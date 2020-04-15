@@ -1,0 +1,191 @@
+trigger:
+  branches:
+    include:
+    - master
+
+  paths:
+    exclude:
+      - README.md
+      - .gitignore    
+
+variables:
+  osProjectName: schema
+  dockerImageName: os-$(osProjectName)-app
+  tag: $(Build.BuildNumber)
+  dockerDir: provider/$(osProjectName)-gcp/docker
+  deploymentName: os-$(osProjectName)-service
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      name: Hosted Ubuntu 1604
+      demands: Maven
+      
+    steps:
+    - task: DownloadSecureFile@1
+      name: gcrKey
+      inputs:
+        secureFile: gcr-push-key-file.json
+        
+    - task: DownloadSecureFile@1
+      name: kubeconfig
+      inputs:
+        secureFile: 'kubeconfig'
+        
+    - task: Maven@3
+      displayName: Maven Build
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        options: '--settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
+        goals: 'clean install package'
+    
+    - task: CopyFiles@2
+      inputs:
+        Contents: 'provider/$(osProjectName)-gcp/deployments/*'
+        TargetFolder: '$(build.artifactstagingdirectory)/deployments'
+      condition: succeeded()
+
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          #!/bin/bash
+              set -e
+              pushd $(dockerDir)
+              cat $(gcrKey.secureFilePath) | docker login -u _json_key --password-stdin https://gcr.io
+              echo $(dockerImageName)
+              docker-compose build $(dockerImageName)
+              docker tag gcr.io/opendes/$(dockerImageName) gcr.io/opendes/$(dockerImageName):$(tag)
+              docker push gcr.io/opendes/$(dockerImageName):$(tag)
+              echo 'Push done.'
+
+              popd
+      condition: succeeded()
+      displayName: 'build,upload and deploy docker image'
+    
+    - task: Maven@3
+      displayName: 'DevSanity'
+      inputs:
+        mavenPomFile: 'provider/$(osProjectName)-gcp/pom.xml'
+        goals: 'verify'
+        options: '-P DevSanity --settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+      
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+      condition: succeededOrFailed()
+      
+- stage: Deploy_DEV
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - job: deploy
+    pool:
+      name: Hosted Ubuntu 1604
+
+    steps:
+    - task: DownloadSecureFile@1
+      name: gcrKey
+      inputs:
+        secureFile: 'gcr-push-key-file.json'
+    - task: DownloadSecureFile@1
+      name: kubeconfigs
+      inputs:
+        secureFile: 'kubeconfig'
+
+
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'specific'
+        project: '9bf2f6e3-4cfe-416c-80df-404767279175'
+        pipeline: '172'
+        buildVersionToDownload: 'latest'
+        downloadType: 'specific'
+        downloadPath: '$(System.ArtifactsDirectory)'
+        
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          #!/bin/bash
+              set -e
+              pushd $(dockerDir)
+              cat $(gcrKey.secureFilePath) | docker login -u _json_key --password-stdin https://gcr.io
+              docker pull gcr.io/opendes/$(dockerImageName):$(tag)
+              docker tag gcr.io/opendes/$(dockerImageName):$(tag) gcr.io/opendes/$(dockerImageName)
+              docker push gcr.io/opendes/$(dockerImageName)
+
+              kubectl --kubeconfig $(kubeconfigs.secureFilePath) rollout restart deployment/$(deploymentName)
+              popd
+      displayName: 'deploy service'
+      
+    - task: Maven@3
+      displayName: 'DevSanity'
+      inputs:
+        mavenPomFile: 'provider/schema-gcp/pom.xml'
+        goals: 'verify'
+        options: '-P DevSanity --settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+
+- stage: DeployToQA
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+  variables:
+    sourceImageName: gcr.io/opendes/$(dockerImageName)
+    destinationImageName: us.gcr.io/opendes-evt/$(dockerImageName)
+
+  jobs:
+    - job: DeployToQA
+
+      steps:
+
+        - task: DownloadSecureFile@1
+          name: gcrKey
+          inputs:
+            secureFile: cicd-push-image-to-cr-keyfile.json
+
+        - task: DownloadSecureFile@1
+          name: gcrKeyEvt
+          inputs:
+            secureFile: cicd-push-image-to-cr-evt-keyfile.json
+
+        - task: DownloadSecureFile@1
+          name: kuberConfigEvt
+          inputs:
+            secureFile: kubeconfig-evt-opendes-qa-us
+
+        - bash: |
+            #!/bin/bash
+            set -e
+
+            cat $(gcrKey.secureFilePath) | docker login -u _json_key --password-stdin https://gcr.io
+            docker pull $(sourceImageName):$(tag)
+
+            cat $(gcrKeyEvt.secureFilePath) | docker login -u _json_key --password-stdin https://us.gcr.io
+            docker tag $(sourceImageName):$(tag) $(destinationImageName):$(tag)
+            docker tag $(sourceImageName):$(tag) $(destinationImageName)
+            docker push $(destinationImageName):$(tag)
+            docker push $(destinationImageName)
+
+            kubectl --kubeconfig $(kuberConfigEvt.secureFilePath) rollout restart deployment/$(deploymentName)

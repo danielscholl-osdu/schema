@@ -1,0 +1,72 @@
+package org.opengroup.osdu.schema.stepdefs.model;
+
+import java.util.Map;
+
+import org.opengroup.osdu.schema.util.FileUtils;
+
+import com.google.inject.Inject;
+
+import io.cucumber.guice.ScenarioScoped;
+
+//import com.slb.swt.de.automation.model.WorkFlowScope;
+
+import lombok.Data;
+
+@ScenarioScoped
+@Data
+public class SchemaServiceScope {
+
+    @Inject
+    private FileUtils fileUtils;
+
+    private String token;
+    private String jobId;
+    private String schemaVersionMinor;
+    private HttpResponse httpResponse;
+    private String jsonPayloadForPostPUT;
+
+    private Map<String, String> authHeaders;
+    private String SchemaIdFromInputPayload;
+    private String SchemaFromInputPayload;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    
+    public void setJsonPayloadForPostPUT(String jsonPayloadForPostPUT) {
+        this.jsonPayloadForPostPUT = jsonPayloadForPostPUT;
+    }
+
+    public String getJsonPayloadForPostPUT() {
+        return jsonPayloadForPostPUT;
+    }
+    public String getSchemaVersionMinor() {
+        return schemaVersionMinor;
+    }
+
+    public void setSchemaVersionMinor(String schemaVersionMinor) {
+        this.schemaVersionMinor = schemaVersionMinor;
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
+
+    public HttpResponse getHttpResponse() {
+        return httpResponse;
+    }
+
+    public void setHttpResponse(HttpResponse httpResponse) {
+        this.httpResponse = httpResponse;
+    }
+
+}

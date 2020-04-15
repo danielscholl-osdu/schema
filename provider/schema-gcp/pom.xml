@@ -1,0 +1,223 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.opengroup.osdu</groupId>
+		<artifactId>os-schema</artifactId>
+		<version>0.0.1</version>
+		<relativePath>../../</relativePath>
+	</parent>
+	<artifactId>os-schema-gcp</artifactId>
+	<description>Google cloud related implementation staff.</description>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage -->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-storage</artifactId>
+			<version>1.105.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-datastore -->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-datastore</artifactId>
+			<version>1.102.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>os-schema-core</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-iam -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-iam</artifactId>
+			<version>v1-rev310-1.25.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>core-lib-gcp</artifactId>
+			<version>0.1.15</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>os-schema-core</artifactId>
+			<version>${project.parent.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java8</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-guice</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
+		</dependency> 
+
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.2.0</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>spring-boot</classifier>
+							<mainClass>
+								org.opengroup.osdu.schema.SchemaApplication
+							</mainClass>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+<!-- 					<includes>
+						<include>*Test.java</include>
+					</includes> -->
+					<skipTests>${skipUnitTests}</skipTests>
+					<forkCount>3</forkCount>
+					<reuseForks>true</reuseForks>
+					<argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<includes>
+								<include>org.opengroup.osdu.schema.impl.sanityTestRunner.TriggerPreIntegrationTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<excludes>
+								<exclude>none</exclude>
+							</excludes>
+							<includes>
+								<include>org.opengroup.osdu.schema.impl.sanityTestRunner.TriggerSchemaServiceTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<includes>
+								<include>org.opengroup.osdu.schema.impl.sanityTestRunner.TriggerPostIntegrationTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>Default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<skipUnitTests>false</skipUnitTests>
+				<skipItTests>true</skipItTests>
+				<preIntegrationPhase>none</preIntegrationPhase>
+				<postIntegrationPhase>none</postIntegrationPhase>
+				<mainClass>org.opengroup.osdu.schema.SchemaApplication</mainClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>DevSanity</id>
+			<properties>
+				<skipUnitTests>true</skipUnitTests>
+				<skipItTests>false</skipItTests>
+				<preIntegrationPhase>pre-integration-test</preIntegrationPhase>
+				<postIntegrationPhase>post-integration-test</postIntegrationPhase>
+				<mainClass>org.opengroup.osdu.schema.SchemaApplication</mainClass>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>

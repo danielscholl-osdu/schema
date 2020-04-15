@@ -1,0 +1,11 @@
+version: "3"
+services:
+  os-schema-app:
+    build:
+      args: 
+        JAR_FILE: target/os-schema-gcp-0.0.1-spring-boot.jar
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: gcr.io/opendes/os-schema-app
+    ports:
+     - "8080:8080"

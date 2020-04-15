@@ -1,0 +1,373 @@
+package org.opengroup.osdu.schema.impl.schemainfostore;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
+import org.opengroup.osdu.schema.constants.SchemaConstants;
+import org.opengroup.osdu.schema.credentials.DatastoreFactory;
+import org.opengroup.osdu.schema.enums.SchemaScope;
+import org.opengroup.osdu.schema.enums.SchemaStatus;
+import org.opengroup.osdu.schema.exceptions.ApplicationException;
+import org.opengroup.osdu.schema.exceptions.BadRequestException;
+import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.opengroup.osdu.schema.model.QueryParams;
+import org.opengroup.osdu.schema.model.SchemaIdentity;
+import org.opengroup.osdu.schema.model.SchemaInfo;
+import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
+import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.google.cloud.Timestamp;
+import com.google.cloud.datastore.Blob;
+import com.google.cloud.datastore.BlobValue;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.DatastoreException;
+import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.EntityQuery;
+import com.google.cloud.datastore.Key;
+import com.google.cloud.datastore.KeyFactory;
+import com.google.cloud.datastore.Query;
+import com.google.cloud.datastore.QueryResults;
+import com.google.cloud.datastore.StructuredQuery;
+import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
+import com.google.cloud.datastore.StructuredQuery.Filter;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
+import com.google.gson.Gson;
+
+import lombok.extern.java.Log;
+
+/**
+ * Repository class to to register Schema in Google store.
+ *
+ */
+@Log
+@Repository
+public class GoogleSchemaInfoStore implements ISchemaInfoStore {
+
+    @Autowired
+    private DpsHeaders headers;
+
+    @Autowired
+    private DatastoreFactory dataStoreFactory;
+
+    @Autowired
+    private ITenantFactory tenantFactory;
+
+    /**
+     * Method to get schemaInfo from google store
+     *
+     * @param schemaId
+     * @return schemaInfo object
+     * @throws ApplicationException
+     * @throws NotFoundException
+     */
+    @Override
+    public SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE).setKind(SchemaConstants.SCHEMA_KIND)
+                .newKey(schemaId);
+        Entity entity = datastore.get(key);
+        if (entity != null) {
+            return getSchemaInfoObject(entity, datastore);
+        }
+        throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
+
+    }
+
+    /**
+     * Method to Create schema in google store of tenantId GCP
+     *
+     * @param schema
+     * @param tenantId
+     * @return schemaInfo object
+     * @throws ApplicationException
+     * @throws BadRequestException
+     */
+    @Override
+    public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        KeyFactory keyFactory = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
+                .setKind(SchemaConstants.SCHEMA_KIND);
+        Entity entity = getEntityObject(schema, datastore, keyFactory);
+        try {
+            datastore.add(entity);
+        } catch (DatastoreException ex) {
+            if (SchemaConstants.ALREADY_EXISTS.equals(ex.getReason())) {
+                log.warning(SchemaConstants.SCHEMA_EXISTS);
+                throw new BadRequestException(SchemaConstants.SCHEMA_EXISTS + " with Id: "
+                        + schema.getSchemaInfo().getSchemaIdentity().getId());
+            } else {
+                log.severe(SchemaConstants.OBJECT_INVALID);
+                throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+            }
+        }
+        log.info(SchemaConstants.SCHEMA_CREATED);
+        return getSchemaInfoObject(entity, datastore);
+    }
+
+    /**
+     * Method to update schema in google store of tenantId GCP
+     *
+     * @param schema
+     * @param tenantId
+     * @return schemaInfo object
+     * @throws ApplicationException
+     * @throws BadRequestException
+     */
+    @Override
+    public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        KeyFactory keyFactory = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
+                .setKind(SchemaConstants.SCHEMA_KIND);
+        Entity entity = getEntityObject(schema, datastore, keyFactory);
+        try {
+            datastore.put(entity);
+        } catch (DatastoreException ex) {
+            log.severe(SchemaConstants.OBJECT_INVALID);
+            throw new ApplicationException("Invalid object, updation failed");
+        }
+        return getSchemaInfoObject(entity, datastore);
+    }
+
+    /**
+     * Method to clean schemaInfo in google datastore of tenantId GCP
+     *
+     * @param schemaId
+     * @return status
+     * @throws ApplicationException
+     */
+    @Override
+    public boolean cleanSchema(String schemaId) throws ApplicationException {
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        KeyFactory keyFactory = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
+                .setKind(SchemaConstants.SCHEMA_KIND);
+        Key key = keyFactory.newKey(schemaId);
+        try {
+            datastore.delete(key);
+            return true;
+        } catch (DatastoreException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getLatestMinorVerSchema(SchemaInfo schemaInfo) throws ApplicationException {
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Query<Entity> query = Query.newEntityQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
+                .setKind(SchemaConstants.SCHEMA_KIND)
+                .setFilter(CompositeFilter.and(
+                        PropertyFilter.eq(SchemaConstants.AUTHORITY, schemaInfo.getSchemaIdentity().getAuthority()),
+                        PropertyFilter.eq(SchemaConstants.ENTITY_TYPE, schemaInfo.getSchemaIdentity().getEntity()),
+                        PropertyFilter.eq(SchemaConstants.MAJOR_VERSION,
+                                schemaInfo.getSchemaIdentity().getSchemaVersionMajor()),
+                        PropertyFilter.eq(SchemaConstants.SOURCE, schemaInfo.getSchemaIdentity().getSource())))
+                .build();
+
+        QueryResults<Entity> result = datastore.run(query);
+        TreeMap<Long, Blob> sortedMap = new TreeMap<>(Collections.reverseOrder());
+        while (result.hasNext()) {
+            Entity entity = result.next();
+            sortedMap.put(entity.getLong(SchemaConstants.MINOR_VERSION), entity.getBlob(SchemaConstants.SCHEMA));
+        }
+        if (sortedMap.size() != 0) {
+            Entry<Long, Blob> blob = sortedMap.firstEntry();
+            return new String(blob.getValue().toByteArray());
+        }
+        return new String();
+    }
+
+    private SchemaInfo getSchemaInfoObject(Entity entity, Datastore datastore) {
+
+        SchemaIdentity superSededBy = null;
+        if (entity.contains(SchemaConstants.SUPERSEDED_BY)) {
+            KeyFactory keyFactory = datastore.newKeyFactory().setKind(SchemaConstants.SCHEMA_KIND);
+            Entity superSededEntity = datastore.get(keyFactory.newKey(entity.getString(SchemaConstants.SUPERSEDED_BY)));
+            superSededBy = getSchemaIdentity(superSededEntity);
+        }
+
+        return SchemaInfo.builder().createdBy(entity.getString(SchemaConstants.CREATED_BY))
+                .dateCreated(entity.getTimestamp(SchemaConstants.DATE_CREATED).toDate())
+                .scope(SchemaScope.valueOf(entity.getString(SchemaConstants.SCOPE)))
+                .status(SchemaStatus.valueOf(entity.getString(SchemaConstants.STATUS)))
+                .schemaIdentity(getSchemaIdentity(entity)).supersededBy(superSededBy).build();
+
+    }
+
+    private Entity getEntityObject(SchemaRequest schema, Datastore datastore, KeyFactory keyFactory)
+            throws BadRequestException, ApplicationException {
+
+        Key key = keyFactory.newKey(schema.getSchemaInfo().getSchemaIdentity().getId());
+
+        Entity.Builder entityBuilder = Entity.newBuilder(key);
+        if (schema.getSchemaInfo().getSupersededBy() != null) {
+            if (schema.getSchemaInfo().getSupersededBy().getId() == null
+                    || datastore.get(keyFactory.newKey(schema.getSchemaInfo().getSupersededBy().getId())) == null) {
+                log.severe(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+                throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+            }
+            entityBuilder.set(SchemaConstants.SUPERSEDED_BY, schema.getSchemaInfo().getSupersededBy().getId());
+        }
+
+        entityBuilder.set(SchemaConstants.DATE_CREATED, Timestamp.now());
+        entityBuilder.set(SchemaConstants.CREATED_BY, headers.getUserEmail());
+        entityBuilder.set(SchemaConstants.AUTHORITY, schema.getSchemaInfo().getSchemaIdentity().getAuthority());
+        entityBuilder.set(SchemaConstants.SOURCE, schema.getSchemaInfo().getSchemaIdentity().getSource());
+        entityBuilder.set(SchemaConstants.ENTITY_TYPE, schema.getSchemaInfo().getSchemaIdentity().getEntity());
+        entityBuilder.set(SchemaConstants.MAJOR_VERSION,
+                schema.getSchemaInfo().getSchemaIdentity().getSchemaVersionMajor());
+        entityBuilder.set(SchemaConstants.MINOR_VERSION,
+                schema.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor());
+        entityBuilder.set(SchemaConstants.PATCH_VERSION,
+                schema.getSchemaInfo().getSchemaIdentity().getSchemaVersionPatch());
+        entityBuilder.set(SchemaConstants.SCOPE, schema.getSchemaInfo().getScope().name());
+        entityBuilder.set(SchemaConstants.STATUS, schema.getSchemaInfo().getStatus().name());
+        Gson gson = new Gson();
+        Blob schemaBlob = Blob.copyFrom(gson.toJson(schema.getSchema()).getBytes());
+        entityBuilder.set(SchemaConstants.SCHEMA, BlobValue.newBuilder(schemaBlob).setExcludeFromIndexes(true).build());
+
+        return entityBuilder.build();
+    }
+
+    private SchemaIdentity getSchemaIdentity(Entity entity) {
+
+        return SchemaIdentity.builder().id(entity.getKey().getName())
+                .authority(entity.getString(SchemaConstants.AUTHORITY)).source(entity.getString(SchemaConstants.SOURCE))
+                .entity(entity.getString(SchemaConstants.ENTITY_TYPE))
+                .schemaVersionMajor(entity.getLong(SchemaConstants.MAJOR_VERSION))
+                .schemaVersionMinor(entity.getLong(SchemaConstants.MINOR_VERSION))
+                .schemaVersionPatch(entity.getLong(SchemaConstants.PATCH_VERSION)).build();
+
+    }
+
+    @Override
+    public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(tenantId));
+        List<Filter> filterList = getFilters(queryParams);
+
+        EntityQuery.Builder queryBuilder = Query.newEntityQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
+                .setKind(SchemaConstants.SCHEMA_KIND);
+
+        if (!filterList.isEmpty()) {
+            queryBuilder.setFilter(
+                    CompositeFilter.and(filterList.get(0), filterList.toArray(new Filter[filterList.size()])));
+        }
+
+        QueryResults<Entity> result = datastore.run(queryBuilder.build());
+        List<SchemaInfo> schemaList = new LinkedList<>();
+        while (result.hasNext()) {
+            Entity entity = result.next();
+            schemaList.add(getSchemaInfoObject(entity, datastore));
+        }
+
+        if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
+            return getLatestVersionSchemaList(schemaList);
+        }
+
+        return schemaList;
+    }
+
+    private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {
+        List<SchemaInfo> latestSchemaList = new LinkedList<>();
+        SchemaInfo previousSchemaInfo = null;
+        TreeMap<VersionHierarchyUtil, SchemaInfo> sortedMap = new TreeMap<>(
+                new VersionHierarchyUtil.SortingVersionComparator());
+
+        for (SchemaInfo schemaInfoObject : filteredSchemaList) {
+            if ((previousSchemaInfo != null) && !(checkAuthorityMatch(previousSchemaInfo, schemaInfoObject)
+                    && checkSourceMatch(previousSchemaInfo, schemaInfoObject)
+                    && checkEntityMatch(previousSchemaInfo, schemaInfoObject))) {
+                Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
+                latestSchemaList.add(latestVersionEntry.getValue());
+                sortedMap.clear();
+            }
+            previousSchemaInfo = schemaInfoObject;
+            SchemaIdentity schemaIdentity = schemaInfoObject.getSchemaIdentity();
+            VersionHierarchyUtil version = new VersionHierarchyUtil(schemaIdentity.getSchemaVersionMajor(),
+                    schemaIdentity.getSchemaVersionMinor(), schemaIdentity.getSchemaVersionPatch());
+            sortedMap.put(version, schemaInfoObject);
+        }
+        if (sortedMap.size() != 0) {
+            Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
+            latestSchemaList.add(latestVersionEntry.getValue());
+        }
+
+        return latestSchemaList;
+    }
+
+    private boolean checkEntityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
+        return schemaInfoObject.getSchemaIdentity().getEntity()
+                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getEntity());
+    }
+
+    private boolean checkSourceMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
+        return schemaInfoObject.getSchemaIdentity().getSource()
+                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getSource());
+    }
+
+    private boolean checkAuthorityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
+        return schemaInfoObject.getSchemaIdentity().getAuthority()
+                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
+    }
+
+    private List<Filter> getFilters(QueryParams queryParams) {
+        List<Filter> filterList = new LinkedList<StructuredQuery.Filter>();
+        if (queryParams.getAuthority() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.AUTHORITY, queryParams.getAuthority()));
+        }
+        if (queryParams.getSource() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.SOURCE, queryParams.getSource()));
+        }
+        if (queryParams.getEntity() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.ENTITY_TYPE, queryParams.getEntity()));
+        }
+        if (queryParams.getSchemaVersionMajor() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.MAJOR_VERSION, queryParams.getSchemaVersionMajor()));
+        }
+        if (queryParams.getSchemaVersionMinor() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.MINOR_VERSION, queryParams.getSchemaVersionMinor()));
+        }
+        if (queryParams.getStatus() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.STATUS, queryParams.getStatus().toUpperCase()));
+        }
+        return filterList;
+    }
+
+    @Override
+    public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
+
+        Set<String> tenantList = new HashSet<>();
+        tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+        tenantList.add(tenantId);
+
+        // code to call check uniqueness
+        if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+            List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
+                    .collect(Collectors.toList());
+            tenantList.addAll(privateTenantList);
+
+        }
+        for (String tenant : tenantList) {
+            Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(tenant));
+            Key schemaKey = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
+                    .setKind(SchemaConstants.SCHEMA_KIND).newKey(schemaId);
+
+            Query<Key> query = Query.newKeyQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
+                    .setKind(SchemaConstants.SCHEMA_KIND).setFilter(PropertyFilter.eq("__key__", schemaKey)).build();
+            QueryResults<Key> keys = datastore.run(query);
+            if (keys.hasNext())
+                return false;
+        }
+        return true;
+    }
+}

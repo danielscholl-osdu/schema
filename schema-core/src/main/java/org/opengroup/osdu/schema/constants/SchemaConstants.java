@@ -1,0 +1,100 @@
+package org.opengroup.osdu.schema.constants;
+
+public class SchemaConstants {
+
+    private SchemaConstants() {
+
+    }
+
+    public static final String NAMESPACE = "dataecosystem";
+
+    // source
+    public static final String SOURCE_KIND = "source";
+
+    // entity type
+    public static final String ENTITYTYPE_KIND = "entityType";
+
+    // authority
+    public static final String AUTHORITY_KIND = "authority";
+
+    // schema
+    public static final String SCHEMA_KIND = "schema";
+    public static final String AUTHORITY = "authority";
+    public static final String SOURCE = "source";
+    public static final String ENTITY_TYPE = "entityType";
+    public static final String MAJOR_VERSION = "majorVersion";
+    public static final String MINOR_VERSION = "minorVersion";
+    public static final String PATCH_VERSION = "patchVersion";
+    public static final String CREATED_BY = "createdBy";
+    public static final String SUPERSEDED_BY = "supersededBy";
+    public static final String DATE_CREATED = "dateCreated";
+    public static final String SCHEMA = "schema";
+    public static final String SCOPE = "scope";
+    public static final String STATUS = "status";
+
+    // general
+    public static final String ALREADY_EXISTS = "ALREADY_EXISTS";
+    public static final String ACCOUNT_ID = "account-Id";
+    public static final String ACCOUNT_ID_COMMON_PROJECT = "common";
+    public static final String ON_BEHALF_OF = "on-Behalf-Of";
+    public static final String ENTITLEMENT_SERVICE_GROUP_VIEWERS = "service.schema-service.viewers";
+    public static final String ENTITLEMENT_SERVICE_GROUP_EDITORS = "service.schema-service.editors";
+    public static final String INTERNAL_SERVER_ERROR = "Internal server error";
+    public static final String REF = "$ref";
+    public static final String DEFINITIONS = "definitions";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String SCHEMA_BUCKET_EXTENSION = "-schema";
+    public static final String SCHEMA_GET_STARTED = "Getting schema from google store";
+    public static final String SCHEMA_GET_PRIVATE = "Getting schema from private google project";
+    public static final String SCHEMA_GET_COMMON = "Getting schema from common google project";
+    public static final String SCHEMA_FOUND = "Schema is found in google store";
+    public static final String SCHEMA_CREATION_STARTED = "Creating schema in google store";
+    public static final String SCHEMA_CREATED = "Schema created in google store";
+    public static final String AUTHORITY_CREATED = "Authority is created";
+    public static final String SOURCE_CREATED = "Source is created";
+    public static final String ENTITY_TYPE_CREATED = "EntityType is created";
+    public static final String JSON_EXTENSION = ".json";
+    public static final String SCHEMA_NOT_FOUND_PRIVATE = "Schema is not present in private tenant";
+    public static final String SCHEMA_NOT_FOUND_COMMON = "Schema is not present in common tenant";
+    public static final String SCHEMA_UPDATION_STARTED = "Updation of schema with schema id {0} started";
+    public static final String SCHEMA_UPDATED = "Schema has been updated";
+    public static final String MSG_FORBIDDEN = "User does not have access to the requested resource";
+
+    // audit message
+    public static final String AUDIT_LOG_MESSAGE = "Schema service starts";
+
+    // exceptions
+    public static final String AUTHORITY_EXISTS_ALREADY_REGISTERED = "Authority already registered";
+    public static final String AUTHORITY_EXISTS_EXCEPTION = "Authority already registered with Id: {0}";
+    public static final String ENTITY_EXISTS_EXCEPTION = "Entity already registered with Id: {0}";
+    public static final String EMPTY_ID = "The id provided is empty";
+    public static final String SCHEMA_CREATION_FAILED = "Schema creation failed";
+    public static final String SCHEMA_UPDATE_FAILED = "Schema updation failed";
+    public static final String SCHEMA_UPDATE_EXCEPTION = "Only schema in developement stage can be updated";
+    public static final String INVALID_SCHEMA_UPDATE = "Invalid schema to update, Schema not registered";
+    public static final String SCHEMA_CREATION_FAILED_INVALID_OBJECT = "Schema creation failed due to invalid object";
+    public static final String INVALID_INPUT = "The input is invalid. Object is invalid";
+    public static final String SOURCE_EXISTS_EXCEPTION = "Source already registered with Id: {0}";
+    public static final String LATESTVERSION_MINORFILTER_WITHOUT_MAJOR = "MinorVersion Filter is invalid without giving MajorVersion when LatestVersion Schema is required";
+    public static final String SCHEMA_CREATE_CLEAN = "Cleaned partial data created by current schema create operation";
+
+    // error message
+    public static final String SCHEMA_NOT_PRESENT = "Schema is not present";
+    public static final String OBJECT_INVALID = "Object is invalid";
+    public static final String SCHEMA_EXISTS = "Schema already registered";
+    public static final String SOURCE_EXISTS = "Source already registered";
+    public static final String ENTITY_EXISTS = "Entity already registered";
+    public static final String INVALID_SUPERSEDEDBY_ID = "Invalid SuperSededBy id";
+    public static final String INVALID_SCHEMA_ID = "Invalid Schema id";
+    public static final String SCHEMA_UPDATE_ERROR = "Schema is not in development stage, only development stage schema can be updated";
+    public static final String SCHEMA_UPDATE_INVALID = "Schema is invalid for updation, it cannot be registered";
+    public static final String BAD_INPUT = "Bad input parameter";
+    public static final String INVALID_AUTHORIZATION_TOKEN = "Invalid authorization token";
+    public static final String SCHEMA_ID_EXISTS = "Schema Id is already present";
+
+    // OSDU
+    public static final String DATA_PARTITION_ID = "data-partition-id";
+    public static final String CORRELATION_ID = "correlation-id";
+
+    public static final String APPLICATION_NAME = "Schema Service";
+}
