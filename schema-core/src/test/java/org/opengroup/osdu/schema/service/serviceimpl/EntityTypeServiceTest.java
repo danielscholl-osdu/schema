@@ -30,7 +30,7 @@ public class EntityTypeServiceTest {
     public void testCheckAndRegisterEntityIfNotPresent() throws NotFoundException, ApplicationException {
         when(mockEntityStore.get("testEntityType")).thenReturn(getMockEntityObject());
         assertEquals(true,
-                entityTypeService.checkAndRegisterEntityIfNotPresent(mockEntityType.getEntityTypeId()));
+                entityTypeService.checkAndRegisterEntityTypeIfNotPresent(mockEntityType.getEntityTypeId()));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class EntityTypeServiceTest {
         getMockEntityObject();
         when(mockEntityStore.create(mockEntityType)).thenThrow(ApplicationException.class);
         assertEquals(false,
-                entityTypeService.checkAndRegisterEntityIfNotPresent(mockEntityType.getEntityTypeId()));
+                entityTypeService.checkAndRegisterEntityTypeIfNotPresent(mockEntityType.getEntityTypeId()));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class EntityTypeServiceTest {
         getMockEntityObject();
         when(mockEntityStore.create(mockEntityType)).thenThrow(BadRequestException.class);
         assertEquals(true,
-                entityTypeService.checkAndRegisterEntityIfNotPresent(mockEntityType.getEntityTypeId()));
+                entityTypeService.checkAndRegisterEntityTypeIfNotPresent(mockEntityType.getEntityTypeId()));
     }
 
     private EntityType getMockEntityObject() {

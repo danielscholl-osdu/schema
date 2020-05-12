@@ -3,6 +3,8 @@ package org.opengroup.osdu.schema.model;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.opengroup.osdu.schema.validation.SchemaConstraint;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +21,7 @@ public class SchemaRequest {
 	private SchemaInfo schemaInfo;
 
 	@NotNull(message = "schema must not be null")
+    @SchemaConstraint
 	private Object schema;
 
 }

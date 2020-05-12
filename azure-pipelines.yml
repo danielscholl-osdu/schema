@@ -58,25 +58,43 @@ stages:
         targetType: 'inline'
         script: |
           #!/bin/bash
-              set -e
               pushd $(dockerDir)
               cat $(gcrKey.secureFilePath) | docker login -u _json_key --password-stdin https://gcr.io
               echo $(dockerImageName)
               docker-compose build $(dockerImageName)
               docker tag gcr.io/opendes/$(dockerImageName) gcr.io/opendes/$(dockerImageName):$(tag)
               docker push gcr.io/opendes/$(dockerImageName):$(tag)
+              docker push gcr.io/opendes/$(dockerImageName)
               echo 'Push done.'
 
+              kubectl --kubeconfig $(kubeconfig.secureFilePath) rollout restart deployment/$(deploymentName)
+
               popd
+              sleep 10
+              OUTPUT="Alive"
+              ENDPOINT=https://open.opendes.cloud.slb-ds.com/api/schema-service/v1/health
+              echo $ENDPOINT
+
+              while [ -z "$STATUS" ]; do
+                STATUS=`curl -v --silent --http1.0 "$ENDPOINT" 2>&1 | grep "$OUTPUT"`
+                echo $STATUS
+
+                if [ -z "$STATUS" ]; then
+                  echo "Endpoint is not up yet."
+                  sleep 10
+                else
+                  echo "Endpoint is up"
+                fi
+              done
       condition: succeeded()
       displayName: 'build,upload and deploy docker image'
     
     - task: Maven@3
-      displayName: 'DevSanity'
+      displayName: 'Running IntegrationTest'
       inputs:
-        mavenPomFile: 'provider/$(osProjectName)-gcp/pom.xml'
+        mavenPomFile: '$(osProjectName)-core/pom.xml'
         goals: 'verify'
-        options: '-P DevSanity --settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
+        options: '-P IntegrationTest --settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
         mavenVersionOption: 'Default'
@@ -91,63 +109,6 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
       condition: succeededOrFailed()
-      
-- stage: Deploy_DEV
-  dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  jobs:
-  - job: deploy
-    pool:
-      name: Hosted Ubuntu 1604
-
-    steps:
-    - task: DownloadSecureFile@1
-      name: gcrKey
-      inputs:
-        secureFile: 'gcr-push-key-file.json'
-    - task: DownloadSecureFile@1
-      name: kubeconfigs
-      inputs:
-        secureFile: 'kubeconfig'
-
-
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        buildType: 'specific'
-        project: '9bf2f6e3-4cfe-416c-80df-404767279175'
-        pipeline: '172'
-        buildVersionToDownload: 'latest'
-        downloadType: 'specific'
-        downloadPath: '$(System.ArtifactsDirectory)'
-        
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: |
-          #!/bin/bash
-              set -e
-              pushd $(dockerDir)
-              cat $(gcrKey.secureFilePath) | docker login -u _json_key --password-stdin https://gcr.io
-              docker pull gcr.io/opendes/$(dockerImageName):$(tag)
-              docker tag gcr.io/opendes/$(dockerImageName):$(tag) gcr.io/opendes/$(dockerImageName)
-              docker push gcr.io/opendes/$(dockerImageName)
-
-              kubectl --kubeconfig $(kubeconfigs.secureFilePath) rollout restart deployment/$(deploymentName)
-              popd
-      displayName: 'deploy service'
-      
-    - task: Maven@3
-      displayName: 'DevSanity'
-      inputs:
-        mavenPomFile: 'provider/schema-gcp/pom.xml'
-        goals: 'verify'
-        options: '-P DevSanity --settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
-        publishJUnitResults: false
-        javaHomeOption: 'JDKVersion'
-        mavenVersionOption: 'Default'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
 
 - stage: DeployToQA
   condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))

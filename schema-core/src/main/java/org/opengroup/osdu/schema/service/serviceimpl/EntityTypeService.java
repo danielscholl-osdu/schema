@@ -16,21 +16,21 @@ import org.springframework.stereotype.Service;
 public class EntityTypeService implements IEntityTypeService {
 
     @Autowired
-    IEntityTypeStore entityStore;
+    IEntityTypeStore entityTypeStore;
 
     /**
-     * check and create Entity if its not present of dataPartitionId store
+     * check and create EntityType if its not present of dataPartitionId store
      *
-     * @param Entity id
-     * @return true or false of successful registration of Entity.
+     * @param EntityType id
+     * @return true or false of successful registration of EntityType.
      */
     @Override
-    public Boolean checkAndRegisterEntityIfNotPresent(String entityTypeId) {
+    public Boolean checkAndRegisterEntityTypeIfNotPresent(String entityTypeId) {
 
         try {
             EntityType entityType = new EntityType();
             entityType.setEntityTypeId(entityTypeId);
-            entityStore.create(entityType);
+            entityTypeStore.create(entityType);
         } catch (ApplicationException e) {
             return false;
         } catch (BadRequestException ex) {

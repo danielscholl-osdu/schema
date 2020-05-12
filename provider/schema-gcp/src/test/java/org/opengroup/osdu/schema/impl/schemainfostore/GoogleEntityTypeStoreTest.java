@@ -134,7 +134,7 @@ public class GoogleEntityTypeStoreTest {
             googleEntityStore.create(mockEntityType);
             fail("Should not succeed");
         } catch (BadRequestException e) {
-            assertEquals("Entity already registered with Id: wks", e.getMessage());
+            assertEquals("EntityType already registered with Id: wks", e.getMessage());
 
         } catch (Exception e) {
             fail("Should not get different exception");

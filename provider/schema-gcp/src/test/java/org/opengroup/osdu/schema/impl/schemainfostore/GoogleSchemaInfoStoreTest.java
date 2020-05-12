@@ -420,7 +420,7 @@ public class GoogleSchemaInfoStoreTest {
         Mockito.when(queryResult.hasNext()).thenReturn(true, false);
         Mockito.when(queryResult.next()).thenReturn(getMockEntityObject());
         assertEquals(1,
-                schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test").entity("test")
+                schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
                         .schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test").latestVersion(false)
                         .limit(100).offset(0).build(), "test").size());
     }
@@ -438,7 +438,7 @@ public class GoogleSchemaInfoStoreTest {
         Mockito.when(queryResult.hasNext()).thenReturn(false);
         assertEquals(0,
                 schemaInfoStore
-                        .getSchemaInfoList(QueryParams.builder().authority("test").source("test").entity("test")
+                        .getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
                                 .scope("test").status("test").latestVersion(true).limit(100).offset(0).build(), "test")
                         .size());
     }
@@ -597,7 +597,7 @@ public class GoogleSchemaInfoStoreTest {
     private SchemaRequest getMockSchemaObject_Published() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well.1.1.1").build())
                         .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).createdBy("subham").build())
@@ -606,7 +606,7 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     private SchemaInfo getMockSchemaInfo() {
-        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well.1.1.1").build())
                 .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).createdBy("subham")
 
@@ -617,11 +617,11 @@ public class GoogleSchemaInfoStoreTest {
     private SchemaRequest getMockSchemaObject_SuperSededBy() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well.1.1.1").build())
                         .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).createdBy("subham")
-                        .supersededBy(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .supersededBy(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(2L)
                                 .id("os:wks:well.1.2.1").build())
                         .build())
@@ -632,11 +632,11 @@ public class GoogleSchemaInfoStoreTest {
     private SchemaRequest getMockSchemaObject_SuperSededByWithoutId() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well.1.1.1").build())
                         .scope(SchemaScope.SHARED).status(SchemaStatus.DEVELOPMENT).createdBy("subham")
-                        .supersededBy(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .supersededBy(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).build())
                         .build())
                 .build();

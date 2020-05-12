@@ -81,10 +81,10 @@ public class SchemaControllerTest {
     private SchemaRequest getSchemaRequestObject() {
         return SchemaRequest.builder().schema(null)
                 .schemaInfo(SchemaInfo.builder().createdBy("creator").dateCreated(new Date(System.currentTimeMillis()))
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").entity("well").id("os..wks.well.1.1")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.1")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
                         .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
-                        .supersededBy(SchemaIdentity.builder().authority("os").entity("well").id("os..wks.well.1.4")
+                        .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.4")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
                         .build())
                 .build();
@@ -92,10 +92,10 @@ public class SchemaControllerTest {
 
     private SchemaInfo getSchemaInfoObject() {
         return SchemaInfo.builder().createdBy("creator").dateCreated(new Date(System.currentTimeMillis()))
-                .schemaIdentity(SchemaIdentity.builder().authority("os").entity("well").id("os..wks.well.1.1")
+                .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.1")
                         .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
                 .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
-                .supersededBy(SchemaIdentity.builder().authority("os").entity("well").id("os..wks.well.1.4")
+                .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.4")
                         .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
                 .build();
     }

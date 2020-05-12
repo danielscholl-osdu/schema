@@ -3,7 +3,7 @@
 		"schemaIdentity": {
 			"authority": "SchemaSanityTest",
 			"source": "testSource",
-			"entity": "testEntity",
+			"entityType": "testEntity",
 			"schemaVersionMajor": 1,
 			"schemaVersionMinor": 1,
 			"schemaVersionPatch": 0,
