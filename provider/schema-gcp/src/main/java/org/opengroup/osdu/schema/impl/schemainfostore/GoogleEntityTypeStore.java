@@ -81,9 +81,9 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
             datastore.add(entity);
         } catch (DatastoreException ex) {
             if ("ALREADY_EXISTS".equals(ex.getReason())) {
-                log.warning(SchemaConstants.ENTITY_EXISTS);
+                log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
                 throw new BadRequestException(
-                        MessageFormat.format(SchemaConstants.ENTITY_EXISTS_EXCEPTION, entityType.getEntityTypeId()));
+                        MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION, entityType.getEntityTypeId()));
             } else {
                 log.severe(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
                 throw new ApplicationException("Invalid input, object invalid");

@@ -7,7 +7,7 @@ import org.opengroup.osdu.schema.model.EntityType;
 
 public interface IEntityTypeStore {
 
-	EntityType get(String entityId) throws NotFoundException, ApplicationException;
+	EntityType get(String entityTypeId) throws NotFoundException, ApplicationException;
 
 	EntityType create(EntityType entityType) throws BadRequestException, ApplicationException;
 

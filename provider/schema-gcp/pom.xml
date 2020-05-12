@@ -60,14 +60,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>os-schema-core</artifactId>
-			<version>${project.parent.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-java8</artifactId>
 			<version>5.4.0</version>
@@ -147,95 +139,15 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M3</version>
 				<configuration>
-					<testFailureIgnore>true</testFailureIgnore>
-<!-- 					<includes>
-						<include>*Test.java</include>
-					</includes> -->
 					<skipTests>${skipUnitTests}</skipTests>
 					<forkCount>3</forkCount>
 					<reuseForks>true</reuseForks>
 					<argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.0.0-M3</version>
-				<executions>
-					<execution>
-						<id>pre-integration-test</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skipItTests}</skipTests>
-							<includes>
-								<include>org.opengroup.osdu.schema.impl.sanityTestRunner.TriggerPreIntegrationTestsRunner</include>
-							</includes>
-						</configuration>
-					</execution>
-					<execution>
-						<id>integration-test</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skipItTests}</skipTests>
-							<excludes>
-								<exclude>none</exclude>
-							</excludes>
-							<includes>
-								<include>org.opengroup.osdu.schema.impl.sanityTestRunner.TriggerSchemaServiceTestsRunner</include>
-							</includes>
-						</configuration>
-					</execution>
-					<execution>
-						<id>post-integration-test</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skipItTests}</skipTests>
-							<includes>
-								<include>org.opengroup.osdu.schema.impl.sanityTestRunner.TriggerPostIntegrationTestsRunner</include>
-							</includes>
-						</configuration>
-					</execution>
-					<execution>
-						<id>verify</id>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>Default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<skipUnitTests>false</skipUnitTests>
-				<skipItTests>true</skipItTests>
-				<preIntegrationPhase>none</preIntegrationPhase>
-				<postIntegrationPhase>none</postIntegrationPhase>
-				<mainClass>org.opengroup.osdu.schema.SchemaApplication</mainClass>
-			</properties>
-		</profile>
-		<profile>
-			<id>DevSanity</id>
-			<properties>
-				<skipUnitTests>true</skipUnitTests>
-				<skipItTests>false</skipItTests>
-				<preIntegrationPhase>pre-integration-test</preIntegrationPhase>
-				<postIntegrationPhase>post-integration-test</postIntegrationPhase>
-				<mainClass>org.opengroup.osdu.schema.SchemaApplication</mainClass>
-			</properties>
-		</profile>
-	</profiles>
 
 </project>

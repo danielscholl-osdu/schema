@@ -24,19 +24,19 @@ The Schema Service is a Maven multi-module project with each cloud implemention 
     server.port=8080
     ```
 
-## Running Automated (DevSanity) Tests
+## Running Automated Integration Test
 DevSanity tests are located in a schema-core project in testing directory under the project root directory.
 
 1. GCP
 
 These tests validate functionality of schema service. 
 
-They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from GCP project.
+They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
 Below command has to be run post building complete project.
     
 
-    cd provider\schema-gcp
-    mvn verify -P DevSanity
+    cd schema-core
+    mvn verify -P IntegrationTest
     
 
 

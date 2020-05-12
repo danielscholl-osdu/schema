@@ -133,8 +133,8 @@ public class SchemaServiceTest {
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getSource()))
                 .thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntity()))
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntityType()))
                 .thenReturn(true);
         Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn("{}");
@@ -159,8 +159,8 @@ public class SchemaServiceTest {
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getSource()))
                 .thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntity()))
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntityType()))
                 .thenReturn(true);
         Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn("{}");
@@ -186,8 +186,8 @@ public class SchemaServiceTest {
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getSource()))
                 .thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntity()))
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntityType()))
                 .thenReturn(true);
         Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString()))
@@ -210,8 +210,8 @@ public class SchemaServiceTest {
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getSource()))
                 .thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntity()))
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntityType()))
                 .thenReturn(true);
         Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn("{}");
@@ -234,8 +234,8 @@ public class SchemaServiceTest {
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getSource()))
                 .thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntity()))
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntityType()))
                 .thenReturn(true);
         Mockito.when(schemaInfoStore.isUnique(schemaId, tenantId)).thenReturn(false);
         schemaService.createSchema(getMockSchemaObject_published());
@@ -277,8 +277,8 @@ public class SchemaServiceTest {
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getSource()))
                 .thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntity()))
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published_InternalScope().getSchemaInfo().getSchemaIdentity().getEntityType()))
                 .thenReturn(true);
         Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn(latestSchema);
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn(latestSchema);
@@ -304,8 +304,8 @@ public class SchemaServiceTest {
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getAuthority())).thenReturn(true);
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getSource())).thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntity())).thenReturn(false);
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(false);
         schemaService.createSchema(getMockSchemaObject_published());
     }
 
@@ -323,8 +323,8 @@ public class SchemaServiceTest {
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getAuthority())).thenReturn(false);
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getSource())).thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntity())).thenReturn(true);
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(true);
         schemaService.createSchema(getMockSchemaObject_published());
     }
 
@@ -342,8 +342,8 @@ public class SchemaServiceTest {
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getAuthority())).thenReturn(true);
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getSource())).thenReturn(false);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntity())).thenReturn(true);
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(true);
 
         schemaService.createSchema(getMockSchemaObject_published());
     }
@@ -370,8 +370,8 @@ public class SchemaServiceTest {
                     .thenReturn(true);
             Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                     getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getSource())).thenReturn(true);
-            Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                    getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntity())).thenReturn(true);
+            Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                    getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(true);
             Mockito.when(schemaInfoStore.getSchemaInfo("os:wks:well:1.1.1")).thenReturn(getMockSchemaInfo());
             schemaService.updateSchema(getMockSchemaObject_published());
             fail("Should not succeed");
@@ -392,8 +392,8 @@ public class SchemaServiceTest {
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getAuthority())).thenReturn(true);
         Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                 getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getSource())).thenReturn(true);
-        Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntity())).thenReturn(true);
+        Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(true);
         Mockito.when(schemaInfoStore.getSchemaInfo("os:wks:well:1.1.1")).thenThrow(NotFoundException.class);
         try {
             schemaService.updateSchema(getMockSchemaObject_published());
@@ -426,8 +426,8 @@ public class SchemaServiceTest {
                     .thenReturn(true);
             Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
                     getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getSource())).thenReturn(true);
-            Mockito.when(entityTypeService.checkAndRegisterEntityIfNotPresent(
-                    getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntity())).thenReturn(true);
+            Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                    getMockSchemaObject_published().getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(true);
             Mockito.when(schemaInfoStore.getSchemaInfo("os:wks:well:1.1.1")).thenThrow(NotFoundException.class);
             schemaService.updateSchema(getMockSchemaObject_published());
             fail("Should not succeed");
@@ -537,7 +537,7 @@ public class SchemaServiceTest {
     private SchemaRequest getMockSchemaObject_published() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well:1.1.1").build())
                         .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).build())
@@ -548,7 +548,7 @@ public class SchemaServiceTest {
     private SchemaRequest getMockSchemaObject_published_InternalScope() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well:1.1.1").build())
                         .scope(SchemaScope.INTERNAL).status(SchemaStatus.PUBLISHED).build())
@@ -559,7 +559,7 @@ public class SchemaServiceTest {
     private SchemaRequest getMockSchemaObject_published_SharedScope() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well:1.1.1").build())
                         .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).build())
@@ -570,7 +570,7 @@ public class SchemaServiceTest {
     private SchemaRequest getMockSchemaObject_BreakingChanges() {
         return SchemaRequest.builder().schema("{\"key\":\"value1\"}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well:1.1.1").build())
                         .scope(SchemaScope.INTERNAL).status(SchemaStatus.PUBLISHED).build())
@@ -581,7 +581,7 @@ public class SchemaServiceTest {
     private SchemaRequest getMockSchemaObject_InvalidSchemaId() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).build())
                         .scope(SchemaScope.SHARED).status(SchemaStatus.DEVELOPMENT).build())
                 .build();
@@ -591,7 +591,7 @@ public class SchemaServiceTest {
     private SchemaRequest getMockSchemaObject_InvalidSchemaIdentity() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(2L).schemaVersionPatch(1L)
                                 .id("os:wks:well:1.1.1").build())
                         .scope(SchemaScope.SHARED).status(SchemaStatus.DEVELOPMENT).build())
@@ -601,37 +601,37 @@ public class SchemaServiceTest {
     private SchemaRequest getMockSchemaObject_Development() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+                        .schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L)
                                 .id("os:wks:well:1.1.1").build())
-                        .scope(SchemaScope.SHARED).status(SchemaStatus.DEVELOPMENT).build())
+                        .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT).build())
                 .build();
 
     }
 
     private SchemaInfo getMockSchemaInfo() {
-        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well:1.1.1").build())
                 .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).build();
 
     }
 
     private SchemaInfo getMockSchemaInfo_Published_InternalScope() {
-        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well:1.1.1").build())
                 .scope(SchemaScope.INTERNAL).status(SchemaStatus.PUBLISHED).build();
     }
 
     private SchemaInfo getMockSchemaInfo_Published_SharedScope() {
-        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well:1.1.1").build())
                 .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).build();
     }
 
     private SchemaInfo getMockSchemaInfo_development_status() {
-        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entity("well")
+        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
                 .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well:1.1.1").build())
-                .scope(SchemaScope.SHARED).status(SchemaStatus.DEVELOPMENT).build();
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT).build();
 
     }
 }

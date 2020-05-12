@@ -57,8 +57,17 @@ public class SchemaResolverTest {
         String orginalSchema = new FileUtils().read("/test_schema/originalSchemaWithInvalidExternalPath.json");
         String referenceSchema = new FileUtils().read("/test_schema/referenceSchemaWithDefinitionBlock.json");
         Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenReturn(referenceSchema);
-        expectedException.expect(ApplicationException.class);
-        expectedException.expectMessage("Internal server error");
+        expectedException.expect(BadRequestException.class);
+        expectedException.expectMessage("Invalid Request, https://ggl.json not resolvable");
+        schemaResolver.resolveSchema(orginalSchema);
+    }
+
+    @Test
+    public void testResolveSchema_ExternalPathWithInValidSchema()
+            throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
+        String orginalSchema = new FileUtils().read("/test_schema/originalSchemaWithInvalidExternalPath3.json");
+        expectedException.expect(BadRequestException.class);
+        expectedException.expectMessage("Invalid Request, https://www.google.com not a valid Json schema object");
         schemaResolver.resolveSchema(orginalSchema);
     }
 
@@ -77,8 +86,7 @@ public class SchemaResolverTest {
     @Test
     public void testResolveSchema_invalidRefSchema()
             throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
-        Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0"))
-                .thenThrow(NotFoundException.class);
+        Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenThrow(NotFoundException.class);
         String orginalSchema = new FileUtils().read("/test_schema/originalSchema.json");
         expectedException.expect(BadRequestException.class);
         expectedException.expectMessage(

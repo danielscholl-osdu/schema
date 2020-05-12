@@ -8,7 +8,7 @@ public class TestConstants {
     public static final String GET_ENDPOINT = "/api/schema-service/v1/schema/";
     public static final String GET_FLATTENED_ENDPOINT = "/api/schema-service/v1/schema/{id}/IndexerSchemaV1";
     public static final String HOST = "https://open.opendes.cloud.slb-ds.com";
-    // public static final String HOST = "http://localhost:8081";
+    //public static final String HOST = "http://localhost:8080";
     public static final String INTERNAL_SERVER_ERROR = "internal server error";
     public static final String INTERNAL = "INTERNAL";
     public static final String SCHEMA_KIND = "schema";
@@ -35,7 +35,7 @@ public class TestConstants {
     public static final String JSON_CONTENT = "application/json";
     public static final String schemaIdOfInputPayload = "schemaInfo.schemaIdentity.id";
     public static final String SCHEMA_IDENTITY = "schemaIdentity";
-    public static final String ENTITY = "entity";
+    public static final String ENTITY = "entityType";
     public static final String SCHEMA_MAJOR_VERSION = "schemaVersionMajor";
     public static final String SCHEMA_MINOR_VERSION = "schemaVersionMinor";
     public static final String SCHEMA_PATCH_VERSION = "schemaVersionPatch";

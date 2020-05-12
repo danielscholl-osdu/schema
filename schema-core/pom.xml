@@ -143,6 +143,11 @@
 			<version>1.76.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
@@ -185,14 +190,63 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<skipTests>${skipUnitTests}</skipTests>
+					<forkCount>3</forkCount>
+					<reuseForks>true</reuseForks>
+					<argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M3</version>
 				<executions>
 					<execution>
-						<id>Jar Tests Package</id>
-						<phase>package</phase>
+						<id>pre-integration-test</id>
 						<goals>
-							<goal>test-jar</goal>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<includes>
+								<include>org.opengroup.osdu.schema.runner.PreIntegrationTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<excludes>
+								<exclude>none</exclude>
+							</excludes>
+							<includes>
+								<include>org.opengroup.osdu.schema.runner.SchemaServiceTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<includes>
+								<include>org.opengroup.osdu.schema.runner.TearDownTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -200,4 +254,31 @@
 
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>Default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<skipUnitTests>false</skipUnitTests>
+				<skipItTests>true</skipItTests>
+				<preIntegrationPhase>none</preIntegrationPhase>
+				<postIntegrationPhase>none</postIntegrationPhase>
+				<mainClass>org.opengroup.osdu.schema.SchemaApplication</mainClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>IntegrationTest</id>
+			<properties>
+				<skipUnitTests>true</skipUnitTests>
+				<skipItTests>false</skipItTests>
+				<preIntegrationPhase>pre-integration-test</preIntegrationPhase>
+				<postIntegrationPhase>post-integration-test</postIntegrationPhase>
+				<mainClass>org.opengroup.osdu.schema.SchemaApplication</mainClass>
+			</properties>
+		</profile>
+	</profiles>
+
 </project>

@@ -129,7 +129,7 @@ public class SchemaService implements ISchemaService {
             Boolean source = sourceService
                     .checkAndRegisterSourceIfNotPresent(schemaRequest.getSchemaInfo().getSchemaIdentity().getSource());
             Boolean entity = entityTypeService
-                    .checkAndRegisterEntityIfNotPresent(schemaRequest.getSchemaInfo().getSchemaIdentity().getEntity());
+                    .checkAndRegisterEntityTypeIfNotPresent(schemaRequest.getSchemaInfo().getSchemaIdentity().getEntityType());
 
             if (authority && source && entity) {
                 log.info(SchemaConstants.SCHEMA_CREATION_STARTED);
@@ -145,7 +145,7 @@ public class SchemaService implements ISchemaService {
                     throw ex;
                 }
             } else {
-                log.severe("The schema could not be created due invalid authority,source or entity");
+                log.severe("The schema could not be created due invalid authority,source or entityType");
                 throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
             }
         } else {
@@ -154,7 +154,9 @@ public class SchemaService implements ISchemaService {
     }
 
     /**
-     * Method to update schema
+     * Method to update schema. Schemas that are in Development state can be
+     * updated. This method checks for the presence of schema based on the schema Id
+     * provided in input Payload, if found updates both the schemaInfo and schema.
      *
      * @param schemarequest
      * @return schemaInfo.
@@ -167,7 +169,7 @@ public class SchemaService implements ISchemaService {
     @Override
     public SchemaInfo updateSchema(SchemaRequest schemaRequest)
             throws ApplicationException, BadRequestException, JsonProcessingException {
-
+        String dataPartitionId = headers.getPartitionId();
         validateSchemaRequest(schemaRequest);
         String createdSchemaId = createSchemaId(schemaRequest);
         if (!(createdSchemaId.equals(schemaRequest.getSchemaInfo().getSchemaIdentity().getId()))) {
@@ -184,6 +186,7 @@ public class SchemaService implements ISchemaService {
         if (SchemaStatus.DEVELOPMENT.equals(schemaInfo.getStatus())) {
             log.info(MessageFormat.format(SchemaConstants.SCHEMA_UPDATION_STARTED, createdSchemaId));
             ObjectMapper mapper = new ObjectMapper();
+            setScope(schemaRequest, dataPartitionId);
             String schema = schemaResolver.resolveSchema(mapper.writeValueAsString(schemaRequest.getSchema()));
             SchemaInfo schInfo = schemaInfoStore.updateSchemaInfo(schemaRequest);
             schemaStore.createSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
@@ -206,7 +209,7 @@ public class SchemaService implements ISchemaService {
     private String createSchemaId(SchemaRequest schemaRequest) {
         SchemaIdentity schemaIdentity = schemaRequest.getSchemaInfo().getSchemaIdentity();
         return new StringBuilder().append(schemaIdentity.getAuthority()).append(":").append(schemaIdentity.getSource())
-                .append(":").append(schemaIdentity.getEntity()).append(":")
+                .append(":").append(schemaIdentity.getEntityType()).append(":")
                 .append(schemaIdentity.getSchemaVersionMajor()).append(".")
                 .append(schemaIdentity.getSchemaVersionMinor()).append(".")
                 .append(schemaIdentity.getSchemaVersionPatch()).toString();

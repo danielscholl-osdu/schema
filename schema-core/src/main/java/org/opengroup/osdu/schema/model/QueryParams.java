@@ -9,7 +9,7 @@ public class QueryParams {
 
     private String authority;
     private String source;
-    private String entity;
+    private String entityType;
     private Long schemaVersionMajor;
     private Long schemaVersionMinor;
     private int limit;

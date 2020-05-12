@@ -168,7 +168,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
                 .setKind(SchemaConstants.SCHEMA_KIND)
                 .setFilter(CompositeFilter.and(
                         PropertyFilter.eq(SchemaConstants.AUTHORITY, schemaInfo.getSchemaIdentity().getAuthority()),
-                        PropertyFilter.eq(SchemaConstants.ENTITY_TYPE, schemaInfo.getSchemaIdentity().getEntity()),
+                        PropertyFilter.eq(SchemaConstants.ENTITY_TYPE, schemaInfo.getSchemaIdentity().getEntityType()),
                         PropertyFilter.eq(SchemaConstants.MAJOR_VERSION,
                                 schemaInfo.getSchemaIdentity().getSchemaVersionMajor()),
                         PropertyFilter.eq(SchemaConstants.SOURCE, schemaInfo.getSchemaIdentity().getSource())))
@@ -191,7 +191,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
         SchemaIdentity superSededBy = null;
         if (entity.contains(SchemaConstants.SUPERSEDED_BY)) {
-            KeyFactory keyFactory = datastore.newKeyFactory().setKind(SchemaConstants.SCHEMA_KIND);
+        	KeyFactory keyFactory = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE).setKind(SchemaConstants.SCHEMA_KIND);
             Entity superSededEntity = datastore.get(keyFactory.newKey(entity.getString(SchemaConstants.SUPERSEDED_BY)));
             superSededBy = getSchemaIdentity(superSededEntity);
         }
@@ -223,7 +223,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         entityBuilder.set(SchemaConstants.CREATED_BY, headers.getUserEmail());
         entityBuilder.set(SchemaConstants.AUTHORITY, schema.getSchemaInfo().getSchemaIdentity().getAuthority());
         entityBuilder.set(SchemaConstants.SOURCE, schema.getSchemaInfo().getSchemaIdentity().getSource());
-        entityBuilder.set(SchemaConstants.ENTITY_TYPE, schema.getSchemaInfo().getSchemaIdentity().getEntity());
+        entityBuilder.set(SchemaConstants.ENTITY_TYPE, schema.getSchemaInfo().getSchemaIdentity().getEntityType());
         entityBuilder.set(SchemaConstants.MAJOR_VERSION,
                 schema.getSchemaInfo().getSchemaIdentity().getSchemaVersionMajor());
         entityBuilder.set(SchemaConstants.MINOR_VERSION,
@@ -243,7 +243,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
         return SchemaIdentity.builder().id(entity.getKey().getName())
                 .authority(entity.getString(SchemaConstants.AUTHORITY)).source(entity.getString(SchemaConstants.SOURCE))
-                .entity(entity.getString(SchemaConstants.ENTITY_TYPE))
+                .entityType(entity.getString(SchemaConstants.ENTITY_TYPE))
                 .schemaVersionMajor(entity.getLong(SchemaConstants.MAJOR_VERSION))
                 .schemaVersionMinor(entity.getLong(SchemaConstants.MINOR_VERSION))
                 .schemaVersionPatch(entity.getLong(SchemaConstants.PATCH_VERSION)).build();
@@ -306,8 +306,8 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     }
 
     private boolean checkEntityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
-        return schemaInfoObject.getSchemaIdentity().getEntity()
-                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getEntity());
+        return schemaInfoObject.getSchemaIdentity().getEntityType()
+                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getEntityType());
     }
 
     private boolean checkSourceMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
@@ -328,8 +328,8 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         if (queryParams.getSource() != null) {
             filterList.add(PropertyFilter.eq(SchemaConstants.SOURCE, queryParams.getSource()));
         }
-        if (queryParams.getEntity() != null) {
-            filterList.add(PropertyFilter.eq(SchemaConstants.ENTITY_TYPE, queryParams.getEntity()));
+        if (queryParams.getEntityType() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.ENTITY_TYPE, queryParams.getEntityType()));
         }
         if (queryParams.getSchemaVersionMajor() != null) {
             filterList.add(PropertyFilter.eq(SchemaConstants.MAJOR_VERSION, queryParams.getSchemaVersionMajor()));

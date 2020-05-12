@@ -16,57 +16,75 @@ import lombok.Data;
 @Data
 public class SchemaServiceScope {
 
-    @Inject
-    private FileUtils fileUtils;
+	@Inject
+	private FileUtils fileUtils;
 
-    private String token;
-    private String jobId;
-    private String schemaVersionMinor;
-    private HttpResponse httpResponse;
-    private String jsonPayloadForPostPUT;
+	private String token;
+	private String jobId;
+	private String schemaVersionMinor;
+	private String schemaVersionMajor;
+	private HttpResponse httpResponse;
+	private String jsonPayloadForPostPUT;
+	private String status;
 
-    private Map<String, String> authHeaders;
-    private String SchemaIdFromInputPayload;
-    private String SchemaFromInputPayload;
+	private Map<String, String> authHeaders;
+	private String SchemaIdFromInputPayload;
+	private String SchemaFromInputPayload;
 
-    public String getToken() {
-        return token;
-    }
+	public String getToken() {
+		return token;
+	}
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+	public void setToken(String token) {
+		this.token = token;
+	}
 
-    
-    public void setJsonPayloadForPostPUT(String jsonPayloadForPostPUT) {
-        this.jsonPayloadForPostPUT = jsonPayloadForPostPUT;
-    }
+	public void setJsonPayloadForPostPUT(String jsonPayloadForPostPUT) {
+		this.jsonPayloadForPostPUT = jsonPayloadForPostPUT;
+	}
 
-    public String getJsonPayloadForPostPUT() {
-        return jsonPayloadForPostPUT;
-    }
-    public String getSchemaVersionMinor() {
-        return schemaVersionMinor;
-    }
+	public String getJsonPayloadForPostPUT() {
+		return jsonPayloadForPostPUT;
+	}
 
-    public void setSchemaVersionMinor(String schemaVersionMinor) {
-        this.schemaVersionMinor = schemaVersionMinor;
-    }
+	public String getSchemaVersionMinor() {
+		return schemaVersionMinor;
+	}
 
-    public String getJobId() {
-        return jobId;
-    }
+	public void setSchemaVersionMinor(String schemaVersionMinor) {
+		this.schemaVersionMinor = schemaVersionMinor;
+	}
 
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
+	public String getSchemaVersionMajor() {
+		return schemaVersionMajor;
+	}
 
-    public HttpResponse getHttpResponse() {
-        return httpResponse;
-    }
+	public void getSchemaVersionMajor(String schemaVersionMajor) {
+		this.schemaVersionMajor = schemaVersionMajor;
+	}
 
-    public void setHttpResponse(HttpResponse httpResponse) {
-        this.httpResponse = httpResponse;
-    }
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public HttpResponse getHttpResponse() {
+		return httpResponse;
+	}
+
+	public void setHttpResponse(HttpResponse httpResponse) {
+		this.httpResponse = httpResponse;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 }

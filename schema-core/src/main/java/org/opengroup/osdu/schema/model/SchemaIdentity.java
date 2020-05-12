@@ -19,8 +19,8 @@ public class SchemaIdentity {
     @NotNull(message = "source must not be null")
     private String source;
 
-    @NotNull(message = "entity must not be null")
-    private String entity;
+    @NotNull(message = "entityType must not be null")
+    private String entityType;
 
     @NotNull(message = "schemaVersionMajor must not be null")
     private Long schemaVersionMajor;

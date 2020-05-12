@@ -1,0 +1,1 @@
+Feature: To verify functionality of GET schema Service

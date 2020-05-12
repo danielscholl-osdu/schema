@@ -52,7 +52,7 @@ public class SchemaController {
     public ResponseEntity<SchemaInfoResponse> getSchemaInfoList(
             @RequestParam(required = false, name = "authority") String authority,
             @RequestParam(required = false, name = "source") String source,
-            @RequestParam(required = false, name = "entityType") String entity,
+            @RequestParam(required = false, name = "entityType") String entityType,
             @RequestParam(required = false, name = "schemaVersionMajor") Long schemaVersionMajor,
             @RequestParam(required = false, name = "schemaVersionMinor") Long schemaVersionMinor,
             @RequestParam(required = false, name = "status") String status,
@@ -61,7 +61,7 @@ public class SchemaController {
             @RequestParam(required = false, name = "limit", defaultValue = "100") int limit,
             @RequestParam(required = false, name = "offset", defaultValue = "0") int offset)
             throws ApplicationException, NotFoundException, BadRequestException {
-        QueryParams queryParams = QueryParams.builder().authority(authority).source(source).entity(entity)
+        QueryParams queryParams = QueryParams.builder().authority(authority).source(source).entityType(entityType)
                 .schemaVersionMajor(schemaVersionMajor).schemaVersionMinor(schemaVersionMinor).limit(limit)
                 .offset(offset).scope(scope).status(status).latestVersion(latestVersion).build();
         return new ResponseEntity<SchemaInfoResponse>(schemaService.getSchemaInfoList(queryParams), HttpStatus.OK);

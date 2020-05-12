@@ -66,7 +66,7 @@ public class SchemaConstants {
     // exceptions
     public static final String AUTHORITY_EXISTS_ALREADY_REGISTERED = "Authority already registered";
     public static final String AUTHORITY_EXISTS_EXCEPTION = "Authority already registered with Id: {0}";
-    public static final String ENTITY_EXISTS_EXCEPTION = "Entity already registered with Id: {0}";
+    public static final String ENTITY_TYPE_EXISTS_EXCEPTION = "EntityType already registered with Id: {0}";
     public static final String EMPTY_ID = "The id provided is empty";
     public static final String SCHEMA_CREATION_FAILED = "Schema creation failed";
     public static final String SCHEMA_UPDATE_FAILED = "Schema updation failed";
@@ -74,6 +74,7 @@ public class SchemaConstants {
     public static final String INVALID_SCHEMA_UPDATE = "Invalid schema to update, Schema not registered";
     public static final String SCHEMA_CREATION_FAILED_INVALID_OBJECT = "Schema creation failed due to invalid object";
     public static final String INVALID_INPUT = "The input is invalid. Object is invalid";
+    public static final String INVALID_SCHEMA_INPUT = "The input is invalid. Schema is not a valid JSON Object";
     public static final String SOURCE_EXISTS_EXCEPTION = "Source already registered with Id: {0}";
     public static final String LATESTVERSION_MINORFILTER_WITHOUT_MAJOR = "MinorVersion Filter is invalid without giving MajorVersion when LatestVersion Schema is required";
     public static final String SCHEMA_CREATE_CLEAN = "Cleaned partial data created by current schema create operation";
@@ -83,7 +84,7 @@ public class SchemaConstants {
     public static final String OBJECT_INVALID = "Object is invalid";
     public static final String SCHEMA_EXISTS = "Schema already registered";
     public static final String SOURCE_EXISTS = "Source already registered";
-    public static final String ENTITY_EXISTS = "Entity already registered";
+    public static final String ENTITY_TYPE_EXISTS = "EntityType already registered";
     public static final String INVALID_SUPERSEDEDBY_ID = "Invalid SuperSededBy id";
     public static final String INVALID_SCHEMA_ID = "Invalid Schema id";
     public static final String SCHEMA_UPDATE_ERROR = "Schema is not in development stage, only development stage schema can be updated";
