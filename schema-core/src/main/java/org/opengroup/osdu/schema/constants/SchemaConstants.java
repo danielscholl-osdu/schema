@@ -71,12 +71,14 @@ public class SchemaConstants {
     public static final String SCHEMA_CREATION_FAILED = "Schema creation failed";
     public static final String SCHEMA_UPDATE_FAILED = "Schema updation failed";
     public static final String SCHEMA_UPDATE_EXCEPTION = "Only schema in developement stage can be updated";
+    public static final String SCHEMA_PUT_CREATE_EXCEPTION = "Only schema in developement stage can be created through put";
     public static final String INVALID_SCHEMA_UPDATE = "Invalid schema to update, Schema not registered";
     public static final String SCHEMA_CREATION_FAILED_INVALID_OBJECT = "Schema creation failed due to invalid object";
     public static final String INVALID_INPUT = "The input is invalid. Object is invalid";
     public static final String INVALID_SCHEMA_INPUT = "The input is invalid. Schema is not a valid JSON Object";
     public static final String SOURCE_EXISTS_EXCEPTION = "Source already registered with Id: {0}";
     public static final String LATESTVERSION_MINORFILTER_WITHOUT_MAJOR = "MinorVersion Filter is invalid without giving MajorVersion when LatestVersion Schema is required";
+    public static final String LATESTVERSION_PATCHFILTER_WITHOUT_MINOR = "PatchVersion Filter is invalid without giving MinorVersion when LatestVersion Schema is required";
     public static final String SCHEMA_CREATE_CLEAN = "Cleaned partial data created by current schema create operation";
 
     // error message

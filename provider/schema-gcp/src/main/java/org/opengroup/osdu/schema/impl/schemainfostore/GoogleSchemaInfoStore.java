@@ -337,6 +337,9 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         if (queryParams.getSchemaVersionMinor() != null) {
             filterList.add(PropertyFilter.eq(SchemaConstants.MINOR_VERSION, queryParams.getSchemaVersionMinor()));
         }
+        if (queryParams.getSchemaVersionPatch() != null) {
+            filterList.add(PropertyFilter.eq(SchemaConstants.PATCH_VERSION, queryParams.getSchemaVersionPatch()));
+        }
         if (queryParams.getStatus() != null) {
             filterList.add(PropertyFilter.eq(SchemaConstants.STATUS, queryParams.getStatus().toUpperCase()));
         }

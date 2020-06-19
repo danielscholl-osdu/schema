@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
+import org.opengroup.osdu.schema.exceptions.NoSchemaFoundException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaInfo;
@@ -55,6 +56,7 @@ public class SchemaController {
             @RequestParam(required = false, name = "entityType") String entityType,
             @RequestParam(required = false, name = "schemaVersionMajor") Long schemaVersionMajor,
             @RequestParam(required = false, name = "schemaVersionMinor") Long schemaVersionMinor,
+            @RequestParam(required = false, name = "schemaVersionPatch") Long schemaVersionPatch,
             @RequestParam(required = false, name = "status") String status,
             @RequestParam(required = false, name = "scope") String scope,
             @RequestParam(required = false, name = "latestVersion") Boolean latestVersion,
@@ -62,16 +64,24 @@ public class SchemaController {
             @RequestParam(required = false, name = "offset", defaultValue = "0") int offset)
             throws ApplicationException, NotFoundException, BadRequestException {
         QueryParams queryParams = QueryParams.builder().authority(authority).source(source).entityType(entityType)
-                .schemaVersionMajor(schemaVersionMajor).schemaVersionMinor(schemaVersionMinor).limit(limit)
+                .schemaVersionMajor(schemaVersionMajor).schemaVersionMinor(schemaVersionMinor).schemaVersionPatch(schemaVersionPatch).limit(limit)
                 .offset(offset).scope(scope).status(status).latestVersion(latestVersion).build();
         return new ResponseEntity<SchemaInfoResponse>(schemaService.getSchemaInfoList(queryParams), HttpStatus.OK);
     }
 
     @PutMapping()
     @PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_EDITORS + "')")
-    public ResponseEntity<SchemaInfo> updateSchema(@Valid @RequestBody SchemaRequest schemaRequest)
+    public ResponseEntity<SchemaInfo> upsertSchema(@Valid @RequestBody SchemaRequest schemaRequest)
             throws ApplicationException, BadRequestException, JsonProcessingException {
-        return new ResponseEntity<>(schemaService.updateSchema(schemaRequest), HttpStatus.NO_CONTENT);
+    	
+    	ResponseEntity<SchemaInfo> response = null;
+    	try {
+    		response =  new ResponseEntity<>(schemaService.updateSchema(schemaRequest), HttpStatus.OK);
+    	}catch (NoSchemaFoundException noSchemaFound) {
+    			response = new ResponseEntity<>(schemaService.createSchema(schemaRequest), HttpStatus.CREATED);
+		}
+    	
+    	return response;
     }
 
 }

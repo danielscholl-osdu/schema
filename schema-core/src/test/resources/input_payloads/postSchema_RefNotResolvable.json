@@ -18,19 +18,6 @@
     "type": "object",
     "definitions": {},
     "properties": {
-      "relationships": {
-        "$ref": "slb:wks:relationships:0.0.0",
-        "description": "All relationships from this entity. Well is typically a relationship target.",
-        "properties": {
-          "well": {
-            "$ref": "#/definitions/toOneRelationship",
-            "description": "The well this wellbore belongs to.",
-            "title": "Well",
-            "x-slb-targetEntity": "well"
-          }
-        },
-        "title": "Relationships"
-      },
       "uwi": {
         "description": "The unique wellbore identifier, aka. API number, US well number or UBHI. Codes can have 10, 12 or 14 digits depending on the availability of directional sidetrack (2 digits) and event sequence codes (2 digits).",
         "example": [

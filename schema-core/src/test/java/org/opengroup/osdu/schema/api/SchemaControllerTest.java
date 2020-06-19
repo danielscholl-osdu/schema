@@ -63,7 +63,7 @@ public class SchemaControllerTest {
 
         when(schemaService.updateSchema(schemaRequest)).thenReturn(getSchemaInfoObject());
 
-        assertNotNull(schemaController.updateSchema(schemaRequest));
+        assertNotNull(schemaController.upsertSchema(schemaRequest));
 
     }
 
@@ -74,7 +74,7 @@ public class SchemaControllerTest {
         when(schemaService.getSchemaInfoList(QueryParams.builder().authority("test").build()))
         .thenReturn(SchemaInfoResponse.builder().schemaInfos(new LinkedList<SchemaInfo>()).build());
 
-        assertNotNull(schemaController.getSchemaInfoList("test", null, null, null, null, null, null, null, 100, 0));
+        assertNotNull(schemaController.getSchemaInfoList("test", null, null, null, null, null, null, null, null, 100, 0));
 
     }
 

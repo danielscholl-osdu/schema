@@ -72,7 +72,7 @@ stages:
               popd
               sleep 10
               OUTPUT="Alive"
-              ENDPOINT=https://open.opendes.cloud.slb-ds.com/api/schema-service/v1/health
+              ENDPOINT=$(SCHEMA_DEV_URL)/health
               echo $ENDPOINT
 
               while [ -z "$STATUS" ]; do
@@ -101,7 +101,35 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
-      
+      env:
+        INTEGRATION_TEST_AUDIENCE: $(INTEGRATION_TEST_AUDIENCE)
+        INTEGRATION_TESTER : $(INTEGRATION_TESTER)
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+        architecture: 'x64'
+    - task: Bash@3
+      displayName: 'Deploying shared schemas'
+      inputs:
+        targetType: 'inline'
+        script: |
+          #!/bin/bash
+
+          pip install -r deployments/scripts/google/requirements.txt
+
+          export JSON_KEY=$(INTEGRATION_TESTER)
+          export AUDIENCE=$(INTEGRATION_TEST_AUDIENCE)
+
+          BEARER_TOKEN=`python deployments/scripts/google/Token.py`
+
+          export BEARER_TOKEN=$BEARER_TOKEN
+          export APP_KEY=""
+          export DATA_PARTITION=$(DATA_PARTITION)
+
+          python deployments/scripts/DeploySharedSchemas.py -u $(SCHEMA_DEV_URL)/schema
+
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
       inputs:

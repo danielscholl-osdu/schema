@@ -1,0 +1,160 @@
+{
+  "$id": "https://schema.osdu.opengroup.org/json/smds/master-data/Wellbore/1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Wellbore",
+  "description": "A hole in the ground extending from a point at the earth's surface to the maximum point of penetration.",
+  "type": "object",
+  "properties": {
+    "ResourceTypeID": {
+      "description": "The SRN of the resource's resource type.",
+      "type": "string",
+      "pattern": "srn:type:master-data/Wellbore:[0-9]+"
+    },
+    "ResourceID": {
+      "description": "The SRN which identifies this OSDU resource object at the version level.",
+      "type": "string",
+      "pattern": "srn:master-data/Wellbore:[^:]+:[0-9]+"
+    },
+     "ResourceHomeRegionID": {
+      "description": "The name of the home [cloud environment] region for this OSDU resource object.",
+      "type": "string",
+      "pattern": "srn:reference-data/OSDURegion:[A-Za-z0-9-]+:[0-9]*"
+    },
+    "ResourceHostRegionIDs": {
+      "description": "The name of the host [cloud environment] region(s) for this OSDU resource object.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "srn:reference-data/OSDURegion:[A-Za-z0-9-]+:[0-9]*"
+      }
+    },
+    "ResourceObjectCreationDateTime": {
+      "description": "Timestamp of the time at which Version 1 of this OSDU resource object was originated.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "ResourceVersionCreationDateTime": {
+      "description": "Timestamp of the time when the current version of this resource entered the OSDU.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "ResourceCurationStatus": {
+      "description": "Describes the current Curation status. Possible values - CREATED, CURATING, CURATED.",
+      "type": "string",
+      "pattern": "srn:reference-data/ResourceCurationStatus:CREATED|CURATING|CURATED:[0-9]*"
+    },
+    "ResourceLifecycleStatus": {
+      "description": "Describes the current Resource Lifecycle status. Possible values - LOADING, RECIEVED, ACCEPTED, RESCINDED, DELETED,",
+      "type": "string",
+      "pattern": "srn:reference-data/ResourceLifecycleStatus:LOADING|RECEIVED|ACCEPTED|RESCINDED|DELETED:[0-9]*"
+    },
+    "ResourceSecurityClassification": {
+      "description": "Classifies the security level of the resourcse. Possible values = RESTRICTED, CLASSIFIED, CONFIDENTIAL, MOST CONFIDENTIAL  ",
+      "type": "string",
+      "pattern": "srn:reference-data/ResourceSecurityClassification:RESTRICTED|CLASSIFIED|CONFIDENTIAL|MOST-CONFIDENTIAL:[0-9]*"
+    },
+    "Data": {
+      "type": "object",
+      "properties": {
+        "GroupTypeProperties": {
+          "type": "object",
+          "properties": {
+          }
+        },
+        "IndividualTypeProperties": {
+          "allOf": [
+            {
+              "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacility/1"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "WellID": {
+                  "type": "string",
+                  "pattern": "srn:master-data/Well:[^:]+:[0-9]*"
+                },
+                "SequenceNumber": {
+                  "description": "A number that indicates the order in which wellbores were drilled.",
+                  "type": "integer"
+                },
+                "VerticalMeasurements": {
+                  "description": "List of all depths and elevations pertaining to the wellbore, like, plug back measured depth, total measured depth, KB elevation",
+                  "type": "array",
+                  "items": {
+                    "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacilityVerticalMeasurement/1"
+                  }
+                },
+                "DrillingReason": {
+                  "description": "The history of drilling reasons of the wellbore.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractWellboreDrillingReason/1"
+                  }
+                },
+                "KickOffWellbore": {
+                  "description": "This is a pointer to the parent wellbore. The wellbore that starts from top has no parent.",
+                  "type": "string",
+                  "pattern": "srn:master-data/Wellbore:[^:]+:[0-9]*"
+                },
+                "TrajectoryTypeID": {
+                  "description": "Describes the predominant shapes the wellbore path can follow if deviated from vertical. Sample Values: Horizontal, Vertical, Directional.",
+                  "type": "string",
+                  "pattern": "srn:reference-data/WellboreTrajectoryType:[^:]+:[0-9]*"
+                },
+                "DefinitiveTrajectoryID": {
+                  "description": "SRN of Wellbore Trajectory which is considered the authoritative or preferred version.",
+                  "type": "string",
+                  "pattern": "srn:work-product-component/WellboreTrajectory:[^/:]+:[0-9]+$"
+                },
+                "TargetFormation": {
+                  "description": "The Formation of interest for which the Wellbore is drilled to interact with. The Wellbore may terminate in a lower formation if the requirement is to drill through the entirety of the target formation, therefore this is not necessarily the Formation at TD.",
+                  "type": "string",
+                  "pattern": "srn:reference-data/GeologicalFormation:[^:]+:[0-9]*"
+                },
+                "FieldID": {
+                  "description": "This is a pointer to the field the wellbore is related to using the Field unique identifier.",
+                  "type": "string",
+                  "pattern": "srn:master-data/Field:[^:]+:[0-9]*"
+                },
+                "PrimaryMaterialID": {
+                  "description": "The primary material injected/produced from the wellbore.",
+                  "type": "string",
+                  "pattern": "srn:reference-data/MaterialType:[^:]+:[0-9]*"
+                },
+                "DefaultVerticalMeasurementID": {
+                  "description": "The default datum reference point, or zero depth point, used to determine other points vertically in a wellbore.  References an entry in the Vertical Measurements array of this wellbore.",
+                  "type": "string"
+                },
+                "ProjectedBottomHoleLocation": {
+                  "description": "Projected location at total depth.",
+                  "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractSpatialLocation/1"
+                },
+                "GeographicBottomHoleLocation": {
+                  "description": "Geographic location at total depth.",
+                  "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractSpatialLocation/1"
+                }
+              }
+            }
+          ]
+        },
+        "ExtensionProperties": {
+          "type": "object",
+          "properties": {
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "ResourceTypeID",
+    "ResourceID",
+    "ResourceHomeRegionID",
+    "ResourceHostRegionIDs",
+    "ResourceObjectCreationDateTime",
+    "ResourceVersionCreationDateTime",
+    "ResourceCurationStatus",
+    "ResourceLifecycleStatus",
+    "ResourceSecurityClassification"
+  ],
+  "additionalProperties": false
+}

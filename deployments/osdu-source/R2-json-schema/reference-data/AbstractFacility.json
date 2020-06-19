@@ -1,0 +1,69 @@
+{
+  "$id": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacility/1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AbstractFacility",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "FacilityID": {
+      "description": "A system-specified unique identifier of a Facility.",
+      "type": "string"
+    },
+    "FacilityTypeID": {
+      "description": "The definition of a kind of capability to perform a business function or a service.",
+      "type": "string",
+      "pattern": "srn:reference-data/FacilityType:[^:]+:[0-9]*"
+    },
+    "FacilityOperator": {
+      "description": "The history of operator organizations of the facility.",
+      "type": "array",
+	    "items": {
+	      "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacilityOperator/1"
+		  }
+    },
+    "DataSourceOrganisationID": {
+      "description": "The main source of the header information.",
+      "type": "string",
+      "pattern": "srn:master-data/Organisation:[^:]+:[0-9]*"
+    },
+    "SpatialLocation": {
+      "description": "The spatial location information such as coordinates,CRS information.",
+	    "type": "array",
+	    "items": {
+	      "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractSpatialLocation/1"
+		  }
+    },
+    "FacilityName": {
+      "description": "Name of the Facility.",
+      "type": "string"
+    },
+    "FacilityNameAlias": {
+      "description": "Alternative names, including historical, by which this facility is/has been known.",
+      "type": "array",
+      "items": {
+        "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractAliasNames/1"
+      }
+    },
+    "FacilityState": {
+      "description": "The history of life cycle states the facility has been through.",
+      "type": "array",
+      "items": {
+        "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacilityState/1"
+      }
+    },
+    "FacilityEvent": {
+      "description": "A list of key facility events.",
+      "type": "array",
+      "items": {
+        "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacilityEvent/1"
+      }
+    },
+    "FacilitySpecification": {
+      "description": "facilitySpecification maintains the specification like slot name, wellbore drilling permit number, rig name etc.",
+      "type": "array",
+      "items": {
+        "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacilitySpecification/1"
+      }
+    }
+  }
+}

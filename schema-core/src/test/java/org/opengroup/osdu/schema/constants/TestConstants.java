@@ -13,6 +13,8 @@ public class TestConstants {
     public static final String INTERNAL = "INTERNAL";
     public static final String SCHEMA_KIND = "schema";
     public static final String AUTHORITY = "authority";
+    public static final String LATEST_VERSION = "latestVersion";
+    public static final String GET_SUCCESSRESPONSECODE = "200";
     public static final String SOURCE = "source";
     public static final String ENTITY_TYPE = "entityType";
     public static final String MAJOR_VERSION = "majorVersion";
@@ -23,6 +25,7 @@ public class TestConstants {
     public static final String DATE_CREATED = "dateCreated";
     public static final String SCHEMA = "schema";
     public static final String OBSOLETE = "OBSOLETE";
+    public static final String PUBLISHED = "PUBLISHED";
     public static final String SCOPE = "scope";
     public static final String STATUS = "status";
     public static final String ALREADY_EXISTS = "ALREADY_EXISTS";

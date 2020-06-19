@@ -1,0 +1,152 @@
+{
+  "$ID": "https://schema.osdu.opengroup.org/json/smds/master-data/Well/1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Well",
+  "description": "The origin of a set of wellbores.",
+  "type": "object",
+  "properties": {
+    "ResourceTypeID": {
+      "description": "The SRN of the resource's resource type.",
+      "type": "string",
+      "pattern": "srn:type:master-data/Well:[0-9]+"
+    },
+    "ResourceID": {
+      "description": "The SRN which identifies this OSDU resource object at the version level.",
+      "type": "string",
+      "pattern": "srn:master-data/Well:[^:]+:[0-9]+"
+    },
+    "ResourceHomeRegionID": {
+      "description": "The name of the home [cloud environment] region for this OSDU resource object.",
+      "type": "string",
+      "pattern": "srn:reference-data/OSDURegion:[A-Za-z0-9-]+:[0-9]*"
+    },
+    "ResourceHostRegionIDs": {
+      "description": "The name of the host [cloud environment] region(s) for this OSDU resource object.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "srn:reference-data/OSDURegion:[A-Za-z0-9-]+:[0-9]*"
+      }
+    },
+    "ResourceObjectCreationDateTime": {
+      "description": "Timestamp of the time at which Version 1 of this OSDU resource object was originated.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "ResourceVersionCreationDateTime": {
+      "description": "Timestamp of the time when the current version of this resource entered the OSDU.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "ResourceCurationStatus": {
+      "description": "Describes the current Curation status. Possible values - CREATED, CURATING, CURATED.",
+      "type": "string",
+      "pattern": "srn:reference-data/ResourceCurationStatus:CREATED|CURATING|CURATED:[0-9]*"
+    },
+    "ResourceLifecycleStatus": {
+      "description": "Describes the current Resource Lifecycle status. Possible values - LOADING, RECIEVED, ACCEPTED, RESCINDED, DELETED,",
+      "type": "string",
+      "pattern": "srn:reference-data/ResourceLifecycleStatus:LOADING|RECEIVED|ACCEPTED|RESCINDED|DELETED:[0-9]*"
+    },
+    "ResourceSecurityClassification": {
+      "description": "Classifies the security level of the resourcse. Possible values = RESTRICTED, CLASSIFIED, CONFIDENTIAL, MOST CONFIDENTIAL  ",
+      "type": "string",
+      "pattern": "srn:reference-data/ResourceSecurityClassification:RESTRICTED|CLASSIFIED|CONFIDENTIAL|MOST-CONFIDENTIAL:[0-9]*"
+    },
+    "Data": {
+      "type": "object",
+      "properties": {
+        "GroupTypeProperties": {
+          "type": "object",
+          "properties": {
+          }
+        },
+        "IndividualTypeProperties": {
+          "allOf": [
+            {
+              "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacility/1"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "DefaultVerticalMeasurementID": {
+                  "description": "The default datum reference point, or zero depth point, used to determine other points vertically in a well.  References an entry in the VerticalMeasurements array.",
+                  "type": "string"
+                },
+                "DefaultVerticalCRSID": {
+                  "description": "The default vertical coordinate reference system used in the vertical measurements for a well or wellbore if absent from input vertical measurements and there is no other recourse for obtaining a valid CRS.",
+                  "type": "string",
+                  "pattern": "srn:reference-data/VerticalCRS:[^:]+:[0-9]*"
+                },
+                "VerticalMeasurements": {
+                  "description": "List of all depths and elevations pertaining to the well, like, water depth, mud line elevation, etc.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractFacilityVerticalMeasurement/1"
+                  }
+                },
+                "InterestTypeID": {
+                  "description": "Pre-defined reasons for interest in the well or information about the well.",
+                  "type": "string",
+                  "pattern": "srn:reference-data/WellInterestType:[^:]+:[0-9]*"
+                },
+                "OperatingEnvironmentID": {
+                  "description": "Identifies the Well's general location as being onshore vs. offshore.",
+                  "type": "string",
+                  "pattern": "srn:reference-data/WellOperatingEnvironment:[^:]+:[0-9]*"
+                },
+                "CountryID": {
+                  "description": "The geopolitical country where the well is located.",
+                  "type": "string",
+                  "pattern": "srn:master-data/GeopoliticalEntity:[^:]+:[0-9]*"
+                },
+                "StateProvinceID": {
+                  "description": "The state/province where the well is located.",
+                  "type": "string",
+                  "pattern": "srn:master-data/GeopoliticalEntity:[^:]+:[0-9]*"
+                },
+                "QuadrantID": {
+                  "description": "The quadrant where the well is located offshore.",
+                  "type": "string",
+                  "pattern": "srn:master-data/GeopoliticalEntity:[^:]+:[0-9]*"
+                },
+                "BlockID": {
+                  "description": "The block where the well is located offshore.",
+                  "type": "string",
+                  "pattern": "srn:master-data/GeopoliticalEntity:[^:]+:[0-9]*"
+                },
+                "CountyID": {
+                  "description": "The county where the well is located.",
+                  "type": "string",
+                  "pattern": "srn:master-data/GeopoliticalEntity:[^:]+:[0-9]*"
+                },
+                "BasinID": {
+                  "description": "The basin where the well is located.",
+                  "type": "string",
+                  "pattern": "srn:master-data/Basin:[^:]+:[0-9]*"
+                }
+              }
+            }
+          ]
+        },
+        "ExtensionProperties": {
+          "type": "object",
+          "properties": {
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "ResourceTypeID",
+    "ResourceID",
+    "ResourceHomeRegionID",
+    "ResourceHostRegionIDs",
+    "ResourceObjectCreationDateTime",
+    "ResourceVersionCreationDateTime",
+    "ResourceCurationStatus",
+    "ResourceLifecycleStatus",
+    "ResourceSecurityClassification"
+  ],
+  "additionalProperties": false
+}

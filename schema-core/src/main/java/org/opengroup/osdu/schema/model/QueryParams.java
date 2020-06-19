@@ -12,6 +12,7 @@ public class QueryParams {
     private String entityType;
     private Long schemaVersionMajor;
     private Long schemaVersionMinor;
+    private Long schemaVersionPatch;
     private int limit;
     private int offset;
     private String status;
