@@ -1,0 +1,145 @@
+# Shared Schemas
+
+The purpose of this folder set is to contain schema definitions in a state ready to 
+register with the **Schema Service**. Each schema version will have its own file, 
+grouped together with all parallel versions under a folder carrying the entity name.
+Example `<schema-authority>/<group-type-folder>/<entity-name>/entity-schema-version.json`  
+
+The deployment pipeline will initially only deploy pre-processed schemas in this `shared-schemas`
+folder. The script to do this is [DeploySharedSchemas.py](../scripts/DeploySharedSchemas.py), see 
+step **2. Upload schema definitions** below. Step 1. is expected to be run by developers or
+schema authors.
+
+##1. Raw Schemas (e.g. original OSDU)
+
+Original OSDU schemas are kept under the [osdu folder](./osdu).
+The contents is produced by the Python script [ImportFromOSDU.py](../scripts/ImportFromOSDU.py) .
+
+The structure of JSON files to register matches the expected payload of the Schema Service 
+POST/PUT requests:
+
+```json
+{
+  "schemaInfo": {
+    "schemaIdentity": {
+      "authority": "osdu",
+      "source": "osdu",
+      "entity": "WellLogWorkProductComponent",
+      "schemaVersionMajor": 0,
+      "schemaVersionMinor": 2,
+      "schemaVersionPatch": 0,
+      "id": "osdu:osdu:WellLogWorkProductComponent:0.2.0"
+    },
+    "createdBy": "OSDU Data Definition Group",
+    "scope": "SHARED",
+    "status": "DEVELOPMENT"
+  },
+  "schema": {
+  }
+}
+```
+
+The `"schema"` property carries the full schema definition - omitted in the above example.
+
+Schemas may refer to abstract entity definitions or other external schema fragments. The
+Schema Service requires the abstract definitions and schema fragments to be registered prior 
+to the registration of the main entity schema. This is achieved by a file defining the 
+load sequence per schema version. An example can be found 
+[here for OSDU R2](./osdu/load_sequence.0.2.0.json).
+
+##2. Upload schema definitions
+
+Once the loading instructions are completed, the schema registration can be launched. this is
+done via the [DeploySharedSchemas.py](../scripts/DeploySharedSchemas.py):
+
+```shell script
+python deployments\scripts\DeploySharedSchemas.py -h
+usage: DeploySharedSchemas.py [-h] [-l L] [-u U]
+
+Given a path to an load sequence file, load/update the schemas listed in the
+load sequence file.
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -l L        The path to the load sequence file, e.g. load_sequence.?.?.?
+  -u U        The complete URL to the Schema Service.
+
+
+example:
+python deployments\scripts\DeploySharedSchemas.py -l load_sequence.0.2.0.json -u https://open.opendes.cloud.slb-ds.com/api/schema-service/v1/schema
+```
+
+
+### Environment value need to execute Token.py script
+```python
+import os
+JSON_KEY = os.environ.get('JSON_KEY')
+AUDIENCE = os.environ.get('AUDIENCE')
+```
+
+The above snippet is from the [Token.py](../scripts/google/Token.py) script and lists the required
+environment variables for json key and audience. These value can be different as per cloud vendors token generation logic.
+
+
+###Bearer Token Generation
+Bearer token generation logic can differ for each cloud vendors. So, each cloud vendor can provide their implementation in below format in specific folder under scripts [google](../scripts/google/). To generate token 
+for google implementation below script is used in [azure pipeline](../../azure-pipelinea.yml)
+
+```shell script
+BEARER_TOKEN=`python deployments/scripts/google/Token.py`
+```
+
+We export the token generated to `BEARER_TOKEN` which is used in DeploySharedSchemas.py script
+
+
+### Environment value need to execute DeploySharedSchemas.py script
+```python
+import os
+BEARER_TOKEN = os.environ.get('BEARER_TOKEN')
+APP_KEY = os.environ.get('APP_KEY')
+DATA_PARTITION = os.environ.get('DATA_PARTITION')
+```
+
+The above snippet is from the [Utility.RunEnv](../scripts/Utility.py) class and lists the required
+environment variables for bearer token, app key and tenant/data-partition-id.
+
+
+### Yaml Pipeline configurations
+```shell script
+#!/bin/bash
+pip install -r deployments/scripts/google/requirements.txt
+
+export JSON_KEY=$(INTEGRATION_TESTER)
+export AUDIENCE=$(INTEGRATION_TEST_AUDIENCE)
+
+BEARER_TOKEN=`python deployments/scripts/google/Token.py`
+
+export BEARER_TOKEN=$BEARER_TOKEN
+export APP_KEY=""
+export DATA_PARTITION=$(DATA_PARTITION)
+
+python deployments/scripts/DeploySharedSchemas.py -u $(SCHEMA_DEV_URL)/schema
+```
+
+In the above script we first install all the required dependencies, then create a bearer token for the specific cloud provider and then execute DeploySharedSchema script.
+Sample yaml can be in [azure pipeline](../../azure-pipelinea.yml)
+
+### Schema Registration
+The upload will depend on the status of the schemas. Schemas in `DEVELOPMENT` can be updated, 
+schemas in status `PUBLISHED` can only be created once (POST).
+
+The script produces output like:
+
+```shell script
+python.exe C:/Users/gehrmann/git_repos/PyCharm/os-schema/deployments/scripts/DeploySharedSchemas.py -l load_sequence.0.2.0.json -u https://api.evq.csp.slb.com/de/schema-service/v1/schema
+Success: kind osdu:osdu:DataCollection:0.2.0 submitted with method PUT schema.
+Success: kind osdu:osdu:File:0.2.0 submitted with method PUT schema.
+...
+Success: kind osdu:osdu:WellLogWorkProductComponent:0.2.0 submitted with method PUT schema.
+Success: kind osdu:osdu:WorkProduct:0.2.0 submitted with method PUT schema.
+This update took 190.44 seconds.
+All 120 schemas registered or updated.
+
+```
+
+In case of errors, the list of failed creations/updates are summarized at the end.

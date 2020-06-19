@@ -14,6 +14,7 @@ import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
+import org.opengroup.osdu.schema.exceptions.NoSchemaFoundException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
@@ -169,18 +170,20 @@ public class SchemaService implements ISchemaService {
     @Override
     public SchemaInfo updateSchema(SchemaRequest schemaRequest)
             throws ApplicationException, BadRequestException, JsonProcessingException {
-        String dataPartitionId = headers.getPartitionId();
-        validateSchemaRequest(schemaRequest);
-        String createdSchemaId = createSchemaId(schemaRequest);
-        if (!(createdSchemaId.equals(schemaRequest.getSchemaInfo().getSchemaIdentity().getId()))) {
-            throw new BadRequestException(SchemaConstants.INVALID_INPUT);
-        }
+       
+    	String dataPartitionId = headers.getPartitionId();
+        String createdSchemaId = createAndSetSchemaId(schemaRequest);
         SchemaInfo schemaInfo = null;
         try {
-            schemaInfo = schemaInfoStore.getSchemaInfo(schemaRequest.getSchemaInfo().getSchemaIdentity().getId());
+            schemaInfo = schemaInfoStore.getSchemaInfo(createdSchemaId);
         } catch (NotFoundException e) {
-            log.severe(SchemaConstants.SCHEMA_UPDATE_INVALID);
-            throw new BadRequestException(SchemaConstants.INVALID_SCHEMA_UPDATE);
+        	
+        	log.severe(SchemaConstants.INVALID_SCHEMA_UPDATE);
+        	
+        	if (!SchemaStatus.DEVELOPMENT.equals(schemaRequest.getSchemaInfo().getStatus()))
+        		throw new BadRequestException(SchemaConstants.SCHEMA_PUT_CREATE_EXCEPTION);
+        	
+            throw new NoSchemaFoundException(SchemaConstants.INVALID_SCHEMA_UPDATE);
         }
 
         if (SchemaStatus.DEVELOPMENT.equals(schemaInfo.getStatus())) {
@@ -260,11 +263,17 @@ public class SchemaService implements ISchemaService {
     }
 
     private void latestVersionMajorMinorFiltersCheck(QueryParams queryParams) throws BadRequestException {
-        if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()
-                && queryParams.getSchemaVersionMajor() == null && queryParams.getSchemaVersionMinor() != null)
-            throw new BadRequestException(SchemaConstants.LATESTVERSION_MINORFILTER_WITHOUT_MAJOR);
+        if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
+        	
+        	if(queryParams.getSchemaVersionMajor() == null && queryParams.getSchemaVersionMinor() != null)
+        		throw new BadRequestException(SchemaConstants.LATESTVERSION_MINORFILTER_WITHOUT_MAJOR);
+        	
+        	if(queryParams.getSchemaVersionMinor() == null && queryParams.getSchemaVersionPatch() != null)
+        		throw new BadRequestException(SchemaConstants.LATESTVERSION_PATCHFILTER_WITHOUT_MINOR);
+        	
+        }
     }
-
+    
     /**
      * Method to set the scope of the schema according to the tenant
      * 

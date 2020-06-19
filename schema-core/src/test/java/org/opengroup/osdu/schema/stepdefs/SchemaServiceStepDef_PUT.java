@@ -41,19 +41,48 @@ public class SchemaServiceStepDef_PUT implements En {
 
 	public SchemaServiceStepDef_PUT() {
 
-		Given("I hit schema service PUT API with {string}, data-partition-id as {string} and mark schema as osolete.",
-				(String inputPayload, String tenant) -> {
-					String body = this.context.getJsonPayloadForPostPUT();
+		Given("I hit schema service PUT API with {string}, data-partition-id as {string} and mark schema as {string}.",
+				(String inputPayload, String tenant, String status) -> {
+
+					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
+					this.context.setSchemaIdFromInputPayload(id);
 					jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject().remove("status");
 					jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject().addProperty("status",
-							TestConstants.OBSOLETE);
-					jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject().addProperty("scope",
-							TestConstants.INTERNAL);
+							status);
 					body = new Gson().toJson(jsonBody);
 					Map<String, String> headers = this.context.getAuthHeaders();
 					headers.put(TestConstants.DATA_PARTITION_ID, tenant);
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
+							.body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+							.build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
 
+		Given("I hit schema service PUT API with {string}, data-partition-id as {string} and mark schema as {string} for next major version",
+				(String inputPayload, String tenant, String status) -> {
+
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					currentMajorVersion = currentMajorVersion + 1;
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
+					this.context.setSchemaIdFromInputPayload(id);
+					jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject().remove("status");
+					jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject().addProperty("status",
+							status);
+					body = new Gson().toJson(jsonBody);
+					Map<String, String> headers = this.context.getAuthHeaders();
+					headers.put(TestConstants.DATA_PARTITION_ID, tenant);
 					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
 							.body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
 							.build();
@@ -68,11 +97,104 @@ public class SchemaServiceStepDef_PUT implements En {
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
 					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
-					int nextMinorVersion = currentMinorVersion;
-					int nextMajorVersion = currentMajorVersion;
-					String id = "SchemaSanityTest:testSource:testEntity:" + nextMajorVersion + "." + nextMinorVersion
-							+ ".0";
-					updateVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, id);
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
+					this.context.setSchemaIdFromInputPayload(id);
+					body = new Gson().toJson(jsonBody);
+					Map<String, String> headers = this.context.getAuthHeaders();
+					headers.put(TestConstants.DATA_PARTITION_ID, tenant);
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
+							.body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+							.build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
+
+		Given("I hit schema service PUT API with {string}, data-partition-id as {string} for superceded input",
+				(String inputPayload, String tenant) -> {
+
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					String supersededById = jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").get("supersededBy")
+							.getAsJsonObject().get("id").getAsString();
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
+					this.context.setSchemaIdFromInputPayload(id);
+					this.context.setSupersededById(supersededById);
+					body = new Gson().toJson(jsonBody);
+					Map<String, String> headers = this.context.getAuthHeaders();
+					headers.put(TestConstants.DATA_PARTITION_ID, tenant);
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
+							.body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+							.build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
+
+		Given("I hit schema service PUT API with {string}, data-partition-id as {string} with increased minor version only",
+				(String inputPayload, String tenant) -> {
+
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					currentMinorVersion = currentMinorVersion + 1;
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
+					this.context.setSchemaIdFromInputPayload(id);
+					body = new Gson().toJson(jsonBody);
+					Map<String, String> headers = this.context.getAuthHeaders();
+					headers.put(TestConstants.DATA_PARTITION_ID, tenant);
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
+							.body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+							.build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
+
+		Given("I hit schema service PUT API with {string}, data-partition-id as {string} with different entityType",
+				(String inputPayload, String tenant) -> {
+
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
+					this.context.setSchemaIdFromInputPayload(id);
+					int randomNum = (int) (Math.random() * 10000);
+					String entityVal = "testEntity" + randomNum;
+					jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").get("schemaIdentity").getAsJsonObject()
+							.remove("entityType");
+					jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").get("schemaIdentity").getAsJsonObject()
+							.addProperty("entityType", entityVal);
+					body = new Gson().toJson(jsonBody);
+					Map<String, String> headers = this.context.getAuthHeaders();
+					headers.put(TestConstants.DATA_PARTITION_ID, tenant);
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
+							.body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+							.build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
+
+		Given("I hit schema service PUT API with {string}, data-partition-id as {string} with next major version",
+				(String inputPayload, String tenant) -> {
+
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					currentMajorVersion = currentMajorVersion + 1;
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
 					this.context.setSchemaIdFromInputPayload(id);
 					body = new Gson().toJson(jsonBody);
 					Map<String, String> headers = this.context.getAuthHeaders();
@@ -88,6 +210,60 @@ public class SchemaServiceStepDef_PUT implements En {
 			HttpResponse response = this.context.getHttpResponse();
 			assertEquals(ReponseStatusCode, String.valueOf(response.getCode()));
 		});
+
+		Then("the put service for supersededBy should respond back with {string} and {string}",
+				(String ReponseStatusCode, String ResponseMessage) -> {
+					String body = this.context.getFileUtils().read(ResponseMessage);
+					JsonObject jsonBody = new Gson().fromJson(body, JsonObject.class);
+					HttpResponse response = this.context.getHttpResponse();
+					if (response != null) {
+						assertEquals(ReponseStatusCode, String.valueOf(response.getCode()));
+
+						commonAssertion(response, jsonBody);
+
+						Assert.assertNotNull(getResponseValue(TestConstants.SUPERSEDED_BY));
+						assertEquals(
+								getResponseValue(TestConstants.SCHEMA_IDENTITY + TestConstants.DOT + TestConstants.ID),
+								this.context.getSchemaIdFromInputPayload());
+						assertEquals(
+								getResponseValue(TestConstants.SUPERSEDED_BY + TestConstants.DOT + TestConstants.ID),
+								this.context.getSupersededById());
+
+					}
+				});
+
+		Given("I hit schema service PUT API for supersededBy with {string} and data-partition-id as {string}",
+				(String inputPayload, String tenant) -> {
+
+					String body = this.context.getFileUtils().read(inputPayload);
+
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+
+					String supersededById = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + ".0";
+					updateSupersededByInJsonBody(jsonBody, supersededById);
+					this.context.setSupersededById(supersededById);
+
+					int nextMinorVersion = currentMinorVersion + 1;
+					int nextMajorVersion = currentMajorVersion + 1;
+					String schemaId = "SchemaSanityTest:testSource:testEntity:" + nextMajorVersion + "."
+							+ nextMinorVersion + ".0";
+
+					this.context.setSchemaIdFromInputPayload(schemaId);
+
+					updateVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, schemaId);
+
+					body = new Gson().toJson(jsonBody);
+					Map<String, String> headers = this.context.getAuthHeaders();
+					headers.put(TestConstants.DATA_PARTITION_ID, tenant);
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
+							.body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+							.build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
 	}
 
 	private void updateVersionInJsonBody(JsonElement jsonBody, int nextMinorVersion, int nextMajorVersion, String id) {
@@ -102,5 +278,60 @@ public class SchemaServiceStepDef_PUT implements En {
 		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").get("schemaIdentity").getAsJsonObject().remove("id");
 		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").get("schemaIdentity").getAsJsonObject()
 				.addProperty("id", id);
+	}
+
+	public void prepareSchemaParameterMapList() throws IOException {
+		String response = this.context.getHttpResponse().getBody();
+		Gson gsn = new Gson();
+		JsonObject root = gsn.fromJson(response, JsonObject.class);
+		JsonObject schemaIdentity_ForEachSchemaInfo = (JsonObject) root.get("schemaIdentity");
+		this.context.setSchemaVersionMajor(schemaIdentity_ForEachSchemaInfo.get("schemaVersionMajor").getAsString());
+		this.context.setSchemaVersionMinor(schemaIdentity_ForEachSchemaInfo.get("schemaVersionMinor").getAsString());
+	}
+
+	private void commonAssertion(HttpResponse response, JsonObject jsonBody) {
+
+		assertEquals(getExpectedValue(jsonBody, TestConstants.SCHEMA_IDENTITY, TestConstants.AUTHORITY),
+				getResponseValue(TestConstants.SCHEMA_IDENTITY + TestConstants.DOT + TestConstants.AUTHORITY));
+
+		assertEquals(getExpectedValue(jsonBody, TestConstants.SCHEMA_IDENTITY, TestConstants.SOURCE),
+				getResponseValue(TestConstants.SCHEMA_IDENTITY + TestConstants.DOT + TestConstants.SOURCE));
+
+		assertEquals(getExpectedValue(jsonBody, TestConstants.SCHEMA_IDENTITY, TestConstants.ENTITY),
+				getResponseValue(TestConstants.SCHEMA_IDENTITY + TestConstants.DOT + TestConstants.ENTITY));
+
+		Assert.assertNotNull(jsonBody.get(TestConstants.DATE_CREATED));
+		Assert.assertNotNull(jsonBody.get(TestConstants.CREATED_BY));
+	}
+
+	private String getExpectedValue(JsonObject jsonBody, String parentAttributeValue, String valueToBeRetrieved) {
+		String value;
+		if (parentAttributeValue == null) {
+			value = jsonBody.get(valueToBeRetrieved).toString();
+			return value.substring(1, value.length() - 1);
+		} else {
+			value = jsonBody.getAsJsonObject(parentAttributeValue).get(valueToBeRetrieved).toString();
+			if (Character.isDigit(value.charAt(0))) {
+				return value;
+			} else {
+				return value.substring(1, value.length() - 1);
+			}
+		}
+	}
+
+	private String getResponseValue(String responseAttribute) {
+		return JsonUtils.getAsJsonPath(this.context.getHttpResponse().getBody().toString()).get(responseAttribute)
+				.toString();
+	}
+
+	private void updateSupersededByInJsonBody(JsonElement jsonBody, String id) {
+
+		JsonElement supersededByBody = new Gson().fromJson(jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo")
+				.getAsJsonObject(TestConstants.SCHEMA_IDENTITY).toString(), JsonElement.class);
+		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").add(TestConstants.SUPERSEDED_BY, supersededByBody);
+		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject(TestConstants.SUPERSEDED_BY)
+				.remove(TestConstants.ID);
+		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject(TestConstants.SUPERSEDED_BY)
+				.addProperty(TestConstants.ID, id);
 	}
 }

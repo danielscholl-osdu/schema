@@ -1,0 +1,52 @@
+{
+  "schemaInfo": {
+    "schemaIdentity": {
+      "authority": "osdu",
+      "source": "osdu",
+      "entityType": "AbstractReferenceType",
+      "schemaVersionMajor": 0,
+      "schemaVersionMinor": 2,
+      "schemaVersionPatch": 0,
+      "id": "osdu:osdu:AbstractReferenceType:0.2.0"
+    },
+    "createdBy": "OSDU Data Definition Group",
+    "scope": "SHARED",
+    "status": "DEVELOPMENT"
+  },
+  "schema": {
+    "$id": "https://schema.osdu.opengroup.org/json/swps/reference-data/AbstractReferenceType/1",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "AbstractReferenceType",
+    "description": "Generic reference object containing the universal properties of reference data, especially the ones commonly thought of as Types",
+    "type": "object",
+    "properties": {
+      "Name": {
+        "description": "The name of the entity instance.",
+        "type": "string"
+      },
+      "NameAlias": {
+        "description": "Alternative names, including historical, by which this entity instance is/has been known.",
+        "type": "array",
+        "items": {
+          "$ref": "osdu:osdu:AbstractAliasNames:0.2.0"
+        }
+      },
+      "ID": {
+        "description": "Surrogate key to uniquely identify an instance in a domain list.",
+        "type": "string"
+      },
+      "InactiveIndicator": {
+        "description": "This is set to T (True) if the instance is no longer in use.",
+        "type": "boolean"
+      },
+      "Description": {
+        "description": "The text which describes a NAME TYPE in detail.",
+        "type": "string"
+      },
+      "Code": {
+        "description": "The abbrevation or mnemonic for facility type if defined. Example: WELL amd WLBR.",
+        "type": "string"
+      }
+    }
+  }
+}

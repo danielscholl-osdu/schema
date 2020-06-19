@@ -23,13 +23,16 @@ public class SchemaServiceScope {
 	private String jobId;
 	private String schemaVersionMinor;
 	private String schemaVersionMajor;
+	private String schemaVersionPatch;
 	private HttpResponse httpResponse;
 	private String jsonPayloadForPostPUT;
 	private String status;
 
 	private Map<String, String> authHeaders;
+	private Map<String, String> queryParams;
 	private String SchemaIdFromInputPayload;
 	private String SchemaFromInputPayload;
+	private String supersededById;
 
 	public String getToken() {
 		return token;
@@ -58,9 +61,19 @@ public class SchemaServiceScope {
 	public String getSchemaVersionMajor() {
 		return schemaVersionMajor;
 	}
+	
 
 	public void getSchemaVersionMajor(String schemaVersionMajor) {
 		this.schemaVersionMajor = schemaVersionMajor;
+	}
+	
+	public String getSchemaVersionPatch() {
+		return schemaVersionPatch;
+	}
+	
+
+	public void getSchemaVersionPatch(String schemaVersionPatch) {
+		this.schemaVersionPatch = schemaVersionPatch;
 	}
 
 	public String getJobId() {
@@ -86,5 +99,6 @@ public class SchemaServiceScope {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
 
 }

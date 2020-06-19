@@ -1,0 +1,17 @@
+{
+  "$id": "https://schema.osdu.opengroup.org/json/smds/reference-data/AbstractCoordinates/1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AbstractCoordinates",
+  "description": "A geographic position on the surface of the earth.",
+  "type": "object",
+  "properties": {
+    "x": {
+      "description": "x is Easting or Longitude.",
+      "type": "number"
+    },
+    "y": {
+      "description": "y is Northing or Latitude.",
+      "type": "number"
+    }
+  }
+}
