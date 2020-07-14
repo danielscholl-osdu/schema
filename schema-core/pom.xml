@@ -15,6 +15,7 @@
 
 	<properties>
 		<springfox-version>2.7.0</springfox-version>
+		<os-core-common.version>0.0.18</os-core-common.version>
 	</properties>
 
 	<dependencies>
@@ -89,7 +90,7 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-core-common</artifactId>
-			<version>0.0.11</version>
+			<version>${os-core-common.version}</version>
 		</dependency>
 
 		<dependency>
