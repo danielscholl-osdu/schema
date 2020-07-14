@@ -8,6 +8,9 @@ variables:
   GCP_DEPLOY_ENV: p4d
   GCP_DOMAIN: cloud.slb-ds.com
 
+  IBM_BUILD_SUBDIR: provider/schema-ibm
+  #IBM_INT_TEST_SUBDIR: testing/schema-test-ibm
+
 include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "standard-setup.yml"
@@ -15,9 +18,20 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "build/maven.yml"
 
-  - project: "osdu/platform/ci-cd-pipelines"
-    file: "scanners/fossa.yml"
+  # - project: "osdu/platform/ci-cd-pipelines"
+  #   file: "scanners/fossa.yml"
+
+  # - project: "osdu/platform/ci-cd-pipelines"
+  #   file: "cloud-providers/gcp.yml"
+
+  # - project: 'osdu/platform/ci-cd-pipelines'
+  #   file: 'cloud-providers/aws.yml'
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: "scanners/gitlab-ultimate.yml"
-    
+    file: "cloud-providers/ibm.yml"
+
+  # - project: "osdu/platform/ci-cd-pipelines"
+  #   file: "scanners/gitlab-ultimate.yml"
+
+  # - project: "osdu/platform/ci-cd-pipelines"
+  #   file: "cloud-providers/azure.yml"

@@ -41,6 +41,7 @@
 	<modules>
 		<module>schema-core</module>
 		<module>provider/schema-gcp</module>
+		<module>provider/schema-ibm</module>
 	</modules>
 	<repositories>
 		<repository>
