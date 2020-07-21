@@ -13,6 +13,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -21,18 +22,18 @@ import org.opengroup.osdu.schema.service.ISchemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.java.Log;
-
 /**
  * Schema resolver class to resolve references inside a schema.
  */
 
-@Log
 @Component
 public class SchemaResolver {
 
     @Autowired
     private ISchemaService schemaService;
+
+    @Autowired
+    JaxRsDpsLog log;
 
     /**
      * Method to resolve schema references.
@@ -154,8 +155,8 @@ public class SchemaResolver {
 
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                log.severe(String.format("Response code while fetching schema from %s , %d", url, statusCode));
-                log.severe(String.format("Response received while fetching schema from %s , %s", url,
+                log.error(String.format("Response code while fetching schema from %s , %d", url, statusCode));
+                log.error(String.format("Response received while fetching schema from %s , %s", url,
                         EntityUtils.toString(response.getEntity())));
                 throw new BadRequestException(String.format("Invalid Request, %s not resolvable", url));
             }

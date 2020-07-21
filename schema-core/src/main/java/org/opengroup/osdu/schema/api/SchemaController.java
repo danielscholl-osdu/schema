@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 @RestController
 @RequestMapping("schema")
 public class SchemaController {
@@ -37,7 +35,7 @@ public class SchemaController {
     @PostMapping()
     @PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_EDITORS + "')")
     public ResponseEntity<SchemaInfo> createSchema(@Valid @RequestBody SchemaRequest schemaRequest)
-            throws ApplicationException, BadRequestException, JsonProcessingException {
+            throws ApplicationException, BadRequestException {
         return new ResponseEntity<>(schemaService.createSchema(schemaRequest), HttpStatus.CREATED);
     }
 
@@ -62,26 +60,27 @@ public class SchemaController {
             @RequestParam(required = false, name = "latestVersion") Boolean latestVersion,
             @RequestParam(required = false, name = "limit", defaultValue = "100") int limit,
             @RequestParam(required = false, name = "offset", defaultValue = "0") int offset)
-            throws ApplicationException, NotFoundException, BadRequestException {
+            throws ApplicationException, BadRequestException {
         QueryParams queryParams = QueryParams.builder().authority(authority).source(source).entityType(entityType)
-                .schemaVersionMajor(schemaVersionMajor).schemaVersionMinor(schemaVersionMinor).schemaVersionPatch(schemaVersionPatch).limit(limit)
-                .offset(offset).scope(scope).status(status).latestVersion(latestVersion).build();
-        return new ResponseEntity<SchemaInfoResponse>(schemaService.getSchemaInfoList(queryParams), HttpStatus.OK);
+                .schemaVersionMajor(schemaVersionMajor).schemaVersionMinor(schemaVersionMinor)
+                .schemaVersionPatch(schemaVersionPatch).limit(limit).offset(offset).scope(scope).status(status)
+                .latestVersion(latestVersion).build();
+        return new ResponseEntity<>(schemaService.getSchemaInfoList(queryParams), HttpStatus.OK);
     }
 
     @PutMapping()
     @PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_EDITORS + "')")
     public ResponseEntity<SchemaInfo> upsertSchema(@Valid @RequestBody SchemaRequest schemaRequest)
-            throws ApplicationException, BadRequestException, JsonProcessingException {
-    	
-    	ResponseEntity<SchemaInfo> response = null;
-    	try {
-    		response =  new ResponseEntity<>(schemaService.updateSchema(schemaRequest), HttpStatus.OK);
-    	}catch (NoSchemaFoundException noSchemaFound) {
-    			response = new ResponseEntity<>(schemaService.createSchema(schemaRequest), HttpStatus.CREATED);
-		}
-    	
-    	return response;
+            throws ApplicationException, BadRequestException {
+
+        ResponseEntity<SchemaInfo> response = null;
+        try {
+            response = new ResponseEntity<>(schemaService.updateSchema(schemaRequest), HttpStatus.OK);
+        } catch (NoSchemaFoundException noSchemaFound) {
+            response = new ResponseEntity<>(schemaService.createSchema(schemaRequest), HttpStatus.CREATED);
+        }
+
+        return response;
     }
 
 }

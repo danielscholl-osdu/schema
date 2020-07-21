@@ -44,12 +44,14 @@ public class SchemaConstants {
     public static final String DEFINITIONS = "definitions";
     public static final String AUTHORIZATION = "Authorization";
     public static final String SCHEMA_BUCKET_EXTENSION = "-schema";
-    public static final String SCHEMA_GET_STARTED = "Getting schema from google store";
-    public static final String SCHEMA_GET_PRIVATE = "Getting schema from private google project";
-    public static final String SCHEMA_GET_COMMON = "Getting schema from common google project";
-    public static final String SCHEMA_FOUND = "Schema is found in google store";
-    public static final String SCHEMA_CREATION_STARTED = "Creating schema in google store";
-    public static final String SCHEMA_CREATED = "Schema created in google store";
+    public static final String SCHEMA_GET_STARTED = "Getting schema from  store";
+    public static final String SCHEMA_GET_PRIVATE = "Getting schema from private  project";
+    public static final String SCHEMA_GET_COMMON = "Getting schema from common  project";
+    public static final String SCHEMA_FOUND = "Schema is found in  store";
+    public static final String SCHEMA_CREATION_STARTED = "Schema registration started";
+    public static final String SCHEMA_INFO_CREATED = "Schema info registered in schema info store";
+    public static final String SCHEMA_INFO_UPDATED = "Schema info updated in schema info store";
+    public static final String SCHEMA_CREATED = "Schmema saved in schema store";
     public static final String AUTHORITY_CREATED = "Authority is created";
     public static final String SOURCE_CREATED = "Source is created";
     public static final String ENTITY_TYPE_CREATED = "EntityType is created";
@@ -84,7 +86,6 @@ public class SchemaConstants {
     // error message
     public static final String SCHEMA_NOT_PRESENT = "Schema is not present";
     public static final String OBJECT_INVALID = "Object is invalid";
-    public static final String SCHEMA_EXISTS = "Schema already registered";
     public static final String SOURCE_EXISTS = "Source already registered";
     public static final String ENTITY_TYPE_EXISTS = "EntityType already registered";
     public static final String INVALID_SUPERSEDEDBY_ID = "Invalid SuperSededBy id";
@@ -94,6 +95,7 @@ public class SchemaConstants {
     public static final String BAD_INPUT = "Bad input parameter";
     public static final String INVALID_AUTHORIZATION_TOKEN = "Invalid authorization token";
     public static final String SCHEMA_ID_EXISTS = "Schema Id is already present";
+    public static final String UNAUTHORIZED_EXCEPTION = "User is unauthorized to perform this action";
 
     // OSDU
     public static final String DATA_PARTITION_ID = "data-partition-id";

@@ -24,6 +24,7 @@ public class SchemaValidatorTest {
     ConstraintValidatorContext constraintValidatorContext;
 
     private Object schemaInputObject;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test

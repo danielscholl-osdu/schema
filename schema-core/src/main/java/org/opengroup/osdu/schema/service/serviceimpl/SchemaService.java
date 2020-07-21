@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
@@ -29,21 +32,19 @@ import org.opengroup.osdu.schema.service.ISchemaService;
 import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
+import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.java.Log;
+import com.google.gson.Gson;
 
 /**
  * Schema Service to register, get and update schema.
  *
  */
-@Log
 @Service
 public class SchemaService implements ISchemaService {
 
@@ -69,6 +70,9 @@ public class SchemaService implements ISchemaService {
     private SchemaResolver schemaResolver;
 
     @Autowired
+    JaxRsDpsLog log;
+
+    @Autowired
     DpsHeaders headers;
 
     /**
@@ -87,7 +91,6 @@ public class SchemaService implements ISchemaService {
         try {
             schema = schemaStore.getSchema(dataPartitionId, schemaId);
         } catch (NotFoundException e) {
-            if (dataPartitionId != SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)
                 schema = schemaStore.getSchema(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT, schemaId);
         }
 
@@ -96,7 +99,7 @@ public class SchemaService implements ISchemaService {
 
     private void validateSchemaId(String schemaId) throws BadRequestException {
         if (StringUtils.isEmpty(schemaId)) {
-            log.severe(SchemaConstants.EMPTY_ID);
+            log.error(SchemaConstants.EMPTY_ID);
             throw new BadRequestException(SchemaConstants.EMPTY_ID);
         }
     }
@@ -110,8 +113,7 @@ public class SchemaService implements ISchemaService {
      * @throws JsonProcessingException
      */
     @Override
-    public SchemaInfo createSchema(SchemaRequest schemaRequest)
-            throws ApplicationException, BadRequestException, JsonProcessingException {
+    public SchemaInfo createSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException {
         String dataPartitionId = headers.getPartitionId();
         String schemaId = createAndSetSchemaId(schemaRequest);
         if (schemaInfoStore.isUnique(schemaId, dataPartitionId)) {
@@ -119,18 +121,18 @@ public class SchemaService implements ISchemaService {
 
             String latestMinorSchema = schemaInfoStore.getLatestMinorVerSchema(schemaRequest.getSchemaInfo());
 
-            ObjectMapper mapper = new ObjectMapper();
+            Gson gson = new Gson();
             if (StringUtils.isNotEmpty(latestMinorSchema)) {
-                schemaUtil.checkBreakingChange(mapper.writeValueAsString(schemaRequest.getSchema()), latestMinorSchema);
+                schemaUtil.checkBreakingChange(gson.toJson(schemaRequest.getSchema()), latestMinorSchema);
             }
-            String schema = schemaResolver.resolveSchema(mapper.writeValueAsString(schemaRequest.getSchema()));
+            String schema = schemaResolver.resolveSchema(gson.toJson(schemaRequest.getSchema()));
 
             Boolean authority = authorityService.checkAndRegisterAuthorityIfNotPresent(
                     schemaRequest.getSchemaInfo().getSchemaIdentity().getAuthority());
             Boolean source = sourceService
                     .checkAndRegisterSourceIfNotPresent(schemaRequest.getSchemaInfo().getSchemaIdentity().getSource());
-            Boolean entity = entityTypeService
-                    .checkAndRegisterEntityTypeIfNotPresent(schemaRequest.getSchemaInfo().getSchemaIdentity().getEntityType());
+            Boolean entity = entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+                    schemaRequest.getSchemaInfo().getSchemaIdentity().getEntityType());
 
             if (authority && source && entity) {
                 log.info(SchemaConstants.SCHEMA_CREATION_STARTED);
@@ -146,7 +148,7 @@ public class SchemaService implements ISchemaService {
                     throw ex;
                 }
             } else {
-                log.severe("The schema could not be created due invalid authority,source or entityType");
+                log.error("The schema could not be created due invalid authority,source or entityType");
                 throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
             }
         } else {
@@ -168,45 +170,36 @@ public class SchemaService implements ISchemaService {
      * @throws JsonParseException
      */
     @Override
-    public SchemaInfo updateSchema(SchemaRequest schemaRequest)
-            throws ApplicationException, BadRequestException, JsonProcessingException {
-       
-    	String dataPartitionId = headers.getPartitionId();
+    public SchemaInfo updateSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException {
+        String dataPartitionId = headers.getPartitionId();
         String createdSchemaId = createAndSetSchemaId(schemaRequest);
         SchemaInfo schemaInfo = null;
         try {
             schemaInfo = schemaInfoStore.getSchemaInfo(createdSchemaId);
         } catch (NotFoundException e) {
-        	
-        	log.severe(SchemaConstants.INVALID_SCHEMA_UPDATE);
-        	
-        	if (!SchemaStatus.DEVELOPMENT.equals(schemaRequest.getSchemaInfo().getStatus()))
-        		throw new BadRequestException(SchemaConstants.SCHEMA_PUT_CREATE_EXCEPTION);
-        	
+
+            log.error(SchemaConstants.INVALID_SCHEMA_UPDATE);
+
+            if (!SchemaStatus.DEVELOPMENT.equals(schemaRequest.getSchemaInfo().getStatus()))
+                throw new BadRequestException(SchemaConstants.SCHEMA_PUT_CREATE_EXCEPTION);
+
             throw new NoSchemaFoundException(SchemaConstants.INVALID_SCHEMA_UPDATE);
         }
 
         if (SchemaStatus.DEVELOPMENT.equals(schemaInfo.getStatus())) {
             log.info(MessageFormat.format(SchemaConstants.SCHEMA_UPDATION_STARTED, createdSchemaId));
-            ObjectMapper mapper = new ObjectMapper();
             setScope(schemaRequest, dataPartitionId);
-            String schema = schemaResolver.resolveSchema(mapper.writeValueAsString(schemaRequest.getSchema()));
+            Gson gson = new Gson();
+            String schema = schemaResolver.resolveSchema(gson.toJson(schemaRequest.getSchema()));
             SchemaInfo schInfo = schemaInfoStore.updateSchemaInfo(schemaRequest);
             schemaStore.createSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
             log.info(SchemaConstants.SCHEMA_UPDATED);
             return schInfo;
         } else {
-            log.severe(SchemaConstants.SCHEMA_UPDATE_ERROR);
+            log.error(SchemaConstants.SCHEMA_UPDATE_ERROR);
             throw new BadRequestException(SchemaConstants.SCHEMA_UPDATE_EXCEPTION);
         }
 
-    }
-
-    private void validateSchemaRequest(SchemaRequest schemaRequest) throws BadRequestException {
-        if (schemaRequest.getSchemaInfo().getSchemaIdentity().getId() == null) {
-            log.severe(SchemaConstants.INVALID_SCHEMA_ID);
-            throw new BadRequestException(SchemaConstants.INVALID_SCHEMA_ID);
-        }
     }
 
     private String createSchemaId(SchemaRequest schemaRequest) {
@@ -249,6 +242,10 @@ public class SchemaService implements ISchemaService {
                 getSchemaInfos(queryParams, schemaList, tenantId);
             }
         }
+        
+        if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
+        	schemaList = getLatestVersionSchemaList(schemaList);
+        }
 
         List<SchemaInfo> schemaFinalList = schemaList.stream().skip(queryParams.getOffset())
                 .limit(queryParams.getLimit()).collect(Collectors.toList());
@@ -264,16 +261,16 @@ public class SchemaService implements ISchemaService {
 
     private void latestVersionMajorMinorFiltersCheck(QueryParams queryParams) throws BadRequestException {
         if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
-        	
-        	if(queryParams.getSchemaVersionMajor() == null && queryParams.getSchemaVersionMinor() != null)
-        		throw new BadRequestException(SchemaConstants.LATESTVERSION_MINORFILTER_WITHOUT_MAJOR);
-        	
-        	if(queryParams.getSchemaVersionMinor() == null && queryParams.getSchemaVersionPatch() != null)
-        		throw new BadRequestException(SchemaConstants.LATESTVERSION_PATCHFILTER_WITHOUT_MINOR);
-        	
+
+            if (queryParams.getSchemaVersionMajor() == null && queryParams.getSchemaVersionMinor() != null)
+                throw new BadRequestException(SchemaConstants.LATESTVERSION_MINORFILTER_WITHOUT_MAJOR);
+
+            if (queryParams.getSchemaVersionMinor() == null && queryParams.getSchemaVersionPatch() != null)
+                throw new BadRequestException(SchemaConstants.LATESTVERSION_PATCHFILTER_WITHOUT_MINOR);
+
         }
     }
-    
+
     /**
      * Method to set the scope of the schema according to the tenant
      * 
@@ -286,6 +283,50 @@ public class SchemaService implements ISchemaService {
         } else {
             schemaRequest.getSchemaInfo().setScope(SchemaScope.INTERNAL);
         }
+    }
+    
+    
+    private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {
+        List<SchemaInfo> latestSchemaList = new LinkedList<>();
+        SchemaInfo previousSchemaInfo = null;
+        TreeMap<VersionHierarchyUtil, SchemaInfo> sortedMap = new TreeMap<>(
+                new VersionHierarchyUtil.SortingVersionComparator());
+
+        for (SchemaInfo schemaInfoObject : filteredSchemaList) {
+            if ((previousSchemaInfo != null) && !(checkAuthorityMatch(previousSchemaInfo, schemaInfoObject)
+                    && checkSourceMatch(previousSchemaInfo, schemaInfoObject)
+                    && checkEntityMatch(previousSchemaInfo, schemaInfoObject))) {
+                Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
+                latestSchemaList.add(latestVersionEntry.getValue());
+                sortedMap.clear();
+            }
+            previousSchemaInfo = schemaInfoObject;
+            SchemaIdentity schemaIdentity = schemaInfoObject.getSchemaIdentity();
+            VersionHierarchyUtil version = new VersionHierarchyUtil(schemaIdentity.getSchemaVersionMajor(),
+                    schemaIdentity.getSchemaVersionMinor(), schemaIdentity.getSchemaVersionPatch());
+            sortedMap.put(version, schemaInfoObject);
+        }
+        if (sortedMap.size() != 0) {
+            Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
+            latestSchemaList.add(latestVersionEntry.getValue());
+        }
+
+        return latestSchemaList;
+    }
+
+    private boolean checkEntityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
+        return schemaInfoObject.getSchemaIdentity().getEntityType()
+                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getEntityType());
+    }
+
+    private boolean checkSourceMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
+        return schemaInfoObject.getSchemaIdentity().getSource()
+                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getSource());
+    }
+
+    private boolean checkAuthorityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
+        return schemaInfoObject.getSchemaIdentity().getAuthority()
+                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
     }
 
 }

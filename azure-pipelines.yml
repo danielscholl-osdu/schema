@@ -64,21 +64,20 @@ stages:
               docker-compose build $(dockerImageName)
               docker tag gcr.io/opendes/$(dockerImageName) gcr.io/opendes/$(dockerImageName):$(tag)
               docker push gcr.io/opendes/$(dockerImageName):$(tag)
-              docker push gcr.io/opendes/$(dockerImageName)
-              echo 'Push done.'
-
+              docker push gcr.io/opendes/$(dockerImageName)              echo 'Push done.'
+              
               kubectl --kubeconfig $(kubeconfig.secureFilePath) rollout restart deployment/$(deploymentName)
-
+              
               popd
               sleep 10
-              OUTPUT="Alive"
+              OUTPUT="200 OK"
               ENDPOINT=$(SCHEMA_DEV_URL)/health
               echo $ENDPOINT
-
+              
               while [ -z "$STATUS" ]; do
                 STATUS=`curl -v --silent --http1.0 "$ENDPOINT" 2>&1 | grep "$OUTPUT"`
                 echo $STATUS
-
+                
                 if [ -z "$STATUS" ]; then
                   echo "Endpoint is not up yet."
                   sleep 10
@@ -92,9 +91,9 @@ stages:
     - task: Maven@3
       displayName: 'Running IntegrationTest'
       inputs:
-        mavenPomFile: '$(osProjectName)-core/pom.xml'
+        mavenPomFile: 'testing/schema-test-gcp/pom.xml'
         goals: 'verify'
-        options: '-P IntegrationTest --settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
+        options: '--settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
         mavenVersionOption: 'Default'
@@ -104,7 +103,7 @@ stages:
       env:
         INTEGRATION_TEST_AUDIENCE: $(INTEGRATION_TEST_AUDIENCE)
         INTEGRATION_TESTER : $(INTEGRATION_TESTER)
-
+        
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.x'
@@ -129,7 +128,7 @@ stages:
           export DATA_PARTITION=$(DATA_PARTITION)
 
           python deployments/scripts/DeploySharedSchemas.py -u $(SCHEMA_DEV_URL)/schema
-
+      
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
       inputs:
@@ -137,7 +136,7 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
       condition: succeededOrFailed()
-
+      
 - stage: DeployToQA
   condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   variables:

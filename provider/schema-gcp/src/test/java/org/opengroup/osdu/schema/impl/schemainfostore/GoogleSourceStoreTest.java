@@ -9,15 +9,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
 import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
-import org.opengroup.osdu.schema.credentials.DatastoreFactory;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
-import org.opengroup.osdu.schema.impl.schemainfostore.GoogleSourceStore;
 import org.opengroup.osdu.schema.model.Source;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -60,13 +60,17 @@ public class GoogleSourceStoreTest {
 
     @Mock
     TenantFactory tenantFactory;
+    
+    @Mock
+    JaxRsDpsLog log;
 
     @Test
     public void testGet() throws NotFoundException, ApplicationException {
         String sourceId = "sourceId";
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -82,7 +86,8 @@ public class GoogleSourceStoreTest {
         try {
             Mockito.when(headers.getPartitionId()).thenReturn("test");
             Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-            Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+            Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                    .thenReturn(dataStore);
             Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
             Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
             Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -102,7 +107,8 @@ public class GoogleSourceStoreTest {
     public void testCreate() throws NotFoundException, ApplicationException, BadRequestException {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -118,7 +124,8 @@ public class GoogleSourceStoreTest {
         sourceStore = Mockito.spy(sourceStore);
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -142,7 +149,8 @@ public class GoogleSourceStoreTest {
         sourceStore = Mockito.spy(sourceStore);
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
