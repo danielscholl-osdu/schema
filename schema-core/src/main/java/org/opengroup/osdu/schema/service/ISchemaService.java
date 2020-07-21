@@ -8,18 +8,14 @@ import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaInfoResponse;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public interface ISchemaService {
 
-	public Object getSchema(String schemaId) throws BadRequestException, NotFoundException, ApplicationException;
+    public Object getSchema(String schemaId) throws BadRequestException, NotFoundException, ApplicationException;
 
-	SchemaInfo createSchema(SchemaRequest schemaRequest)
-			throws ApplicationException, BadRequestException, JsonProcessingException;
+    SchemaInfo createSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
 
-	SchemaInfo updateSchema(SchemaRequest schemaRequest)
-			throws ApplicationException, BadRequestException, JsonProcessingException;
+    SchemaInfo updateSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
 
-	SchemaInfoResponse getSchemaInfoList(QueryParams queryParams) throws BadRequestException, ApplicationException;
+    SchemaInfoResponse getSchemaInfoList(QueryParams queryParams) throws BadRequestException, ApplicationException;
 
 }

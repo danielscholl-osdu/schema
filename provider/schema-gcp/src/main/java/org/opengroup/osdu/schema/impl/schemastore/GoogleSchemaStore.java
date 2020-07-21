@@ -1,9 +1,10 @@
 package org.opengroup.osdu.schema.impl.schemastore;
 
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.core.gcp.multitenancy.GcsMultiTenantAccess;
 import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
-import org.opengroup.osdu.schema.credentials.StorageFactory;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
@@ -28,10 +29,13 @@ public class GoogleSchemaStore implements ISchemaStore {
     private DpsHeaders headers;
 
     @Autowired
-    private StorageFactory storageFactory;
+    private GcsMultiTenantAccess storageFactory;
 
     @Autowired
     TenantFactory tenantFactory;
+
+    @Autowired
+    JaxRsDpsLog log;
 
     /**
      * Method to get schema from google Storage given Tenant ProjectInfo
@@ -47,10 +51,11 @@ public class GoogleSchemaStore implements ISchemaStore {
     public String getSchema(String dataPartitionId, String filePath) throws ApplicationException, NotFoundException {
         filePath = filePath + SchemaConstants.JSON_EXTENSION;
         String bucketname = getSchemaBucketName(dataPartitionId);
-        Storage storage = storageFactory.getStorage(tenantFactory.getTenantInfo(dataPartitionId));
+        Storage storage = storageFactory.get(tenantFactory.getTenantInfo(dataPartitionId));
         Blob blob = storage.get(bucketname, filePath);
-        if (blob != null)
+        if (blob != null) {
             return new String(blob.getContent());
+        }
         throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
     }
 
@@ -71,17 +76,14 @@ public class GoogleSchemaStore implements ISchemaStore {
         String bucketname = getSchemaBucketName(dataPartitionId);
         BlobId blobId = BlobId.of(bucketname, filePath);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-        Storage storage = storageFactory.getStorage(tenantFactory.getTenantInfo(dataPartitionId));
+        Storage storage = storageFactory.get(tenantFactory.getTenantInfo(dataPartitionId));
         try {
             Blob blob = storage.create(blobInfo, content.getBytes());
+            log.info(SchemaConstants.SCHEMA_CREATED);
             return blob.getName();
         } catch (StorageException ex) {
             throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String getSchemaBucketName(String dataPartitionId) {
-        return tenantFactory.getTenantInfo(dataPartitionId).getProjectId() + SchemaConstants.SCHEMA_BUCKET_EXTENSION;
     }
 
     @Override
@@ -90,7 +92,11 @@ public class GoogleSchemaStore implements ISchemaStore {
         String fileName = schemaId + SchemaConstants.JSON_EXTENSION;
         String bucketname = getSchemaBucketName(dataPartitionId);
         BlobId blobId = BlobId.of(bucketname, fileName);
-        return storageFactory.getStorage(tenantFactory.getTenantInfo(dataPartitionId)).delete(blobId);
+        return storageFactory.get(tenantFactory.getTenantInfo(dataPartitionId)).delete(blobId);
+    }
+
+    private String getSchemaBucketName(String dataPartitionId) {
+        return tenantFactory.getTenantInfo(dataPartitionId).getProjectId() + SchemaConstants.SCHEMA_BUCKET_EXTENSION;
     }
 
 }

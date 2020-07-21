@@ -2,10 +2,11 @@ package org.opengroup.osdu.schema.impl.schemainfostore;
 
 import java.text.MessageFormat;
 
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
+import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
-import org.opengroup.osdu.schema.credentials.DatastoreFactory;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
@@ -20,14 +21,12 @@ import com.google.cloud.datastore.DatastoreException;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Key;
 
-import lombok.extern.java.Log;
-
 /**
  * Repository class to to register Source in Google store.
  *
  *
  */
-@Log
+
 @Repository
 public class GoogleSourceStore implements ISourceStore {
 
@@ -40,6 +39,9 @@ public class GoogleSourceStore implements ISourceStore {
     @Autowired
     private ITenantFactory tenantFactory;
 
+    @Autowired
+    JaxRsDpsLog log;
+
     /**
      * Method to create Source in google store
      *
@@ -49,7 +51,7 @@ public class GoogleSourceStore implements ISourceStore {
      */
     @Override
     public Source get(String sourceId) throws NotFoundException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE).setKind(SchemaConstants.SOURCE_KIND)
                 .newKey(sourceId);
         Entity entity = datastore.get(key);
@@ -70,10 +72,10 @@ public class GoogleSourceStore implements ISourceStore {
      */
     @Override
     public Source create(Source source) throws BadRequestException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE).setKind(SchemaConstants.SOURCE_KIND)
                 .newKey(source.getSourceId());
-        Entity entity = getEntityObject(source, key);
+        Entity entity = getEntityObject(key);
 
         try {
             datastore.add(entity);
@@ -83,7 +85,7 @@ public class GoogleSourceStore implements ISourceStore {
                 throw new BadRequestException(
                         MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION, source.getSourceId()));
             } else {
-                log.severe(SchemaConstants.OBJECT_INVALID);
+                log.error(SchemaConstants.OBJECT_INVALID);
                 throw new ApplicationException(SchemaConstants.INVALID_INPUT);
             }
         }
@@ -99,7 +101,7 @@ public class GoogleSourceStore implements ISourceStore {
 
     }
 
-    private Entity getEntityObject(Source source, Key key) {
+    private Entity getEntityObject(Key key) {
         Entity.Builder entityBuilder = Entity.newBuilder(key);
         entityBuilder.set(SchemaConstants.DATE_CREATED, Timestamp.now());
         return entityBuilder.build();

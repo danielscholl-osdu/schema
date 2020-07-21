@@ -16,11 +16,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
 import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
-import org.opengroup.osdu.schema.credentials.DatastoreFactory;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -98,6 +99,9 @@ public class GoogleSchemaInfoStoreTest {
     @Mock
     TenantFactory tenantFactory;
 
+    @Mock
+    JaxRsDpsLog log;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -105,7 +109,8 @@ public class GoogleSchemaInfoStoreTest {
     public void testGetLatestMinorVersion_ReturnNull() throws NotFoundException, ApplicationException {
         when(headers.getPartitionId()).thenReturn("tenant");
         Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
         Mockito.when(entity.getBlob(SchemaConstants.SCHEMA)).thenReturn(blob);
         Mockito.when(blob.toByteArray()).thenReturn("{}".getBytes());
@@ -117,7 +122,8 @@ public class GoogleSchemaInfoStoreTest {
         String schemaId = "schemaId";
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -135,7 +141,8 @@ public class GoogleSchemaInfoStoreTest {
         String schemaId = "schemaId";
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -148,7 +155,8 @@ public class GoogleSchemaInfoStoreTest {
     public void testCreateSchemaInfo_Positive() throws ApplicationException, BadRequestException {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -166,8 +174,12 @@ public class GoogleSchemaInfoStoreTest {
         String tenantId = "tenant";
         Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
         Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
+        Mockito.when(tenantInfo.getName()).thenReturn("tenant");
+        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo.getName(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon.getName(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -187,8 +199,12 @@ public class GoogleSchemaInfoStoreTest {
         String tenantId = "tenant";
         Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
         Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
+        Mockito.when(tenantInfo.getName()).thenReturn("test");
+        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon.getName(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -208,8 +224,12 @@ public class GoogleSchemaInfoStoreTest {
         String tenantId = "common";
         Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
         Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
+        Mockito.when(tenantInfo.getName()).thenReturn("test");
+        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon.getName(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -226,7 +246,8 @@ public class GoogleSchemaInfoStoreTest {
         String tenantId = "test";
         Mockito.when(headers.getPartitionId()).thenReturn(tenantId);
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -241,7 +262,8 @@ public class GoogleSchemaInfoStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -261,7 +283,8 @@ public class GoogleSchemaInfoStoreTest {
         try {
             Mockito.when(headers.getPartitionId()).thenReturn("test");
             Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-            Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+            Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                    .thenReturn(dataStore);
             Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
             Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
             Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -286,7 +309,8 @@ public class GoogleSchemaInfoStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -304,7 +328,8 @@ public class GoogleSchemaInfoStoreTest {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -315,7 +340,7 @@ public class GoogleSchemaInfoStoreTest {
             schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published());
             fail("Should not succeed");
         } catch (BadRequestException e) {
-            assertEquals("Schema already registered with Id: os:wks:well.1.1.1", e.getMessage());
+            assertEquals(SchemaConstants.SCHEMA_ID_EXISTS, e.getMessage());
 
         } catch (Exception e) {
             fail("Should not get different exception");
@@ -329,7 +354,8 @@ public class GoogleSchemaInfoStoreTest {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -353,7 +379,8 @@ public class GoogleSchemaInfoStoreTest {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -375,7 +402,8 @@ public class GoogleSchemaInfoStoreTest {
         when(headers.getPartitionId()).thenReturn("tenant");
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -395,7 +423,9 @@ public class GoogleSchemaInfoStoreTest {
 
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(tenantInfo.getName()).thenReturn("test");
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -412,7 +442,9 @@ public class GoogleSchemaInfoStoreTest {
 
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(tenantInfo.getName()).thenReturn("test");
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
+                .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -420,147 +452,9 @@ public class GoogleSchemaInfoStoreTest {
         Mockito.when(queryResult.hasNext()).thenReturn(true, false);
         Mockito.when(queryResult.next()).thenReturn(getMockEntityObject());
         assertEquals(1,
-                schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
-                        .schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test").latestVersion(false)
-                        .limit(100).offset(0).build(), "test").size());
-    }
-
-    @Test
-    public void testGetSchemaInfoList_latestVersionTrue_NoSchemaMatchScenario()
-            throws NotFoundException, ApplicationException, BadRequestException {
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.hasNext()).thenReturn(false);
-        assertEquals(0,
-                schemaInfoStore
-                        .getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
-                                .scope("test").status("test").latestVersion(true).limit(100).offset(0).build(), "test")
-                        .size());
-    }
-
-    @Test
-    public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentMajorVersion()
-            throws NotFoundException, ApplicationException, BadRequestException {
-
-        Entity entity = Entity.newBuilder(key).set("createdBy", "subham")
-                .set("dateCreated", TimestampValue.newBuilder(Timestamp.MAX_VALUE).build()).set("scope", "INTERNAL")
-                .set("status", "PUBLISHED").setKey(key).set("authority", "os1").set("source", "techlog1")
-                .set("entityType", "wellbore1").set("majorVersion", 1).set("minorVersion", 1024).set("patchVersion", 2)
-                .build();
-        Entity latestEntity = getMockEntityObject();
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.hasNext()).thenReturn(true, true, false);
-        Mockito.when(queryResult.next()).thenReturn(entity, latestEntity);
-        assertEquals(1, schemaInfoStore.getSchemaInfoList(
-                QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
-                "test").size());
-    }
-
-    @Test
-    public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentMinorVersion()
-            throws NotFoundException, ApplicationException, BadRequestException {
-
-        Entity entity = Entity.newBuilder(key).set("createdBy", "subham")
-                .set("dateCreated", TimestampValue.newBuilder(Timestamp.MAX_VALUE).build()).set("scope", "INTERNAL")
-                .set("status", "PUBLISHED").setKey(key).set("authority", "os1").set("source", "techlog1")
-                .set("entityType", "wellbore1").set("majorVersion", 2).set("minorVersion", 102).set("patchVersion", 2)
-                .build();
-        Entity latestEntity = getMockEntityObject();
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.hasNext()).thenReturn(true, true, false);
-        Mockito.when(queryResult.next()).thenReturn(entity, latestEntity);
-        assertEquals(1, schemaInfoStore.getSchemaInfoList(
-                QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
-                "test").size());
-    }
-
-    @Test
-    public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentSource()
-            throws NotFoundException, ApplicationException, BadRequestException {
-
-        Entity entity = Entity.newBuilder(key).set("createdBy", "subham")
-                .set("dateCreated", TimestampValue.newBuilder(Timestamp.MAX_VALUE).build()).set("scope", "INTERNAL")
-                .set("status", "PUBLISHED").setKey(key).set("authority", "os1").set("source", "differenttechlog1")
-                .set("entityType", "wellbore1").set("majorVersion", 2).set("minorVersion", 1023).set("patchVersion", 2)
-                .build();
-        Entity latestEntity = getMockEntityObject();
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.hasNext()).thenReturn(true, true, false);
-        Mockito.when(queryResult.next()).thenReturn(entity, latestEntity);
-        assertEquals(2, schemaInfoStore.getSchemaInfoList(
-                QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
-                "test").size());
-    }
-
-    @Test
-    public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentAuthority()
-            throws NotFoundException, ApplicationException, BadRequestException {
-
-        Entity entity = Entity.newBuilder(key).set("createdBy", "subham")
-                .set("dateCreated", TimestampValue.newBuilder(Timestamp.MAX_VALUE).build()).set("scope", "INTERNAL")
-                .set("status", "PUBLISHED").setKey(key).set("authority", "differentos1").set("source", "techlog1")
-                .set("entityType", "wellbore1").set("majorVersion", 2).set("minorVersion", 1023).set("patchVersion", 2)
-                .build();
-        Entity latestEntity = getMockEntityObject();
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.hasNext()).thenReturn(true, true, false);
-        Mockito.when(queryResult.next()).thenReturn(entity, latestEntity);
-        assertEquals(2, schemaInfoStore.getSchemaInfoList(
-                QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
-                "test").size());
-    }
-
-    @Test
-    public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentEntity()
-            throws NotFoundException, ApplicationException, BadRequestException {
-
-        Entity entity = Entity.newBuilder(key).set("createdBy", "subham")
-                .set("dateCreated", TimestampValue.newBuilder(Timestamp.MAX_VALUE).build()).set("scope", "INTERNAL")
-                .set("status", "PUBLISHED").setKey(key).set("authority", "os1").set("source", "techlog1")
-                .set("entityType", "differentwellbore1").set("majorVersion", 2).set("minorVersion", 1023)
-                .set("patchVersion", 2).build();
-        Entity latestEntity = getMockEntityObject();
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.hasNext()).thenReturn(true, true, false);
-        Mockito.when(queryResult.next()).thenReturn(entity, latestEntity);
-        assertEquals(2, schemaInfoStore.getSchemaInfoList(
-                QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
-                "test").size());
+                schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test")
+                        .entityType("test").schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test")
+                        .latestVersion(false).limit(100).offset(0).build(), "test").size());
     }
 
     @Test
@@ -568,7 +462,9 @@ public class GoogleSchemaInfoStoreTest {
         String schemaId = "schemaId";
         String dataPartitionId = "tenant1";
         when(headers.getPartitionId()).thenReturn(dataPartitionId);
-        Mockito.when(dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId())))
+        Mockito.when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(tenantInfo);
+        Mockito.when(tenantInfo.getName()).thenReturn("test");
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
                 .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
@@ -583,7 +479,9 @@ public class GoogleSchemaInfoStoreTest {
         String schemaId = "schemaId";
         String dataPartitionId = "tenant1";
         when(headers.getPartitionId()).thenReturn(dataPartitionId);
-        Mockito.when(dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId())))
+        Mockito.when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(tenantInfo);
+        Mockito.when(tenantInfo.getName()).thenReturn("tenant1");
+        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
                 .thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
@@ -606,8 +504,10 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     private SchemaInfo getMockSchemaInfo() {
-        return SchemaInfo.builder().schemaIdentity(SchemaIdentity.builder().authority("os").source("wks").entityType("well")
-                .schemaVersionMajor(1L).schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well.1.1.1").build())
+        return SchemaInfo.builder()
+                .schemaIdentity(
+                        SchemaIdentity.builder().authority("os").source("wks").entityType("well").schemaVersionMajor(1L)
+                                .schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well.1.1.1").build())
                 .scope(SchemaScope.SHARED).status(SchemaStatus.PUBLISHED).createdBy("subham")
 
                 .build();

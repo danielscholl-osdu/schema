@@ -7,12 +7,12 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
@@ -28,6 +28,9 @@ public class SchemaResolverTest {
 
     @Mock
     ISchemaService schemaService;
+
+    @Mock
+    JaxRsDpsLog log;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -53,6 +56,15 @@ public class SchemaResolverTest {
     }
 
     @Test
+    public void testResolveSchema_no_definitionblock()
+            throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
+        String resolvedSchema = new FileUtils().read("/test_schema/resolvedSchemaWithNoDefinationBlock.json");
+        String orginalSchema = new FileUtils().read("/test_schema/originalSchemaWithNoDefinitionBlockNoRef.json");
+
+        JSONAssert.assertEquals(resolvedSchema, schemaResolver.resolveSchema(orginalSchema), JSONCompareMode.LENIENT);
+    }
+
+    @Test
     public void testResolveSchema_InvalidExternalPath()
             throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
         String orginalSchema = new FileUtils().read("/test_schema/originalSchemaWithInvalidExternalPath.json");
@@ -72,7 +84,6 @@ public class SchemaResolverTest {
         schemaResolver.resolveSchema(orginalSchema);
     }
 
-    @Ignore  // Ignored for initial GitLab push
     @Test
     public void testResolveSchema_BadRequestExternalPath()
             throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
@@ -81,7 +92,7 @@ public class SchemaResolverTest {
         Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenReturn(referenceSchema);
         expectedException.expect(BadRequestException.class);
         expectedException.expectMessage(
-                "Invalid Request, https://schema-service.endpoints.evd-ddl-us-services.cloud.goog/de/schema-service/v1/schema not resolvable");
+                "Invalid Request, https://schema-service.endpoints.evd-ddl-us-services.cloud.goog/api/sgsd not resolvable");
         schemaResolver.resolveSchema(orginalSchema);
     }
 

@@ -2,10 +2,11 @@ package org.opengroup.osdu.schema.impl.schemainfostore;
 
 import java.text.MessageFormat;
 
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
+import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
-import org.opengroup.osdu.schema.credentials.DatastoreFactory;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
@@ -20,14 +21,12 @@ import com.google.cloud.datastore.DatastoreException;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Key;
 
-import lombok.extern.java.Log;
-
 /**
  * Repository class to register Entity type in Google store.
  *
  *
  */
-@Log
+
 @Repository
 public class GoogleEntityTypeStore implements IEntityTypeStore {
 
@@ -40,6 +39,9 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
     @Autowired
     private ITenantFactory tenantFactory;
 
+    @Autowired
+    JaxRsDpsLog log;
+
     /**
      * Method to get entity type from google store
      *
@@ -50,7 +52,7 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.ENTITYTYPE_KIND).newKey(entityTypeId);
         Entity entity = datastore.get(key);
@@ -73,19 +75,19 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.ENTITYTYPE_KIND).newKey(entityType.getEntityTypeId());
-        Entity entity = getEntityObject(entityType, key);
+        Entity entity = getEntityObject(key);
         try {
             datastore.add(entity);
         } catch (DatastoreException ex) {
             if ("ALREADY_EXISTS".equals(ex.getReason())) {
                 log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
-                throw new BadRequestException(
-                        MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION, entityType.getEntityTypeId()));
+                throw new BadRequestException(MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
+                        entityType.getEntityTypeId()));
             } else {
-                log.severe(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
                 throw new ApplicationException("Invalid input, object invalid");
             }
         }
@@ -101,7 +103,7 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
 
     }
 
-    private Entity getEntityObject(EntityType entityType, Key key) {
+    private Entity getEntityObject(Key key) {
         Entity.Builder entityBuilder = Entity.newBuilder(key);
         entityBuilder.set(SchemaConstants.DATE_CREATED, Timestamp.now());
         return entityBuilder.build();

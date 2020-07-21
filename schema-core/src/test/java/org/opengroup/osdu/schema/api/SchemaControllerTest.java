@@ -15,6 +15,7 @@ import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
+import org.opengroup.osdu.schema.exceptions.NoSchemaFoundException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
@@ -35,9 +36,7 @@ public class SchemaControllerTest {
     @InjectMocks
     SchemaController schemaController;
 
-
     private SchemaRequest schemaRequest;
-
 
     @Test
     public void testGetSchema_SuccessScenario() throws ApplicationException, NotFoundException, BadRequestException {
@@ -57,11 +56,23 @@ public class SchemaControllerTest {
     }
 
     @Test
-    public void testUpdateSchema() throws ApplicationException, NotFoundException, BadRequestException, JSONException,
-    JsonProcessingException {
+    public void testUpsertSchema_update() throws ApplicationException, NotFoundException, BadRequestException,
+            JSONException, JsonProcessingException {
         schemaRequest = getSchemaRequestObject();
 
         when(schemaService.updateSchema(schemaRequest)).thenReturn(getSchemaInfoObject());
+
+        assertNotNull(schemaController.upsertSchema(schemaRequest));
+
+    }
+
+    @Test
+    public void testUpsertSchema_create() throws ApplicationException, NotFoundException, BadRequestException,
+            JSONException, JsonProcessingException {
+        schemaRequest = getSchemaRequestObject();
+
+        when(schemaService.updateSchema(schemaRequest)).thenThrow(NoSchemaFoundException.class);
+        when(schemaService.createSchema(schemaRequest)).thenReturn(getSchemaInfoObject());
 
         assertNotNull(schemaController.upsertSchema(schemaRequest));
 
@@ -72,22 +83,22 @@ public class SchemaControllerTest {
         schemaRequest = getSchemaRequestObject();
 
         when(schemaService.getSchemaInfoList(QueryParams.builder().authority("test").build()))
-        .thenReturn(SchemaInfoResponse.builder().schemaInfos(new LinkedList<SchemaInfo>()).build());
+                .thenReturn(SchemaInfoResponse.builder().schemaInfos(new LinkedList<SchemaInfo>()).build());
 
-        assertNotNull(schemaController.getSchemaInfoList("test", null, null, null, null, null, null, null, null, 100, 0));
+        assertNotNull(
+                schemaController.getSchemaInfoList("test", null, null, null, null, null, null, null, null, 100, 0));
 
     }
 
     private SchemaRequest getSchemaRequestObject() {
-        return SchemaRequest.builder().schema(null)
-                .schemaInfo(SchemaInfo.builder().createdBy("creator").dateCreated(new Date(System.currentTimeMillis()))
-                        .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.1")
-                                .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
-                        .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
-                        .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.4")
-                                .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
-                        .build())
-                .build();
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
+                .build()).build();
     }
 
     private SchemaInfo getSchemaInfoObject() {

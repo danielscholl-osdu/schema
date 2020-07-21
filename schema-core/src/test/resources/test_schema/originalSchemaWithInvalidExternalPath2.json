@@ -17,7 +17,7 @@
       "locationWGS84": {
         "description": "The well's location as GeoJSON FeatureCollection.",
         "title": "WGS84 Location",
-        "$ref": "https://schema-service.endpoints.evd-ddl-us-services.cloud.goog/de/schema-service/v1/schema",
+        "$ref": "https://schema-service.endpoints.evd-ddl-us-services.cloud.goog/api/sgsd",
         "example": {
           "features": [
             {

@@ -2,10 +2,10 @@ package org.opengroup.osdu.schema.impl.schemainfostore;
 
 import java.text.MessageFormat;
 
+import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
+import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
-import org.opengroup.osdu.schema.credentials.DatastoreFactory;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
@@ -20,14 +20,11 @@ import com.google.cloud.datastore.DatastoreException;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Key;
 
-import lombok.extern.java.Log;
-
 /**
  * Repository class to to register authority in Google store.
  *
  */
 
-@Log
 @Repository
 public class GoogleAuthorityStore implements IAuthorityStore {
 
@@ -38,7 +35,7 @@ public class GoogleAuthorityStore implements IAuthorityStore {
     private DatastoreFactory dataStoreFactory;
 
     @Autowired
-    private ITenantFactory tenantFactory;
+    JaxRsDpsLog log;
 
     /**
      * Method to get authority from google store
@@ -50,7 +47,7 @@ public class GoogleAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority get(String authorityId) throws NotFoundException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.AUTHORITY_KIND).newKey(authorityId);
 
@@ -74,10 +71,10 @@ public class GoogleAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority create(Authority authority) throws ApplicationException, BadRequestException {
-        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
+        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.AUTHORITY_KIND).newKey(authority.getAuthorityId());
-        Entity entity = getEntityObject(authority, key);
+        Entity entity = getEntityObject(key);
         try {
             datastore.add(entity);
         } catch (DatastoreException ex) {
@@ -86,7 +83,7 @@ public class GoogleAuthorityStore implements IAuthorityStore {
                 throw new BadRequestException(
                         MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION, authority.getAuthorityId()));
             } else {
-                log.severe(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
                 throw new ApplicationException(SchemaConstants.INVALID_INPUT);
             }
         }
@@ -102,7 +99,7 @@ public class GoogleAuthorityStore implements IAuthorityStore {
 
     }
 
-    private Entity getEntityObject(Authority authority, Key key) {
+    private Entity getEntityObject(Key key) {
         return Entity.newBuilder(key).set(SchemaConstants.DATE_CREATED, Timestamp.now()).build();
     }
 

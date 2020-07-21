@@ -20,11 +20,10 @@ public class SchemaValidator implements ConstraintValidator<SchemaConstraint, Ob
         ObjectMapper mapper = new ObjectMapper();
         try {
             String schemaString = mapper.writeValueAsString(value);
-            JSONObject schemaJson = new JSONObject(schemaString);
+            new JSONObject(schemaString);
         } catch (JsonProcessingException e) {
             return false;
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             return false;
         }
         return true;
