@@ -19,7 +19,9 @@
 *.tar.gz
 *.rar
 
-
+# IntelliJ
+.idea
+*.iml
 
 ### STS ###
 target/
