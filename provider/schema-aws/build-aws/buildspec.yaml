@@ -40,6 +40,7 @@ phases:
       - export BRANCH_NAME=`echo ${CODEBUILD_SOURCE_VERSION} | awk '{gsub("refs/heads/","");gsub("\\.","-");gsub("[[:space:]]","-")}1' | sed 's/\//-/g' | awk '{print tolower($0)}'`
       - export ECR_TAG=`echo build.${BRANCH_NAME}.${CODEBUILD_BUILD_NUMBER}.${CODEBUILD_RESOLVED_SOURCE_VERSION} | cut -c 1-120`
       - export ECR_IMAGE=${ECR_REGISTRY}:${ECR_TAG}
+      - export ECR_IMAGE_BRANCH_LATEST=${ECR_REGISTRY}:${BRANCH_NAME}
       - export INTEGRATION_TEST_OUTPUT=${OUTPUT_DIR}/testing/integration
       - export INTEGRATION_TEST_OUTPUT_BIN=${INTEGRATION_TEST_OUTPUT}/bin
       - mkdir -p ${OUTPUT_DIR}/bin
@@ -61,8 +62,10 @@ phases:
 
       - echo "Building docker image..."
       - docker build -f provider/schema-aws/build-aws/Dockerfile -t ${ECR_IMAGE} .
+      - docker tag  ${ECR_IMAGE} ${ECR_IMAGE_BRANCH_LATEST}
       - echo "Pushing docker image..."
       - docker push ${ECR_IMAGE}
+      - docker push ${ECR_IMAGE_BRANCH_LATEST}
 
       - echo "Generate build-info.json"
       - |
