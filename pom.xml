@@ -42,6 +42,7 @@
 		<module>schema-core</module>
 		<module>provider/schema-gcp</module>
 		<module>provider/schema-ibm</module>
+		<module>provider/schema-azure</module>
 	</modules>
 	<repositories>
 		<repository>
