@@ -43,7 +43,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API with {string}, data-partition-id as {string} and mark schema as {string}.",
 				(String inputPayload, String tenant, String status) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -67,7 +67,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API with {string}, data-partition-id as {string} and mark schema as {string} for next major version",
 				(String inputPayload, String tenant, String status) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -92,7 +92,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API with {string}, data-partition-id as {string}",
 				(String inputPayload, String tenant) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -113,6 +113,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API with {string}, data-partition-id as {string} for superceded input",
 				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -136,7 +137,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API with {string}, data-partition-id as {string} with increased minor version only",
 				(String inputPayload, String tenant) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -158,7 +159,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API with {string}, data-partition-id as {string} with different entityType",
 				(String inputPayload, String tenant) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -185,7 +186,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API with {string}, data-partition-id as {string} with next major version",
 				(String inputPayload, String tenant) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -230,7 +231,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API for supersededBy with {string} and data-partition-id as {string}",
 				(String inputPayload, String tenant) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
@@ -339,5 +340,23 @@ public class SchemaServiceStepDef_PUT implements En {
 				.remove(TestConstants.SCHEMA_PATCH_VERSION);
 		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject(TestConstants.SUPERSEDED_BY)
 				.addProperty(TestConstants.SCHEMA_PATCH_VERSION, patchVersion);
+	}
+
+	private String selectTenant(String tenant) {
+
+		switch (tenant) {
+		case "TENANT1":
+			tenant = TestConstants.PRIVATE_TENANT1;
+			break;
+		case "TENANT2":
+			tenant = TestConstants.PRIVATE_TENANT2;
+			break;
+		case "COMMON":
+			tenant = TestConstants.SHARED_TENANT;
+			break;
+		default:
+			System.out.println("Invalid tenant");
+		}
+		return tenant;
 	}
 }

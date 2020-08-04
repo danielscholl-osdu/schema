@@ -41,7 +41,7 @@ public class SchemaServiceStepDef_GET implements En {
 
 	public SchemaServiceStepDef_GET() {
 
-		Given("I generate user token and set request headers", () -> {
+		Given("I generate user token and set request headers for {string}", (String tenant) -> {
 			if (this.context.getToken() == null) {
 				String token = new AuthUtil().getToken();
 				this.context.setToken(token);
@@ -50,7 +50,7 @@ public class SchemaServiceStepDef_GET implements En {
 			if (this.context.getAuthHeaders() == null) {
 				Map<String, String> authHeaders = new HashMap<String, String>();
 				authHeaders.put(TestConstants.AUTHORIZATION, this.context.getToken());
-				authHeaders.put(TestConstants.DATA_PARTITION_ID, TestConstants.TENANT);
+				authHeaders.put(TestConstants.DATA_PARTITION_ID, selectTenant(tenant));
 				authHeaders.put(TestConstants.CONTENT_TYPE, TestConstants.JSON_CONTENT);
 				this.context.setAuthHeaders(authHeaders);
 			}
@@ -61,9 +61,9 @@ public class SchemaServiceStepDef_GET implements En {
 					Map<String, String> queryParams = new HashMap<String, String>();
 					queryParams.put(parameter, parameterVal);
 					queryParams.put("latestVersion", latestVersion);
-					HttpRequest httpRequest = HttpRequest.builder()
-							.url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT).queryParams(queryParams)
-							.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT)
+							.queryParams(queryParams).httpMethod(HttpRequest.GET)
+							.requestHeaders(this.context.getAuthHeaders()).build();
 					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 					this.context.setHttpResponse(response);
 					assertEquals("200", String.valueOf(response.getCode()));
@@ -103,9 +103,9 @@ public class SchemaServiceStepDef_GET implements En {
 					queryParams.put(TestConstants.LATEST_VERSION, latestVersion);
 
 					this.context.setQueryParams(queryParams);
-					HttpRequest httpRequest = HttpRequest.builder()
-							.url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT).queryParams(queryParams)
-							.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT)
+							.queryParams(queryParams).httpMethod(HttpRequest.GET)
+							.requestHeaders(this.context.getAuthHeaders()).build();
 					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 					this.context.setHttpResponse(response);
 				});
@@ -123,9 +123,8 @@ public class SchemaServiceStepDef_GET implements En {
 				});
 
 		Given("I hit schema service GET API with {string}", (String schemaId) -> {
-			HttpRequest httpRequest = HttpRequest.builder()
-					.url(TestConstants.HOST + TestConstants.GET_ENDPOINT + schemaId).httpMethod(HttpRequest.GET)
-					.requestHeaders(this.context.getAuthHeaders()).build();
+			HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.GET_ENDPOINT + schemaId)
+					.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
 			HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 			this.context.setHttpResponse(response);
 		});
@@ -155,8 +154,7 @@ public class SchemaServiceStepDef_GET implements En {
 					Map<String, String> authHeaders = this.context.getAuthHeaders();
 					authHeaders.put(TestConstants.DATA_PARTITION_ID, otherTenant);
 					HttpRequest httpRequest = HttpRequest.builder()
-							.url(TestConstants.HOST + TestConstants.GET_ENDPOINT
-									+ this.context.getSchemaIdFromInputPayload())
+							.url(TestConstants.HOST + TestConstants.GET_ENDPOINT + this.context.getSchemaIdFromInputPayload())
 							.httpMethod(HttpRequest.GET).requestHeaders(authHeaders).build();
 					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 					this.context.setHttpResponse(response);
@@ -175,8 +173,7 @@ public class SchemaServiceStepDef_GET implements En {
 		Then("schema service should respond back with {string} and {string}",
 				(String ReponseStatusCode, String ResponseToBeVerified) -> {
 					HttpRequest httpRequest = HttpRequest.builder()
-							.url(TestConstants.HOST + TestConstants.GET_ENDPOINT
-									+ this.context.getSchemaIdFromInputPayload())
+							.url(TestConstants.HOST + TestConstants.GET_ENDPOINT + this.context.getSchemaIdFromInputPayload())
 							.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
 					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 					assertEquals(ReponseStatusCode, String.valueOf(response.getCode()));
@@ -194,9 +191,9 @@ public class SchemaServiceStepDef_GET implements En {
 
 					Map<String, String> queryParams = new HashMap<String, String>();
 					queryParams.put(parameter, parameterVal);
-					HttpRequest httpRequest = HttpRequest.builder()
-							.url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT).queryParams(queryParams)
-							.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT)
+							.queryParams(queryParams).httpMethod(HttpRequest.GET)
+							.requestHeaders(this.context.getAuthHeaders()).build();
 					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 					this.context.setHttpResponse(response);
 				});
@@ -255,9 +252,9 @@ public class SchemaServiceStepDef_GET implements En {
 					}
 
 					this.context.setQueryParams(queryParams);
-					HttpRequest httpRequest = HttpRequest.builder()
-							.url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT).queryParams(queryParams)
-							.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
+					HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT)
+							.queryParams(queryParams).httpMethod(HttpRequest.GET)
+							.requestHeaders(this.context.getAuthHeaders()).build();
 					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 					this.context.setHttpResponse(response);
 				});
@@ -391,5 +388,22 @@ public class SchemaServiceStepDef_GET implements En {
 			String value = entry.getValue();
 			verifyResponseJsonElement(key, value, root);
 		});
+	}
+	private String selectTenant(String tenant) {
+
+		switch (tenant) {
+		case "TENANT1":
+			tenant = TestConstants.PRIVATE_TENANT1;
+			break;
+		case "TENANT2":
+			tenant = TestConstants.PRIVATE_TENANT2;
+			break;
+		case "COMMON":
+			tenant = TestConstants.SHARED_TENANT;
+			break;
+		default:
+			System.out.println("Invalid tenant");
+		}
+		return tenant;
 	}
 }

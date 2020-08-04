@@ -29,7 +29,7 @@ public class SchemaServiceStepDef_POST implements En {
 
 	@Inject
 	private SchemaServiceScope context;
-	
+
 	static String[] GetListBaseFilterArray;
 	static String[] GetListVersionFilterArray;
 	String queryParameter;
@@ -41,6 +41,7 @@ public class SchemaServiceStepDef_POST implements En {
 
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} only if status is not development",
 				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
 					String resp = this.context.getHttpResponse().getBody();
 					Gson gsn = new Gson();
 					JsonObject schemaInfosList = gsn.fromJson(resp, JsonObject.class);
@@ -51,11 +52,11 @@ public class SchemaServiceStepDef_POST implements En {
 						JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 						int currentMinorVersion = 0;
 						int currentMajorVersion = 0;
-						if(root.size() > 0) {
-						currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
-						currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+						if (root.size() > 0) {
+							currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+							currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
 						}
-						
+
 						int nextMinorVersion = currentMinorVersion + 1;
 						int nextMajorVersion = currentMajorVersion + 1;
 						String schemaId = "SchemaSanityTest:testSource:testEntity:" + nextMajorVersion + "."
@@ -74,8 +75,8 @@ public class SchemaServiceStepDef_POST implements En {
 
 		Given("I hit schema service POST API with {string} and data-partition-id as {string}",
 				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
-
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
 					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
@@ -91,6 +92,7 @@ public class SchemaServiceStepDef_POST implements En {
 
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version only",
 				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -117,6 +119,7 @@ public class SchemaServiceStepDef_POST implements En {
 
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} without increasing any version",
 				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
@@ -148,9 +151,7 @@ public class SchemaServiceStepDef_POST implements En {
 					HttpResponse response = this.context.getHttpResponse();
 					if (response != null) {
 						assertEquals(ReponseStatusCode, String.valueOf(response.getCode()));
-
 						commonAssertion(response, jsonBody);
-
 						Assert.assertNotNull(jsonBody.get(TestConstants.DATE_CREATED));
 						Assert.assertNotNull(jsonBody.get(TestConstants.CREATED_BY));
 					}
@@ -217,7 +218,7 @@ public class SchemaServiceStepDef_POST implements En {
 
 		Given("I hit schema service POST API for supersededBy with {string} and data-partition-id as {string}",
 				(String inputPayload, String tenant) -> {
-
+					tenant = selectTenant(tenant);
 					String body = this.context.getFileUtils().read(inputPayload);
 
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
@@ -262,7 +263,7 @@ public class SchemaServiceStepDef_POST implements En {
 								this.context.getSupersededById());
 
 					}
-				});		 
+				});
 	}
 
 	private HttpResponse postRequest(JsonElement jsonBody, String schemaId, String tenant) {
@@ -275,7 +276,6 @@ public class SchemaServiceStepDef_POST implements En {
 		HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.POST_ENDPOINT)
 				.body(jsonBody.toString()).httpMethod(HttpRequest.POST).requestHeaders(headers).build();
 		HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
-
 		return response;
 	}
 
@@ -348,5 +348,23 @@ public class SchemaServiceStepDef_POST implements En {
 				.setSchemaVersionMajor(schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMajor").getAsString());
 		this.context
 				.setSchemaVersionMinor(schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMinor").getAsString());
+	}
+
+	private String selectTenant(String tenant) {
+
+		switch (tenant) {
+		case "TENANT1":
+			tenant = TestConstants.PRIVATE_TENANT1;
+			break;
+		case "TENANT2":
+			tenant = TestConstants.PRIVATE_TENANT2;
+			break;
+		case "COMMON":
+			tenant = TestConstants.SHARED_TENANT;
+			break;
+		default:
+			System.out.println("Invalid tenant");
+		}
+		return tenant;
 	}
 }

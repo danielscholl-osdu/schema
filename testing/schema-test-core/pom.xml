@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>schema-test-gcp</artifactId>
+	<artifactId>schema-test-core</artifactId>
 	<dependencies>
 
 		<dependency>
@@ -117,37 +117,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>Default</id>
-			<properties>
-				<skipUnitTests>true</skipUnitTests>
-				<skipItTests>false</skipItTests>
-				<preIntegrationPhase>pre-integration-test</preIntegrationPhase>
-				<postIntegrationPhase>post-integration-test</postIntegrationPhase>
-				<mainClass>org.opengroup.osdu.schema.SchemaApplication</mainClass>
-			</properties>
-		</profile>
-	</profiles>
-	
-	<repositories>
-		<repository>
-			<id>${gitlab-server}</id>
-			<url>https://community.opengroup.org/api/v4/groups/17/-/packages/maven</url>
-		</repository>
-	</repositories>
-
-	<distributionManagement>
-		<repository>
-			<id>${gitlab-server}</id>
-			<url>https://community.opengroup.org/api/v4/projects/26/packages/maven</url>
-		</repository>
-		<snapshotRepository>
-			<id>${gitlab-server}</id>
-			<url>https://community.opengroup.org/api/v4/projects/26/packages/maven</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-
 </project>
