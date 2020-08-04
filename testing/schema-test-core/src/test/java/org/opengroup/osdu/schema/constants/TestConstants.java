@@ -7,7 +7,6 @@ public class TestConstants {
     public static final String GET_LIST_ENDPOINT = "/api/schema-service/v1/schema";
     public static final String GET_ENDPOINT = "/api/schema-service/v1/schema/";
     public static final String GET_FLATTENED_ENDPOINT = "/api/schema-service/v1/schema/{id}/IndexerSchemaV1";
-    public static final String HOST = "https://open.opendes.cloud.slb-ds.com";
     //public static final String HOST = "http://localhost:8080";
     public static final String INTERNAL_SERVER_ERROR = "internal server error";
     public static final String INTERNAL = "INTERNAL";
@@ -34,7 +33,6 @@ public class TestConstants {
     public static final String DATA_PARTITION_ID = "data-partition-id";
     public static final String BEARER = "Bearer ";
     public static final String CONTENT_TYPE = "Content-Type";
-    public static final String TENANT = "opendes";
     public static final String JSON_CONTENT = "application/json";
     public static final String schemaIdOfInputPayload = "schemaInfo.schemaIdentity.id";
     public static final String SCHEMA_IDENTITY = "schemaIdentity";
@@ -50,4 +48,8 @@ public class TestConstants {
     public static final String USER = "user";
     public static final String STORAGE_SCHEMA_USER_EMAIL = "testUserEmail@test.com";
     public static final String KIND = "kind";
+    public static final String HOST = System.getProperty("HOST", System.getenv("HOST"));
+    public static final String PRIVATE_TENANT1 = System.getProperty("PRIVATE_TENANT1", System.getenv("PRIVATE_TENANT1"));
+    public static final String PRIVATE_TENANT2 = System.getProperty("PRIVATE_TENANT2", System.getenv("PRIVATE_TENANT2"));
+    public static final String SHARED_TENANT = System.getProperty("SHARED_TENANT", System.getenv("SHARED_TENANT"));    
 }

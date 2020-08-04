@@ -91,8 +91,8 @@ stages:
     - task: Maven@3
       displayName: 'Running IntegrationTest'
       inputs:
-        mavenPomFile: 'testing/schema-test-gcp/pom.xml'
-        goals: 'verify'
+        mavenPomFile: 'testing/schema-test-core/pom.xml'
+        goals: 'verify "-Dcucumber.options=--tags @SchemaService"'
         options: '--settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
@@ -103,6 +103,12 @@ stages:
       env:
         INTEGRATION_TEST_AUDIENCE: $(INTEGRATION_TEST_AUDIENCE)
         INTEGRATION_TESTER : $(INTEGRATION_TESTER)
+        PRIVATE_TENANT1 : $(PRIVATE_TENANT1)
+        PRIVATE_TENANT2 : $(PRIVATE_TENANT2)
+        SHARED_TENANT : $(SHARED_TENANT)
+        HOST : $(HOST)
+        VENDOR : $(VENDOR)
+        
         
     - task: UsePythonVersion@0
       inputs:
