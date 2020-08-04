@@ -52,6 +52,7 @@ public class AzureSchemaStoreTest {
     private static final String dataPartitionId = "dataPartitionId";
     private static final String FILE_PATH = "/test-folder/test-file";
     private static final String CONTENT = "Hello World";
+    private static final String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
 
     @Before
     public void init(){
@@ -61,7 +62,6 @@ public class AzureSchemaStoreTest {
 
     @Test
     public void testGetSchema() throws ApplicationException, NotFoundException {
-        String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
         doReturn(CONTENT).when(blobStorage).readFromBlob(filePath);
         Assert.assertEquals(CONTENT, schemaStore.getSchema(dataPartitionId, FILE_PATH));
     }
@@ -70,7 +70,6 @@ public class AzureSchemaStoreTest {
     public void testGetSchema_NotFound() throws ApplicationException, NotFoundException {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
-        String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
         doReturn(null).when(blobStorage).readFromBlob(filePath);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
@@ -79,14 +78,13 @@ public class AzureSchemaStoreTest {
     public void testGetSchema_Failure() throws ApplicationException, NotFoundException {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
-        String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
+
         doThrow(ApplicationException.class).when(blobStorage).readFromBlob(filePath);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
 
     @Test
     public void testDeleteSchema() throws ApplicationException {
-        String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
         doReturn(true).when(blobStorage).deleteFromBlob(filePath);
 
         Boolean result = schemaStore.cleanSchemaProject(FILE_PATH);
@@ -98,7 +96,6 @@ public class AzureSchemaStoreTest {
         expectedException.expect(ApplicationException.class);
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
-        String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
         doThrow(ApplicationException.class).when(blobStorage).deleteFromBlob(filePath);
         schemaStore.cleanSchemaProject(FILE_PATH);
     }
@@ -106,7 +103,6 @@ public class AzureSchemaStoreTest {
     @Test
     public void testCreateSchema() throws ApplicationException {
 
-        String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
         doReturn(filePath).when(blobStorage).writeToBlob(filePath, CONTENT);
         Assert.assertEquals(filePath, schemaStore.createSchema(FILE_PATH, CONTENT));
     }
@@ -116,7 +112,6 @@ public class AzureSchemaStoreTest {
         expectedException.expect(ApplicationException.class);
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
-        String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
         doThrow(ApplicationException.class).when(blobStorage).writeToBlob(filePath, CONTENT);
         schemaStore.createSchema(FILE_PATH, CONTENT);
     }

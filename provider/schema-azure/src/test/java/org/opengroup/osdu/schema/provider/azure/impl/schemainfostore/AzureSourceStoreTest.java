@@ -59,19 +59,29 @@ public class AzureSourceStoreTest {
     @Mock
     JaxRsDpsLog log;
 
+    private static final String dataPartitionId = "testPartitionId";
+    private static final String sourceId = "testSourceId";
+
     @Before
     public void init() {
         initMocks(this);
+        Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
+        Mockito.when(mockSource.getSourceId()).thenReturn(sourceId);
     }
 
     @Test
     public void testGetSource() throws NotFoundException, ApplicationException, IOException {
-        String sourceId = "testSourceId";
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        SourceDoc sourceDoc = getSourceDoc("test", sourceId);
+        SourceDoc sourceDoc = getSourceDoc(dataPartitionId, sourceId);
         Optional<SourceDoc> cosmosItem = Optional.of(sourceDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
-
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + sourceId),
+                        eq(dataPartitionId),
+                        any());
         assertNotNull(store.get(sourceId));
         assertEquals(sourceId, store.get(sourceId).getSourceId());
     }
@@ -79,10 +89,16 @@ public class AzureSourceStoreTest {
     @Test
     public void testGetSource_NotFoundException() throws IOException {
         String sourceId = "";
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
         Optional<SourceDoc> cosmosItem = Optional.empty();
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
-
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + ""),
+                        eq(dataPartitionId),
+                        any());
         try {
             store.get(sourceId);
             fail("Should not succeed");
@@ -96,8 +112,6 @@ public class AzureSourceStoreTest {
 
     @Test
     public void testCreateSource() throws  ApplicationException, BadRequestException {
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(mockSource.getSourceId()).thenReturn("testSourceId");
         doNothing().when(cosmosStore).upsertItem(anyString(), any(), any(), any());
         assertNotNull(store.create(mockSource));
     }
@@ -105,12 +119,17 @@ public class AzureSourceStoreTest {
     @Test
     public void testCreateSource_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(mockSource.getSourceId()).thenReturn("testSourceId");
-        SourceDoc sourceDoc = getSourceDoc("test", "testSourceId");
+        SourceDoc sourceDoc = getSourceDoc(dataPartitionId, sourceId);
         Optional<SourceDoc> cosmosItem = Optional.of(sourceDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
-
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + sourceId),
+                        eq(dataPartitionId),
+                        any());
         try {
             store.create(mockSource);
             fail("Should not succeed");
@@ -125,10 +144,16 @@ public class AzureSourceStoreTest {
     @Test
     public void testCreateSource_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException, CosmosClientException {
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(mockSource.getSourceId()).thenReturn("testSourceId");
         Optional<SourceDoc> cosmosItem = Optional.empty();
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + sourceId),
+                        eq(dataPartitionId),
+                        any());
         doThrow(AppException.class).when(cosmosStore).upsertItem(anyString(), any(), any(), any());
 
         try {
