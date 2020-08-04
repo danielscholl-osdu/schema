@@ -187,7 +187,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         pars.add(new SqlParameter("@majorVersion", schemaInfo.getSchemaIdentity().getSchemaVersionMajor()));
 
         FeedOptions options = new FeedOptions();
-        options.setEnableCrossPartitionQuery(true);
+        options.setEnableCrossPartitionQuery(false);
         List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
         TreeMap<Long, String> sortedMap = new TreeMap<>(Collections.reverseOrder());
@@ -316,7 +316,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         }
 
         FeedOptions options = new FeedOptions();
-        options.setEnableCrossPartitionQuery(true);
+        options.setEnableCrossPartitionQuery(false);
         List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
         List<SchemaInfo> schemaList = new LinkedList<>();

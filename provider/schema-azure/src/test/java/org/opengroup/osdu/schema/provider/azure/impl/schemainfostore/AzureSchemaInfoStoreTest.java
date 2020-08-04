@@ -102,7 +102,15 @@ public class AzureSchemaInfoStoreTest {
     public void testGetLatestMinorVersion_ReturnNull() throws NotFoundException, ApplicationException, IOException {
 
         List<SchemaInfoDoc> cosmosItem = new ArrayList<>();
-        doReturn(cosmosItem).when(cosmosStore).queryItems(anyString(), anyString(), anyString(), any(), any(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .queryItems(
+                        eq(dataPartitionId),
+                        anyString(),
+                        anyString(),
+                        any(),
+                        any(),
+                        any());
         assertEquals("", schemaInfoStore.getLatestMinorVerSchema(getMockSchemaInfo()));
     }
 
@@ -110,16 +118,27 @@ public class AzureSchemaInfoStoreTest {
     public void testGetLatestMinorVersion_Entity() throws NotFoundException, ApplicationException {
         List<SchemaInfoDoc> schemaInfoDocsList = new LinkedList<>();
         schemaInfoDocsList.add(getMockSchemaInfoDoc());
-        doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(anyString(), any(), any(), any(), any(), any());
+        doReturn(schemaInfoDocsList)
+                .when(cosmosStore)
+                .queryItems(eq(dataPartitionId), any(), any(), any(), any(), any());
 
         Mockito.when(schemaStore.getSchema(dataPartitionId, schemaId)).thenReturn(CONTENT);
         assertEquals(CONTENT, schemaInfoStore.getLatestMinorVerSchema(getMockSchemaInfo()));
+
     }
 
     @Test
     public void testGetSchemaInfo_NotEmpty() throws NotFoundException, ApplicationException {
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
 
         doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
         SchemaInfo schemaInfo = schemaInfoStore.getSchemaInfo(schemaId);
@@ -132,14 +151,30 @@ public class AzureSchemaInfoStoreTest {
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
 
         Optional<SchemaInfoDoc> cosmosItem = Optional.empty();
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         schemaInfoStore.getSchemaInfo(schemaId);
     }
 
     @Test
     public void testCreateSchemaInfo_Positive() throws ApplicationException, BadRequestException {
         // the schema is not present in schemaInfoStore
-        doReturn(Optional.empty()).when(cosmosStore).findItem(anyString(), any(), any(), eq(dataPartitionId + ":" + schemaId), anyString(), any());
+        doReturn(Optional.empty())
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
 
         assertNotNull(schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published()));
@@ -148,10 +183,26 @@ public class AzureSchemaInfoStoreTest {
     @Test
     public void testCreateSchemaInfo_WithSupersededBy()
             throws NotFoundException, ApplicationException, BadRequestException {
-        doReturn(Optional.empty()).when(cosmosStore).findItem(anyString(), any(), any(), eq(dataPartitionId + ":" + schemaId), anyString(), any());
+        doReturn(Optional.empty())
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
 
-        doReturn(cosmosItem).when(cosmosStore).findItem(any(), any(), any(), eq(dataPartitionId + ":" + supersedingSchemaId), any(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + supersedingSchemaId),
+                        eq(dataPartitionId),
+                        any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
 
         assertNotNull(schemaInfoStore.createSchemaInfo(getMockSchemaObject_SupersededBy()));
@@ -162,7 +213,15 @@ public class AzureSchemaInfoStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException {
 
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), eq(dataPartitionId + ":" + schemaId), anyString(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
 
         try {
             schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published());
@@ -179,7 +238,15 @@ public class AzureSchemaInfoStoreTest {
     public void testCreateSchemaInfo_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException {
 
-        doReturn(Optional.empty()).when(cosmosStore).findItem(anyString(), any(), any(), eq(dataPartitionId + ":" + schemaId), anyString(), any());
+        doReturn(Optional.empty())
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
 
         doThrow(AppException.class).when(cosmosStore).upsertItem(anyString(), any(), any(), any());
 
@@ -197,14 +264,30 @@ public class AzureSchemaInfoStoreTest {
     @Test
     public void testIsUnique_True() throws ApplicationException {
 
-        doReturn(Optional.empty()).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
+        doReturn(Optional.empty())
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         assertTrue(schemaInfoStore.isUnique(schemaId, dataPartitionId));
     }
 
     @Test
     public void testIsUnique_False() throws ApplicationException {
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         assertFalse(schemaInfoStore.isUnique(schemaId, dataPartitionId));
     }
 
@@ -219,14 +302,30 @@ public class AzureSchemaInfoStoreTest {
         Collection<TenantInfo> tenants = Lists.newArrayList(tenant1, tenant2);
         when(this.tenantFactory.listTenantInfo()).thenReturn(tenants);
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), eq(dataPartitionId + ":" + schemaId), anyString(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         assertFalse(schemaInfoStore.isUnique(schemaId, commonTenantId));
     }
 
     @Test
     public void testUpdateSchemaInfo() throws NotFoundException, ApplicationException, BadRequestException {
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(any(), any(), any(), eq(dataPartitionId + ":" + supersedingSchemaId), any(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + supersedingSchemaId),
+                        eq(dataPartitionId),
+                        any());
 
         doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
         assertNotNull(schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published()));
@@ -236,8 +335,24 @@ public class AzureSchemaInfoStoreTest {
     public void testUpdateSchemaInfo_SupersededBy()
             throws NotFoundException, ApplicationException, BadRequestException {
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(getMockSchemaInfoDoc());
-        doReturn(cosmosItem).when(cosmosStore).findItem(any(), any(), any(), eq(dataPartitionId + ":" + schemaId), any(), any());
-        doReturn(Optional.of(schemaInfoDoc)).when(cosmosStore).findItem(any(), any(), any(), eq(dataPartitionId + ":" + supersedingSchemaId), any(), any());
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
+        doReturn(Optional.of(schemaInfoDoc))
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + supersedingSchemaId),
+                        eq(dataPartitionId),
+                        any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
         assertNotNull(schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published()));
     }
@@ -245,8 +360,24 @@ public class AzureSchemaInfoStoreTest {
     @Test
     public void testUpdateSchemaInfo_SupersededByException()
             throws NotFoundException, ApplicationException, BadRequestException {
-        doReturn(Optional.empty()).when(cosmosStore).findItem(any(), any(), any(), eq(dataPartitionId + ":" + supersedingSchemaId), any(), any());
-        doReturn(Optional.of(schemaInfoDoc)).when(cosmosStore).findItem(any(), any(), any(), eq(dataPartitionId + ":" + schemaId), any(), any());
+        doReturn(Optional.empty())
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + supersedingSchemaId),
+                        eq(dataPartitionId),
+                        any());
+        doReturn(Optional.of(schemaInfoDoc))
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
         try {
             schemaInfoStore.updateSchemaInfo(getMockSchemaObject_SupersededBy());
@@ -263,7 +394,15 @@ public class AzureSchemaInfoStoreTest {
     public void testUpdateInfo_SupersededByWithoutIdException()
             throws NotFoundException, ApplicationException, BadRequestException {
 
-        doReturn(Optional.of(schemaInfoDoc)).when(cosmosStore).findItem(any(), any(), any(), eq(dataPartitionId + ":" + schemaId), any(), any());
+        doReturn(Optional.of(schemaInfoDoc))
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
 
         SchemaRequest schemaRequest = getMockSchemaObject_SuperSededByWithoutId();
@@ -275,8 +414,16 @@ public class AzureSchemaInfoStoreTest {
     @Test
     public void testUpdateSchemaInfo_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException {
-        doReturn(Optional.of(schemaInfoDoc)).when(cosmosStore).findItem(any(), any(), any(), anyString(), any(), any());
-        doThrow(AppException.class).when(cosmosStore).upsertItem(anyString(), any(), any(), any());
+        doReturn(Optional.of(schemaInfoDoc))
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
+        doThrow(AppException.class).when(cosmosStore).upsertItem(eq(dataPartitionId), any(), any(), any());
 
         try {
             schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published());
@@ -294,7 +441,7 @@ public class AzureSchemaInfoStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException {
         List<SchemaInfoDoc> schemaInfoDocsList = new LinkedList<>();
         schemaInfoDocsList.add(getMockSchemaInfoDoc());
-        doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(anyString(), any(), any(), any(), any(), any());
+        doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(eq(dataPartitionId), any(), any(), any(), any(), any());
 
         assertEquals(1,
                 schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), dataPartitionId).size());
@@ -305,7 +452,7 @@ public class AzureSchemaInfoStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException {
         List<SchemaInfoDoc> schemaInfoDocsList = new LinkedList<>();
         schemaInfoDocsList.add(getMockSchemaInfoDoc());
-        doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(anyString(), any(), any(), any(), any(), any());
+        doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(eq(dataPartitionId), any(), any(), any(), any(), any());
         assertEquals(1,
                 schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
                         .schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test").latestVersion(false)
@@ -316,7 +463,7 @@ public class AzureSchemaInfoStoreTest {
     public void testGetSchemaInfoList_latestVersionTrue_NoSchemaMatchScenario()
             throws NotFoundException, ApplicationException, BadRequestException {
         List<SchemaInfoDoc> cosmosItem = new ArrayList<>();
-        doReturn(cosmosItem).when(cosmosStore).queryItems(anyString(), any(), any(), any(), any(), any());
+        doReturn(cosmosItem).when(cosmosStore).queryItems(eq(dataPartitionId), any(), any(), any(), any(), any());
         assertEquals(0,
                 schemaInfoStore
                         .getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
@@ -326,13 +473,29 @@ public class AzureSchemaInfoStoreTest {
 
     @Test
     public void testCleanSchema_Success() throws ApplicationException {
-        doReturn(Optional.of(schemaInfoDoc)).when(cosmosStore).findItem(any(), any(), any(), anyString(), any(), any());
+        doReturn(Optional.of(schemaInfoDoc))
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         assertEquals(true, schemaInfoStore.cleanSchema(schemaId));
     }
 
     @Test
     public void testCleanSchema_Failure() throws ApplicationException {
-        doReturn(Optional.empty()).when(cosmosStore).findItem(any(), any(), any(), anyString(), any(), any());
+        doReturn(Optional.empty())
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(dataPartitionId),
+                        any());
         assertEquals(false, schemaInfoStore.cleanSchema(schemaId));
     }
 

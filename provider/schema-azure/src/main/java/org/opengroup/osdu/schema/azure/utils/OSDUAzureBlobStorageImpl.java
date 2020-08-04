@@ -67,24 +67,16 @@ public class OSDUAzureBlobStorageImpl {
     public String writeToBlob(String filePath, String content) throws ApplicationException {
         byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
         int bytesSize = bytes.length;
+        
         BlockBlobClient blockBlobClient = blobContainerClient.getBlobClient(filePath).getBlockBlobClient();
-
-        if (blockBlobClient.exists())
-        {
-            // we need to clean up the previous schema content.
-            log.info("Cleaning up the previously existing blob");
-            this.deleteFromBlob(filePath);
-        }
-
-        BlockBlobClient newBlockBlobClient = blobContainerClient.getBlobClient(filePath).getBlockBlobClient();
         try (ByteArrayInputStream dataStream = new ByteArrayInputStream(bytes)) {
-            newBlockBlobClient.upload(dataStream, bytesSize);
+            blockBlobClient.upload(dataStream, bytesSize, true);
         } catch (Exception ex) {
             log.warning(ex.getMessage());
             throw new ApplicationException("Write to blob failed");
         }
 
         // Get the blobname
-        return newBlockBlobClient.getBlobName();
+        return blockBlobClient.getBlobName();
     }
 }
