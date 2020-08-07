@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -48,6 +49,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -124,7 +127,6 @@ public class AzureSchemaInfoStoreTest {
 
         Mockito.when(schemaStore.getSchema(dataPartitionId, schemaId)).thenReturn(CONTENT);
         assertEquals(CONTENT, schemaInfoStore.getLatestMinorVerSchema(getMockSchemaInfo()));
-
     }
 
     @Test
