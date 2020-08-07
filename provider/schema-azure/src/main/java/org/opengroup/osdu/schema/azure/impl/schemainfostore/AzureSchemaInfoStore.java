@@ -174,7 +174,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public String getLatestMinorVerSchema(SchemaInfo schemaInfo) throws ApplicationException {
 
-        SqlQuerySpec query = new SqlQuerySpec("SELECT * FROM c WHERE STARTSWITH(c.id, @partitionId)" +
+        SqlQuerySpec query = new SqlQuerySpec("SELECT * FROM c WHERE c.dataPartitionId = @partitionId" +
                 " AND c.flattenedSchemaInfo.authority = @authority" +
                 " AND c.flattenedSchemaInfo.source = @source" +
                 " AND c.flattenedSchemaInfo.entityType = @entityType" +
@@ -272,7 +272,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
-        String queryText = "SELECT * FROM c WHERE STARTSWITH(c.id, @partitionId)";
+        String queryText = "SELECT * FROM c WHERE c.dataPartitionId = @partitionId";
         HashMap<String, Object> parameterMap = new HashMap<>();
         // Populate the implicit partitionId parameter
         parameterMap.put("@partitionId", tenantId);
