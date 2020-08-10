@@ -37,8 +37,16 @@ public class SchemaConstants {
     public static final String ACCOUNT_ID = "account-Id";
     public static final String ACCOUNT_ID_COMMON_PROJECT = "common";
     public static final String ON_BEHALF_OF = "on-Behalf-Of";
-    public static final String ENTITLEMENT_SERVICE_GROUP_VIEWERS = "service.schema-service.viewers";
-    public static final String ENTITLEMENT_SERVICE_GROUP_EDITORS = "service.schema-service.editors";
+
+    // #### IMPORTANT [Brandt 8/8/2020] ##############################
+    // All other services define groups that aren't plural e.g. viewer/editor.  Our initialization
+    // scripts expect this convention so these groups were changed to match the other services
+    public static final String ENTITLEMENT_SERVICE_GROUP_VIEWERS = "service.schema-service.viewer";
+    public static final String ENTITLEMENT_SERVICE_GROUP_EDITORS = "service.schema-service.editor";
+//    public static final String ENTITLEMENT_SERVICE_GROUP_VIEWERS = "service.schema-service.viewers";
+//    public static final String ENTITLEMENT_SERVICE_GROUP_EDITORS = "service.schema-service.editors";
+
+
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
     public static final String REF = "$ref";
     public static final String DEFINITIONS = "definitions";

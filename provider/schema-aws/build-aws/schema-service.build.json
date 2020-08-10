@@ -33,17 +33,17 @@
     },
     "environment": {
         "type": "LINUX_CONTAINER",
-        "image": "aws/codebuild/standard:2.0",
+        "image": "aws/codebuild/standard:4.0",
         "computeType": "BUILD_GENERAL1_SMALL",
         "environmentVariables": [
             {
-                "name": "M2_REPO_S3_BUCKET",
-                "value": "dev-888733619319-persistent-maven-m2-bucket",
+                "name": "ECR_REGISTRY",
+                "value": "888733619319.dkr.ecr.us-east-1.amazonaws.com/schema-service_dev",
                 "type": "PLAINTEXT"
             },
             {
-                "name": "ECR_REGISTRY",
-                "value": "888733619319.dkr.ecr.us-east-1.amazonaws.com/schema-service_dev",
+                "name": "AWS_OSDU_DEV_MAVEN_URL",
+                "value": "https://osdu-dev-888733619319.d.codeartifact.us-east-1.amazonaws.com/maven/osdu-maven/",
                 "type": "PLAINTEXT"
             }
         ],
