@@ -14,10 +14,9 @@
 
 package org.opengroup.osdu.schema.azure.impl.schemastore;
 
-import com.azure.storage.blob.BlobContainerClient;
+import org.opengroup.osdu.azure.blobstorage.BlobStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-import org.opengroup.osdu.schema.azure.utils.OSDUAzureBlobStorageImpl;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
@@ -37,10 +36,7 @@ public class AzureSchemaStore implements ISchemaStore {
     private DpsHeaders headers;
 
     @Autowired
-    private BlobContainerClient blobContainerClient;
-
-    @Autowired
-    private OSDUAzureBlobStorageImpl blobStorage;
+    private BlobStore blobStore;
 
     @Autowired
     JaxRsDpsLog log;
@@ -59,7 +55,7 @@ public class AzureSchemaStore implements ISchemaStore {
     public String getSchema(String dataPartitionId, String filePath) throws ApplicationException, NotFoundException {
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
         try {
-            String content = blobStorage.readFromBlob(filePath);
+            String content = blobStore.readFromBlob(dataPartitionId, filePath);
             if (content != null)
                 return content;
             else
@@ -85,7 +81,8 @@ public class AzureSchemaStore implements ISchemaStore {
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
 
         try {
-            return blobStorage.writeToBlob(filePath, content);
+            blobStore.writeToBlob(dataPartitionId, filePath, content);
+            return filePath;
         } catch (Exception ex) {
             throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
         }
@@ -104,7 +101,7 @@ public class AzureSchemaStore implements ISchemaStore {
 
         try
         {
-            return blobStorage.deleteFromBlob(filePath);
+            return blobStore.deleteFromBlob(dataPartitionId, filePath);
         }
         catch (Exception e)
         {

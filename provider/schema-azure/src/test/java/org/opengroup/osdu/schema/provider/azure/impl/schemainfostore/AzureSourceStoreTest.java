@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureSourceStore;
@@ -112,24 +113,15 @@ public class AzureSourceStoreTest {
 
     @Test
     public void testCreateSource() throws  ApplicationException, BadRequestException {
-        doNothing().when(cosmosStore).upsertItem(anyString(), any(), any(), any());
+        doNothing().when(cosmosStore).createItem(anyString(), any(), any(), any());
         assertNotNull(store.create(mockSource));
     }
 
     @Test
     public void testCreateSource_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
-        SourceDoc sourceDoc = getSourceDoc(dataPartitionId, sourceId);
-        Optional<SourceDoc> cosmosItem = Optional.of(sourceDoc);
-        doReturn(cosmosItem)
-                .when(cosmosStore)
-                .findItem(
-                        eq(dataPartitionId),
-                        any(),
-                        any(),
-                        eq(dataPartitionId + ":" + sourceId),
-                        eq(dataPartitionId),
-                        any());
+        AppException exception = getMockAppException(409);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
         try {
             store.create(mockSource);
             fail("Should not succeed");
@@ -144,17 +136,8 @@ public class AzureSourceStoreTest {
     @Test
     public void testCreateSource_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException, CosmosClientException {
-        Optional<SourceDoc> cosmosItem = Optional.empty();
-        doReturn(cosmosItem)
-                .when(cosmosStore)
-                .findItem(
-                        eq(dataPartitionId),
-                        any(),
-                        any(),
-                        eq(dataPartitionId + ":" + sourceId),
-                        eq(dataPartitionId),
-                        any());
-        doThrow(AppException.class).when(cosmosStore).upsertItem(anyString(), any(), any(), any());
+        AppException exception = getMockAppException(500);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
 
         try {
             store.create(mockSource);
@@ -172,5 +155,13 @@ public class AzureSourceStoreTest {
         Source source = new Source();
         source.setSourceId(sourceName);
         return new SourceDoc(id, partitionId, source);
+    }
+
+    private AppException getMockAppException(int errorCode) {
+        AppException mockException = mock(AppException.class);
+        AppError mockError = mock(AppError.class);
+        lenient().when(mockException.getError()).thenReturn(mockError);
+        lenient().when(mockError.getCode()).thenReturn(errorCode);
+        return mockException;
     }
 }

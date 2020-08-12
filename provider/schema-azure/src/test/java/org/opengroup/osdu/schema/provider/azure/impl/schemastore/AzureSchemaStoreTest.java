@@ -21,16 +21,16 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.opengroup.osdu.azure.blobstorage.BlobStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.impl.schemastore.AzureSchemaStore;
-import org.opengroup.osdu.schema.azure.utils.OSDUAzureBlobStorageImpl;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class AzureSchemaStoreTest {
@@ -38,7 +38,7 @@ public class AzureSchemaStoreTest {
     AzureSchemaStore schemaStore;
 
     @Mock
-    OSDUAzureBlobStorageImpl blobStorage;
+    BlobStore blobStore;
 
     @Mock
     DpsHeaders headers;
@@ -62,7 +62,7 @@ public class AzureSchemaStoreTest {
 
     @Test
     public void testGetSchema() throws ApplicationException, NotFoundException {
-        doReturn(CONTENT).when(blobStorage).readFromBlob(filePath);
+        doReturn(CONTENT).when(blobStore).readFromBlob(dataPartitionId, filePath);
         Assert.assertEquals(CONTENT, schemaStore.getSchema(dataPartitionId, FILE_PATH));
     }
 
@@ -70,7 +70,7 @@ public class AzureSchemaStoreTest {
     public void testGetSchema_NotFound() throws ApplicationException, NotFoundException {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
-        doReturn(null).when(blobStorage).readFromBlob(filePath);
+        doReturn(null).when(blobStore).readFromBlob(dataPartitionId, filePath);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
 
@@ -79,13 +79,13 @@ public class AzureSchemaStoreTest {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
 
-        doThrow(ApplicationException.class).when(blobStorage).readFromBlob(filePath);
+        doThrow(AppException.class).when(blobStore).readFromBlob(dataPartitionId, filePath);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
 
     @Test
     public void testDeleteSchema() throws ApplicationException {
-        doReturn(true).when(blobStorage).deleteFromBlob(filePath);
+        doReturn(true).when(blobStore).deleteFromBlob(dataPartitionId, filePath);
 
         Boolean result = schemaStore.cleanSchemaProject(FILE_PATH);
         Assert.assertEquals(true, result);
@@ -96,14 +96,14 @@ public class AzureSchemaStoreTest {
         expectedException.expect(ApplicationException.class);
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
-        doThrow(ApplicationException.class).when(blobStorage).deleteFromBlob(filePath);
+        doThrow(AppException.class).when(blobStore).deleteFromBlob(dataPartitionId, filePath);
         schemaStore.cleanSchemaProject(FILE_PATH);
     }
 
     @Test
     public void testCreateSchema() throws ApplicationException {
 
-        doReturn(filePath).when(blobStorage).writeToBlob(filePath, CONTENT);
+        doNothing().when(blobStore).writeToBlob(dataPartitionId, filePath, CONTENT);
         Assert.assertEquals(filePath, schemaStore.createSchema(FILE_PATH, CONTENT));
     }
 
@@ -112,7 +112,7 @@ public class AzureSchemaStoreTest {
         expectedException.expect(ApplicationException.class);
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
-        doThrow(ApplicationException.class).when(blobStorage).writeToBlob(filePath, CONTENT);
+        doThrow(AppException.class).when(blobStore).writeToBlob(dataPartitionId, filePath, CONTENT);
         schemaStore.createSchema(FILE_PATH, CONTENT);
     }
 }

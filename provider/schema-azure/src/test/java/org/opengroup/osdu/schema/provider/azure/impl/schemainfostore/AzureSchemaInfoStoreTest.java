@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
@@ -214,16 +215,8 @@ public class AzureSchemaInfoStoreTest {
     public void testCreateSchemaInfo_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException {
 
-        Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
-        doReturn(cosmosItem)
-                .when(cosmosStore)
-                .findItem(
-                        eq(dataPartitionId),
-                        any(),
-                        any(),
-                        eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
-                        any());
+        AppException exception = getMockAppException(409);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
 
         try {
             schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published());
@@ -240,17 +233,8 @@ public class AzureSchemaInfoStoreTest {
     public void testCreateSchemaInfo_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException {
 
-        doReturn(Optional.empty())
-                .when(cosmosStore)
-                .findItem(
-                        eq(dataPartitionId),
-                        any(),
-                        any(),
-                        eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
-                        any());
-
-        doThrow(AppException.class).when(cosmosStore).upsertItem(anyString(), any(), any(), any());
+        AppException exception = getMockAppException(500);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
 
         try {
             schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published());
@@ -581,5 +565,13 @@ public class AzureSchemaInfoStoreTest {
                         .build())
                 .build();
 
+    }
+
+    private AppException getMockAppException(int errorCode) {
+        AppException mockException = mock(AppException.class);
+        AppError mockError = mock(AppError.class);
+        lenient().when(mockException.getError()).thenReturn(mockError);
+        lenient().when(mockError.getCode()).thenReturn(errorCode);
+        return mockException;
     }
 }

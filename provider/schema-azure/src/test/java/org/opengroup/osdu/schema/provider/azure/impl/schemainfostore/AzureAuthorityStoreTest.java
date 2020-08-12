@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureAuthorityStore;
@@ -35,7 +36,6 @@ import org.opengroup.osdu.azure.CosmosStore;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -112,24 +112,15 @@ public class AzureAuthorityStoreTest {
 
     @Test
     public void testCreateAuthority() throws  ApplicationException, BadRequestException {
-        doNothing().when(cosmosStore).upsertItem(eq(dataPartitionId), any(), any(), any());
+        doNothing().when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
         assertNotNull(store.create(mockAuthority));
     }
 
     @Test
     public void testCreateAuthority_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
-        AuthorityDoc authorityDoc = getAuthorityDoc(dataPartitionId, authorityId);
-        Optional<AuthorityDoc> cosmosItem = Optional.of(authorityDoc);
-        doReturn(cosmosItem)
-                .when(cosmosStore)
-                .findItem(
-                        eq(dataPartitionId),
-                        any(),
-                        any(),
-                        eq(dataPartitionId + ":" + authorityId),
-                        eq(dataPartitionId),
-                        any());
+        AppException exception = getMockAppException(409);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
 
         try {
             store.create(mockAuthority);
@@ -145,17 +136,8 @@ public class AzureAuthorityStoreTest {
     @Test
     public void testCreateAuthority_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException, CosmosClientException {
-        Optional<AuthorityDoc> cosmosItem = Optional.empty();
-        doReturn(cosmosItem)
-                .when(cosmosStore)
-                .findItem(
-                        eq(dataPartitionId),
-                        any(),
-                        any(),
-                        eq(dataPartitionId + ":" + authorityId),
-                        eq(dataPartitionId),
-                        any());
-        doThrow(AppException.class).when(cosmosStore).upsertItem(eq(dataPartitionId), any(), any(), any());
+        AppException exception = getMockAppException(500);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
         try {
             store.create(mockAuthority);
             fail("Should not succeed");
@@ -172,5 +154,13 @@ public class AzureAuthorityStoreTest {
         Authority authority = new Authority();
         authority.setAuthorityId(authorityName);
         return new AuthorityDoc(id, partitionId, authority);
+    }
+
+    private AppException getMockAppException(int errorCode) {
+        AppException mockException = mock(AppException.class);
+        AppError mockError = mock(AppError.class);
+        lenient().when(mockException.getError()).thenReturn(mockError);
+        lenient().when(mockError.getCode()).thenReturn(errorCode);
+        return mockException;
     }
 }

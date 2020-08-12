@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import com.azure.cosmos.*;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
@@ -104,21 +105,18 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
-
-        // Check whether SchemaInfo already exists and throw required exception.
-        Boolean exists = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, headers.getPartitionId(), SchemaInfoDoc.class).isPresent();
-        if (exists) {
-            log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
-            throw new BadRequestException(SchemaConstants.SCHEMA_ID_EXISTS);
-        }
-
         FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema.getSchemaInfo());
         SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, headers.getPartitionId(), flattenedSchemaInfo);
         try {
-            cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
-        } catch (Exception ex) {
-            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-            throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
+        } catch (AppException ex) {
+            if (ex.getError().getCode() == 409) {
+                log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
+                throw new BadRequestException(SchemaConstants.SCHEMA_ID_EXISTS);
+            } else {
+                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+                throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+            }
         }
 
         log.info(SchemaConstants.SCHEMA_CREATED);
