@@ -46,6 +46,10 @@ Once the above Prerequisite are done, we can follow the below steps to run the s
 
 You can access the service APIs by following the service contract in [schema.yaml](https://dev.azure.com/slb-des-ext-collaboration/open-data-ecosystem/_git/os-schema?path=%2Fdocs%2Fapi%2Fschema.yaml) 
 
+### 2. Azure deployment 
+
+Instructions for running the Azure implementation in the cloud can be found [here](https://community.opengroup.org/osdu/platform/system/schema-service/-/blob/master/provider/schema-azure/README.md).
+
 ## Running Automated Integration Test
 DevSanity tests are located in a schema-core project in testing directory under the project root directory.
 

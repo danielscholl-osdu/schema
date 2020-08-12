@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureEntityTypeStore;
@@ -114,16 +115,15 @@ public class AzureEntityTypeStoreTest {
     @Test
     public void testCreateEntityType() throws  ApplicationException, BadRequestException {
         Mockito.when(mockEntityType.getEntityTypeId()).thenReturn(entityTypeId);
-        doNothing().when(cosmosStore).upsertItem(anyString(), any(), any(), any());
+        doNothing().when(cosmosStore).createItem(anyString(), any(), any(), any());
         assertNotNull(store.create(mockEntityType));
     }
 
     @Test
     public void testCreateEntityType_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
-        EntityTypeDoc entityTypeDoc = getEntityTypeDoc(dataPartitionId, entityTypeId);
-        Optional<EntityTypeDoc> cosmosItem = Optional.of(entityTypeDoc);
-        doReturn(cosmosItem).when(cosmosStore).findItem(anyString(), any(), any(), anyString(), anyString(), any());
+        AppException exception = getMockAppException(409);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
 
         try {
             store.create(mockEntityType);
@@ -139,17 +139,8 @@ public class AzureEntityTypeStoreTest {
     @Test
     public void testCreateEntityType_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException, CosmosClientException {
-        Optional<EntityTypeDoc> cosmosItem = Optional.empty();
-        doReturn(cosmosItem)
-                .when(cosmosStore)
-                .findItem(
-                        eq(dataPartitionId),
-                        any(),
-                        any(),
-                        eq(dataPartitionId + ":" + entityTypeId),
-                        eq(dataPartitionId),
-                        any());
-        doThrow(AppException.class).when(cosmosStore).upsertItem(anyString(), any(), any(), any());
+        AppException exception = getMockAppException(500);
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
 
         try {
             store.create(mockEntityType);
@@ -167,5 +158,13 @@ public class AzureEntityTypeStoreTest {
         EntityType EntityType = new EntityType();
         EntityType.setEntityTypeId(EntityTypeName);
         return new EntityTypeDoc(id, partitionId, EntityType);
+    }
+
+    private AppException getMockAppException(int errorCode) {
+        AppException mockException = mock(AppException.class);
+        AppError mockError = mock(AppError.class);
+        lenient().when(mockException.getError()).thenReturn(mockError);
+        lenient().when(mockError.getCode()).thenReturn(errorCode);
+        return mockException;
     }
 }

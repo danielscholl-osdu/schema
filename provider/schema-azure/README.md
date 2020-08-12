@@ -52,6 +52,19 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 | `AZURE_CLIENT_SECRET` | `********` | Secret for `$AZURE_CLIENT_ID` | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password` |
 
 
+**Required to run integration tests**
+
+| name | value | description | sensitive? | source |
+| ---  | ---   | ---         | ---        | ---    |
+| `AZURE_AD_APP_RESOURCE_ID` | `********` | AAD client application ID | yes | output of infrastructure deployment |
+| `AZURE_AD_TENANT_ID` | `********` | AD tenant to authenticate users from | yes | -- |
+| `INTEGRATION_TESTER` | `********` | System identity to assume for API calls. Note: this user must have entitlements configured already | no | -- |
+| `PRIVATE_TENANT1` | `opendes` | OSDU tenant used for testing | no | -- |
+| `PRIVATE_TENANT2` | `tenant2` | OSDU tenant used for testing | no | -- |
+| `SHARED_TENANT` | `common` | OSDU tenant used for testing | no | -- |
+| `VENDOR` | `azure` | cloud provider name | no | -- |
+| `HOST` | ex: `http://localhost:8080` | OSDU tenant used for testing | no | -- |
+| `TESTER_SERVICEPRINCIPAL_SECRET` | `********` | Secret for `$INTEGRATION_TESTER` | yes | -- |
 
 ### Configure Maven
 
@@ -109,6 +122,19 @@ After configuring your environment as specified above, you can follow these step
 
 After the service has started it should be accessible via a web browser by visiting [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html). If the request does not fail, you can then run the integration tests.
 
+### Running automated integration tests:
+These tests validate functionality of schema service. 
+
+They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
+Below command has to be run post building complete project.
+    
+
+    cd testing/schema-test-core
+    mvn verify -DVENDOR=azure -DHOST=http://localhost:8080 -DPRIVATE_TENANT1=opendes -DPRIVATE_TENANT2=tenant2 -DSHARED_TENANT=common -Dcucumber.options="--tags @SchemaService"
+    
+Below command can be run through azure-pipeline.yml after setting environment variables in the pipeline.
+
+	verify "-Dcucumber.options=--tags @SchemaService"
 
 ## Debugging
 

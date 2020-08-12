@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.definitions.SourceDoc;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -78,23 +79,20 @@ public class AzureSourceStore implements ISourceStore {
      */
     @Override
     public Source create(Source source) throws BadRequestException, ApplicationException {
-
         String id = headers.getPartitionId() + ":" + source.getSourceId();
-
-        // Check whether Source already exists and throw required exception.
-        Boolean exists = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, headers.getPartitionId(), SourceDoc.class).isPresent();
-        if (exists) {
-            log.warning(SchemaConstants.SOURCE_EXISTS);
-            throw new BadRequestException(MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION,
-                    source.getSourceId()));
-        }
 
         try {
             SourceDoc sourceDoc = new SourceDoc(id, headers.getPartitionId(), source);
-            cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, sourceContainer, sourceDoc);
-        } catch (Exception ex) {
-            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, sourceDoc);
+        } catch (AppException ex) {
+            if (ex.getError().getCode() == 409) {
+                log.warning(SchemaConstants.SOURCE_EXISTS);
+                throw new BadRequestException(MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION,
+                        source.getSourceId()));
+            } else {
+                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+                throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+            }
         }
 
         log.info(SchemaConstants.SOURCE_CREATED);
