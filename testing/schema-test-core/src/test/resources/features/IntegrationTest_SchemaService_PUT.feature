@@ -163,20 +163,20 @@ Feature: To verify functionality of PUT schema Service
   @SchemaService
   Scenario Outline: Verify that create Schema Service supersededBy functionality work correctly
     Given I hit schema service PUT API for supersededBy with <InputPayload> and data-partition-id as <tenant>
-    Then the put service for supersededBy should respond back with <ReponseStatusCode> and <ResponseMessage>
+    Then the put service for supersededBy should respond back with <ReponseStatusCode>
 
     Examples: 
-      | parameter   | value              | latestVersion | InputPayload                                           | tenant    | ReponseStatusCode | ResponseMessage                                                    |
-      | "authority" | "SchemaSanityTest" | "true"        | "/input_payloads/supercededInputPayload_positive.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
+      | parameter   | value              | latestVersion | InputPayload                                           | tenant    | ReponseStatusCode |
+      | "authority" | "SchemaSanityTest" | "true"        | "/input_payloads/supercededInputPayload_positive.json" | "TENANT1" | "201"             |
 
   @SchemaService
   Scenario Outline: Verify that update Schema Service supersededBy functionality work correctly
     Given I hit schema service PUT API with <InputPayload>, data-partition-id as <tenant> for superceded input
-    Then the put service for supersededBy should respond back with <ReponseStatusCode> and <ResponseMessage>
+    Then the put service for supersededBy should respond back with <ReponseStatusCode>
 
     Examples: 
-      | parameter   | value              | latestVersion | InputPayload                                           | tenant    | ReponseStatusCode | ResponseMessage                                                    |
-      | "authority" | "SchemaSanityTest" | "true"        | "/input_payloads/supercededInputPayload_positive.json" | "TENANT1" | "200"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
+      | parameter   | value              | latestVersion | InputPayload                                           | tenant    | ReponseStatusCode |
+      | "authority" | "SchemaSanityTest" | "true"        | "/input_payloads/postSchemaService_EmptySchema.json" | "TENANT1" | "200"             |
 
   @SchemaService
   Scenario Outline: Verify that Schema Service's PUT API throws correct error if input payload is not valid
