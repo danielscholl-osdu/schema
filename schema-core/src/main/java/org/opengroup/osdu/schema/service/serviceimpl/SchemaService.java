@@ -2,10 +2,12 @@ package org.opengroup.osdu.schema.service.serviceimpl;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +34,6 @@ import org.opengroup.osdu.schema.service.ISchemaService;
 import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
-import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,7 +75,7 @@ public class SchemaService implements ISchemaService {
 
     @Autowired
     DpsHeaders headers;
-
+    
     /**
      * Method to get schema
      *
@@ -246,8 +247,11 @@ public class SchemaService implements ISchemaService {
         if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
         	schemaList = getLatestVersionSchemaList(schemaList);
         }
+        
+        Comparator<SchemaInfo> compareByCreatedDate = (s1,s2) -> s1.getDateCreated().compareTo(s2.getDateCreated());
 
         List<SchemaInfo> schemaFinalList = schemaList.stream().skip(queryParams.getOffset())
+        		.sorted(compareByCreatedDate)
                 .limit(queryParams.getLimit()).collect(Collectors.toList());
 
         return SchemaInfoResponse.builder().schemaInfos(schemaFinalList).count(schemaFinalList.size())
@@ -256,6 +260,7 @@ public class SchemaService implements ISchemaService {
 
     private void getSchemaInfos(QueryParams queryParams, List<SchemaInfo> schemaList, String tenant)
             throws ApplicationException {
+    	
         schemaInfoStore.getSchemaInfoList(queryParams, tenant).forEach(schemaList::add);
     }
 
@@ -287,46 +292,61 @@ public class SchemaService implements ISchemaService {
     
     
     private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {
-        List<SchemaInfo> latestSchemaList = new LinkedList<>();
-        SchemaInfo previousSchemaInfo = null;
-        TreeMap<VersionHierarchyUtil, SchemaInfo> sortedMap = new TreeMap<>(
-                new VersionHierarchyUtil.SortingVersionComparator());
+    	
+		List<SchemaInfo> latestSchemaList = new ArrayList<>();
+		Map<String, SchemaInfo> latestSchemaMap = new HashMap<>();
 
-        for (SchemaInfo schemaInfoObject : filteredSchemaList) {
-            if ((previousSchemaInfo != null) && !(checkAuthorityMatch(previousSchemaInfo, schemaInfoObject)
-                    && checkSourceMatch(previousSchemaInfo, schemaInfoObject)
-                    && checkEntityMatch(previousSchemaInfo, schemaInfoObject))) {
-                Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
-                latestSchemaList.add(latestVersionEntry.getValue());
-                sortedMap.clear();
-            }
-            previousSchemaInfo = schemaInfoObject;
-            SchemaIdentity schemaIdentity = schemaInfoObject.getSchemaIdentity();
-            VersionHierarchyUtil version = new VersionHierarchyUtil(schemaIdentity.getSchemaVersionMajor(),
-                    schemaIdentity.getSchemaVersionMinor(), schemaIdentity.getSchemaVersionPatch());
-            sortedMap.put(version, schemaInfoObject);
-        }
-        if (sortedMap.size() != 0) {
-            Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
-            latestSchemaList.add(latestVersionEntry.getValue());
-        }
+		for(SchemaInfo schemaInfo :filteredSchemaList) {
+			
+			String key = getGroupingKey(schemaInfo);
+			latestSchemaMap.computeIfAbsent(key, k -> schemaInfo);
 
-        return latestSchemaList;
+			SchemaInfo value = latestSchemaMap.get(key);
+			
+			if(compareSchemaVersion(schemaInfo, value) >= 0) 
+				latestSchemaMap.put(key, schemaInfo);
+			
+		}
+
+		latestSchemaList.addAll(latestSchemaMap.values());
+		
+		return latestSchemaList;
     }
+    
+    /***
+	 * This method creates a key based on Athority:Source:EntityType
+	 * 
+	 * @param schemaInfo SchemaInfo whose key is to be formed
+	 * @return String based key formed using Athority:Source:EntityType
+	 */
+	private String getGroupingKey(SchemaInfo schemaInfo){
+		return String.join(":", schemaInfo.getSchemaIdentity().getAuthority(),
+				schemaInfo.getSchemaIdentity().getSource(), 
+				schemaInfo.getSchemaIdentity().getEntityType());
+	}
+	
+	/****
+	 * This method compares the schema versions of two SchemaInfo attribute. The comparison is done based on the following order <br>
+	 * 1. Major Version <br>
+	 * 2. Minor Version <br>
+	 * 3. Patch Version <br>
+	 * 
+	 * @param scInfo1 SchemaInfo version
+	 * @param scInfo2 SchemaInfo
+	 * @return Returns positive integer if version of scInfo1 is greater than version of scInfo2
+	 */
+	private int compareSchemaVersion(SchemaInfo scInfo1, SchemaInfo scInfo2){
 
-    private boolean checkEntityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
-        return schemaInfoObject.getSchemaIdentity().getEntityType()
-                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getEntityType());
-    }
+		Comparator<SchemaInfo> compareByMajor = 
+				(s1,s2) -> s1.getSchemaIdentity().getSchemaVersionMajor().compareTo(s2.getSchemaIdentity().getSchemaVersionMajor());
 
-    private boolean checkSourceMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
-        return schemaInfoObject.getSchemaIdentity().getSource()
-                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getSource());
-    }
+		Comparator<SchemaInfo> compareByMinor = 
+				(s1,s2) -> s1.getSchemaIdentity().getSchemaVersionMinor().compareTo(s2.getSchemaIdentity().getSchemaVersionMinor());
+		
+		Comparator<SchemaInfo> compareByPatch = 
+				(s1,s2) -> s1.getSchemaIdentity().getSchemaVersionPatch().compareTo(s2.getSchemaIdentity().getSchemaVersionPatch());
 
-    private boolean checkAuthorityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
-        return schemaInfoObject.getSchemaIdentity().getAuthority()
-                .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
-    }
-
+		
+		return compareByMajor.thenComparing(compareByMinor).thenComparing(compareByPatch).compare(scInfo1, scInfo2);
+	}
 }
