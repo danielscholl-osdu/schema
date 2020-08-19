@@ -14,13 +14,11 @@
 
 package org.opengroup.osdu.schema.provider.azure.impl.schemainfostore;
 
-import com.azure.cosmos.*;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,7 +32,6 @@ import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.definitions.FlattenedSchemaInfo;
 import org.opengroup.osdu.schema.azure.definitions.SchemaInfoDoc;
 import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureSchemaInfoStore;
-import org.opengroup.osdu.schema.azure.impl.schemastore.AzureSchemaStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
@@ -82,9 +79,6 @@ public class AzureSchemaInfoStoreTest {
     DpsHeaders headers;
 
     @Mock
-    AzureSchemaStore schemaStore;
-
-    @Mock
     FlattenedSchemaInfo flattenedSchemaInfo;
 
     private static final String dataPartitionId = "testPartitionId";
@@ -126,7 +120,6 @@ public class AzureSchemaInfoStoreTest {
                 .when(cosmosStore)
                 .queryItems(eq(dataPartitionId), any(), any(), any(), any(), any());
 
-        Mockito.when(schemaStore.getSchema(dataPartitionId, schemaId)).thenReturn(CONTENT);
         assertEquals(CONTENT, schemaInfoStore.getLatestMinorVerSchema(getMockSchemaInfo()));
     }
 
@@ -512,6 +505,7 @@ public class AzureSchemaInfoStoreTest {
                 .patchVersion(1L)
                 .scope(SchemaScope.SHARED.toString())
                 .status(SchemaStatus.PUBLISHED.toString())
+                .schema(CONTENT)
                 .build();
     }
 

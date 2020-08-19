@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.azure.cosmos.*;
+import com.google.gson.Gson;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -28,7 +29,6 @@ import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.definitions.FlattenedSchemaInfo;
 import org.opengroup.osdu.schema.azure.definitions.SchemaInfoDoc;
-import org.opengroup.osdu.schema.azure.impl.schemastore.AzureSchemaStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
@@ -71,10 +71,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Autowired
     JaxRsDpsLog log;
 
-    @Autowired
-    AzureSchemaStore schemaStore;
-
-
     /**
      * Method to get schemaInfo from azure store
      *
@@ -105,7 +101,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
-        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema.getSchemaInfo());
+        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
         SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, headers.getPartitionId(), flattenedSchemaInfo);
         try {
             cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
@@ -134,7 +130,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
-        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema.getSchemaInfo());
+        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
         SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, headers.getPartitionId(), flattenedSchemaInfo);
         try {
             cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
@@ -191,17 +187,12 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         TreeMap<Long, String> sortedMap = new TreeMap<>(Collections.reverseOrder());
         for (SchemaInfoDoc info : schemaInfoList)
         {
-            sortedMap.put(info.getFlattenedSchemaInfo().getMinorVersion(), info.getFlattenedSchemaInfo().getId());
+            sortedMap.put(info.getFlattenedSchemaInfo().getMinorVersion(), info.getFlattenedSchemaInfo().getSchema());
         }
 
         if (sortedMap.size() != 0) {
             Entry<Long, String> entry = sortedMap.firstEntry();
-            String schemaId = entry.getValue();
-            try {
-                return schemaStore.getSchema(headers.getPartitionId(), schemaId);
-            } catch (NotFoundException e) {
-                return new String();
-            }
+            return entry.getValue();
         }
         return new String();
     }
@@ -212,8 +203,9 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
      * @param schema
      * @return
      */
-    private FlattenedSchemaInfo populateSchemaInfo(SchemaInfo schemaInfo)
+    private FlattenedSchemaInfo populateSchemaInfo(SchemaRequest schemaRequest)
             throws BadRequestException {
+        SchemaInfo schemaInfo = schemaRequest.getSchemaInfo();
         // check for super-seeding schemas
         String supersededById = "";
         if (schemaInfo.getSupersededBy() != null) {
@@ -227,6 +219,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
             supersededById = schemaInfo.getSupersededBy().getId();
         }
 
+        Gson gson = new Gson();
         return FlattenedSchemaInfo.builder().id(schemaInfo.getSchemaIdentity().getId())
                 .supersededBy(supersededById)
                 .dateCreated(new Date())
@@ -239,6 +232,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
                 .patchVersion(schemaInfo.getSchemaIdentity().getSchemaVersionPatch())
                 .scope(schemaInfo.getScope().name())
                 .status(schemaInfo.getStatus().name())
+                .schema(gson.toJson(schemaRequest.getSchema()))
                 .build();
     }
 
