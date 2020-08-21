@@ -180,7 +180,9 @@ public class SchemaServiceStepDef_POST implements En {
 					Gson gsn = new Gson();
 					JsonObject expectedData = gsn.fromJson(body, JsonObject.class);
 					JsonObject responseMsg = gsn.fromJson(response.getBody().toString(), JsonObject.class);
-					assertEquals(expectedData.toString(), responseMsg.toString());
+					if(!response.getBody().isEmpty())
+						assertEquals(expectedData.toString(), responseMsg.toString());
+
 				});
 
 		Given("I hit schema service POST API with {string} and auth token invalid", (String inputPayload) -> {

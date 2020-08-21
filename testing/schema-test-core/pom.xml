@@ -9,7 +9,11 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>schema-test-core</artifactId>
+	<artifactId>schema-test-core</artifactId>	
+	<properties>
+		<os-core-lib-ibm.version>0.3.6-SNAPSHOT</os-core-lib-ibm.version>
+	</properties>
+	
 	<dependencies>
 
 		<dependency>
@@ -75,6 +79,12 @@
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>core-lib-azure</artifactId>
 			<version>0.0.17</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>os-core-lib-ibm</artifactId>
+			<version>${os-core-lib-ibm.version}</version>
 		</dependency>
 	</dependencies>
 
