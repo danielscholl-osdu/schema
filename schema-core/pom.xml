@@ -15,7 +15,7 @@
 
 	<properties>
 		<springfox-version>2.7.0</springfox-version>
-		<os-core-common.version>0.0.18</os-core-common.version>
+		<os-core-common.version>0.3.5</os-core-common.version>
 	</properties>
 
 	<dependencies>
