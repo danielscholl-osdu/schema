@@ -1,3 +1,16 @@
+// Copyright © 2020 Amazon Web Services
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
@@ -6,6 +19,8 @@ import org.joda.time.DateTime;
 import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -19,6 +34,7 @@ import org.opengroup.osdu.schema.provider.aws.models.SchemaInfoDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -32,6 +48,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Inject
   private DpsHeaders headers;
+
+  @Autowired
+  private ITenantFactory tenantFactory;
 
   @Inject
   private JaxRsDpsLog log;
@@ -74,15 +93,17 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
     // Set Audit properties
     SchemaInfo schemaInfo = schema.getSchemaInfo();
-
-    SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schema.getSchemaInfo(), partitionId);
-    schemaInfoDoc.setDataPartitionId(partitionId);
+    schemaInfo.setCreatedBy(userEmail);
+    schemaInfo.setDateCreated(DateTime.now().toDate());
+    SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, partitionId);
     schemaInfoDoc.setId(id);
 
-    throwExceptionIfSupersedingSchemaIsNotFoundInDb(schemaInfo.getSupersededBy(), partitionId);
+    validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
+
 
     try {
       queryHelper.save(schemaInfoDoc);
+
     } catch (Exception ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
@@ -103,10 +124,13 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     schemaInfo.setDateCreated(DateTime.now().toDate());
 
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schema.getSchemaInfo(), partitionId);
-    schemaInfoDoc.setDataPartitionId(partitionId);
     schemaInfoDoc.setId(id);
 
-    throwExceptionIfSupersedingSchemaIsNotFoundInDb(schemaInfo.getSupersededBy(), partitionId);
+    if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) == true) {
+      throw new BadRequestException("Schema " + id + " already exist. Can't create again.");
+    }
+    validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
+
 
     try {
       queryHelper.save(schemaInfoDoc);
@@ -122,18 +146,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   public String getLatestMinorVerSchema(SchemaInfo schemaInfo) throws ApplicationException {
     String dataPartitionId = headers.getPartitionId();
     SchemaInfoDoc fullSchemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, headers.getPartitionId());
-    // remap to another object only containing the partial key
-    SchemaInfoDoc query = SchemaInfoDoc.builder()
-            .dataPartitionId(fullSchemaInfoDoc.getDataPartitionId())
-            .authority(fullSchemaInfoDoc.getAuthority())
-            .scope(fullSchemaInfoDoc.getScope())
-            .entityType(fullSchemaInfoDoc.getEntityType())
-            .build();
 
-    PaginatedQueryList<SchemaInfoDoc> results = queryHelper.queryByGSI(SchemaInfoDoc.class,
-            query,
-            "MajorVersion",
-            fullSchemaInfoDoc.getMajorVersion());
+    SchemaInfoDoc gsiQuery = new SchemaInfoDoc();
+    gsiQuery.setGsiPartitionKey(fullSchemaInfoDoc.getGsiPartitionKey());
+
+    PaginatedQueryList<SchemaInfoDoc> results = queryHelper.queryByGSI(SchemaInfoDoc.class,gsiQuery,"MajorVersion",fullSchemaInfoDoc.getMajorVersion());
+
 
     TreeMap<Long, SchemaInfoDoc> sortedMap = new TreeMap<>(Collections.reverseOrder());
 
@@ -220,12 +238,29 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     return toReturn;
   }
 
-  @Override
+
+ @Override
   public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
-    String id = tenantId + ":" + schemaId;
-    SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
-    schemaInfoDoc.setId(id);
-    return !queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc);
+   Set<String> tenantList = new HashSet<>();
+   tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+   tenantList.add(tenantId);
+
+   // code to call check uniqueness
+   if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+     List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
+             .collect(Collectors.toList());
+     tenantList.addAll(privateTenantList);
+   }
+
+   for (String tenant : tenantList) {
+     String id = tenant + ":" + schemaId;
+     SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
+     schemaInfoDoc.setId(id);
+     if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) == true){ // the schemaId exists and hence is not unique
+       return false;
+     }
+   }
+   return true;
   }
 
   @Override
@@ -243,13 +278,21 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     }
   }
 
-  private void throwExceptionIfSupersedingSchemaIsNotFoundInDb(SchemaIdentity schema, String tenantId) throws ApplicationException, BadRequestException {
-    if (schema != null) {
-      if (!isUnique(schema.getId(), tenantId)) {
-        throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+
+  private void validateSupersededById(SchemaIdentity superseding_schema, String tenantId) throws ApplicationException, BadRequestException {
+    if (superseding_schema != null) {
+      String id = tenantId + ":" + superseding_schema.getId();
+      SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
+      schemaInfoDoc.setId(id);
+      if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) == false) // superseding schema does ot exist in the db
+      {
+         throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
       }
+
     }
   }
+
+
 
   private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {
     List<SchemaInfo> latestSchemaList = new LinkedList<>();

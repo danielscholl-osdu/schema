@@ -1,4 +1,4 @@
-// Copyright © Amazon Web Services
+// Copyright © 2020 Amazon Web Services
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,8 +64,8 @@ public class AwsServiceConfig {
   @Setter(AccessLevel.PROTECTED)
   public Boolean ssmEnabled;
 
-  @Inject
-  protected JaxRsDpsLog logger;
+  /*@Inject
+  protected JaxRsDpsLog logger;*/
 
   @PostConstruct
   public void init() {
@@ -77,7 +77,8 @@ public class AwsServiceConfig {
       try {
         s3DataBucket = ssm.getProperty(s3DataBucketParameter).toString();
       } catch (Exception e) {
-        logger.error(String.format("SSM property %s not found", s3DataBucketParameter));
+        //logger.error(String.format("SSM property %s not found", s3DataBucketParameter));
+        System.out.println(String.format("SSM property %s not found", s3DataBucketParameter));
       }
     }
   }

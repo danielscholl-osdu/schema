@@ -1,4 +1,4 @@
-# Copyright © Amazon Web Services
+# Copyright © 2020 Amazon Web Services
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -59,8 +59,10 @@ phases:
 #      - cp ./provider/delivery-aws/target/*spring-boot.jar ${OUTPUT_DIR}/bin # copy aws jars
 #      - cp ./delivery-core/target/*.jar ${OUTPUT_DIR}/bin # copy core jar
 
-      # - echo "Building integration testing assemblies and gathering artifacts..."
-      # - ./testing/schema-test-aws/build-aws/prepare-dist.sh
+      - echo "Building integration testing assemblies and gathering artifacts..."
+       #Needed to add this for Windows
+      - chmod +x ./testing/schema-test-aws/build-aws/prepare-dist.sh
+      - ./testing/schema-test-aws/build-aws/prepare-dist.sh
 
       - echo "Building docker image..."
       - docker build -f provider/schema-aws/build-aws/Dockerfile -t ${ECR_IMAGE} .
@@ -74,12 +76,12 @@ phases:
         python provider/schema-aws/build-aws/build-info.py --branch ${CODEBUILD_SOURCE_VERSION} --commit ${CODEBUILD_RESOLVED_SOURCE_VERSION} \
           --buildid ${CODEBUILD_BUILD_ID} --buildnumber ${CODEBUILD_BUILD_NUMBER} --reponame ${REPO_NAME} --outdir ${OUTPUT_DIR} \
           --artifact ${ECR_IMAGE}
-#reports:
-#  SurefireReports: # CodeBuild will create a report group called "SurefireReports".
-#    files: #Store all of the files
-#      - "schema-core/target/surefire-reports/**/*"
-#      - "provider/schema-aws/target/surefire-reports/**/*"
-#    base-directory: "." # Location of the reports
+reports:
+  SurefireReports: # CodeBuild will create a report group called "SurefireReports".
+    files: #Store all of the files
+      - "schema-core/target/surefire-reports/**/*"
+      - "provider/schema-aws/target/surefire-reports/**/*"
+    base-directory: "." # Location of the reports
 artifacts:
   files:
     - "**/*"

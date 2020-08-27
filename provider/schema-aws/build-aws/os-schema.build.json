@@ -1,9 +1,9 @@
 {
-    "name": "schema-service",
-    "description": "Build of the os-delivery repository",
+    "name": "os-schema",
+    "description": "Build of the os-schema repository",
     "source": {
         "type": "CODECOMMIT",
-        "location": "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/schema-service",
+        "location": "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/os-schema",
         "gitCloneDepth": 1,
         "gitSubmodulesConfig": {
             "fetchSubmodules": false
@@ -17,9 +17,9 @@
     "artifacts": {
         "type": "S3",
         "location": "888733619319-devops-build-artifacts",
-        "path": "schema-service",
+        "path": "os-schema",
         "namespaceType": "NONE",
-        "name": "schema-service",
+        "name": "os-schema",
         "packaging": "ZIP",
         "overrideArtifactName": true,
         "encryptionDisabled": false
@@ -38,7 +38,7 @@
         "environmentVariables": [
             {
                 "name": "ECR_REGISTRY",
-                "value": "888733619319.dkr.ecr.us-east-1.amazonaws.com/schema-service_dev",
+                "value": "888733619319.dkr.ecr.us-east-1.amazonaws.com/os-schema_dev",
                 "type": "PLAINTEXT"
             },
             {
