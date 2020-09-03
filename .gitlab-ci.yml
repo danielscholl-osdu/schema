@@ -9,7 +9,8 @@ variables:
   GCP_DOMAIN: cloud.slb-ds.com
 
   IBM_BUILD_SUBDIR: provider/schema-ibm
-  #IBM_INT_TEST_SUBDIR: testing/schema-test-ibm
+  IBM_INT_TEST_SUBDIR: testing/schema-test-core
+  IBM_TEST_CMD: verify
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
