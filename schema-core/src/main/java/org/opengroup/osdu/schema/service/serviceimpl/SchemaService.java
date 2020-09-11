@@ -273,7 +273,6 @@ public class SchemaService implements ISchemaService {
 				response = createSchema(schemaRequest);
 				httpCode = HttpStatus.CREATED;
 			}catch (BadRequestException badreqEx) {
-				
 				//If there is same schema-id for other tenant then throw different error message
 				if(SchemaConstants.SCHEMA_ID_EXISTS.equals(badreqEx.getMessage()))
 					throw new BadRequestException(SchemaConstants.INVALID_UPDATE_OPERATION);
