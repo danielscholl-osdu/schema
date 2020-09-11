@@ -280,7 +280,6 @@ public class SchemaService implements ISchemaService {
 				throw badreqEx;
 			}
 		}
-		
 		return upsertBuilder.schemaInfo(response).httpCode(httpCode).build();
 	}
 
