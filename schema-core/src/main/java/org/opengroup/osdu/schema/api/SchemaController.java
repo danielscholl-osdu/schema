@@ -1,7 +1,6 @@
 package org.opengroup.osdu.schema.api;
 
 import javax.validation.Valid;
-
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -33,21 +32,21 @@ public class SchemaController {
     ISchemaService schemaService;
 
     @PostMapping()
-    //@PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_EDITORS + "')")
+    @PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_EDITORS + "')")
     public ResponseEntity<SchemaInfo> createSchema(@Valid @RequestBody SchemaRequest schemaRequest)
             throws ApplicationException, BadRequestException {
         return new ResponseEntity<>(schemaService.createSchema(schemaRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    //@PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_VIEWERS + "')")
+    @PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_VIEWERS + "')")
     public ResponseEntity<Object> getSchema(@PathVariable("id") String id)
             throws ApplicationException, NotFoundException, BadRequestException {
         return new ResponseEntity<>(schemaService.getSchema(id), HttpStatus.OK);
     }
 
     @GetMapping()
-    //@PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_VIEWERS + "')")
+    @PreAuthorize("@authorizationFilter.hasRole('" + SchemaConstants.ENTITLEMENT_SERVICE_GROUP_VIEWERS + "')")
     public ResponseEntity<SchemaInfoResponse> getSchemaInfoList(
             @RequestParam(required = false, name = "authority") String authority,
             @RequestParam(required = false, name = "source") String source,
