@@ -12,6 +12,12 @@ variables:
   IBM_INT_TEST_SUBDIR: testing/schema-test-core
   IBM_TEST_CMD: verify
 
+  AZURE_SERVICE: schema
+  AZURE_BUILD_SUBDIR: provider/schema-azure
+  AZURE_TEST_SUBDIR: testing/schema-test-core
+  AZURE_SKIP_TEST: 'true'
+
+
 include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "standard-setup.yml"
@@ -31,8 +37,8 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "scanners/gitlab-ultimate.yml"
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "scanners/gitlab-ultimate.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/azure.yml"
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/azure.yml"
