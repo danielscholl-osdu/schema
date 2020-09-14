@@ -17,6 +17,11 @@ variables:
   AZURE_TEST_SUBDIR: testing/schema-test-core
   AZURE_SKIP_TEST: 'true'
 
+  AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
+  AWS_TEST_SUBDIR: testing/schema-test-aws
+  AWS_SERVICE: schema-service
+  AWS_ENVIRONMENT: dev
+
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
