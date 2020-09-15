@@ -18,7 +18,7 @@ variables:
   AZURE_SKIP_TEST: 'true'
 
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
-  AWS_TEST_SUBDIR: testing/schema-test-aws
+  AWS_TEST_SUBDIR: testing/schema-test-core
   AWS_SERVICE: schema-service
   AWS_ENVIRONMENT: dev
 
@@ -30,14 +30,14 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "build/maven.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "scanners/fossa.yml"
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "scanners/fossa.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/gcp.yml"
+  #- project: "osdu/platform/ci-cd-pipelines"
+   # file: "cloud-providers/gcp.yml"
 
-  # - project: 'osdu/platform/ci-cd-pipelines'
-  #   file: 'cloud-providers/aws.yml'
+  - project: 'osdu/platform/ci-cd-pipelines'
+    file: 'cloud-providers/aws.yml'
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
