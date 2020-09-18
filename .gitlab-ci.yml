@@ -21,6 +21,7 @@ variables:
   AWS_TEST_SUBDIR: testing/schema-test-core
   AWS_SERVICE: schema-service
   AWS_ENVIRONMENT: dev
+  AWS_MAVEN_TEST_COMMAND_OVERRIDE: verify
 
 
 include:
@@ -38,6 +39,7 @@ include:
 
   - project: 'osdu/platform/ci-cd-pipelines'
     file: 'cloud-providers/aws.yml'
+    ref: 'aws-schema-service'
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
