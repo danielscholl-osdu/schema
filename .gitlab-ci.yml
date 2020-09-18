@@ -19,7 +19,7 @@ variables:
 
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   AWS_TEST_SUBDIR: testing/schema-test-core
-  AWS_SERVICE: schema-service
+  AWS_SERVICE: schema
   AWS_ENVIRONMENT: dev
   AWS_MAVEN_TEST_COMMAND_OVERRIDE: verify
 
