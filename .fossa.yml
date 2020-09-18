@@ -24,3 +24,7 @@ analyze:
     type: mvn
     target: provider/schema-azure/pom.xml
     path: .
+  - name: os-schema-aws
+    type: mvn
+    target: provider/schema-aws/pom.xml
+    path: .
