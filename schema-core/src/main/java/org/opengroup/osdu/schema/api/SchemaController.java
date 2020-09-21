@@ -1,16 +1,15 @@
 package org.opengroup.osdu.schema.api;
 
 import javax.validation.Valid;
-
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
-import org.opengroup.osdu.schema.exceptions.NoSchemaFoundException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaInfoResponse;
 import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.model.SchemaUpsertResponse;
 import org.opengroup.osdu.schema.service.ISchemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,13 +72,8 @@ public class SchemaController {
     public ResponseEntity<SchemaInfo> upsertSchema(@Valid @RequestBody SchemaRequest schemaRequest)
             throws ApplicationException, BadRequestException {
 
-        ResponseEntity<SchemaInfo> response = null;
-        try {
-            response = new ResponseEntity<>(schemaService.updateSchema(schemaRequest), HttpStatus.OK);
-        } catch (NoSchemaFoundException noSchemaFound) {
-            response = new ResponseEntity<>(schemaService.createSchema(schemaRequest), HttpStatus.CREATED);
-        }
-
+        SchemaUpsertResponse upsertResp = schemaService.upsertSchema(schemaRequest);
+        ResponseEntity<SchemaInfo> response = new ResponseEntity<>(upsertResp.getSchemaInfo(), upsertResp.getHttpCode());
         return response;
     }
 

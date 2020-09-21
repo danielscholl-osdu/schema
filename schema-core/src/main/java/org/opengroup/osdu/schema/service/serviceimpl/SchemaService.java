@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -26,6 +25,7 @@ import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaInfoResponse;
 import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.model.SchemaUpsertResponse;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.service.IAuthorityService;
@@ -35,8 +35,8 @@ import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -257,6 +257,29 @@ public class SchemaService implements ISchemaService {
         return SchemaInfoResponse.builder().schemaInfos(schemaFinalList).count(schemaFinalList.size())
                 .offset(queryParams.getOffset()).totalCount(schemaList.size()).build();
     }
+    
+    @Override
+	public SchemaUpsertResponse upsertSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException {
+		SchemaInfo response = null;
+		HttpStatus httpCode = HttpStatus.BAD_REQUEST;
+		SchemaUpsertResponse.SchemaUpsertResponseBuilder upsertBuilder = SchemaUpsertResponse.builder();
+		try {
+			response = updateSchema(schemaRequest);
+			httpCode = HttpStatus.OK;
+		} catch (NoSchemaFoundException noSchemaFound) {
+			try {
+				response = createSchema(schemaRequest);
+				httpCode = HttpStatus.CREATED;
+			}catch (BadRequestException badreqEx) {
+				//If there is same schema-id for other tenant then throw different error message
+				if(SchemaConstants.SCHEMA_ID_EXISTS.equals(badreqEx.getMessage()))
+					throw new BadRequestException(SchemaConstants.INVALID_UPDATE_OPERATION);
+				
+				throw badreqEx;
+			}
+		}
+		return upsertBuilder.schemaInfo(response).httpCode(httpCode).build();
+	}
 
     private void getSchemaInfos(QueryParams queryParams, List<SchemaInfo> schemaList, String tenant)
             throws ApplicationException {

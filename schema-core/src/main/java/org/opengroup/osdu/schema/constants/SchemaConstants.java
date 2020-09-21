@@ -99,6 +99,7 @@ public class SchemaConstants {
     public static final String BAD_INPUT = "Bad input parameter";
     public static final String INVALID_AUTHORIZATION_TOKEN = "Invalid authorization token";
     public static final String SCHEMA_ID_EXISTS = "Schema Id is already present";
+    public static final String INVALID_UPDATE_OPERATION = "Update/Create failed because schema id is present in another tenant";
     public static final String UNAUTHORIZED_EXCEPTION = "User is unauthorized to perform this action";
 
     // OSDU

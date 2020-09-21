@@ -2,6 +2,7 @@ package org.opengroup.osdu.schema.service.serviceimpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
@@ -38,6 +39,7 @@ import org.opengroup.osdu.schema.service.IEntityTypeService;
 import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -795,6 +797,104 @@ public class SchemaServiceTest {
         schemaService.getSchemaInfoList(queryParams);
     }
 
+    @Test
+	public void testUpsertSchema_SuccessfullUpdate()
+			throws ApplicationException, NotFoundException, BadRequestException {
+
+		SchemaInfo schInfo = getMockSchemaInfo_development_status();
+		SchemaRequest schReq = getMockSchemaObject_Development();
+
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		Mockito.when(schemaInfoStore.getSchemaInfo("os:wks:well:1.1.1")).thenReturn(schInfo);
+		Mockito.when(schemaInfoStore.updateSchemaInfo(schReq)).thenReturn(schInfo);
+		Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn("{}");
+		assertEquals(HttpStatus.OK, schemaService.upsertSchema(schReq).getHttpCode());
+	}
+
+	@Test
+	public void testUpsertSchema_SuccessfullCreate()
+			throws ApplicationException, NotFoundException, BadRequestException {
+
+		//throw exception while updating the schema
+		SchemaRequest schReq = getMockSchemaObject_Development();
+		SchemaInfo schInfoCr = getMockSchemaInfo_development_status();
+
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		Mockito.when(schemaInfoStore.getSchemaInfo("os:wks:well:1.1.1")).thenThrow(new NotFoundException());
+
+
+
+		//Create schema call
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		String schemaId = "os:wks:well:1.1.1";
+
+		when(schemaInfoStore.isUnique(schemaId, "common")).thenReturn(true);
+		when(schemaInfoStore.isUnique(schemaId, "tenant")).thenReturn(true);
+		Mockito.when(schemaStore.getSchema(Mockito.anyString(), Mockito.anyString()))
+		.thenThrow(NotFoundException.class);
+		Mockito.when(authorityService.checkAndRegisterAuthorityIfNotPresent(
+				schReq.getSchemaInfo().getSchemaIdentity().getAuthority()))
+		.thenReturn(true);
+		Mockito.when(sourceService.checkAndRegisterSourceIfNotPresent(
+				schReq.getSchemaInfo().getSchemaIdentity().getSource()))
+		.thenReturn(true);
+		Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
+				schReq.getSchemaInfo().getSchemaIdentity().getEntityType()))
+		.thenReturn(true);
+		Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn("{}");
+		Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn("{}");
+		Mockito.when(schemaInfoStore.createSchemaInfo(schReq))
+		.thenReturn(schInfoCr);
+
+		assertEquals(HttpStatus.CREATED, schemaService.upsertSchema(schReq).getHttpCode());
+	}
+
+	@Test(expected = BadRequestException.class)
+	public void testUpsertSchema_WhenSchemaExistInOtherTenant()
+			throws ApplicationException, NotFoundException, BadRequestException {
+		//schemaInfoStore.isUnique(schemaId, dataPartitionId)
+
+
+		//throw exception while updating the schema
+		SchemaRequest schReq = getMockSchemaObject_Development();
+
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		Mockito.when(schemaInfoStore.getSchemaInfo("os:wks:well:1.1.1")).thenThrow(new NotFoundException());
+
+		//Create schema call
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		String schemaId = "os:wks:well:1.1.1";
+
+		when(schemaInfoStore.isUnique(schemaId, "tenant")).thenReturn(false);
+		schemaService.upsertSchema(schReq).getHttpCode();
+	}
+	
+	@Test
+	public void testUpsertSchema_Badrequest()
+			throws ApplicationException, NotFoundException, BadRequestException {
+		//schemaInfoStore.isUnique(schemaId, dataPartitionId)
+
+
+		//throw exception while updating the schema
+		SchemaRequest schReq = getMockSchemaObject_Development();
+
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		Mockito.when(schemaInfoStore.getSchemaInfo("os:wks:well:1.1.1")).thenThrow(new NotFoundException());
+
+		//Create schema call
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		String schemaId = "os:wks:well:1.1.1";
+
+		when(schemaInfoStore.isUnique(schemaId, "tenant")).thenReturn(false);
+		
+		try {
+			schemaService.upsertSchema(schReq).getHttpCode();
+		}catch (BadRequestException badreqEx) {
+			assertTrue(SchemaConstants.INVALID_UPDATE_OPERATION.equals(badreqEx.getMessage()));
+		}
+		
+	}
+    
     private SchemaRequest getMockSchemaObject_published() {
         return SchemaRequest.builder().schema("{}")
                 .schemaInfo(SchemaInfo.builder()
