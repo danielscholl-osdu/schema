@@ -2,6 +2,7 @@ package org.opengroup.osdu.schema.util;
 
 import com.google.common.base.Strings;
 import org.opengroup.osdu.azure.util.AzureServicePrincipal;
+import org.opengroup.osdu.core.aws.cognito.AWSCognitoClient;
 import org.opengroup.osdu.core.ibm.util.IdentityClient;
 
 
@@ -15,7 +16,12 @@ public class AuthUtil {
                     System.getenv("INTEGRATION_TEST_AUDIENCE"));
             token = new GoogleServiceAccount(serviceAccountFile).getAuthToken(audience);
         }else if (Strings.isNullOrEmpty(token) && vendor.equals("aws")) {
-            System.out.println("Token generation code for aws comes here");
+            String awsCognitoClientId = System.getProperty("AWS_COGNITO_CLIENT_ID", System.getenv("AWS_COGNITO_CLIENT_ID"));
+            String awsCognitoAuthFlow = "USER_PASSWORD_AUTH";
+            String awsCognitoAuthParamsUser = System.getProperty("AWS_COGNITO_AUTH_PARAMS_USER", System.getenv("AWS_COGNITO_AUTH_PARAMS_USER"));
+            String awsCognitoAuthParamsPassword = System.getProperty("AWS_COGNITO_AUTH_PARAMS_PASSWORD", System.getenv("AWS_COGNITO_AUTH_PARAMS_PASSWORD"));
+            AWSCognitoClient client = new AWSCognitoClient(awsCognitoClientId, awsCognitoAuthFlow, awsCognitoAuthParamsUser,  awsCognitoAuthParamsPassword);
+            token=client.getToken();
         } else if (Strings.isNullOrEmpty(token) && vendor.equals("azure")) {
             String sp_id = System.getProperty("INTEGRATION_TESTER", System.getenv("INTEGRATION_TESTER"));
             String sp_secret = System.getProperty("TESTER_SERVICEPRINCIPAL_SECRET", System.getenv("TESTER_SERVICEPRINCIPAL_SECRET"));
@@ -25,7 +31,6 @@ public class AuthUtil {
         } else if (Strings.isNullOrEmpty(token) && vendor.equals("ibm")) {
             token = IdentityClient.getTokenForUserWithAccess();
         }
-        System.out.println("Bearer " + token);
         return "Bearer " + token;
     }
 }

@@ -37,8 +37,12 @@ public class SchemaConstants {
     public static final String ACCOUNT_ID = "account-Id";
     public static final String ACCOUNT_ID_COMMON_PROJECT = "common";
     public static final String ON_BEHALF_OF = "on-Behalf-Of";
+
+
     public static final String ENTITLEMENT_SERVICE_GROUP_VIEWERS = "service.schema-service.viewers";
     public static final String ENTITLEMENT_SERVICE_GROUP_EDITORS = "service.schema-service.editors";
+
+
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
     public static final String REF = "$ref";
     public static final String DEFINITIONS = "definitions";

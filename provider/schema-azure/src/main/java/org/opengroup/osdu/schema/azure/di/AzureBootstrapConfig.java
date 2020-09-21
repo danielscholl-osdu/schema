@@ -28,6 +28,9 @@ public class AzureBootstrapConfig {
     @Value("${azure.storage.account-name}")
     private String storageAccount;
 
+    @Value("${azure.storage.container-name}")
+    private String storageContainer;
+
     @Value("${azure.keyvault.url}")
     private String keyVaultURL;
 
@@ -43,7 +46,7 @@ public class AzureBootstrapConfig {
     @Bean
     @Named("STORAGE_CONTAINER_NAME")
     public String containerName() {
-        return "opendes";
+        return storageContainer;
     }
 
     @Bean

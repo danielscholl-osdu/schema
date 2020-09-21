@@ -25,6 +25,7 @@ import org.opengroup.osdu.azure.blobstorage.BlobStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.schema.azure.di.AzureBootstrapConfig;
 import org.opengroup.osdu.schema.azure.impl.schemastore.AzureSchemaStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -41,6 +42,9 @@ public class AzureSchemaStoreTest {
     BlobStore blobStore;
 
     @Mock
+    AzureBootstrapConfig config;
+
+    @Mock
     DpsHeaders headers;
 
     @Mock
@@ -52,17 +56,19 @@ public class AzureSchemaStoreTest {
     private static final String dataPartitionId = "dataPartitionId";
     private static final String FILE_PATH = "/test-folder/test-file";
     private static final String CONTENT = "Hello World";
+    private static final String containerName = "opendes";
     private static final String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
 
     @Before
     public void init(){
         initMocks(this);
         doReturn(dataPartitionId).when(headers).getPartitionId();
+        when(config.containerName()).thenReturn(containerName);
     }
 
     @Test
     public void testGetSchema() throws ApplicationException, NotFoundException {
-        doReturn(CONTENT).when(blobStore).readFromBlob(dataPartitionId, filePath);
+        doReturn(CONTENT).when(blobStore).readFromStorageContainer(dataPartitionId, filePath, containerName);
         Assert.assertEquals(CONTENT, schemaStore.getSchema(dataPartitionId, FILE_PATH));
     }
 
@@ -70,7 +76,7 @@ public class AzureSchemaStoreTest {
     public void testGetSchema_NotFound() throws ApplicationException, NotFoundException {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
-        doReturn(null).when(blobStore).readFromBlob(dataPartitionId, filePath);
+        doReturn(null).when(blobStore).readFromStorageContainer(dataPartitionId, filePath, containerName);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
 
@@ -79,13 +85,13 @@ public class AzureSchemaStoreTest {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
 
-        doThrow(AppException.class).when(blobStore).readFromBlob(dataPartitionId, filePath);
+        doThrow(AppException.class).when(blobStore).readFromStorageContainer(dataPartitionId, filePath, containerName);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
 
     @Test
     public void testDeleteSchema() throws ApplicationException {
-        doReturn(true).when(blobStore).deleteFromBlob(dataPartitionId, filePath);
+        doReturn(true).when(blobStore).deleteFromStorageContainer(dataPartitionId, filePath, containerName);
 
         Boolean result = schemaStore.cleanSchemaProject(FILE_PATH);
         Assert.assertEquals(true, result);
@@ -96,14 +102,14 @@ public class AzureSchemaStoreTest {
         expectedException.expect(ApplicationException.class);
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
-        doThrow(AppException.class).when(blobStore).deleteFromBlob(dataPartitionId, filePath);
+        doThrow(AppException.class).when(blobStore).deleteFromStorageContainer(dataPartitionId, filePath, containerName);
         schemaStore.cleanSchemaProject(FILE_PATH);
     }
 
     @Test
     public void testCreateSchema() throws ApplicationException {
 
-        doNothing().when(blobStore).writeToBlob(dataPartitionId, filePath, CONTENT);
+        doNothing().when(blobStore).writeToStorageContainer(dataPartitionId, filePath, CONTENT, containerName);
         Assert.assertEquals(filePath, schemaStore.createSchema(FILE_PATH, CONTENT));
     }
 
@@ -112,7 +118,7 @@ public class AzureSchemaStoreTest {
         expectedException.expect(ApplicationException.class);
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
-        doThrow(AppException.class).when(blobStore).writeToBlob(dataPartitionId, filePath, CONTENT);
+        doThrow(AppException.class).when(blobStore).writeToStorageContainer(dataPartitionId, filePath, CONTENT, containerName);
         schemaStore.createSchema(FILE_PATH, CONTENT);
     }
 }
