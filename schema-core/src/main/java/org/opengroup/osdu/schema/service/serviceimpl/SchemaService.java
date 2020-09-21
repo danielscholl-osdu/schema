@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -38,7 +37,6 @@ import org.opengroup.osdu.schema.util.SchemaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
