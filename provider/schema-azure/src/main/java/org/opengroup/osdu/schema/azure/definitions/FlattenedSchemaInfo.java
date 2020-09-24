@@ -38,4 +38,5 @@ public class FlattenedSchemaInfo {
     private Long patchVersion;
     private String scope;
     private String status;
+    private String schema;
 }

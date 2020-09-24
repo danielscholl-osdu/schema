@@ -14,10 +14,12 @@ import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.annotation.RequestScope;
 
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
+import com.ibm.cloud.objectstorage.services.s3.model.AmazonS3Exception;
 import com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata;
 import com.ibm.cloud.objectstorage.services.s3.model.PutObjectRequest;
 
@@ -61,9 +63,13 @@ public class IBMSchemaStore implements ISchemaStore {
 	public String getSchema(String dataPartitionId, String schemaId) throws ApplicationException, NotFoundException {
 		// dataPartitionId not used b/c getting from header
 		
-		String content;
+		String content = null;
 		try {
 			content = getObjectAsString(schemaId);
+		} catch (AmazonS3Exception s3Exp) {
+			if(s3Exp.getStatusCode() == 404) {
+				throw new NotFoundException(HttpStatus.NOT_FOUND, SchemaConstants.SCHEMA_NOT_PRESENT);
+			} 
 		} catch (Exception e) {
 			 throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
 		}

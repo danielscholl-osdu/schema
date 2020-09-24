@@ -46,6 +46,10 @@ Once the above Prerequisite are done, we can follow the below steps to run the s
 
 You can access the service APIs by following the service contract in [schema.yaml](https://dev.azure.com/slb-des-ext-collaboration/open-data-ecosystem/_git/os-schema?path=%2Fdocs%2Fapi%2Fschema.yaml) 
 
+### 2. Azure deployment 
+
+Instructions for running the Azure implementation in the cloud can be found [here](https://community.opengroup.org/osdu/platform/system/schema-service/-/blob/master/provider/schema-azure/README.md).
+
 ## Running Automated Integration Test
 DevSanity tests are located in a schema-core project in testing directory under the project root directory.
 
@@ -57,10 +61,13 @@ They can then be run/debugged directly in your IDE of choice using the GUI or vi
 Below command has to be run post building complete project.
     
 
-    cd testing/schema-test-gcp
-    mvn verify
+    cd testing/schema-test-core
+    mvn verify -DVENDOR=gcp -DHOST=https://open.opendes.cloud.slb-ds.com -DPRIVATE_TENANT1=opendes -DPRIVATE_TENANT2=tenant2 -DSHARED_TENANT=common -Dcucumber.options="--tags @SchemaService"
+    
+Below command can be run through azure-pipeline.yml after setting environment variables in the pipeline.
 
-
+	verify "-Dcucumber.options=--tags @SchemaService"
+	
 ## Deploy Shared Schemas
 Schema service as part of deployment deploys pre-defined OSDU schemas so end users can get community accepted schemas to refer. Such schemas are present in [folder](https://dev.azure.com/slb-des-ext-collaboration/open-data-ecosystem/_git/os-schema?path=%2Fdeployments%2Fshared-schemas%2Fosdu) and script to deploy the schema are present [here](https://dev.azure.com/slb-des-ext-collaboration/open-data-ecosystem/_git/os-schema?path=%2Fdeployments%2Fscripts). 
 

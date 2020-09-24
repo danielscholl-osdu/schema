@@ -17,6 +17,7 @@ package org.opengroup.osdu.schema.azure.impl.schemainfostore;
 import java.text.MessageFormat;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.definitions.EntityTypeDoc;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -81,22 +82,20 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
-
         String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
 
-        // Check whether EntityType already exists and throw required exception.
-        Boolean exists = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, headers.getPartitionId(), EntityTypeDoc.class).isPresent();
-        if (exists) {
-            log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
-            throw new BadRequestException(MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
-                    entityType.getEntityTypeId()));
-        }
         try {
             EntityTypeDoc entityTypeDoc = new EntityTypeDoc(id, headers.getPartitionId(), entityType);
-            cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, entityTypeDoc);
-        } catch (Exception ex) {
-            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, entityTypeDoc);
+        } catch (AppException ex) {
+            if (ex.getError().getCode() == 409) {
+                log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
+                throw new BadRequestException(MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
+                        entityType.getEntityTypeId()));
+            } else {
+                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+                throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+            }
         }
 
         log.info(SchemaConstants.ENTITY_TYPE_CREATED);

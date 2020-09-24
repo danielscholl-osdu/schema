@@ -20,14 +20,15 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.azure.cosmos.*;
+import com.google.gson.Gson;
 import org.opengroup.osdu.azure.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.definitions.FlattenedSchemaInfo;
 import org.opengroup.osdu.schema.azure.definitions.SchemaInfoDoc;
-import org.opengroup.osdu.schema.azure.impl.schemastore.AzureSchemaStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
@@ -70,10 +71,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Autowired
     JaxRsDpsLog log;
 
-    @Autowired
-    AzureSchemaStore schemaStore;
-
-
     /**
      * Method to get schemaInfo from azure store
      *
@@ -104,21 +101,18 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
-
-        // Check whether SchemaInfo already exists and throw required exception.
-        Boolean exists = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, headers.getPartitionId(), SchemaInfoDoc.class).isPresent();
-        if (exists) {
-            log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
-            throw new BadRequestException(SchemaConstants.SCHEMA_ID_EXISTS);
-        }
-
-        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema.getSchemaInfo());
+        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
         SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, headers.getPartitionId(), flattenedSchemaInfo);
         try {
-            cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
-        } catch (Exception ex) {
-            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-            throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
+        } catch (AppException ex) {
+            if (ex.getError().getCode() == 409) {
+                log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
+                throw new BadRequestException(SchemaConstants.SCHEMA_ID_EXISTS);
+            } else {
+                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+                throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+            }
         }
 
         log.info(SchemaConstants.SCHEMA_CREATED);
@@ -136,7 +130,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
-        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema.getSchemaInfo());
+        FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
         SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, headers.getPartitionId(), flattenedSchemaInfo);
         try {
             cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
@@ -174,7 +168,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public String getLatestMinorVerSchema(SchemaInfo schemaInfo) throws ApplicationException {
 
-        SqlQuerySpec query = new SqlQuerySpec("SELECT * FROM c WHERE STARTSWITH(c.id, @partitionId)" +
+        SqlQuerySpec query = new SqlQuerySpec("SELECT * FROM c WHERE c.dataPartitionId = @partitionId" +
                 " AND c.flattenedSchemaInfo.authority = @authority" +
                 " AND c.flattenedSchemaInfo.source = @source" +
                 " AND c.flattenedSchemaInfo.entityType = @entityType" +
@@ -187,23 +181,18 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         pars.add(new SqlParameter("@majorVersion", schemaInfo.getSchemaIdentity().getSchemaVersionMajor()));
 
         FeedOptions options = new FeedOptions();
-        options.setEnableCrossPartitionQuery(true);
+        options.setEnableCrossPartitionQuery(false);
         List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
         TreeMap<Long, String> sortedMap = new TreeMap<>(Collections.reverseOrder());
         for (SchemaInfoDoc info : schemaInfoList)
         {
-            sortedMap.put(info.getFlattenedSchemaInfo().getMinorVersion(), info.getFlattenedSchemaInfo().getId());
+            sortedMap.put(info.getFlattenedSchemaInfo().getMinorVersion(), info.getFlattenedSchemaInfo().getSchema());
         }
 
         if (sortedMap.size() != 0) {
             Entry<Long, String> entry = sortedMap.firstEntry();
-            String schemaId = entry.getValue();
-            try {
-                return schemaStore.getSchema(headers.getPartitionId(), schemaId);
-            } catch (NotFoundException e) {
-                return new String();
-            }
+            return entry.getValue();
         }
         return new String();
     }
@@ -214,8 +203,9 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
      * @param schema
      * @return
      */
-    private FlattenedSchemaInfo populateSchemaInfo(SchemaInfo schemaInfo)
+    private FlattenedSchemaInfo populateSchemaInfo(SchemaRequest schemaRequest)
             throws BadRequestException {
+        SchemaInfo schemaInfo = schemaRequest.getSchemaInfo();
         // check for super-seeding schemas
         String supersededById = "";
         if (schemaInfo.getSupersededBy() != null) {
@@ -229,6 +219,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
             supersededById = schemaInfo.getSupersededBy().getId();
         }
 
+        Gson gson = new Gson();
         return FlattenedSchemaInfo.builder().id(schemaInfo.getSchemaIdentity().getId())
                 .supersededBy(supersededById)
                 .dateCreated(new Date())
@@ -241,6 +232,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
                 .patchVersion(schemaInfo.getSchemaIdentity().getSchemaVersionPatch())
                 .scope(schemaInfo.getScope().name())
                 .status(schemaInfo.getStatus().name())
+                .schema(gson.toJson(schemaRequest.getSchema()))
                 .build();
     }
 
@@ -272,7 +264,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
-        String queryText = "SELECT * FROM c WHERE STARTSWITH(c.id, @partitionId)";
+        String queryText = "SELECT * FROM c WHERE c.dataPartitionId = @partitionId";
         HashMap<String, Object> parameterMap = new HashMap<>();
         // Populate the implicit partitionId parameter
         parameterMap.put("@partitionId", tenantId);
@@ -316,7 +308,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         }
 
         FeedOptions options = new FeedOptions();
-        options.setEnableCrossPartitionQuery(true);
+        options.setEnableCrossPartitionQuery(false);
         List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
         List<SchemaInfo> schemaList = new LinkedList<>();

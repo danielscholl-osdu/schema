@@ -1,0 +1,180 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.opengroup.osdu</groupId>
+		<artifactId>os-schema</artifactId>
+		<version>0.0.1</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>schema-test-core</artifactId>
+	<properties>
+		<os-core-lib-ibm.version>0.3.6-SNAPSHOT</os-core-lib-ibm.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>os-schema-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-to-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
+
+
+			<version>0.0.1</version>
+		</dependency>
+
+		<!--Rest assured dependency to be placed before JUnit dependency -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java8</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-guice</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-storage</artifactId>
+			<version>1.76.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>core-lib-azure</artifactId>
+			<version>0.0.17</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opengroup.osdu.core.aws</groupId>
+			<artifactId>os-core-lib-aws</artifactId>
+			<version>0.3.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>os-core-lib-ibm</artifactId>
+			<version>${os-core-lib-ibm.version}</version>
+		</dependency>
+	</dependencies>
+   		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.0.0-M3</version>
+					<configuration>
+						<excludes>
+							<exclude>none</exclude>
+						</excludes>
+						<includes>
+							<include>org.opengroup.osdu.schema.runner.SchemaServiceTestsRunner</include>
+						</includes>
+					</configuration>
+					<executions>
+						<execution>
+							<id>integration-test</id>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+   </build>
+
+	<!--This runs the tests thrice-->
+	<!--<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M3</version>
+
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<includes>
+								<include>org.opengroup.osdu.schema.runner.PreIntegrationTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<excludes>
+								<exclude>none</exclude>
+							</excludes>
+							<includes>
+								<include>org.opengroup.osdu.schema.runner.SchemaServiceTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipItTests}</skipTests>
+							<includes>
+								<include>org.opengroup.osdu.schema.runner.TearDownTestsRunner</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>-->
+</project>

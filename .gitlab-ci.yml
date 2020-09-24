@@ -9,7 +9,20 @@ variables:
   GCP_DOMAIN: cloud.slb-ds.com
 
   IBM_BUILD_SUBDIR: provider/schema-ibm
-  #IBM_INT_TEST_SUBDIR: testing/schema-test-ibm
+  IBM_INT_TEST_SUBDIR: testing/schema-test-core
+  IBM_TEST_CMD: verify
+
+  AZURE_SERVICE: schema
+  AZURE_BUILD_SUBDIR: provider/schema-azure
+  AZURE_TEST_SUBDIR: testing/schema-test-core
+  AZURE_SKIP_TEST: 'true'
+
+  AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
+  AWS_TEST_SUBDIR: testing/schema-test-core
+  AWS_SERVICE: schema
+  AWS_ENVIRONMENT: dev
+  AWS_MAVEN_TEST_COMMAND_OVERRIDE: verify
+
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -18,20 +31,20 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "build/maven.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "scanners/fossa.yml"
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "scanners/fossa.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/gcp.yml"
+  #- project: "osdu/platform/ci-cd-pipelines"
+   # file: "cloud-providers/gcp.yml"
 
-  # - project: 'osdu/platform/ci-cd-pipelines'
-  #   file: 'cloud-providers/aws.yml'
+  - project: 'osdu/platform/ci-cd-pipelines'
+    file: 'cloud-providers/aws.yml'
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "scanners/gitlab-ultimate.yml"
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "scanners/gitlab-ultimate.yml"
 
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/azure.yml"
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/azure.yml"

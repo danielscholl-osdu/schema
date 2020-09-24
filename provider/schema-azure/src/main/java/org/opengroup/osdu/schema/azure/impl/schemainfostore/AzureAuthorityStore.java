@@ -15,6 +15,7 @@
 package org.opengroup.osdu.schema.azure.impl.schemainfostore;
 
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.azure.CosmosStore;
@@ -79,21 +80,20 @@ public class AzureAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority create(Authority authority) throws ApplicationException, BadRequestException {
-
         String id = headers.getPartitionId() + ":" + authority.getAuthorityId();
 
-        Boolean exists = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, headers.getPartitionId(), AuthorityDoc.class).isPresent();
-        if (exists) {
-            log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
-            throw new BadRequestException(MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION,
-                    authority.getAuthorityId()));
-        }
         try {
             AuthorityDoc authorityDoc = new AuthorityDoc(id, headers.getPartitionId(), authority);
-            cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, authorityContainer, authorityDoc);
-        } catch (Exception ex) {
-            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, authorityDoc);
+        } catch (AppException ex) {
+            if (ex.getError().getCode() == 409) {
+                log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
+                throw new BadRequestException(MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION,
+                        authority.getAuthorityId()));
+            } else {
+                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+                throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+            }
         }
 
         log.info(SchemaConstants.AUTHORITY_CREATED);

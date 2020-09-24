@@ -34,6 +34,5 @@ public class SchemaApplication {
                 CosmosContainerConfig.class
         };
         SpringApplication.run(sources, args);
-        SpringApplication.run(SchemaApplication.class, args);
     }
 }

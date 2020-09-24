@@ -41,9 +41,6 @@ public class CosmosContainerConfig {
     @Value("${source.container.name}")
     private String sourceContainerName;
 
-    @Value("${tenant-info.container.name}")
-    private String tenantInfoContainerName;
-
     @Bean
     public String authorityContainer() {
         return authorityContainerName;
@@ -62,10 +59,5 @@ public class CosmosContainerConfig {
     @Bean
     public String sourceContainer() {
         return sourceContainerName;
-    }
-
-    @Bean
-    public String tenantInfoContainer() {
-        return tenantInfoContainerName;
     }
 }
