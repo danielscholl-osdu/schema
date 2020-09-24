@@ -27,6 +27,7 @@ import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.cloud.Timestamp;
@@ -64,6 +65,12 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
     @Autowired
     JaxRsDpsLog log;
+
+    @Value("${default.account.id}")
+    private String defaultAccountId;
+
+    @Value("${common.account.id}")
+    private String commonAccountId;
 
     /**
      * Method to get schemaInfo from google store
@@ -254,7 +261,12 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
+        Datastore datastore;
+        if (tenantId.equalsIgnoreCase(commonAccountId)) {
+            datastore = dataStoreFactory.getDatastore(defaultAccountId, SchemaConstants.NAMESPACE);
+        } else {
+            datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
+        }
         List<Filter> filterList = getFilters(queryParams);
 
         EntityQuery.Builder queryBuilder = Query.newEntityQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
@@ -305,11 +317,11 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
 
         Set<String> tenantList = new HashSet<>();
-        tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+        tenantList.add(defaultAccountId);
         tenantList.add(tenantId);
 
         // code to call check uniqueness
-        if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+        if (tenantId.equalsIgnoreCase(defaultAccountId)) {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
                     .collect(Collectors.toList());
             tenantList.addAll(privateTenantList);
