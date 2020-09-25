@@ -92,7 +92,7 @@ stages:
       displayName: 'Running IntegrationTest'
       inputs:
         mavenPomFile: 'testing/schema-test-core/pom.xml'
-        goals: 'verify "-Dcucumber.options=--tags @SchemaService"'
+        goals: 'verify'
         options: '--settings maven/settings.xml -DVSTS_FEED_TOKEN=$(VSTS_FEED_TOKEN)'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
