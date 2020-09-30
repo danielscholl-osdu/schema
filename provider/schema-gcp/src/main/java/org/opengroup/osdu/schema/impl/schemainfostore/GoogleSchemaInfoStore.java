@@ -340,4 +340,20 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         }
         return true;
     }
+
+    public String getDefaultAccountId() {
+        return defaultAccountId;
+    }
+
+    public void setDefaultAccountId(String defaultAccountId) {
+        this.defaultAccountId = defaultAccountId;
+    }
+
+    public String getCommonAccountId() {
+        return commonAccountId;
+    }
+
+    public void setCommonAccountId(String commonAccountId) {
+        this.commonAccountId = commonAccountId;
+    }
 }
