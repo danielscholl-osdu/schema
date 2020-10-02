@@ -27,6 +27,7 @@ import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.cloud.Timestamp;
@@ -64,6 +65,9 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
     @Autowired
     JaxRsDpsLog log;
+
+    @Value("${account.id.common.project}")
+    private String commonAccountId;
 
     /**
      * Method to get schemaInfo from google store
@@ -305,11 +309,11 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
 
         Set<String> tenantList = new HashSet<>();
-        tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+        tenantList.add(commonAccountId);
         tenantList.add(tenantId);
 
         // code to call check uniqueness
-        if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+        if (tenantId.equalsIgnoreCase(commonAccountId)) {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
                     .collect(Collectors.toList());
             tenantList.addAll(privateTenantList);
@@ -327,5 +331,13 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
                 return false;
         }
         return true;
+    }
+
+    public String getCommonAccountId() {
+        return commonAccountId;
+    }
+
+    public void setCommonAccountId(String commonAccountId) {
+        this.commonAccountId = commonAccountId;
     }
 }
