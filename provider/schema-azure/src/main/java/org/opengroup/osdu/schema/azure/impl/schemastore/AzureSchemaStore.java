@@ -66,7 +66,6 @@ public class AzureSchemaStore implements ISchemaStore {
                 throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
         }
         catch (Exception ex) {
-            log.info(ex.getMessage());
             throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
         }
     }
@@ -86,6 +85,7 @@ public class AzureSchemaStore implements ISchemaStore {
 
         try {
             blobStore.writeToStorageContainer(dataPartitionId, filePath, content, config.containerName());
+            log.info(SchemaConstants.SCHEMA_CREATED);
             return filePath;
         } catch (Exception ex) {
             throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
