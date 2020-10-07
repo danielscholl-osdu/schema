@@ -66,10 +66,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     @Autowired
     JaxRsDpsLog log;
 
-    @Value("${default.account.id}")
-    private String defaultAccountId;
-
-    @Value("${common.account.id}")
+    @Value("${account.id.common.project}")
     private String commonAccountId;
 
     /**
@@ -261,12 +258,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
-        Datastore datastore;
-        if (tenantId.equalsIgnoreCase(commonAccountId)) {
-            datastore = dataStoreFactory.getDatastore(defaultAccountId, SchemaConstants.NAMESPACE);
-        } else {
-            datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
-        }
+        Datastore datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
         List<Filter> filterList = getFilters(queryParams);
 
         EntityQuery.Builder queryBuilder = Query.newEntityQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
@@ -317,11 +309,11 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
 
         Set<String> tenantList = new HashSet<>();
-        tenantList.add(defaultAccountId);
+        tenantList.add(commonAccountId);
         tenantList.add(tenantId);
 
         // code to call check uniqueness
-        if (tenantId.equalsIgnoreCase(defaultAccountId)) {
+        if (tenantId.equalsIgnoreCase(commonAccountId)) {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
                     .collect(Collectors.toList());
             tenantList.addAll(privateTenantList);
@@ -339,14 +331,6 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
                 return false;
         }
         return true;
-    }
-
-    public String getDefaultAccountId() {
-        return defaultAccountId;
-    }
-
-    public void setDefaultAccountId(String defaultAccountId) {
-        this.defaultAccountId = defaultAccountId;
     }
 
     public String getCommonAccountId() {

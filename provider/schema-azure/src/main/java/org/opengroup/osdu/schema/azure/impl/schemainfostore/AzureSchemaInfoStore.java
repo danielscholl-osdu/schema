@@ -115,7 +115,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
             }
         }
 
-        log.info(SchemaConstants.SCHEMA_CREATED);
+        log.info(SchemaConstants.SCHEMA_INFO_CREATED);
         return getSchemaInfoObject(flattenedSchemaInfo);
     }
 
@@ -139,7 +139,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
             throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
         }
 
-        log.info(SchemaConstants.SCHEMA_CREATED);
+        log.info(SchemaConstants.SCHEMA_INFO_UPDATED);
         return getSchemaInfoObject(flattenedSchemaInfo);
     }
 

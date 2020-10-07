@@ -2,6 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
@@ -29,8 +30,6 @@
 					<artifactId>log4j-to-slf4j</artifactId>
 				</exclusion>
 			</exclusions>
-
-
 			<version>0.0.1</version>
 		</dependency>
 
@@ -68,7 +67,7 @@
 			<version>4.2.0</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.cloud</groupId>
 			<artifactId>google-cloud-storage</artifactId>
@@ -86,47 +85,20 @@
 			<artifactId>os-core-lib-aws</artifactId>
 			<version>0.3.7</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-core-lib-ibm</artifactId>
 			<version>${os-core-lib-ibm.version}</version>
 		</dependency>
 	</dependencies>
-   		<build>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.0.0-M3</version>
-					<configuration>
-						<excludes>
-							<exclude>none</exclude>
-						</excludes>
-						<includes>
-							<include>org.opengroup.osdu.schema.runner.SchemaServiceTestsRunner</include>
-						</includes>
-					</configuration>
-					<executions>
-						<execution>
-							<id>integration-test</id>
-							<goals>
-								<goal>integration-test</goal>
-								<goal>verify</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-   </build>
 
-	<!--This runs the tests thrice-->
-	<!--<build>
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>3.0.0-M3</version>
-
 				<executions>
 					<execution>
 						<id>pre-integration-test</id>
@@ -176,5 +148,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>-->
+	</build>
 </project>

@@ -48,6 +48,7 @@ public class TestConstants {
     public static final String USER = "user";
     public static final String STORAGE_SCHEMA_USER_EMAIL = "testUserEmail@test.com";
     public static final String KIND = "kind";
+    public static final String TRUE = "true";
     public static final String HOST = System.getProperty("HOST", System.getenv("HOST"));
     public static final String PRIVATE_TENANT1 = System.getProperty("PRIVATE_TENANT1", System.getenv("PRIVATE_TENANT1"));
     public static final String PRIVATE_TENANT2 = System.getProperty("PRIVATE_TENANT2", System.getenv("PRIVATE_TENANT2"));

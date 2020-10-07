@@ -38,12 +38,6 @@ public class GoogleSchemaStore implements ISchemaStore {
     @Autowired
     JaxRsDpsLog log;
 
-    @Value("${default.account.id}")
-    private String defaultAccountId;
-
-    @Value("${common.account.id}")
-    private String commonAccountId;
-
     /**
      * Method to get schema from google Storage given Tenant ProjectInfo
      *
@@ -56,9 +50,6 @@ public class GoogleSchemaStore implements ISchemaStore {
      */
     @Override
     public String getSchema(String dataPartitionId, String filePath) throws ApplicationException, NotFoundException {
-        if (dataPartitionId.equalsIgnoreCase(commonAccountId)) {
-            dataPartitionId = defaultAccountId;
-        }
         filePath = filePath + SchemaConstants.JSON_EXTENSION;
         String bucketname = getSchemaBucketName(dataPartitionId);
         Storage storage = storageFactory.get(tenantFactory.getTenantInfo(dataPartitionId));

@@ -173,7 +173,6 @@ public class GoogleSchemaInfoStoreTest {
         String schemaId = "schemaId";
         String tenantId = "tenant";
         schemaInfoStore.setCommonAccountId(tenantId);
-        schemaInfoStore.setDefaultAccountId(tenantId);
         Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
         Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
         Mockito.when(tenantInfo.getName()).thenReturn("tenant");
