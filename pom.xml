@@ -44,7 +44,6 @@
 		<module>provider/schema-gcp</module>
 		<module>provider/schema-ibm</module>
 		<module>provider/schema-azure</module>
-		<module>testing/schema-test-core</module>
 	</modules>
 	<repositories>
 		<repository>
