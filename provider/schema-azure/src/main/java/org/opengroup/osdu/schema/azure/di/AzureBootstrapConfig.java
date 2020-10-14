@@ -64,13 +64,13 @@ public class AzureBootstrapConfig {
     @Bean
     @Named("COSMOS_ENDPOINT")
     public String cosmosEndpoint(SecretClient kv) {
-        return getKeyVaultSecret(kv, "cosmos-endpoint");
+        return getKeyVaultSecret(kv, "opendes-cosmos-endpoint");
     }
 
     @Bean
     @Named("COSMOS_KEY")
     public String cosmosKey(SecretClient kv) {
-        return getKeyVaultSecret(kv, "cosmos-primary-key");
+        return getKeyVaultSecret(kv, "opendes-cosmos-primary-key");
     }
 
     public String getKeyVaultSecret(SecretClient kv, String secretName) {

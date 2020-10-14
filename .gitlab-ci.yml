@@ -16,6 +16,9 @@ variables:
   AZURE_BUILD_SUBDIR: provider/schema-azure
   AZURE_TEST_SUBDIR: testing/schema-test-core
   AZURE_SKIP_TEST: 'true'
+  AZURE_DEPLOYMENTS_SUBDIR: deployments/scripts/azure
+  AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
+
 
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   AWS_TEST_SUBDIR: testing/schema-test-core
