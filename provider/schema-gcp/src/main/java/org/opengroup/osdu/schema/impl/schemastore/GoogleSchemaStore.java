@@ -9,7 +9,6 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.cloud.storage.Blob;
@@ -50,6 +49,9 @@ public class GoogleSchemaStore implements ISchemaStore {
      */
     @Override
     public String getSchema(String dataPartitionId, String filePath) throws ApplicationException, NotFoundException {
+        if (SchemaConstants.ACCOUNT_ID_COMMON_PROJECT.equals(dataPartitionId)) {
+            throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
+        }
         filePath = filePath + SchemaConstants.JSON_EXTENSION;
         String bucketname = getSchemaBucketName(dataPartitionId);
         Storage storage = storageFactory.get(tenantFactory.getTenantInfo(dataPartitionId));

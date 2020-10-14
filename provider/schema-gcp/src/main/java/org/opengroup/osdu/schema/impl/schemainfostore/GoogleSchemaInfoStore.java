@@ -25,7 +25,6 @@ import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
-import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -258,6 +257,10 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
+        List<SchemaInfo> schemaList = new LinkedList<>();
+        if (SchemaConstants.ACCOUNT_ID_COMMON_PROJECT.equals(tenantId)) {
+            return schemaList;
+        }
         Datastore datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
         List<Filter> filterList = getFilters(queryParams);
 
@@ -270,7 +273,6 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         }
 
         QueryResults<Entity> result = datastore.run(queryBuilder.build());
-        List<SchemaInfo> schemaList = new LinkedList<>();
         while (result.hasNext()) {
             Entity entity = result.next();
             schemaList.add(getSchemaInfoObject(entity, datastore));
