@@ -25,12 +25,6 @@
 			<groupId>com.google.cloud</groupId>
 			<artifactId>google-cloud-datastore</artifactId>
 			<version>1.102.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.cloud</groupId>
-          <artifactId>google-cloud-core-http</artifactId>
-        </exclusion>
-      </exclusions>
 		</dependency>
 
 		<dependency>
