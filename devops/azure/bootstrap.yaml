@@ -1,0 +1,17 @@
+azure_bootstrap:
+  stage: bootstrap
+  image: python:3.8
+  needs: ["azure_deploy"]
+  script:
+    - pip install -r $AZURE_DEPLOYMENTS_SUBDIR/requirements.txt
+    - chmod +x $AZURE_DEPLOYMENTS_SUBDIR/bootstrap.sh
+    - $AZURE_DEPLOYMENTS_SUBDIR/bootstrap.sh
+  only:
+    variables:
+      - $AZURE == 'true'
+
+azure_test:
+  needs: ["azure_bootstrap"]
+  only:
+    variables:
+      - $AZURE == 'true'

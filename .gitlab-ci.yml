@@ -17,6 +17,9 @@ variables:
   AZURE_TEST_SUBDIR: testing/schema-test-core
   AZURE_SKIP_TEST: 'true'
   AZURE_DEPLOYMENTS_SUBDIR: deployments/scripts/azure
+  INTEGRATION_TESTER: $AZURE_PRINCIPAL_ID
+  AZURE_TESTER_SERVICEPRINCIPAL_SECRET: $AZURE_PRINCIPAL_SECRET
+  DATA_PARTITION: opendes
   AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
 
 
@@ -60,6 +63,8 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     ref: 'master'
     file: 'cloud-providers/osdu-gcp-cloudrun.yml'
+    
+  - local: "/devops/azure/bootstrap.yaml"
 
 osdu-gcp-test:
   image: maven:3.3.9-jdk-8
