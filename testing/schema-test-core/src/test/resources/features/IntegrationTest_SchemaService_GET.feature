@@ -23,12 +23,12 @@ Feature: To verify functionality of GET schema Service
   Scenario Outline: Verify that Schema Service's GET list API throws correct exception if mandatory headers are blank in request header
     #Given I hit schema service GET List API with <parameter> and <value> having blank <header>
     Given I hit schema service GET API with blank <header>
-    Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
+    Then service should respond back with status code <ResponseStatusCode> or <AlternateStatusCode>
 
     Examples: 
-      | ReponseStatusCode | ResponseMessage                                          | header              |
-      | "401"             | "/output_payloads/SchemaGet_MissingAuthorization.json"   | "authorization"     |
-      | "401"             | "/output_payloads/SchemaGet_MissingDataPartitionId.json" | "data-partition-id" |
+      | ResponseStatusCode | ResponseMessage                                          | header              | AlternateStatusCode |
+      | "401"              | "/output_payloads/SchemaGet_MissingAuthorization.json"   | "authorization"     | "403"               |
+      | "401"              | "/output_payloads/SchemaGet_MissingDataPartitionId.json" | "data-partition-id" | "401"               |
 
   @SchemaService
   Scenario Outline: Verify that Schema Service's GET list API returns list of schema all scopes
