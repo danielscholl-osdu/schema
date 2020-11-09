@@ -1,6 +1,7 @@
 package org.opengroup.osdu.schema.stepdefs;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -300,6 +301,15 @@ public class SchemaServiceStepDef_GET implements En {
 								this.context.getSchemaVersionMinor());
 						verifySchemaIdentityElementValues(TestConstants.SCHEMA_PATCH_VERSION,
 								this.context.getSchemaVersionPatch());
+					}
+				});
+
+		Then("Then service should respond back with status code {string} or {string}",
+				(String ResponseStatusCode, String AlternateStatusCode) -> {
+					HttpResponse response = this.context.getHttpResponse();
+					if (response != null) {
+						assertTrue(ResponseStatusCode.equals(String.valueOf(response.getCode()))
+								|| AlternateStatusCode.equals(String.valueOf(response.getCode())));
 					}
 				});
 
