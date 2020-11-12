@@ -5,9 +5,9 @@
 
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
-		<artifactId>os-schema</artifactId>
+		<artifactId>os-schema-test</artifactId>
 		<version>0.0.1</version>
-		<relativePath>../../pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>schema-test-core</artifactId>
