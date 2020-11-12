@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.opengroup.osdu</groupId>
+  <artifactId>os-schema-test</artifactId>
+  <version>0.0.1</version>
+  <description>Schema Service Integration Test Root Project</description>
+  <packaging>pom</packaging>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <modules>
+    <module>schema-test-core</module>
+    <module>schema-test-aws</module>
+    <module>schema-test-gcp</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>${repo.releases.id}</id>
+      <url>${repo.releases.url}</url>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>${publish.releases.id}</id>
+      <url>${publish.releases.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>${publish.snapshots.id}</id>
+      <url>${publish.snapshots.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>
