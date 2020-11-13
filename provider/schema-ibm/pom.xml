@@ -6,7 +6,7 @@
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
 		<version>0.0.1</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>os-schema-ibm</artifactId>
 	<description>IBM cloud related implementation staff.</description>
@@ -14,7 +14,7 @@
 	
 	<properties>
 		<start-class>org.opengroup.osdu.schema.provider.ibm.app.SchemaIBMApplication</start-class>
-		<os-core-lib-ibm.version>0.0.19-SNAPSHOT</os-core-lib-ibm.version>
+		<os-core-lib-ibm.version>0.3.8-SNAPSHOT</os-core-lib-ibm.version>
 	</properties>
 	
 
@@ -58,27 +58,7 @@
 			<version>5.4.0</version>
 			<scope>test</scope>
 		</dependency>
-		
-
 	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>${gitlab-server}</id>
-			<url>https://community.opengroup.org/api/v4/groups/17/-/packages/maven</url>
-		</repository>
-	</repositories>
-
-	<distributionManagement>
-		<repository>
-			<id>${gitlab-server}</id>
-			<url>https://community.opengroup.org/api/v4/projects/26/packages/maven</url>
-		</repository>
-		<snapshotRepository>
-			<id>${gitlab-server}</id>
-			<url>https://community.opengroup.org/api/v4/projects/26/packages/maven</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<build>
 		<plugins>

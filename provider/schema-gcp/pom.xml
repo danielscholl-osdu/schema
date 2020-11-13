@@ -6,8 +6,9 @@
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
 		<version>0.0.1</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
 	<artifactId>os-schema-gcp</artifactId>
 	<description>Google cloud related implementation staff.</description>
 	<packaging>jar</packaging>
