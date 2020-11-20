@@ -13,6 +13,7 @@
 	<artifactId>schema-test-core</artifactId>
 	<properties>
 		<os-core-lib-ibm.version>0.3.6-SNAPSHOT</os-core-lib-ibm.version>
+		<os-core-lib-azure.version>0.0.42</os-core-lib-azure.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -80,7 +81,7 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>core-lib-azure</artifactId>
-			<version>0.0.17</version>
+			<version>${os-core-lib-azure.version}</version>
 		</dependency>
 
 		<dependency>
@@ -95,6 +96,20 @@
 			<version>${os-core-lib-ibm.version}</version>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Inherit managed dependencies from core-lib-azure -->
+			<dependency>
+				<groupId>org.opengroup.osdu</groupId>
+				<artifactId>core-lib-azure</artifactId>
+				<version>${os-core-lib-azure.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 
 	<build>
 		<plugins>
