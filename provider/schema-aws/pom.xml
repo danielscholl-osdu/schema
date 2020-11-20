@@ -21,8 +21,9 @@
         <artifactId>os-schema</artifactId>
         <groupId>org.opengroup.osdu</groupId>
         <version>0.0.1</version>
-        <relativePath>../../</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
+
     <artifactId>os-schema-aws</artifactId>
     <description>AWS implementation of the OSDU Schema Service</description>
     <packaging>jar</packaging>
@@ -112,23 +113,4 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>${gitlab-server}</id>
-            <url>https://community.opengroup.org/api/v4/groups/17/-/packages/maven</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>${gitlab-server}</id>
-            <url>https://community.opengroup.org/api/v4/projects/26/packages/maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>${gitlab-server}</id>
-            <url>https://community.opengroup.org/api/v4/projects/26/packages/maven</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-
 </project>
