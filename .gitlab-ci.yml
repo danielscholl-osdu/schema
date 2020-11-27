@@ -33,7 +33,6 @@ variables:
   OSDU_GCP_APPLICATION_NAME: os-schema
   OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_URL,AUTHORIZE_API_KEY=$OSDU_GCP_AUTHORIZE_API_KEY,LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=DEBUG,ACCOUNT_ID_COMMON_PROJECT=$TENANT --vpc-connector=$OSDU_GCP_VPC_CONNECTOR
 
-
 include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "standard-setup.yml"
@@ -44,8 +43,8 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "scanners/fossa.yml"
 
-  #- project: "osdu/platform/ci-cd-pipelines"
-   # file: "cloud-providers/gcp.yml"
+# - project: "osdu/platform/ci-cd-pipelines"
+#   file: "cloud-providers/gcp.yml"
 
   - project: 'osdu/platform/ci-cd-pipelines'
     file: 'cloud-providers/aws.yml'
@@ -62,17 +61,5 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     ref: 'master'
     file: 'cloud-providers/osdu-gcp-cloudrun.yml'
-    
-  - local: "/devops/azure/bootstrap.yaml"
 
-osdu-gcp-test:
-  image: maven:3.3.9-jdk-8
-  extends:
-    - .osdu-gcp-variables
-  stage: integration
-  needs: ["osdu-gcp-deploy"]
-  script:
-    - echo 'GCP integrations tests - TBD'
-  only:
-    variables:
-      - $OSDU_GCP == 'true'
+  - local: "/devops/azure/bootstrap.yaml"
