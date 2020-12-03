@@ -15,7 +15,7 @@
 package org.opengroup.osdu.schema.azure.impl.schemainfostore;
 
 import java.text.MessageFormat;
-import org.opengroup.osdu.azure.CosmosStore;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -86,7 +86,7 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
 
         try {
             EntityTypeDoc entityTypeDoc = new EntityTypeDoc(id, headers.getPartitionId(), entityType);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, entityTypeDoc);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, headers.getPartitionId(), entityTypeDoc);
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);

@@ -19,9 +19,11 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.azure.cosmos.*;
+import com.azure.cosmos.models.SqlQuerySpec;
+import com.azure.cosmos.models.SqlParameter;
+import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.google.gson.Gson;
-import org.opengroup.osdu.azure.CosmosStore;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -104,7 +106,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
         SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, headers.getPartitionId(), flattenedSchemaInfo);
         try {
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, headers.getPartitionId(), schemaInfoDoc);
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
@@ -133,7 +135,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
         SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, headers.getPartitionId(), flattenedSchemaInfo);
         try {
-            cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, schemaInfoDoc);
+            cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, headers.getPartitionId(), schemaInfoDoc);
         } catch (Exception ex) {
             log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
             throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
@@ -173,15 +175,14 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
                 " AND c.flattenedSchemaInfo.source = @source" +
                 " AND c.flattenedSchemaInfo.entityType = @entityType" +
                 " AND c.flattenedSchemaInfo.majorVersion = @majorVersion");
-        SqlParameterList pars = query.getParameters();
-        pars.add(new SqlParameter("@partitionId", headers.getPartitionId()));
-        pars.add(new SqlParameter("@authority", schemaInfo.getSchemaIdentity().getAuthority()));
-        pars.add(new SqlParameter("@source", schemaInfo.getSchemaIdentity().getSource()));
-        pars.add(new SqlParameter("@entityType", schemaInfo.getSchemaIdentity().getEntityType()));
-        pars.add(new SqlParameter("@majorVersion", schemaInfo.getSchemaIdentity().getSchemaVersionMajor()));
+        List<SqlParameter> sqlParameterList = query.getParameters();
+        sqlParameterList.add(new SqlParameter("@partitionId", headers.getPartitionId()));
+        sqlParameterList.add(new SqlParameter("@authority", schemaInfo.getSchemaIdentity().getAuthority()));
+        sqlParameterList.add(new SqlParameter("@source", schemaInfo.getSchemaIdentity().getSource()));
+        sqlParameterList.add(new SqlParameter("@entityType", schemaInfo.getSchemaIdentity().getEntityType()));
+        sqlParameterList.add(new SqlParameter("@majorVersion", schemaInfo.getSchemaIdentity().getSchemaVersionMajor()));
 
-        FeedOptions options = new FeedOptions();
-        options.setEnableCrossPartitionQuery(false);
+        CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
         List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
         TreeMap<Long, String> sortedMap = new TreeMap<>(Collections.reverseOrder());
@@ -301,14 +302,12 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         }
 
         SqlQuerySpec query = new SqlQuerySpec(queryText);
-        SqlParameterList pars = query.getParameters();
         for (String param : parameterMap.keySet())
         {
-            pars.add(new SqlParameter(param, parameterMap.get(param)));
+            query.getParameters().add(new SqlParameter(param, parameterMap.get(param)));
         }
 
-        FeedOptions options = new FeedOptions();
-        options.setEnableCrossPartitionQuery(false);
+        CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
         List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
         List<SchemaInfo> schemaList = new LinkedList<>();
@@ -330,6 +329,9 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
         tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
         tenantList.add(tenantId);
 
+        /* TODO : Below code enables uniqueness check across tenants and is redundant now. This will be handled/updated as part
+            of data partition changes.
+         */
         if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getName)
                     .collect(Collectors.toList());

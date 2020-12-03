@@ -14,6 +14,12 @@
 
 package org.opengroup.osdu.schema.azure.di;
 
+import com.azure.cosmos.CosmosClient;
+import com.azure.cosmos.CosmosClientBuilder;
+import com.azure.identity.DefaultAzureCredential;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -86,5 +92,22 @@ public class AzureBootstrapConfig {
         }
 
         return secretValue;
+    }
+
+    @Bean
+    public CosmosClient buildCosmosClient(SecretClient kv)
+    {
+        return new CosmosClientBuilder().endpoint(cosmosEndpoint(kv)).key(cosmosKey(kv)).buildClient();
+    }
+
+    @Autowired
+    private DefaultAzureCredential defaultAzureCredential;
+
+    @Bean
+    public BlobServiceClient buildBlobServiceClient()
+    {
+        String blobEndpoint = String.format("https://%s.blob.core.windows.net", storageAccount);
+        return new BlobServiceClientBuilder().endpoint(blobEndpoint).credential(defaultAzureCredential).buildClient();
+
     }
 }
