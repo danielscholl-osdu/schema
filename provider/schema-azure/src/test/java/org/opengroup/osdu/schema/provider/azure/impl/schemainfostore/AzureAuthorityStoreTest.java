@@ -31,7 +31,7 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
-import org.opengroup.osdu.azure.CosmosStore;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -112,7 +112,7 @@ public class AzureAuthorityStoreTest {
 
     @Test
     public void testCreateAuthority() throws  ApplicationException, BadRequestException {
-        doNothing().when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
+        doNothing().when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
         assertNotNull(store.create(mockAuthority));
     }
 
@@ -120,7 +120,7 @@ public class AzureAuthorityStoreTest {
     public void testCreateAuthority_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
         AppException exception = getMockAppException(409);
-        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
 
         try {
             store.create(mockAuthority);
@@ -135,9 +135,9 @@ public class AzureAuthorityStoreTest {
 
     @Test
     public void testCreateAuthority_ApplicationException()
-            throws NotFoundException, ApplicationException, BadRequestException, CosmosClientException {
+            throws NotFoundException, ApplicationException, BadRequestException, CosmosException {
         AppException exception = getMockAppException(500);
-        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
         try {
             store.create(mockAuthority);
             fail("Should not succeed");

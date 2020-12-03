@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.opengroup.osdu.azure.CosmosStore;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -115,7 +115,7 @@ public class AzureEntityTypeStoreTest {
     @Test
     public void testCreateEntityType() throws  ApplicationException, BadRequestException {
         Mockito.when(mockEntityType.getEntityTypeId()).thenReturn(entityTypeId);
-        doNothing().when(cosmosStore).createItem(anyString(), any(), any(), any());
+        doNothing().when(cosmosStore).createItem(anyString(), any(), any(), any(), any());
         assertNotNull(store.create(mockEntityType));
     }
 
@@ -123,7 +123,7 @@ public class AzureEntityTypeStoreTest {
     public void testCreateEntityType_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
         AppException exception = getMockAppException(409);
-        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
 
         try {
             store.create(mockEntityType);
@@ -138,9 +138,9 @@ public class AzureEntityTypeStoreTest {
 
     @Test
     public void testCreateEntityType_ApplicationException()
-            throws NotFoundException, ApplicationException, BadRequestException, CosmosClientException {
+            throws NotFoundException, ApplicationException, BadRequestException, CosmosException {
         AppException exception = getMockAppException(500);
-        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
 
         try {
             store.create(mockEntityType);
