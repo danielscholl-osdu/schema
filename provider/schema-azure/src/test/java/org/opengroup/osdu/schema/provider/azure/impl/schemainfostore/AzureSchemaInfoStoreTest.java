@@ -22,7 +22,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.opengroup.osdu.azure.CosmosStore;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -209,7 +209,7 @@ public class AzureSchemaInfoStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException {
 
         AppException exception = getMockAppException(409);
-        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
 
         try {
             schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published());
@@ -227,7 +227,7 @@ public class AzureSchemaInfoStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException {
 
         AppException exception = getMockAppException(500);
-        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
 
         try {
             schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published());
@@ -402,7 +402,7 @@ public class AzureSchemaInfoStoreTest {
                         eq(dataPartitionId + ":" + schemaId),
                         eq(dataPartitionId),
                         any());
-        doThrow(AppException.class).when(cosmosStore).upsertItem(eq(dataPartitionId), any(), any(), any());
+        doThrow(AppException.class).when(cosmosStore).upsertItem(eq(dataPartitionId), any(), any(), any(), any());
 
         try {
             schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published());

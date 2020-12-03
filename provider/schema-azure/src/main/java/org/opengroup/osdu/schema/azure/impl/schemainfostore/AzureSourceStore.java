@@ -15,7 +15,7 @@
 package org.opengroup.osdu.schema.azure.impl.schemainfostore;
 
 import java.text.MessageFormat;
-import org.opengroup.osdu.azure.CosmosStore;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -83,7 +83,7 @@ public class AzureSourceStore implements ISourceStore {
 
         try {
             SourceDoc sourceDoc = new SourceDoc(id, headers.getPartitionId(), source);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, sourceDoc);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, headers.getPartitionId(), sourceDoc);
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.SOURCE_EXISTS);

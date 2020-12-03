@@ -18,7 +18,7 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
-import org.opengroup.osdu.azure.CosmosStore;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.schema.azure.definitions.AuthorityDoc;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -84,7 +84,7 @@ public class AzureAuthorityStore implements IAuthorityStore {
 
         try {
             AuthorityDoc authorityDoc = new AuthorityDoc(id, headers.getPartitionId(), authority);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, authorityDoc);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, headers.getPartitionId(), authorityDoc);
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
