@@ -34,7 +34,7 @@ echo $INTEGRATION_TEST_OUTPUT_BIN_DIR
 rm -rf "$INTEGRATION_TEST_OUTPUT_DIR"
 mkdir -p "$INTEGRATION_TEST_OUTPUT_DIR" && mkdir -p "$INTEGRATION_TEST_OUTPUT_BIN_DIR"
 echo "Building integration testing assemblies and gathering artifacts..."
-mvn install dependency:copy-dependencies -DskipTests -f "$INTEGRATION_TEST_SOURCE_DIR_CORE"/pom.xml -DincludeGroupIds=org.opengroup.osdu -Dmdep.copyPom
+mvn install dependency:copy-dependencies -DskipItTests=true -f "$INTEGRATION_TEST_SOURCE_DIR_CORE"/pom.xml -DincludeGroupIds=org.opengroup.osdu -Dmdep.copyPom
 cp "$INTEGRATION_TEST_SOURCE_DIR_CORE"/target/dependency/* "${INTEGRATION_TEST_OUTPUT_BIN_DIR}"
 (cd "${INTEGRATION_TEST_OUTPUT_BIN_DIR}" && ls *.jar | sed -e 's/\.jar$//' | xargs -I {} echo mvn install:install-file -Dfile={}.jar -DpomFile={}.pom >> install-deps.sh)
 chmod +x "${INTEGRATION_TEST_OUTPUT_BIN_DIR}"/install-deps.sh

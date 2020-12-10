@@ -110,8 +110,35 @@
 		</dependencies>
 	</dependencyManagement>
 
-
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<skipTests>${skipItTests}</skipTests>
+					<excludes>
+						<exclude>none</exclude>
+					</excludes>
+					<includes>
+						<include>org.opengroup.osdu.schema.runner.SchemaServiceTestsRunner</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- This runs the integration-test goal thrice -->
+	<!--<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -166,5 +193,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>
+	</build>-->
 </project>
