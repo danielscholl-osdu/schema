@@ -12,7 +12,7 @@ class ImportFromOSDU(object):
             description="Given a path to an OSDU schema sub-folder release, move and rename schemas for deployment.")
         parser.add_argument('-f', type=str,
                             help='The folder path relative to "deployments"',
-                            default='osdu-source/R2-json-schema')
+                            default='osdu-source/R3-json-schema')
         arguments = parser.parse_args()
 
         self.info = None
