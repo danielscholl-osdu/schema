@@ -1,11 +1,11 @@
 {
   "authority": "osdu",
-  "source": "osdu",
-  "majorVersion": 0,
-  "minorVersion": 3,
+  "source": "wks",
+  "majorVersion": 1,
+  "minorVersion": 0,
   "patchVersion": 0,
   "createdBy": "OSDU Data Definition Group",
-  "status": "PUBLISHED",
+  "status": "DEVELOPMENT",
   "scope": "SHARED",
   "exclude": []
 }

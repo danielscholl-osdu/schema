@@ -12,7 +12,8 @@ schema authors.
 
 ##1. Raw Schemas (e.g. original OSDU)
 
-Original OSDU schemas are kept under the [osdu folder](./osdu).
+Original OSDU schemas are kept under the [osdu folder](./osdu). The 
+[source is located here](https://gitlab.opengroup.org/osdu/subcommittees/data-def/work-products/schema/-/tree/master/Generated).
 The contents is produced by the Python script [ImportFromOSDU.py](../scripts/ImportFromOSDU.py) .
 
 The structure of JSON files to register matches the expected payload of the Schema Service 
@@ -23,12 +24,12 @@ POST/PUT requests:
   "schemaInfo": {
     "schemaIdentity": {
       "authority": "osdu",
-      "source": "osdu",
-      "entity": "WellLogWorkProductComponent",
-      "schemaVersionMajor": 0,
-      "schemaVersionMinor": 2,
+      "source": "wks",
+      "entity": "work-product-component.WellLog",
+      "schemaVersionMajor": 1,
+      "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "osdu:osdu:WellLogWorkProductComponent:0.2.0"
+      "id": "osdu:wks:work-product-component.WellLog:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -45,7 +46,7 @@ Schemas may refer to abstract entity definitions or other external schema fragme
 Schema Service requires the abstract definitions and schema fragments to be registered prior 
 to the registration of the main entity schema. This is achieved by a file defining the 
 load sequence per schema version. An example can be found 
-[here for OSDU R2](./osdu/load_sequence.0.2.0.json).
+[here for OSDU R3](../shared-schemas/osdu/load_sequence.1.0.0.json).
 
 ##2. Upload schema definitions
 
