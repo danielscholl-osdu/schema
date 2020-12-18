@@ -35,6 +35,7 @@ import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -69,6 +70,9 @@ public class SchemaService implements ISchemaService {
 
     @Autowired
     private SchemaResolver schemaResolver;
+    
+    @Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 
     @Autowired
     JaxRsDpsLog log;
@@ -92,7 +96,7 @@ public class SchemaService implements ISchemaService {
         try {
             schema = schemaStore.getSchema(dataPartitionId, schemaId);
         } catch (NotFoundException e) {
-                schema = schemaStore.getSchema(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT, schemaId);
+                schema = schemaStore.getSchema(sharedTenant, schemaId);
         }
 
         return schema;
@@ -230,16 +234,16 @@ public class SchemaService implements ISchemaService {
         if (queryParams.getScope() != null) {
 
             if (queryParams.getScope().equalsIgnoreCase(SchemaScope.SHARED.toString())) {
-                getSchemaInfos(queryParams, schemaList, SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+                getSchemaInfos(queryParams, schemaList, sharedTenant);
             }
 
             else if (queryParams.getScope().equalsIgnoreCase(SchemaScope.INTERNAL.toString())) {
                 getSchemaInfos(queryParams, schemaList, tenantId);
             }
         } else {
-            getSchemaInfos(queryParams, schemaList, SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+            getSchemaInfos(queryParams, schemaList, sharedTenant);
 
-            if (!SchemaConstants.ACCOUNT_ID_COMMON_PROJECT.equalsIgnoreCase(tenantId)) {
+            if (!sharedTenant.equalsIgnoreCase(tenantId)) {
                 getSchemaInfos(queryParams, schemaList, tenantId);
             }
         }
@@ -306,7 +310,7 @@ public class SchemaService implements ISchemaService {
      * @param dataPartitionId
      */
     private void setScope(SchemaRequest schemaRequest, String dataPartitionId) {
-        if (dataPartitionId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+        if (dataPartitionId.equalsIgnoreCase(sharedTenant)) {
             schemaRequest.getSchemaInfo().setScope(SchemaScope.SHARED);
         } else {
             schemaRequest.getSchemaInfo().setScope(SchemaScope.INTERNAL);
