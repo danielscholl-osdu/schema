@@ -36,6 +36,7 @@
       {
         "$ref": "osdu:wks:AbstractGeoProspectContext:1.0.0"
       }
-    ]
+    ],
+    "x-osdu-inheriting-from-kind": []
   }
 }

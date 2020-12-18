@@ -136,6 +136,7 @@
           "$ref": "osdu:wks:AbstractFacilitySpecification:1.0.0"
         }
       }
-    }
+    },
+    "x-osdu-inheriting-from-kind": []
   }
 }

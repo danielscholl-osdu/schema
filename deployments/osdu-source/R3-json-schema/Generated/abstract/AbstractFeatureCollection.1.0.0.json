@@ -520,5 +520,6 @@
         "type": "number"
       }
     }
-  }
+  },
+  "x-osdu-inheriting-from-kind": []
 }

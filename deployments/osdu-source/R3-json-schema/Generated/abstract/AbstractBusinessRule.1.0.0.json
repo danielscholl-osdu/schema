@@ -55,5 +55,6 @@
         }
       }
     }
-  }
+  },
+  "x-osdu-inheriting-from-kind": []
 }

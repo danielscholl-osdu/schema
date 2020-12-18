@@ -115,6 +115,7 @@
         "description": "Increment (positive integer) for the crossline coordinate. If not provided then 1 is assumed.  The bin grid definition is expected to have increment 1 and the increment stored with the SeismicTraceData (\u201ccrossline increment\u201d) takes precedence over the increment set at the BinGrid. Alternatively the increments are allowed to be defined with the BinGrid, but this should be avoided to allow for variations in sampling in trace data sets.",
         "type": "integer"
       }
-    }
+    },
+    "x-osdu-inheriting-from-kind": []
   }
 }

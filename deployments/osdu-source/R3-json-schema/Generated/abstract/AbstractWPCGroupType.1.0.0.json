@@ -13,7 +13,11 @@
         "description": "The SRN which identifies this OSDU File resource.",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:file\\/[\\w\\-\\.]+:.+:[0-9]*$",
-        "x-osdu-relationship": []
+        "x-osdu-relationship": [
+          {
+            "GroupType": "file"
+          }
+        ]
       }
     },
     "Artefacts": {
@@ -42,7 +46,11 @@
             "description": "The SRN which identifies this OSDU Artefact resource.",
             "type": "string",
             "pattern": "^[\\w\\-\\.]+:file\\/[\\w\\-\\.]+:.+:[0-9]*$",
-            "x-osdu-relationship": []
+            "x-osdu-relationship": [
+              {
+                "GroupType": "file"
+              }
+            ]
           }
         }
       }
@@ -55,5 +63,6 @@
       "type": "boolean",
       "description": "A flag that indicates if the work product component is searchable, which means covered in the search index."
     }
-  }
+  },
+  "x-osdu-inheriting-from-kind": []
 }

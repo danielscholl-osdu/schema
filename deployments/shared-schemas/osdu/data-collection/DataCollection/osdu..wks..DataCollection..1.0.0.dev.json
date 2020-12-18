@@ -87,6 +87,7 @@
       "Resources",
       "Name",
       "OwnerID"
-    ]
+    ],
+    "x-osdu-inheriting-from-kind": []
   }
 }

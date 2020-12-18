@@ -37,6 +37,7 @@
         "const": "Field",
         "description": "The fixed type 'Field' for this AbstractGeoFieldContext."
       }
-    }
+    },
+    "x-osdu-inheriting-from-kind": []
   }
 }

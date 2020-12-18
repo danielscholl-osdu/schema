@@ -48,6 +48,7 @@
         "type": "string",
         "format": "date-time"
       }
-    }
+    },
+    "x-osdu-inheriting-from-kind": []
   }
 }

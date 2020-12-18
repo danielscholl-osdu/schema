@@ -30,6 +30,7 @@
         "description": "y is Northing or Latitude.",
         "type": "number"
       }
-    }
+    },
+    "x-osdu-inheriting-from-kind": []
   }
 }

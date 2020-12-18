@@ -21,5 +21,6 @@
     {
       "$ref": "AbstractGeoProspectContext.1.0.0.json"
     }
-  ]
+  ],
+  "x-osdu-inheriting-from-kind": []
 }

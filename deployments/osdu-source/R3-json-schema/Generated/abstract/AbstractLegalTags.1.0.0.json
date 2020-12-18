@@ -35,5 +35,6 @@
     "legaltags",
     "otherRelevantDataCountries"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-osdu-inheriting-from-kind": []
 }

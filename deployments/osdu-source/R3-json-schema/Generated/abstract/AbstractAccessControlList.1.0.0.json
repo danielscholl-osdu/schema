@@ -30,5 +30,6 @@
     "owners",
     "viewers"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-osdu-inheriting-from-kind": []
 }

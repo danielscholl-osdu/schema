@@ -49,5 +49,6 @@
       "description": "The distinct instance of the attribution publication, by version number, sequence number, date of publication, etc., that was used for the entity value.",
       "type": "string"
     }
-  }
+  },
+  "x-osdu-inheriting-from-kind": []
 }

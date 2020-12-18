@@ -111,6 +111,7 @@
         "description": "Text which describes a vertical measurement in detail.",
         "type": "string"
       }
-    }
+    },
+    "x-osdu-inheriting-from-kind": []
   }
 }

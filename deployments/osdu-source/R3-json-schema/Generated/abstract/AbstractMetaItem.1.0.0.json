@@ -185,5 +185,6 @@
         "persistableReference"
       ]
     }
-  ]
+  ],
+  "x-osdu-inheriting-from-kind": []
 }

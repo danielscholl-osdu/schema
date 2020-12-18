@@ -52,5 +52,6 @@
       "description": "The count of total number of additional properties that are not populated.",
       "type": "number"
     }
-  }
+  },
+  "x-osdu-inheriting-from-kind": []
 }

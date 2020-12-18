@@ -17,5 +17,6 @@
       "type": "array"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-osdu-inheriting-from-kind": []
 }
