@@ -5,13 +5,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
-
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,7 +26,6 @@ import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.ibm.cloudant.IBMCloudantClientFactory;
 import org.opengroup.osdu.core.ibm.multitenancy.TenantFactory;
-import org.opengroup.osdu.core.ibm.objectstorage.CloudObjectStorageFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
@@ -38,11 +39,11 @@ import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.ibm.SchemaDoc;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.cloudant.client.api.Database;
 import com.cloudant.client.api.query.QueryResult;
 import com.cloudant.client.org.lightcouch.DocumentConflictException;
-import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -95,6 +96,10 @@ public class IbmSchemaInfoStoreTest {
     
     private static final String dataPartitionId = "testPartitionId";
 	
+    @Before
+    public void setUp() {
+    	 ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
+    }
 
     @Test
     public void testGetLatestMinorVersion_ReturnNull() throws NotFoundException, ApplicationException, MalformedURLException {
