@@ -10,7 +10,7 @@ folder. The script to do this is [DeploySharedSchemas.py](../scripts/DeployShare
 step **2. Upload schema definitions** below. Step 1. is expected to be run by developers or
 schema authors.
 
-##1. Raw Schemas (e.g. original OSDU)
+## 1. Raw Schemas (e.g. original OSDU)
 
 Original OSDU schemas are kept under the [osdu folder](./osdu). The 
 [source is located here](https://gitlab.opengroup.org/osdu/subcommittees/data-def/work-products/schema/-/tree/master/Generated).
@@ -48,7 +48,7 @@ to the registration of the main entity schema. This is achieved by a file defini
 load sequence per schema version. An example can be found 
 [here for OSDU R3](../shared-schemas/osdu/load_sequence.1.0.0.json).
 
-##2. Upload schema definitions
+## 2. Upload schema definitions
 
 Once the loading instructions are completed, the schema registration can be launched. this is
 done via the [DeploySharedSchemas.py](../scripts/DeploySharedSchemas.py):
