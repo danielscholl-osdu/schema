@@ -35,6 +35,7 @@ import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfo
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -43,7 +44,6 @@ import com.cloudant.client.api.query.Expression;
 import com.cloudant.client.api.query.QueryBuilder;
 import com.cloudant.client.api.query.QueryResult;
 import com.cloudant.client.api.query.Selector;
-import com.google.gson.Gson;
 
 /**
  * Repository class to to register Schema in IBM Document Store.
@@ -67,6 +67,9 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	
 	@Autowired
     private ISchemaStore schemaStore;
+	
+	@Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 
 	
 	@PostConstruct
@@ -78,11 +81,11 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	@Override
 	public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
 		Set<String> tenantList = new HashSet<>();
-		tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+		tenantList.add(sharedTenant);
 		tenantList.add(tenantId);
 
 		// code to call check uniqueness
-		if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+		if (tenantId.equalsIgnoreCase(sharedTenant)) {
 			List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
 					.collect(Collectors.toList());
 			tenantList.addAll(privateTenantList);

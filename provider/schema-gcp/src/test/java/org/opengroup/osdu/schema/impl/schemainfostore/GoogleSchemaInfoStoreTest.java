@@ -9,6 +9,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,6 +33,7 @@ import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.Blob;
@@ -104,6 +106,11 @@ public class GoogleSchemaInfoStoreTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    
+    @Before
+    public void setUp() {
+    	 ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
+    }
 
     @Test
     public void testGetLatestMinorVersion_ReturnNull() throws NotFoundException, ApplicationException {
@@ -172,7 +179,7 @@ public class GoogleSchemaInfoStoreTest {
         KeyFactory storageKeyFactory = mock(KeyFactory.class);
         String schemaId = "schemaId";
         String tenantId = "tenant";
-        schemaInfoStore.setCommonAccountId(tenantId);
+        schemaInfoStore.setSharedTenant(tenantId);
         Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
         Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
         Mockito.when(tenantInfo.getName()).thenReturn("tenant");
