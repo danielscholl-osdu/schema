@@ -82,8 +82,8 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     @Autowired
     JaxRsDpsLog log;
 
-    @Value("${account.id.common.project}")
-    private String commonAccountId;
+    @Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 
     /**
      * Method to get schemaInfo from google store
@@ -275,9 +275,6 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
         List<SchemaInfo> schemaList = new LinkedList<>();
-        if (SchemaConstants.ACCOUNT_ID_COMMON_PROJECT.equals(tenantId)) {
-            return schemaList;
-        }
         Datastore datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
         List<Filter> filterList = getFilters(queryParams);
 
@@ -328,11 +325,11 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
 
         Set<String> tenantList = new HashSet<>();
-        tenantList.add(commonAccountId);
+        tenantList.add(sharedTenant);
         tenantList.add(tenantId);
 
         // code to call check uniqueness
-        if (tenantId.equalsIgnoreCase(commonAccountId)) {
+        if (tenantId.equalsIgnoreCase(sharedTenant)) {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
                     .collect(Collectors.toList());
             tenantList.addAll(privateTenantList);
@@ -352,11 +349,12 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         return true;
     }
 
-    public String getCommonAccountId() {
-        return commonAccountId;
-    }
+	public String getSharedTenant() {
+		return sharedTenant;
+	}
 
-    public void setCommonAccountId(String commonAccountId) {
-        this.commonAccountId = commonAccountId;
-    }
+	public void setSharedTenant(String sharedTenant) {
+		this.sharedTenant = sharedTenant;
+	}
+
 }

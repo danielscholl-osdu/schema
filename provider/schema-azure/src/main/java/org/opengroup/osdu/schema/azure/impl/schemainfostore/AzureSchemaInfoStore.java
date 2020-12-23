@@ -44,6 +44,7 @@ import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import lombok.extern.java.Log;
@@ -69,6 +70,9 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 
     @Autowired
     private String cosmosDBName;
+    
+    @Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 
     @Autowired
     JaxRsDpsLog log;
@@ -326,13 +330,13 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
         Set<String> tenantList = new HashSet<>();
-        tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+        tenantList.add(sharedTenant);
         tenantList.add(tenantId);
 
         /* TODO : Below code enables uniqueness check across tenants and is redundant now. This will be handled/updated as part
             of data partition changes.
          */
-        if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+        if (tenantId.equalsIgnoreCase(sharedTenant)) {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getName)
                     .collect(Collectors.toList());
             tenantList.addAll(privateTenantList);

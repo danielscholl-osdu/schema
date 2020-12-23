@@ -13,8 +13,21 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -35,13 +48,11 @@ import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfo
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 @Repository
 public class AwsSchemaInfoStore implements ISchemaInfoStore {
@@ -62,6 +73,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   private ISchemaStore schemaStore;
 
   private DynamoDBQueryHelper queryHelper;
+  
+  @Value("${shared.tenant.name:common}")
+  private String sharedTenant;
 
   @PostConstruct
   public void init() {
@@ -242,11 +256,11 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
  @Override
   public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
    Set<String> tenantList = new HashSet<>();
-   tenantList.add(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT);
+   tenantList.add(sharedTenant);
    tenantList.add(tenantId);
 
    // code to call check uniqueness
-   if (tenantId.equalsIgnoreCase(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT)) {
+   if (tenantId.equalsIgnoreCase(sharedTenant)) {
      List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
              .collect(Collectors.toList());
      tenantList.addAll(privateTenantList);
