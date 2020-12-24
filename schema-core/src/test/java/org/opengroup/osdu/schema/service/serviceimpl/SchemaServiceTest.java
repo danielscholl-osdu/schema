@@ -91,7 +91,7 @@ public class SchemaServiceTest {
     
     @Before
     public void setUp() {
-    	 ReflectionTestUtils.setField(schemaService, "sharedTenant", "common");
+    	 ReflectionTestUtils.setField(schemaService, "sharedTenant", sharedTenant);
     }
     
     @Test
