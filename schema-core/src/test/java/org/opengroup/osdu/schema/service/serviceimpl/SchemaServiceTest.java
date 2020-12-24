@@ -115,6 +115,7 @@ public class SchemaServiceTest {
     @Test
     public void testGetSchema_FetchCommonProjectTest()
             throws BadRequestException, NotFoundException, ApplicationException {
+        ReflectionTestUtils.setField(schemaService, "sharedTenant", sharedTenant);
         String dataPartitionId = "private";
         Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
         String schemaId = "os..wks..well.1.1";
@@ -125,6 +126,7 @@ public class SchemaServiceTest {
 
     @Test
     public void testGetSchema_NotFoundException() throws BadRequestException, NotFoundException, ApplicationException {
+        ReflectionTestUtils.setField(schemaService, "sharedTenant", sharedTenant);
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
         String dataPartitionId = "private";
