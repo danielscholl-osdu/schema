@@ -29,70 +29,73 @@ spec:
         aadpodidbinding: osdu-identity
     spec:
       volumes:
-      - name: azure-keyvault
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true
-          volumeAttributes:
-            secretProviderClass: azure-keyvault
-      containers:
-      - name: {{ .Chart.Name }}
-        image: {{ .Values.image.repository }}/{{ .Chart.Name }}-{{ .Values.image.branch }}:{{ .Values.image.tag | default .Chart.AppVersion }}
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
-        readinessProbe:
-          httpGet:
-            path: /api/schema-service/v1/swagger-ui.html
-            port: 80
-        volumeMounts:
         - name: azure-keyvault
-          mountPath: "/mnt/azure-keyvault"
-          readOnly: true
-        env:
-        - name: spring_application_name
-          value: schema
-        - name: LOG_PREFIX
-          value: "schema"
-        - name: server.servlet.contextPath
-          value: /api/schema-service/v1/
-        - name: server.port
-          value: "80"
-        - name: KEYVAULT_URI
-          valueFrom:
-            configMapKeyRef:
-              name: osdu-svc-properties
-              key: ENV_KEYVAULT
-        - name: AZURE_TENANT_ID
-          valueFrom:
-            secretKeyRef:
-              name: active-directory
-              key: tenantid
-        - name: AZURE_CLIENT_ID
-          valueFrom:
-            secretKeyRef:
-              name: active-directory
-              key: principal-clientid
-        - name: AZURE_CLIENT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: active-directory
-              key: principal-clientpassword
-        - name: aad_client_id
-          valueFrom:
-            secretKeyRef:
-              name: active-directory
-              key: application-appid
-        - name: appinsights_key
-          valueFrom:
-            secretKeyRef:
-              name: central-logging
-              key: appinsights
-        - name: cosmosdb_database
-          value: osdu-db
-        - name: storage_account
-          value: osdumvpdp1glabky7vdata
-        - name: entitlements_service_endpoint
-          value: http://entitlements-azure/entitlements/v1
-        - name: entitlements_service_api_key
-          value: "OBSOLETE"
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: azure-keyvault
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}/{{ .Chart.Name }}-{{ .Values.image.branch }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /api/schema-service/v1/swagger-ui.html
+              port: 80
+          volumeMounts:
+            - name: azure-keyvault
+              mountPath: "/mnt/azure-keyvault"
+              readOnly: true
+          env:
+            - name: spring_application_name
+              value: schema
+            - name: LOG_PREFIX
+              value: "schema"
+            - name: server.servlet.contextPath
+              value: /api/schema-service/v1/
+            - name: server.port
+              value: "80"
+            - name: KEYVAULT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: osdu-svc-properties
+                  key: ENV_KEYVAULT
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: active-directory
+                  key: tenantid
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: active-directory
+                  key: principal-clientid
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: active-directory
+                  key: principal-clientpassword
+            - name: aad_client_id
+              valueFrom:
+                secretKeyRef:
+                  name: active-directory
+                  key: application-appid
+            - name: appinsights_key
+              valueFrom:
+                secretKeyRef:
+                  name: central-logging
+                  key: appinsights
+            - name: storage_account
+              valueFrom:
+                secretKeyRef:
+                  name: storage
+                  key: storage-account
+            - name: cosmosdb_database
+              value: osdu-db
+            - name: entitlements_service_endpoint
+              value: http://entitlements-azure/entitlements/v1
+            - name: entitlements_service_api_key
+              value: "OBSOLETE"
