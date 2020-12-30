@@ -71,7 +71,7 @@ stages:
       serviceBase: ${{ variables.serviceName }}
       testingRootFolder: 'testing'
       chartPath: ${{ variables.chartPath }}
-  - template: deploy-stages.yml
+  - template: deploy-stage.yml
     parameters:
       serviceName: ${{ variables.serviceName }}
       chartPath: ${{ variables.chartPath }}
@@ -84,7 +84,7 @@ stages:
       providers:
         -  name: Azure
            environments: ['dev']
-  - template: bootstrap-task.yml
+  - template: bootstrap-stage.yml
     parameters:
       serviceName: ${{ variables.serviceName }}
       providers:

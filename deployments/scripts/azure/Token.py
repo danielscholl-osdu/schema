@@ -6,8 +6,8 @@ class AzureToken(object):
     def get_azure_id_token(self):
         tenant_id = os.getenv('AZURE_TENANT_ID')
         resource_id = os.getenv('AZURE_AD_APP_RESOURCE_ID')
-        client_id = os.getenv('INTEGRATION_TESTER')
-        client_secret = os.getenv('AZURE_TESTER_SERVICEPRINCIPAL_SECRET')
+        client_id = os.getenv('AZURE_CLIENT_ID')
+        client_secret = os.getenv('AZURE_CLIENT_SECRET')
         
         if tenant_id is None:
             print('Please pass tenant Id to generate token')
