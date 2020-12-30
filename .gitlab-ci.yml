@@ -64,4 +64,4 @@ include:
     ref: 'master'
     file: 'cloud-providers/osdu-gcp-cloudrun.yml'
 
-  - local: "/devops/azure/bootstrap.yaml"
+  - local: "/devops/azure/gitlab-bootstrap.yml"

@@ -84,3 +84,9 @@ stages:
       providers:
         -  name: Azure
            environments: ['dev']
+  - template: bootstrap-task.yml
+    parameters:
+      serviceName: ${{ variables.serviceName }}
+      providers:
+        -  name: Azure
+           environments: ['dev']

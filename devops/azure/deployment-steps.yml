@@ -75,27 +75,6 @@ steps:
       providerName: ${{ parameters.providerName }}
       elasticEndpoint: ${{ parameters.elasticEndpoint }}
 
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '3.8'
-      addToPath: true
-      architecture: 'x64'
-  - task: Bash@3
-    displayName: 'Deploy Schemas'
-    inputs:
-      targetType: 'inline'
-      script: |
-        export AZURE_DEPLOYMENTS_SUBDIR=$(System.DefaultWorkingDirectory)/${{ parameters.artifactName }}/deployments/scripts/azure
-        export AZURE_TENANT_ID=$(AZURE_TENANT_ID)
-        export AZURE_AD_APP_RESOURCE_ID=$(AZURE_AD_APP_RESOURCE_ID)
-        export INTEGRATION_TESTER=$(INTEGRATION_TESTER)
-        export AZURE_TESTER_SERVICEPRINCIPAL_SECRET=$(AZURE_TESTER_SERVICEPRINCIPAL_SECRET)
-        export DATA_PARTITION=$(DATA_PARTITION_ID)
-
-        pip install -r $AZURE_DEPLOYMENTS_SUBDIR/requirements.txt
-        chmod +x $AZURE_DEPLOYMENTS_SUBDIR/bootstrap.sh
-        $AZURE_DEPLOYMENTS_SUBDIR/bootstrap.sh
-
   - task: Maven@3
     displayName: 'Maven build, test, and install ${{parameters.providerName}}-test-core'
     condition: ne('${{ parameters.testCoreMavenPomFile }}', '')
