@@ -10,7 +10,7 @@ folder. The script to do this is [DeploySharedSchemas.py](../scripts/DeployShare
 step **2. Upload schema definitions** below. Step 1. is expected to be run by developers or
 schema authors.
 
-## 1. Raw Schemas (e.g. original OSDU)
+## 1. Raw Schemas (e.g. original OSDU) - This is generic and is completed, CSPs don't have to run this step. 
 
 Original OSDU schemas are kept under the [osdu folder](./osdu). The 
 [source is located here](https://gitlab.opengroup.org/osdu/subcommittees/data-def/work-products/schema/-/tree/master/Generated).
@@ -67,7 +67,7 @@ optional arguments:
 
 
 example:
-python deployments\scripts\DeploySharedSchemas.py -l load_sequence.0.2.0.json -u https://open.opendes.cloud.slb-ds.com/api/schema-service/v1/schema
+python deployments\scripts\DeploySharedSchemas.py -l load_sequence.1.0.0.json -u https://opengroup.test.org/api/schema-service/v1/schema
 ```
 
 
@@ -132,12 +132,12 @@ schemas in status `PUBLISHED` can only be created once (POST).
 The script produces output like:
 
 ```shell script
-python.exe C:/Users/gehrmann/git_repos/PyCharm/os-schema/deployments/scripts/DeploySharedSchemas.py -l load_sequence.0.2.0.json -u https://api.evq.csp.slb.com/de/schema-service/v1/schema
-Success: kind osdu:osdu:DataCollection:0.2.0 submitted with method PUT schema.
-Success: kind osdu:osdu:File:0.2.0 submitted with method PUT schema.
+python.exe C:/Users/gehrmann/git_repos/PyCharm/os-schema/deployments/scripts/DeploySharedSchemas.py -l load_sequence.1.0.0.json -u https://api.evq.csp.slb.com/de/schema-service/v1/schema
+Success: kind osdu:osdu:DataCollection:1.0.0 submitted with method PUT schema.
+Success: kind osdu:osdu:File:1.0.0 submitted with method PUT schema.
 ...
-Success: kind osdu:osdu:WellLogWorkProductComponent:0.2.0 submitted with method PUT schema.
-Success: kind osdu:osdu:WorkProduct:0.2.0 submitted with method PUT schema.
+Success: kind osdu:osdu:WellLogWorkProductComponent:1.0.0 submitted with method PUT schema.
+Success: kind osdu:osdu:WorkProduct:1.0.0 submitted with method PUT schema.
 This update took 190.44 seconds.
 All 120 schemas registered or updated.
 
