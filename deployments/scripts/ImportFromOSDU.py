@@ -147,7 +147,7 @@ class ImportFromOSDU(object):
         sequence = list()
         for dep in self.dependencies:
             parts = dep.split(':')
-            parts[2] = parts[2].split('.')[-1]
+            parts[2] = parts[2].split('/')[-1]
             dep_without_group_type = ':'.join(parts)
             dep_as_file = dep_without_group_type.replace(':', '..')
             abs_path = Utility.find_file(dep_as_file + '*.json', root=self.target_path)
