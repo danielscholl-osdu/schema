@@ -26,6 +26,7 @@ variables:
 
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   AWS_TEST_SUBDIR: testing/schema-test-core
+  AWS_DEPLOYMENTS_SUBDIR: deployments/scripts/aws
   AWS_SERVICE: schema
   AWS_ENVIRONMENT: dev
   AWS_MAVEN_TEST_COMMAND_OVERRIDE: verify
@@ -65,3 +66,4 @@ include:
     file: 'cloud-providers/osdu-gcp-cloudrun.yml'
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
+  - local: "/devops/aws/bootstrap.yaml"
