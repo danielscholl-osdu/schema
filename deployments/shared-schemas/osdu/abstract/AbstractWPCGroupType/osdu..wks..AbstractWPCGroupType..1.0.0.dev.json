@@ -55,7 +55,7 @@
             "ResourceKind": {
               "description": "The kind or schema ID of the artefact. Resolvable with the Schema Service.",
               "type": "string",
-              "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$"
+              "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$"
             },
             "ResourceID": {
               "description": "The SRN which identifies this OSDU Artefact resource.",
