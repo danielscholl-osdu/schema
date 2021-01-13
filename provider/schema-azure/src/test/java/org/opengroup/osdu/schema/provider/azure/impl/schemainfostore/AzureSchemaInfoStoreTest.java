@@ -42,6 +42,7 @@ import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -93,6 +94,7 @@ public class AzureSchemaInfoStoreTest {
     @Before
     public void init() {
         initMocks(this);
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
         doReturn(dataPartitionId).when(headers).getPartitionId();
     }
 

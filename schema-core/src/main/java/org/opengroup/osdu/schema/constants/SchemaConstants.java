@@ -35,7 +35,7 @@ public class SchemaConstants {
     // general
     public static final String ALREADY_EXISTS = "ALREADY_EXISTS";
     public static final String ACCOUNT_ID = "account-Id";
-    public static final String ACCOUNT_ID_COMMON_PROJECT = "common";
+    //public static final String ACCOUNT_ID_COMMON_PROJECT = "common";
     public static final String ON_BEHALF_OF = "on-Behalf-Of";
 
 

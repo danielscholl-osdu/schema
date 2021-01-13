@@ -1,6 +1,7 @@
 package org.opengroup.osdu.schema.impl.schemastore;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,6 +18,7 @@ import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -59,6 +61,11 @@ public class GoogleSchemaStoreTest {
     private static final String FILE_PATH = "/test-folder/test-file";
     private static final String CONTENT = "Hello World";
 
+    @Before
+    public void setUp() {
+    	 ReflectionTestUtils.setField(schemaStore, "sharedTenant", "common");
+    }
+    
     @Test
     public void testCreateSchema() throws ApplicationException {
 

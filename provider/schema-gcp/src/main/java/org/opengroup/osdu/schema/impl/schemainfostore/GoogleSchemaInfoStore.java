@@ -1,3 +1,20 @@
+/*
+  Copyright 2020 Google LLC
+  Copyright 2020 EPAM Systems, Inc
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ */
+
 package org.opengroup.osdu.schema.impl.schemainfostore;
 
 import java.util.Collections;
@@ -65,8 +82,8 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     @Autowired
     JaxRsDpsLog log;
 
-    @Value("${account.id.common.project}")
-    private String commonAccountId;
+    @Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 
     /**
      * Method to get schemaInfo from google store
@@ -188,7 +205,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
             Entry<Long, Blob> blob = sortedMap.firstEntry();
             return new String(blob.getValue().toByteArray());
         }
-        return new String();
+        return "";
     }
 
     private SchemaInfo getSchemaInfoObject(Entity entity, Datastore datastore) {
@@ -210,7 +227,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     }
 
     private Entity getEntityObject(SchemaRequest schema, Datastore datastore, KeyFactory keyFactory)
-            throws BadRequestException, ApplicationException {
+            throws BadRequestException {
 
         Key key = keyFactory.newKey(schema.getSchemaInfo().getSchemaIdentity().getId());
 
@@ -258,9 +275,6 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
         List<SchemaInfo> schemaList = new LinkedList<>();
-        if (SchemaConstants.ACCOUNT_ID_COMMON_PROJECT.equals(tenantId)) {
-            return schemaList;
-        }
         Datastore datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
         List<Filter> filterList = getFilters(queryParams);
 
@@ -311,11 +325,11 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
 
         Set<String> tenantList = new HashSet<>();
-        tenantList.add(commonAccountId);
+        tenantList.add(sharedTenant);
         tenantList.add(tenantId);
 
         // code to call check uniqueness
-        if (tenantId.equalsIgnoreCase(commonAccountId)) {
+        if (tenantId.equalsIgnoreCase(sharedTenant)) {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
                     .collect(Collectors.toList());
             tenantList.addAll(privateTenantList);
@@ -335,11 +349,12 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         return true;
     }
 
-    public String getCommonAccountId() {
-        return commonAccountId;
-    }
+	public String getSharedTenant() {
+		return sharedTenant;
+	}
 
-    public void setCommonAccountId(String commonAccountId) {
-        this.commonAccountId = commonAccountId;
-    }
+	public void setSharedTenant(String sharedTenant) {
+		this.sharedTenant = sharedTenant;
+	}
+
 }

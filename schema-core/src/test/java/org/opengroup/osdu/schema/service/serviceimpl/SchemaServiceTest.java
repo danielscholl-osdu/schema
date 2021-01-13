@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -39,8 +40,10 @@ import org.opengroup.osdu.schema.service.IEntityTypeService;
 import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,11 +81,19 @@ public class SchemaServiceTest {
     @Mock
     JaxRsDpsLog log;
     
+    @Value("${shared.tenant.name:common}")
+	private String sharedTenant;
+    
     private Date currDate = new Date();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
+    
+    @Before
+    public void setUp() {
+    	 ReflectionTestUtils.setField(schemaService, "sharedTenant", "common");
+    }
+    
     @Test
     public void testGetSchema_EmptySchemaId() throws BadRequestException, NotFoundException, ApplicationException {
         String schemaId = "";
@@ -108,7 +119,7 @@ public class SchemaServiceTest {
         Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
         String schemaId = "os..wks..well.1.1";
         Mockito.when(schemaStore.getSchema(dataPartitionId, schemaId)).thenThrow(NotFoundException.class);
-        Mockito.when(schemaStore.getSchema(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT, schemaId)).thenReturn("{}");
+        Mockito.when(schemaStore.getSchema(sharedTenant, schemaId)).thenReturn("{}");
         assertNotNull(schemaService.getSchema(schemaId));
     }
 
@@ -120,7 +131,7 @@ public class SchemaServiceTest {
         Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
         String schemaId = "os..wks..well.1.1";
         Mockito.when(schemaStore.getSchema(dataPartitionId, schemaId)).thenThrow(NotFoundException.class);
-        Mockito.when(schemaStore.getSchema(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT, schemaId))
+        Mockito.when(schemaStore.getSchema(sharedTenant, schemaId))
                 .thenThrow(new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT));
         schemaService.getSchema(schemaId);
     }
@@ -137,7 +148,7 @@ public class SchemaServiceTest {
         when(schemaInfoStore.isUnique(schemaId, "common")).thenReturn(true);
         when(schemaInfoStore.isUnique(schemaId, "tenant")).thenReturn(true);
         when(headers.getPartitionId()).thenReturn(dataPartitionId);
-        Mockito.when(schemaStore.getSchema(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT, schemaId))
+        Mockito.when(schemaStore.getSchema(sharedTenant, schemaId))
                 .thenThrow(NotFoundException.class);
         Mockito.when(schemaStore.getSchema(dataPartitionId, schemaId)).thenThrow(NotFoundException.class);
         Mockito.when(authorityService.checkAndRegisterAuthorityIfNotPresent(
@@ -225,7 +236,7 @@ public class SchemaServiceTest {
         
         Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
         when(schemaInfoStore.isUnique(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        Mockito.when(schemaStore.getSchema(SchemaConstants.ACCOUNT_ID_COMMON_PROJECT, schemaId))
+        Mockito.when(schemaStore.getSchema(sharedTenant, schemaId))
                 .thenThrow(NotFoundException.class);
         Mockito.when(authorityService.checkAndRegisterAuthorityIfNotPresent(
         		schReqInt.getSchemaInfo().getSchemaIdentity().getAuthority()))
