@@ -8,6 +8,7 @@ from Utility import Utility
 class ImportFromOSDU(object):
     SCHEMA_INFO = 'schema-version-info'
     LOAD_SEQUENCE_FILE = 'load_sequence.{}.{}.{}.json'
+    IGNORE_GROUP_TYPES = ['abstract', 'data-collection', 'manifest']
 
     def __init__(self):
         parser = argparse.ArgumentParser(
@@ -60,6 +61,8 @@ class ImportFromOSDU(object):
                     'source': file,
                     'target': target
                 }
+                if group_type is not None and group_type not in self.IGNORE_GROUP_TYPES:
+                    schema_file['group-type'] = group_type
                 if version is not None:
                     schema_file['version'] = version
                 else:
@@ -191,6 +194,12 @@ class ImportFromOSDU(object):
         if len(parts) < 5:
             exit('Error: unexpected $ref: {}'.format(file_name))
         entity = parts[-5].split('/')[-1]
+        group_type = self.schema_files.get(entity, dict()).get('group-type')
+        name_parts = list()
+        if group_type is not None:
+            name_parts.append(group_type)
+        name_parts.append(entity)
+        entity = '/'.join(name_parts)
         entity_info = {'entity': entity, 'version': '.'.join(parts[-4:-1])}
         kind = self.__make_kind(entity_info, is_file=False)
         return kind
