@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "osdu",
       "source": "wks",
-      "entityType": "file/AbstractAnyRecordFile",
+      "entityType": "work-product/GenericWorkProduct",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "osdu:wks:file/AbstractAnyRecordFile:1.0.0"
+      "id": "osdu:wks:work-product/GenericWorkProduct:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/file/AbstractAnyRecordFile.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/work-product/GenericWorkProduct.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:file/AbstractAnyRecordFile:1.0.0",
-    "title": "AbstractAnyRecordFile",
-    "description": "Essential schema for file group-type records.",
+    "x-osdu-schema-source": "osdu:wks:work-product/GenericWorkProduct:1.0.0",
+    "title": "GenericWorkProduct",
+    "description": "Essential schema for work-product group-type records.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:file\\/[\\w\\-\\.]+:.+)$",
-        "example": "namespace:file/AbstractAnyRecordFile:23270a0b-0090-5570-8259-3424eb8cd2cf"
+        "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:work-product\\/GenericWorkProduct:.+)$",
+        "example": "namespace:work-product/GenericWorkProduct:7f718b23-9dde-5ed7-b773-b4818a852690"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:file/AbstractAnyRecordFile:1.0.0"
+        "example": "osdu:wks:work-product/GenericWorkProduct:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -174,7 +174,111 @@
       },
       "data": {
         "type": "object",
-        "description": "The data block containing the kind-specific payload. The actual schema is defined by the 'kind', resolvable via the Schema Service."
+        "description": "A collection of work product components such as might be produced by a business activity and which is delivered to the data platform for loading.",
+        "properties": {
+          "Components": {
+            "type": "array",
+            "items": {
+              "description": "The SRN which identifies this OSDU Work Product Component resource.",
+              "type": "string",
+              "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:work-product-component\\/[\\w\\-\\.]+:.+:[0-9]*)$",
+              "x-osdu-relationship": [
+                {
+                  "GroupType": "work-product-component"
+                }
+              ]
+            }
+          },
+          "IsExtendedLoad": {
+            "type": "boolean",
+            "description": "A flag that indicates if the work product is undergoing an extended load.  It reflects the fact that the work product is in an early stage and may be updated before finalization."
+          },
+          "IsDiscoverable": {
+            "type": "boolean",
+            "description": "A flag that indicates if the work product is searchable, which means covered in the search index."
+          },
+          "Name": {
+            "type": "string",
+            "description": "Name of the instance of Work Product - could be a shipment number."
+          },
+          "Description": {
+            "type": "string",
+            "description": "Description of the purpose of the work product."
+          },
+          "CreationDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date that a resource (work  product here) is formed outside of OSDU before loading (e.g. publication date, work product delivery package assembly date)."
+          },
+          "Tags": {
+            "type": "array",
+            "description": "Array of key words to identify the work product, especially to help in search.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "SpatialPoint": {
+            "description": "A centroid point that reflects the locale of the content of the work product (location of the subject matter).",
+            "$ref": "osdu:wks:AbstractSpatialLocation:1.0.0"
+          },
+          "SpatialArea": {
+            "description": "A polygon boundary that reflects the locale of the content of the work product (location of the subject matter).",
+            "$ref": "osdu:wks:AbstractSpatialLocation:1.0.0"
+          },
+          "SubmitterName": {
+            "type": "string",
+            "description": "Name of the person that first submitted the work product package to OSDU."
+          },
+          "BusinessActivities": {
+            "type": "array",
+            "description": "Array of business processes/workflows that the work product has been through (ex. well planning, exploration).",
+            "items": {
+              "type": "string",
+              "description": "Business Activity"
+            }
+          },
+          "AuthorIDs": {
+            "type": "array",
+            "description": "Array of Authors' names of the work product.  Could be a person or company entity.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "LineageAssertions": {
+            "type": "array",
+            "description": "Defines relationships with other objects (any kind of Resource) upon which this work product depends.  The assertion is directed only from the asserting WP to ancestor objects, not children.  It should not be used to refer to files or artefacts within the WP -- the association within the WP is sufficient and Artefacts are actually children of the main WP file. They should be recorded in the Data.Artefacts[] array.",
+            "items": {
+              "type": "object",
+              "title": "LineageAssertion",
+              "properties": {
+                "ID": {
+                  "type": "string",
+                  "description": "The object reference identifying the DIRECT, INDIRECT, REFERENCE dependency.",
+                  "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+\\/[\\w\\-\\.]+:.+:[0-9]*$",
+                  "x-osdu-relationship": []
+                },
+                "LineageRelationshipType": {
+                  "type": "string",
+                  "description": "Used by LineageAssertion to describe the nature of the line of descent of a work product from a prior Resource, such as DIRECT, INDIRECT, REFERENCE.  It is not for proximity (number of nodes away), it is not to cover all the relationships in a full ontology or graph, and it is not to describe the type of activity that created the asserting WP.  LineageAssertion does not encompass a full provenance, process history, or activity model.",
+                  "pattern": "^[\\w\\-\\.]+:reference-data\\/LineageRelationshipType:.+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "reference-data",
+                      "EntityType": "LineageRelationshipType"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "Annotations": {
+            "type": "array",
+            "description": "Array of Annotations",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       }
     },
     "required": [

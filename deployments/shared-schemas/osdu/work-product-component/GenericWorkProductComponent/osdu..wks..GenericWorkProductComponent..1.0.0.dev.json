@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "osdu",
       "source": "wks",
-      "entityType": "reference-data/AbstractAnyRecordReferenceData",
+      "entityType": "work-product-component/GenericWorkProductComponent",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "osdu:wks:reference-data/AbstractAnyRecordReferenceData:1.0.0"
+      "id": "osdu:wks:work-product-component/GenericWorkProductComponent:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/reference-data/AbstractAnyRecordReferenceData.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/work-product-component/GenericWorkProductComponent.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:reference-data/AbstractAnyRecordReferenceData:1.0.0",
-    "title": "AbstractAnyRecordReferenceData",
-    "description": "Essential schema for reference-data group-type records.",
+    "x-osdu-schema-source": "osdu:wks:work-product-component/GenericWorkProductComponent:1.0.0",
+    "title": "GenericWorkProductComponent",
+    "description": "Essential schema for work-product-component group-type records.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/[\\w\\-\\.]+:.+$",
-        "example": "namespace:reference-data/AbstractAnyRecordReferenceData:71e87d3d-4963-52dc-94c4-22312765146b"
+        "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:work-product-component\\/GenericWorkProductComponent:.+)$",
+        "example": "namespace:work-product-component/GenericWorkProductComponent:6d67f41c-c417-541d-8646-146bf14cbc8b"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:reference-data/AbstractAnyRecordReferenceData:1.0.0"
+        "example": "osdu:wks:work-product-component/GenericWorkProductComponent:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -174,11 +174,68 @@
       },
       "data": {
         "type": "object",
-        "description": "The data block containing the kind-specific payload. The actual schema is defined by the 'kind', resolvable via the Schema Service."
+        "description": "Generic reference object containing the universal group-type properties of a Work Product Component for inclusion in data type specific Work Product Component objects",
+        "properties": {
+          "Files": {
+            "type": "array",
+            "items": {
+              "description": "The SRN which identifies this OSDU File resource.",
+              "type": "string",
+              "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:file\\/[\\w\\-\\.]+:.+:[0-9]*)$",
+              "x-osdu-relationship": [
+                {
+                  "GroupType": "file"
+                }
+              ]
+            }
+          },
+          "Artefacts": {
+            "type": "array",
+            "description": "An array of Artefacts - each artefact has a Role, Resource tuple. An artefact is distinct from the file, in the sense certain valuable information is generated during loading process (Artefact generation process). Examples include retrieving location data, performing an OCR which may result in the generation of artefacts which need to be preserved distinctly",
+            "items": {
+              "type": "object",
+              "properties": {
+                "RoleID": {
+                  "description": "The SRN of this artefact's role.",
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:reference-data\\/ArtefactRole:.+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "reference-data",
+                      "EntityType": "ArtefactRole"
+                    }
+                  ]
+                },
+                "ResourceKind": {
+                  "description": "The kind or schema ID of the artefact. Resolvable with the Schema Service.",
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$"
+                },
+                "ResourceID": {
+                  "description": "The SRN which identifies this OSDU Artefact resource.",
+                  "type": "string",
+                  "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:file\\/[\\w\\-\\.]+:.+:[0-9]*)$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "file"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "IsExtendedLoad": {
+            "type": "boolean",
+            "description": "A flag that indicates if the work product component is undergoing an extended load.  It reflects the fact that the work product component is in an early stage and may be updated before finalization."
+          },
+          "IsDiscoverable": {
+            "type": "boolean",
+            "description": "A flag that indicates if the work product component is searchable, which means covered in the search index."
+          }
+        }
       }
     },
     "required": [
-      "id",
       "kind",
       "acl",
       "legal"

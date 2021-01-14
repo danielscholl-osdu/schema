@@ -33,14 +33,14 @@
         "description": "Reference-data are submitted as an array of records.",
         "type": "array",
         "items": {
-          "$ref": "osdu:wks:AbstractAnyRecordReferenceData:1.0.0"
+          "$ref": "osdu:wks:reference-data/GenericReferenceData:1.0.0"
         }
       },
       "MasterData": {
         "description": "Master-data are submitted as an array of records.",
         "type": "array",
         "items": {
-          "$ref": "osdu:wks:AbstractAnyRecordMasterData:1.0.0"
+          "$ref": "osdu:wks:master-data/GenericMasterData:1.0.0"
         }
       },
       "Data": {
@@ -49,20 +49,20 @@
         "properties": {
           "WorkProduct": {
             "description": "The work-product component capturing the work-product-component records belonging to this loading/ingestion transaction.",
-            "$ref": "osdu:wks:AbstractAnyRecordWorkProduct:1.0.0"
+            "$ref": "osdu:wks:work-product/GenericWorkProduct:1.0.0"
           },
           "WorkProductComponents": {
             "description": "The list of work-product-components records. The record ids are internal surrogate keys enabling the association of work-product-component records with the work-product records.",
             "type": "array",
             "items": {
-              "$ref": "osdu:wks:AbstractAnyRecordWorkProductComponent:1.0.0"
+              "$ref": "osdu:wks:work-product-component/GenericWorkProductComponent:1.0.0"
             }
           },
           "Files": {
             "description": "The list of 'Files' or data containers holding the actual data. The record ids are usually internal surrogate keys enabling the association of file records with work-product-component records, namely 'Files' and 'Artefacts' (both referring to file group-type entity types).",
             "type": "array",
             "items": {
-              "$ref": "osdu:wks:AbstractAnyRecordFile:1.0.0"
+              "$ref": "osdu:wks:file/GenericFile:1.0.0"
             }
           }
         }
