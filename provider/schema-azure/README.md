@@ -108,11 +108,11 @@ After configuring your environment as specified above, you can follow these step
     ```bash
     mvn --projects schema-core,provider/schema-azure clean install
     ```
-2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Azure, run the below command : 
-    ```bash 
-    # Running Azure : 
-    java -jar  provider\schema-gcp\target\os-schema-azure-0.0.1-SNAPSHOT-spring-boot.jar
-3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used: 
+2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Azure, run the below command :
+    ```bash
+    # Running Azure :
+    java -jar  provider/schema-azure/target/os-schema-azure-0.0.1-SNAPSHOT-spring-boot.jar
+3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used:
     ```bash
     server.servlet.contextPath=/api/schema-service/v1/
     server.port=8080
@@ -123,19 +123,28 @@ After configuring your environment as specified above, you can follow these step
 
 After the service has started it should be accessible via a web browser by visiting [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html). If the request does not fail, you can then run the integration tests.
 
-### Running automated integration tests:
-These tests validate functionality of schema service. 
-
 They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
-Below command has to be run post building complete project.
-    
 
-    cd testing/schema-test-core
+```bash
+# build + run Azure integration tests.
+#
+# Note: this assumes that the environment variables for integration tests as outlined
+#       above are already exported in your environment.
+$ (cd testing/schema-test-core && mvn clean verify)
+```
+
+Additionally if you were trying to isolate specific variables the following can be executed
+
+```bash
+cd testing/schema-test-core
     mvn verify -DVENDOR=azure -DHOST=http://localhost:8080 -DPRIVATE_TENANT1=opendes -DPRIVATE_TENANT2=tenant2 -DSHARED_TENANT=common -Dcucumber.options="--tags @SchemaService"
-    
+```
+
 Below command can be run through azure-pipeline.yml after setting environment variables in the pipeline.
 
 	verify "-Dcucumber.options=--tags @SchemaService"
+
+
 
 ## Debugging
 
@@ -153,7 +162,7 @@ Copyright © Microsoft Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+You may obtain a copy of the License at
 
 [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
