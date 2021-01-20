@@ -27,7 +27,7 @@
         "type": "array",
         "items": {
           "type": "string",
-          "pattern": "^[\\w\\-\\.]+:(work-product|work-product-component)\\/[\\w\\-\\.]+:.+:[0-9]*$",
+          "pattern": "^[\\w\\-\\.]+:(work-product|work-product-component)\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
           "x-osdu-relationship": [
             {
               "GroupType": "work-product"

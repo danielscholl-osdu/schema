@@ -25,7 +25,7 @@
     "VerticalMeasurementTypeID": {
       "description": "Specifies the type of vertical measurement (TD, Plugback, Kickoff, Drill Floor, Rotary Table...).",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/VerticalMeasurementType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-VerticalMeasurementType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",
@@ -36,7 +36,7 @@
     "VerticalMeasurementPathID": {
       "description": "Specifies Measured Depth, True Vertical Depth, or Elevation.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/VerticalMeasurementPath:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-VerticalMeasurementPath:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",
@@ -47,7 +47,7 @@
     "VerticalMeasurementSourceID": {
       "description": "Specifies Driller vs Logger.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/VerticalMeasurementSource:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-VerticalMeasurementSource:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",
@@ -58,7 +58,7 @@
     "WellboreTVDTrajectoryID": {
       "description": "Specifies what directional survey or wellpath was used to calculate the TVD.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:work-product-component\\/WellboreTrajectory:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-WellboreTrajectory:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "work-product-component",
@@ -69,7 +69,7 @@
     "VerticalMeasurementUnitOfMeasureID": {
       "description": "The unit of measure for the vertical measurement. If a unit of measure and a vertical CRS are provided, the unit of measure provided is taken over the unit of measure from the CRS.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",
@@ -80,7 +80,7 @@
     "VerticalCRSID": {
       "description": "A vertical coordinate reference system defines the origin for height or depth values. It is expected that either VerticalCRSID or VerticalReferenceID reference is provided in a given vertical measurement array object, but not both.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/CoordinateReferenceSystem:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

@@ -45,8 +45,8 @@
           "unitOfMeasureID": {
             "description": "SRN to unit of measure reference.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
-            "example": "namespace:reference-data/UnitOfMeasure:Energistics_UoM_ftUS:",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
+            "example": "namespace:reference-data--UnitOfMeasure:ftUS:",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -96,8 +96,8 @@
           "coordinateReferenceSystemID": {
             "description": "SRN to CRS reference.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/CoordinateReferenceSystem:.+:[0-9]*$",
-            "example": "namespace:reference-data/CoordinateReferenceSystem:EPSG.32615:",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:.+:[0-9]*$",
+            "example": "namespace:reference-data--CoordinateReferenceSystem:EPSG.32615:",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",

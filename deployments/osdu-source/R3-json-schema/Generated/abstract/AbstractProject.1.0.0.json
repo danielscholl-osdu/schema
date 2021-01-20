@@ -60,7 +60,7 @@
           "CurrencyID": {
             "description": "Type of currency for the authorized expenditure.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/Currency:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-Currency:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -76,7 +76,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\/Agreement:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Agreement:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "master-data",
@@ -88,7 +88,7 @@
     "Operator": {
       "description": "The organisation which controlled the conduct of the project.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "master-data",
@@ -105,7 +105,7 @@
           "ContractorOrganisationID": {
             "description": "Reference to a company that provided services.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "master-data",
@@ -120,7 +120,7 @@
           "ContractorTypeID": {
             "description": "The identifier of a reference value for the role of a contractor providing services, such as Recording, Line Clearing, Positioning, Data Processing.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/ContractorType:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ContractorType:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -144,7 +144,7 @@
           "CompanyOrganisationID": {
             "description": "Reference to the company which employs Personnel.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "master-data",
@@ -155,7 +155,7 @@
           "ProjectRoleID": {
             "description": "The identifier of a reference value for the role of an individual supporting a Project, such as Project Manager, Party Chief, Client Representative, Senior Observer.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/ProjectRole:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ProjectRole:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -164,17 +164,6 @@
             ]
           }
         }
-      }
-    },
-    "SpatialLocation": {
-      "description": "A spatial geometry object that indicates the area of operation or interest for a Project.",
-      "$ref": "AbstractSpatialLocation.1.0.0.json"
-    },
-    "GeoContexts": {
-      "description": "List of geographic entities which provide context to the project.  This may include multiple types or multiple values of the same type.",
-      "type": "array",
-      "items": {
-        "$ref": "AbstractGeoContext.1.0.0.json"
       }
     },
     "ProjectSpecification": {
@@ -214,7 +203,7 @@
           "UnitOfMeasureID": {
             "description": "The unit for the quantity parameter if overriding the default for this ParameterType, like metre (m in SI units system) for quantity Length.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -225,7 +214,7 @@
           "ParameterTypeID": {
             "description": "Parameter type of property or characteristic.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/ParameterType:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ParameterType:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -255,7 +244,7 @@
           "ProjectStateTypeID": {
             "description": "The Project life cycle state from planning to completion.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/ProjectStateType:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ProjectStateType:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",

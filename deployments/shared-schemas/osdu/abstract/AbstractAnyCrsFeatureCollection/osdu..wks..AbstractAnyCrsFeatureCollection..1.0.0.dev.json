@@ -37,8 +37,8 @@
         "title": "Coordinate Reference System ID",
         "description": "The CRS reference into the CoordinateReferenceSystem catalog.",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/CoordinateReferenceSystem:.+:[0-9]*$",
-        "example": "namespace:reference-data/CoordinateReferenceSystem:BoundCRS.SLB.32021.15851:",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:.+:[0-9]*$",
+        "example": "namespace:reference-data--CoordinateReferenceSystem:BoundCRS.SLB.32021.15851:",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -50,8 +50,8 @@
         "title": "Vertical Coordinate Reference System ID",
         "description": "The explicit VerticalCRS reference into the CoordinateReferenceSystem catalog. This property stays empty for 2D geometries. Absent or empty values for 3D geometries mean the context may be provided by a CompoundCRS in 'CoordinateReferenceSystemID' or implicitly EPSG:5714 MSL height",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/CoordinateReferenceSystem:.+:[0-9]*$",
-        "example": "namespace:reference-data/CoordinateReferenceSystem:VerticalCRS.EPSG.5773:",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:.+:[0-9]*$",
+        "example": "namespace:reference-data--CoordinateReferenceSystem:VerticalCRS.EPSG.5773:",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",

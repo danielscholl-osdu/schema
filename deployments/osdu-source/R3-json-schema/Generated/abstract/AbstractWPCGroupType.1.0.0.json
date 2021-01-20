@@ -12,7 +12,7 @@
       "items": {
         "description": "The SRN which identifies this OSDU File resource.",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:file\\/[\\w\\-\\.]+:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:file\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "file"
@@ -29,7 +29,7 @@
           "RoleID": {
             "description": "The SRN of this artefact's role.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/ArtefactRole:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ArtefactRole:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -45,7 +45,7 @@
           "ResourceID": {
             "description": "The SRN which identifies this OSDU Artefact resource.",
             "type": "string",
-            "pattern": "^[\\w\\-\\.]+:file\\/[\\w\\-\\.]+:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:file\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "file"

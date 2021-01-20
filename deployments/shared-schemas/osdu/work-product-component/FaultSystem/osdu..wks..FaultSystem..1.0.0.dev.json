@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "osdu",
       "source": "wks",
-      "entityType": "work-product-component/FaultSystem",
+      "entityType": "work-product-component--FaultSystem",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "osdu:wks:work-product-component/FaultSystem:1.0.0"
+      "id": "osdu:wks:work-product-component--FaultSystem:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -17,7 +17,7 @@
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
     "$id": "https://schema.osdu.opengroup.org/json/work-product-component/FaultSystem.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:work-product-component/FaultSystem:1.0.0",
+    "x-osdu-schema-source": "osdu:wks:work-product-component--FaultSystem:1.0.0",
     "title": "FaultSystem",
     "description": "A set of picked faults.",
     "type": "object",
@@ -26,15 +26,15 @@
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:work-product-component\\/FaultSystem:.+$",
-        "example": "namespace:work-product-component/FaultSystem:b877730b-1aec-566d-a8fd-807bb0a47a5f"
+        "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-FaultSystem:.+$",
+        "example": "namespace:work-product-component--FaultSystem:701e6ebb-0ad0-5547-9de2-5f4363ed3442"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:work-product-component/FaultSystem:1.0.0"
+        "example": "osdu:wks:work-product-component--FaultSystem:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -57,7 +57,7 @@
         "description": "The name of the home [cloud environment] region for this OSDU resource object.",
         "title": "Resource Home Region ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/OSDURegion:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OSDURegion:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -71,7 +71,7 @@
         "type": "array",
         "items": {
           "type": "string",
-          "pattern": "^[\\w\\-\\.]+:reference-data\\/OSDURegion:.+:[0-9]*$",
+          "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OSDURegion:.+:[0-9]*$",
           "x-osdu-relationship": [
             {
               "GroupType": "reference-data",
@@ -110,7 +110,7 @@
         "description": "Describes the current Curation status.",
         "title": "Resource Curation Status",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ResourceCurationStatus:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceCurationStatus:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -122,7 +122,7 @@
         "description": "Describes the current Resource Lifecycle status.",
         "title": "Resource Lifecycle Status",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ResourceLifecycleStatus:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceLifecycleStatus:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -134,7 +134,7 @@
         "description": "Classifies the security level of the resource.",
         "title": "Resource Security Classification",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ResourceSecurityClassification:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceSecurityClassification:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -164,7 +164,7 @@
         "description": "Where does this data resource sit in the cradle-to-grave span of its existence?",
         "title": "Existence Kind",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ExistenceKind:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ExistenceKind:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -185,7 +185,7 @@
             "properties": {
               "SeismicPickingTypeID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\/SeismicPickingType:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-SeismicPickingType:.+:[0-9]*$",
                 "description": "Method used to pick faults. E.g.Autotracked, Grid, Manual Picked, Mixed.",
                 "x-osdu-relationship": [
                   {
@@ -203,7 +203,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "pattern": "^[\\w\\-\\.]+:work-product-component\\/SeismicTraceData:.+:[0-9]*$",
+                  "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-SeismicTraceData:.+:[0-9]*$",
                   "x-osdu-relationship": [
                     {
                       "GroupType": "work-product-component",
@@ -214,7 +214,7 @@
               },
               "SeismicDomainTypeID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\/SeismicDomainType:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-SeismicDomainType:.+:[0-9]*$",
                 "description": "Vertical domain of faults.  E.g. Time, Depth",
                 "x-osdu-relationship": [
                   {
@@ -225,7 +225,7 @@
               },
               "SeismicDomainUOM": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                 "description": "Unit of measurement for vertical domain",
                 "x-osdu-relationship": [
                   {
@@ -237,7 +237,7 @@
               "HorizontalCRSID": {
                 "type": "string",
                 "description": "The CRS for surface coordinates used in fault locations if not specified in File.",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\/CoordinateReferenceSystem:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:.+:[0-9]*$",
                 "x-osdu-relationship": [
                   {
                     "GroupType": "reference-data",
@@ -247,7 +247,7 @@
               },
               "BinGridID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:work-product-component\\/SeismicBinGrid:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-SeismicBinGrid:.+:[0-9]*$",
                 "description": "the Bin Grid of the Fault System when coordinates are specified in seismic bin inline/crossline.",
                 "x-osdu-relationship": [
                   {
@@ -263,7 +263,7 @@
               },
               "VerticalMeasurementTypeID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\/VerticalMeasurementType:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-VerticalMeasurementType:.+:[0-9]*$",
                 "description": "Identifies a vertical reference datum type. E.g. mean sea level, ground level, mudline.",
                 "x-osdu-relationship": [
                   {
@@ -289,7 +289,7 @@
                     },
                     "SeismicFaultTypeID": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/SeismicFaultType:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-SeismicFaultType:.+:[0-9]*$",
                       "description": "Geological type of fault geometry. E.g. Thrust (thr), Reverse (rev), Normal(norm)",
                       "x-osdu-relationship": [
                         {
@@ -300,7 +300,7 @@
                     },
                     "SeismicPickingTypeID": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/SeismicPickingType:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-SeismicPickingType:.+:[0-9]*$",
                       "description": "Method used to pick faults. E.g.Autotracked, Grid, Manual Picked",
                       "x-osdu-relationship": [
                         {
@@ -316,7 +316,7 @@
                     },
                     "SeismicFaultLengthUOM": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                       "description": "ID of the Unit of Measure of the Length of the Fault",
                       "x-osdu-relationship": [
                         {
@@ -332,7 +332,7 @@
                     },
                     "SeismicFaultSurfaceAreaUOM": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                       "description": "ID of the Unit of Measure of the Surface Area of the Fault",
                       "x-osdu-relationship": [
                         {
@@ -348,7 +348,7 @@
                     },
                     "VerticalFaultDipAngleUOM": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                       "description": "ID of the Unit of Measure of the Dip angle of the Fault",
                       "x-osdu-relationship": [
                         {
@@ -364,7 +364,7 @@
                     },
                     "FaultHeaveNumberUOM": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                       "description": "ID of the Unit of Measure of the FaultHeaveNumber",
                       "x-osdu-relationship": [
                         {
@@ -380,7 +380,7 @@
                     },
                     "FaultNetSlipNumberUOM": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                       "description": "ID of the Unit of Measure of the FaultNetSlipNumber",
                       "x-osdu-relationship": [
                         {
@@ -396,7 +396,7 @@
                     },
                     "StratigraphicFaultOffsetUOM": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                       "description": "ID of the Unit of Measure of the StratigraphicFaultOffset",
                       "x-osdu-relationship": [
                         {

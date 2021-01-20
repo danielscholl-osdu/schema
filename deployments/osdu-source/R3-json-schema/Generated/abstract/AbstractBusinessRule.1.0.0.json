@@ -16,7 +16,7 @@
           "DataRuleSetID": {
             "type": "string",
             "description": "The relationship to the QualityDataRuleSet.",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/QualityDataRuleSet:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-QualityDataRuleSet:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",
@@ -40,7 +40,7 @@
           "DataRuleID": {
             "type": "string",
             "description": "The relationship to the individual QualityDataRule.",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/QualityDataRule:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-QualityDataRule:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",

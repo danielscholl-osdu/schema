@@ -38,7 +38,7 @@
     "UnitOfMeasureID": {
       "description": "The unit for the quantity parameter, like metre (m in SI units system) for quantity Length.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",
@@ -49,7 +49,7 @@
     "ParameterTypeID": {
       "description": "Parameter type of property or characteristic.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/ParameterType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ParameterType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

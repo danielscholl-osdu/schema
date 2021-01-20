@@ -10,7 +10,7 @@
     "FacilityEventTypeID": {
       "description": "The facility event type is a picklist. Examples: 'Permit', 'Spud', 'Abandon', etc.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/FacilityEventType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-FacilityEventType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

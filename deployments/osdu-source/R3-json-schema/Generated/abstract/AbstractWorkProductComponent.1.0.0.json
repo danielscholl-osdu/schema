@@ -71,13 +71,13 @@
           "ID": {
             "type": "string",
             "description": "The object reference identifying the DIRECT, INDIRECT, REFERENCE dependency.",
-            "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+\\/[\\w\\-\\.]+:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
             "x-osdu-relationship": []
           },
           "LineageRelationshipType": {
             "type": "string",
             "description": "Used by LineageAssertion to describe the nature of the line of descent of a work product component from a prior Resource, such as DIRECT, INDIRECT, REFERENCE.  It is not for proximity (number of nodes away), it is not to cover all the relationships in a full ontology or graph, and it is not to describe the type of activity that created the asserting WPC.  LineageAssertion does not encompass a full provenance, process history, or activity model.",
-            "pattern": "^[\\w\\-\\.]+:reference-data\\/LineageRelationshipType:.+:[0-9]*$",
+            "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-LineageRelationshipType:.+:[0-9]*$",
             "x-osdu-relationship": [
               {
                 "GroupType": "reference-data",

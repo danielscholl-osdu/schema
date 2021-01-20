@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "osdu",
       "source": "wks",
-      "entityType": "work-product-component/PPFGDataset",
+      "entityType": "work-product-component--PPFGDataset",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "osdu:wks:work-product-component/PPFGDataset:1.0.0"
+      "id": "osdu:wks:work-product-component--PPFGDataset:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -17,7 +17,7 @@
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
     "$id": "https://schema.osdu.opengroup.org/json/work-product-component/PPFGDataset.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:work-product-component/PPFGDataset:1.0.0",
+    "x-osdu-schema-source": "osdu:wks:work-product-component--PPFGDataset:1.0.0",
     "title": "PPFGDataset",
     "description": "Pore Pressure and Fracture (Pressure) Gradient (PPFG) data describes the predicted (Pre-drill) and actual (Post-drill) depth-related variations in overburden stress, pore pressure, fracture pressure and minimum principal stress within a wellbore and conveys the range of uncertainty in these values given various plausible geological scenarios. PPFG predictions are fundamental inputs for well design and construction and estimates of pore and fracture pressure are typically provided to the well planning and execution teams.",
     "type": "object",
@@ -26,15 +26,15 @@
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:work-product-component\\/PPFGDataset:.+$",
-        "example": "namespace:work-product-component/PPFGDataset:d3176fee-bb48-5eb7-94c5-50876ac61c80"
+        "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-PPFGDataset:.+$",
+        "example": "namespace:work-product-component--PPFGDataset:bb2f4d26-6446-508a-b137-7239ee1bbea1"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:work-product-component/PPFGDataset:1.0.0"
+        "example": "osdu:wks:work-product-component--PPFGDataset:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -57,7 +57,7 @@
         "description": "The name of the home [cloud environment] region for this OSDU resource object.",
         "title": "Resource Home Region ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/OSDURegion:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OSDURegion:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -71,7 +71,7 @@
         "type": "array",
         "items": {
           "type": "string",
-          "pattern": "^[\\w\\-\\.]+:reference-data\\/OSDURegion:.+:[0-9]*$",
+          "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OSDURegion:.+:[0-9]*$",
           "x-osdu-relationship": [
             {
               "GroupType": "reference-data",
@@ -110,7 +110,7 @@
         "description": "Describes the current Curation status.",
         "title": "Resource Curation Status",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ResourceCurationStatus:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceCurationStatus:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -122,7 +122,7 @@
         "description": "Describes the current Resource Lifecycle status.",
         "title": "Resource Lifecycle Status",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ResourceLifecycleStatus:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceLifecycleStatus:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -134,7 +134,7 @@
         "description": "Classifies the security level of the resource.",
         "title": "Resource Security Classification",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ResourceSecurityClassification:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceSecurityClassification:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -164,7 +164,7 @@
         "description": "Where does this data resource sit in the cradle-to-grave span of its existence?",
         "title": "Existence Kind",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/ExistenceKind:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ExistenceKind:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -185,7 +185,7 @@
             "properties": {
               "WellID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:master-data\\/Well:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Well:.+:[0-9]*$",
                 "description": "ID from the Well where the PPFG Work Product Component was recorded",
                 "x-osdu-relationship": [
                   {
@@ -196,7 +196,7 @@
               },
               "WellboreID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:master-data\\/Wellbore:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Wellbore:.+:[0-9]*$",
                 "description": "ID from the Wellbore where the PPFG Work Product Component was recorded",
                 "x-osdu-relationship": [
                   {
@@ -212,7 +212,7 @@
               },
               "ContextTypeID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGContextType:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGContextType:.+:[0-9]*$",
                 "description": "ID that reflects the context of the PPFG  data set, for example 'Pre-Drill' or 'Post-Drill'",
                 "x-osdu-relationship": [
                   {
@@ -224,7 +224,7 @@
               "ServiceCompanyID": {
                 "description": "ID of the service Company that acquired the PPFG",
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
                 "x-osdu-relationship": [
                   {
                     "GroupType": "master-data",
@@ -238,7 +238,7 @@
               },
               "ReferenceWellTrajectoryID": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:work-product-component\\/WellboreTrajectory:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-WellboreTrajectory:.+:[0-9]*$",
                 "description": "Id of the Reference WellTrajectory used for TVD's calculation",
                 "x-osdu-relationship": [
                   {
@@ -252,7 +252,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "pattern": "^[\\w\\-\\.]+:master-data\\/Wellbore:.+:[0-9]*$",
+                  "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Wellbore:.+:[0-9]*$",
                   "x-osdu-relationship": [
                     {
                       "GroupType": "master-data",
@@ -275,7 +275,7 @@
               },
               "TectonicSetting": {
                 "type": "string",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\/TectonicSettingType:.+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-TectonicSettingType:.+:[0-9]*$",
                 "description": "Tectonic Scenario Setting for Planning and Pore Pressure Practitioners. Built into interpretive curves. Can be, for example 'Strike Slip'",
                 "x-osdu-relationship": [
                   {
@@ -309,7 +309,7 @@
                     "CurveMainFamilyID": {
                       "type": "string",
                       "description": "ID of the Main Family Type of the PPFG quantity measured, for example 'Pore Pressure'. Primarily used for high level curve classification",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGCurveMainFamily:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGCurveMainFamily:.+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -320,7 +320,7 @@
                     "CurveFamilyID": {
                       "type": "string",
                       "description": "ID of the PPFG Curve Family of the PPFG quantity measured, for example 'Pore Pressure from Corrected Drilling Exponent'. An individual curve that belongs to a Main Family",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGCurveFamily:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGCurveFamily:.+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -331,7 +331,7 @@
                     "CurveFamilyMnemonicID": {
                       "type": "string",
                       "description": "ID of the mnemonic of the Curve Family which is the value as received either from external providers or from internal processing team, for example 'PP DxC'",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGCurveMnemonic:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGCurveMnemonic:.+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -342,7 +342,7 @@
                     "CurveProbabilityID": {
                       "type": "string",
                       "description": "ID of the PPFG Curve probability, for example 'Most Likely Case' and 'P50'",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGCurveProbability:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGCurveProbability:.+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -355,7 +355,7 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGCurveProcessingType:.+:[0-9]*$",
+                        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGCurveProcessingType:.+:[0-9]*$",
                         "x-osdu-relationship": [
                           {
                             "GroupType": "reference-data",
@@ -366,7 +366,7 @@
                     },
                     "CurveLithologyID": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGCurveLithoType:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGCurveLithoType:.+:[0-9]*$",
                       "description": "ID of the lithological unit represented by the curve",
                       "x-osdu-relationship": [
                         {
@@ -378,7 +378,7 @@
                     "CurveTransformModelTypeID": {
                       "type": "string",
                       "description": "ID of the empirical calibrated model used for pressure calculations from a petrophysical curve (sonic or resistivity logs), for example 'Eaton' and  'Bowers',... ",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/PPFGCurveTransformModelType:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PPFGCurveTransformModelType:.+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -388,7 +388,7 @@
                     },
                     "CurveUOM": {
                       "type": "string",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\/UnitOfMeasure:.+:[0-9]*$",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:.+:[0-9]*$",
                       "description": "Unit of Measure of the Physical Quantity Measured by the curve. An ID to relevant unit of measure reference",
                       "x-osdu-relationship": [
                         {

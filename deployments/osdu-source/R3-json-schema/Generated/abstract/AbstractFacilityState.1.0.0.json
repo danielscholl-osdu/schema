@@ -20,7 +20,7 @@
     "FacilityStateTypeID": {
       "description": "The facility life cycle state from planning to abandonment.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/FacilityStateType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-FacilityStateType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

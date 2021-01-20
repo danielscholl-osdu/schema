@@ -30,7 +30,7 @@
       "FacilityOperatorOrganisationID": {
         "description": "The company that currently operates, or previously operated the facility",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "master-data",

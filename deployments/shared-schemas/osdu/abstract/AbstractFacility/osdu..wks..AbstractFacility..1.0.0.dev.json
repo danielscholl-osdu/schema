@@ -29,7 +29,7 @@
       "FacilityTypeID": {
         "description": "The definition of a kind of capability to perform a business function or a service.",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/FacilityType:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-FacilityType:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",
@@ -48,7 +48,7 @@
         "description": "A initial operator organization ID; the organization ID may also be found in the FacilityOperatorOrganisationID of the FacilityOperator array providing the actual dates.",
         "type": "string",
         "title": "Initial Operator ID",
-        "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "master-data",
@@ -60,7 +60,7 @@
         "description": "The current operator organization ID; the organization ID may also be found in the FacilityOperatorOrganisationID of the FacilityOperator array providing the actual dates.",
         "type": "string",
         "title": "Current Operator ID",
-        "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "master-data",
@@ -71,7 +71,7 @@
       "DataSourceOrganisationID": {
         "description": "The main source of the header information.",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "master-data",
@@ -79,24 +79,10 @@
           }
         ]
       },
-      "SpatialLocation": {
-        "description": "The spatial location information such as coordinates,CRS information.",
-        "type": "array",
-        "items": {
-          "$ref": "osdu:wks:AbstractSpatialLocation:1.0.0"
-        }
-      },
-      "GeoContexts": {
-        "description": "List of geographic entities which provide context to the facility.  This may include multiple types or multiple values of the same type.",
-        "type": "array",
-        "items": {
-          "$ref": "osdu:wks:AbstractGeoContext:1.0.0"
-        }
-      },
       "OperatingEnvironmentID": {
         "description": "Identifies the Facility's general location as being onshore vs. offshore.",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\/OperatingEnvironment:.+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OperatingEnvironment:.+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "reference-data",

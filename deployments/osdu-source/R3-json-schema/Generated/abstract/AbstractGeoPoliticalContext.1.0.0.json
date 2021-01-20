@@ -10,7 +10,7 @@
     "GeoPoliticalEntityID": {
       "type": "string",
       "description": "Reference to GeoPoliticalEntity.",
-      "pattern": "^[\\w\\-\\.]+:master-data\\/GeoPoliticalEntity:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-GeoPoliticalEntity:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "master-data",
@@ -21,7 +21,7 @@
     "GeoTypeID": {
       "type": "string",
       "description": "The GeoPoliticalEntityType reference of the GeoPoliticalEntity (via GeoPoliticalEntityID) for application convenience.",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/GeoPoliticalEntityType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-GeoPoliticalEntityType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

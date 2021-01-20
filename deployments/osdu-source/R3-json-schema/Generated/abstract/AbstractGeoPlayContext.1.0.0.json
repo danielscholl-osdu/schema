@@ -10,7 +10,7 @@
     "PlayID": {
       "type": "string",
       "description": "Reference to the play.",
-      "pattern": "^[\\w\\-\\.]+:master-data\\/Play:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Play:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "master-data",
@@ -21,7 +21,7 @@
     "GeoTypeID": {
       "type": "string",
       "description": "The PlayType reference of the Play (via PlayID) for application convenience.",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/PlayType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PlayType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

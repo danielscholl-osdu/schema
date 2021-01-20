@@ -10,7 +10,7 @@
     "DrillingReasonTypeID": {
       "description": "Identifier of the drilling reason type for the corresponding time period.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/DrillingReasonType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-DrillingReasonType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

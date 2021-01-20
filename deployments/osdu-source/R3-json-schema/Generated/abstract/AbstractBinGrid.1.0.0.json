@@ -14,7 +14,7 @@
     "BinGridTypeID": {
       "description": "Type of bin grid (Acquisition, Processing, Velocity, MagGrav, Magnetics, Gravity, GeologicModel, Reprojected, etc.)",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/SeismicBinGridType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-SeismicBinGridType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",
@@ -37,7 +37,7 @@
     "BinGridDefinitionMethodTypeID": {
       "description": "This identifies how the Bin Grid is defined:  4=ABCD four-points method was used to define the grid (P6 parameters are optional and can contain derived values; P6BinNodeIncrementOnIAxis and P6BinNodeIncrementOnJaxis can be used as part of four-point method).  Use a perspective transformation to map between map coordinates and bin coordinates. Note point order.  6=P6 definition method was used to define the bin grid (ABCD points are optional and can contain derived values; ABCDBinGridSpatialLocation must specify the projected CRS).  Use an affine transformation to map between map coordinates and bin coordinates.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/BinGridDefinitionMethodType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BinGridDefinitionMethodType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

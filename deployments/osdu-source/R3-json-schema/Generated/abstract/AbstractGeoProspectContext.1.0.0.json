@@ -10,7 +10,7 @@
     "ProspectID": {
       "type": "string",
       "description": "Reference to the prospect.",
-      "pattern": "^[\\w\\-\\.]+:master-data\\/Prospect:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Prospect:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "master-data",
@@ -21,7 +21,7 @@
     "GeoTypeID": {
       "type": "string",
       "description": "The ProspectType reference of the Prospect (via ProspectID) for application convenience.",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/ProspectType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ProspectType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",

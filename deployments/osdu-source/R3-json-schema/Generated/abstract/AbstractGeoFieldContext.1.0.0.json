@@ -10,7 +10,7 @@
     "FieldID": {
       "type": "string",
       "description": "Reference to Field.",
-      "pattern": "^[\\w\\-\\.]+:master-data\\/Field:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Field:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "master-data",

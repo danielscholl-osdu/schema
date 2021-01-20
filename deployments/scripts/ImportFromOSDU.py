@@ -9,6 +9,7 @@ class ImportFromOSDU(object):
     SCHEMA_INFO = 'schema-version-info'
     LOAD_SEQUENCE_FILE = 'load_sequence.{}.{}.{}.json'
     IGNORE_GROUP_TYPES = ['abstract', 'data-collection', 'manifest']
+    SEPARATOR = '--'
 
     def __init__(self):
         parser = argparse.ArgumentParser(
@@ -150,7 +151,7 @@ class ImportFromOSDU(object):
         sequence = list()
         for dep in self.dependencies:
             parts = dep.split(':')
-            parts[2] = parts[2].split('/')[-1]
+            parts[2] = parts[2].split(self.SEPARATOR)[-1]
             dep_without_group_type = ':'.join(parts)
             dep_as_file = dep_without_group_type.replace(':', '..')
             abs_path = Utility.find_file(dep_as_file + '*.json', root=self.target_path)
@@ -199,7 +200,7 @@ class ImportFromOSDU(object):
         if group_type is not None:
             name_parts.append(group_type)
         name_parts.append(entity)
-        entity = '/'.join(name_parts)
+        entity = self.SEPARATOR.join(name_parts)
         entity_info = {'entity': entity, 'version': '.'.join(parts[-4:-1])}
         kind = self.__make_kind(entity_info, is_file=False)
         return kind

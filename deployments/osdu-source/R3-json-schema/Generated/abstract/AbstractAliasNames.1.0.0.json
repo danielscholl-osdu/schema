@@ -14,7 +14,7 @@
     "AliasNameTypeID": {
       "description": "A classification of alias names such as by role played or type of source, such as regulatory name, regulatory code, company code, international standard name, etc.",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\/AliasNameType:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-AliasNameType:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "reference-data",
@@ -25,7 +25,7 @@
     "DefinitionOrganisationID": {
       "description": "Organisation that provided the name (the source).",
       "type": "string",
-      "pattern": "^[\\w\\-\\.]+:master-data\\/Organisation:.+:[0-9]*$",
+      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:.+:[0-9]*$",
       "x-osdu-relationship": [
         {
           "GroupType": "master-data",
