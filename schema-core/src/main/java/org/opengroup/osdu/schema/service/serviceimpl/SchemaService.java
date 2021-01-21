@@ -37,6 +37,7 @@ import org.opengroup.osdu.schema.service.ISchemaService;
 import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -67,12 +68,17 @@ public class SchemaService implements ISchemaService {
 
     private final SchemaUtil schemaUtil;
 
-    private final SchemaResolver schemaResolver;
+    private SchemaResolver schemaResolver;
     
     @Value("${shared.tenant.name:common}")
 	private String sharedTenant;
 
     final JaxRsDpsLog log;
+
+    @Autowired
+	public void setSchemaResolver(SchemaResolver schemaResolver) {
+		this.schemaResolver = schemaResolver;
+	}
 
     final DpsHeaders headers;
     
