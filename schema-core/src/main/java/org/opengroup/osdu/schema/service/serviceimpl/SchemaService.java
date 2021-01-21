@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -36,7 +37,6 @@ import org.opengroup.osdu.schema.service.ISchemaService;
 import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -50,40 +50,31 @@ import com.google.gson.Gson;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class SchemaService implements ISchemaService {
 
-	@Autowired
-	private AuditLogger auditLogger;
+	private final AuditLogger auditLogger;
 
-    @Autowired
-    private ISchemaInfoStore schemaInfoStore;
+    private final ISchemaInfoStore schemaInfoStore;
 
-    @Autowired
-    private ISchemaStore schemaStore;
+    private final ISchemaStore schemaStore;
 
-    @Autowired
-    private IAuthorityService authorityService;
+    private final IAuthorityService authorityService;
 
-    @Autowired
-    private ISourceService sourceService;
+    private final ISourceService sourceService;
 
-    @Autowired
-    private IEntityTypeService entityTypeService;
+    private final IEntityTypeService entityTypeService;
 
-    @Autowired
-    private SchemaUtil schemaUtil;
+    private final SchemaUtil schemaUtil;
 
-    @Autowired
-    private SchemaResolver schemaResolver;
+    private final SchemaResolver schemaResolver;
     
     @Value("${shared.tenant.name:common}")
 	private String sharedTenant;
 
-    @Autowired
-    JaxRsDpsLog log;
+    final JaxRsDpsLog log;
 
-    @Autowired
-    DpsHeaders headers;
+    final DpsHeaders headers;
     
     /**
      * Method to get schema
