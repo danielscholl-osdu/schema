@@ -1,3 +1,6 @@
+/* Licensed Materials - Property of IBM              */		
+/* (c) Copyright IBM Corp. 2020. All Rights Reserved.*/
+
 package org.opengroup.osdu.schema.impl.schemainfostore;
 
 import static org.junit.Assert.assertEquals;
