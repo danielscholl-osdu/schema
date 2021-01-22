@@ -1,25 +1,25 @@
 {
   "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-  "$id": "https://schema.osdu.opengroup.org/json/reference-data/GenericReferenceData.1.0.0.json",
+  "$id": "https://schema.osdu.opengroup.org/json/dataset/File.CompressedVectorHeaders.1.0.0.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "x-osdu-schema-source": "osdu:wks:reference-data--GenericReferenceData:1.0.0",
-  "title": "GenericReferenceData",
-  "description": "Template schema for reference-data group-type records. This schema needs to be understood as a reference-data abstraction. Manifests will refer to concrete reference-data types.",
+  "x-osdu-schema-source": "osdu:wks:dataset--File.CompressedVectorHeaders:1.0.0",
+  "title": "File.CompressedVectorHeaders",
+  "description": "A File type carrying compression and vector header mapping information.",
   "type": "object",
   "properties": {
     "id": {
       "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
       "title": "Entity ID",
       "type": "string",
-      "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:reference-data\\-\\-[\\w\\-\\.]+:.+)$",
-      "example": "namespace:reference-data--GenericReferenceData:63ca0ed3-d6fb-53f0-8549-0916ef144266"
+      "pattern": "^[\\w\\-\\.]+:dataset\\-\\-File.CompressedVectorHeaders:.+$",
+      "example": "namespace:dataset--File.CompressedVectorHeaders:01901c5f-d46b-5300-9d7e-d22ef738b7a0"
     },
     "kind": {
       "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
       "title": "Entity Kind",
       "type": "string",
       "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.\\/]+:[0-9]+.[0-9]+.[0-9]+$",
-      "example": "osdu:wks:reference-data--GenericReferenceData:1.0.0"
+      "example": "osdu:wks:dataset--File.CompressedVectorHeaders:1.0.0"
     },
     "version": {
       "description": "The version number of this OSDU resource; set by the framework.",
@@ -38,31 +38,15 @@
       "title": "Legal Tags",
       "$ref": "../abstract/AbstractLegalTags.1.0.0.json"
     },
-    "resourceHomeRegionID": {
-      "description": "The name of the home [cloud environment] region for this OSDU resource object.",
-      "title": "Resource Home Region ID",
-      "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OSDURegion:.+:[0-9]*$",
-      "x-osdu-relationship": [
-        {
-          "GroupType": "reference-data",
-          "EntityType": "OSDURegion"
-        }
-      ]
-    },
-    "resourceHostRegionIDs": {
-      "description": "The name of the host [cloud environment] region(s) for this OSDU resource object.",
-      "title": "Resource Host Region ID",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OSDURegion:.+:[0-9]*$",
-        "x-osdu-relationship": [
-          {
-            "GroupType": "reference-data",
-            "EntityType": "OSDURegion"
-          }
-        ]
+    "tags": {
+      "title": "Tag Dictionary",
+      "description": "A generic dictionary of string keys mapping to string value. Only strings are permitted as keys and values.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "example": {
+        "NameOfKey": "String value"
       }
     },
     "createTime": {
@@ -91,42 +75,6 @@
       "type": "string",
       "example": "some-user@some-company-cloud.com"
     },
-    "resourceCurationStatus": {
-      "description": "Describes the current Curation status.",
-      "title": "Resource Curation Status",
-      "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceCurationStatus:.+:[0-9]*$",
-      "x-osdu-relationship": [
-        {
-          "GroupType": "reference-data",
-          "EntityType": "ResourceCurationStatus"
-        }
-      ]
-    },
-    "resourceLifecycleStatus": {
-      "description": "Describes the current Resource Lifecycle status.",
-      "title": "Resource Lifecycle Status",
-      "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceLifecycleStatus:.+:[0-9]*$",
-      "x-osdu-relationship": [
-        {
-          "GroupType": "reference-data",
-          "EntityType": "ResourceLifecycleStatus"
-        }
-      ]
-    },
-    "resourceSecurityClassification": {
-      "description": "Classifies the security level of the resource.",
-      "title": "Resource Security Classification",
-      "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ResourceSecurityClassification:.+:[0-9]*$",
-      "x-osdu-relationship": [
-        {
-          "GroupType": "reference-data",
-          "EntityType": "ResourceSecurityClassification"
-        }
-      ]
-    },
     "ancestry": {
       "description": "The links to data, which constitute the inputs.",
       "title": "Ancestry",
@@ -140,33 +88,53 @@
         "$ref": "../abstract/AbstractMetaItem.1.0.0.json"
       }
     },
-    "source": {
-      "description": "The entity that produced the record, or from which it is received; could be an organization, agency, system, internal team, or individual. For informational purposes only, the list of sources is not governed.",
-      "title": "Data Source",
-      "type": "string"
-    },
-    "existenceKind": {
-      "description": "Where does this data resource sit in the cradle-to-grave span of its existence?",
-      "title": "Existence Kind",
-      "type": "string",
-      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ExistenceKind:.+:[0-9]*$",
-      "x-osdu-relationship": [
+    "data": {
+      "allOf": [
         {
-          "GroupType": "reference-data",
-          "EntityType": "ExistenceKind"
+          "$ref": "../abstract/AbstractCommonResources.1.0.0.json"
+        },
+        {
+          "$ref": "../abstract/AbstractDataset.1.0.0.json"
+        },
+        {
+          "$ref": "../abstract/AbstractFile.1.0.0.json"
+        },
+        {
+          "$ref": "../abstract/AbstractCompressionInfo.1.0.0.json"
+        },
+        {
+          "$ref": "../abstract/AbstractVectorHeaderMapping.1.0.0.json"
+        },
+        {
+          "type": "object",
+          "properties": {}
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ExtensionProperties": {
+              "type": "object"
+            }
+          }
         }
       ]
-    },
-    "data": {
-      "type": "object",
-      "description": "The data block containing the kind-specific payload. The actual schema is defined by the 'kind', resolvable via the Schema Service."
     }
   },
   "required": [
-    "id",
     "kind",
     "acl",
     "legal"
   ],
-  "x-osdu-inheriting-from-kind": []
+  "additionalProperties": false,
+  "x-osdu-review-status": "Accepted",
+  "x-osdu-inheriting-from-kind": [
+    {
+      "name": "Dataset",
+      "kind": "osdu:wks:AbstractDataset:1.0.0"
+    },
+    {
+      "name": "File",
+      "kind": "osdu:wks:AbstractFile:1.0.0"
+    }
+  ]
 }

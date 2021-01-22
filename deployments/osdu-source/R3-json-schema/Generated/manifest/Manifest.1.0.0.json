@@ -4,7 +4,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "x-osdu-schema-source": "osdu:wks:Manifest:1.0.0",
   "title": "Load Manifest Schema",
-  "description": "Load manifest applicable for all types defined as 'kind', i.e. registered as schemas with the Schema Service. It supports loading of individual 'records' of any group-type or combinations. The load sequence follows a well-defined sequence. The 'ReferenceData' array is processed first (if populated). The 'MasterData' array is processed second (if populated) second. The 'Data' structure is processed last (if populated). Inside the 'Data' property the 'Files' array is processed first, followed by the 'WorkProductComponents' array, the 'WorkProduct' is processed last. Any arrays are ordered. should there be interdependencies, the dependent items must be placed behind their relationship targets, e.g. a master-data Well record must placed in the 'MasterData' array before its Wellbores.",
+  "description": "Load manifest applicable for all types defined as 'kind', i.e. registered as schemas with the Schema Service. It supports loading of individual 'records' of any group-type or combinations. The load sequence follows a well-defined sequence. The 'ReferenceData' array is processed first (if populated). The 'MasterData' array is processed second (if populated) second. The 'Data' structure is processed last (if populated). Inside the 'Data' property the 'Datasets' array is processed first, followed by the 'WorkProductComponents' array, the 'WorkProduct' is processed last. Any arrays are ordered. should there be interdependencies, the dependent items must be placed behind their relationship targets, e.g. a master-data Well record must placed in the 'MasterData' array before its Wellbores.",
   "type": "object",
   "properties": {
     "kind": {
@@ -18,36 +18,36 @@
       "description": "Reference-data are submitted as an array of records.",
       "type": "array",
       "items": {
-        "$ref": "../reference-data/GenericReferenceData.1.0.0.json"
+        "$ref": "GenericReferenceData.1.0.0.json"
       }
     },
     "MasterData": {
       "description": "Master-data are submitted as an array of records.",
       "type": "array",
       "items": {
-        "$ref": "../master-data/GenericMasterData.1.0.0.json"
+        "$ref": "GenericMasterData.1.0.0.json"
       }
     },
     "Data": {
-      "description": "Manifest schema for work-product, work-product-component, file ensembles. The items in 'Files' are processed first since they are referenced by 'WorkProductComponents' ('data.Files[]' and 'data.Artefacts[].ResourceID'). The WorkProduct is processed last collecting the WorkProductComponents.",
+      "description": "Manifest schema for work-product, work-product-component, dataset ensembles. The items in 'Datasets' are processed first since they are referenced by 'WorkProductComponents' ('data.DatasetIDs[]' and 'data.Artefacts[].ResourceID'). The WorkProduct is processed last collecting the WorkProductComponents.",
       "type": "object",
       "properties": {
         "WorkProduct": {
           "description": "The work-product component capturing the work-product-component records belonging to this loading/ingestion transaction.",
-          "$ref": "../work-product/GenericWorkProduct.1.0.0.json"
+          "$ref": "GenericWorkProduct.1.0.0.json"
         },
         "WorkProductComponents": {
           "description": "The list of work-product-components records. The record ids are internal surrogate keys enabling the association of work-product-component records with the work-product records.",
           "type": "array",
           "items": {
-            "$ref": "../work-product-component/GenericWorkProductComponent.1.0.0.json"
+            "$ref": "GenericWorkProductComponent.1.0.0.json"
           }
         },
-        "Files": {
-          "description": "The list of 'Files' or data containers holding the actual data. The record ids are usually internal surrogate keys enabling the association of file records with work-product-component records, namely 'Files' and 'Artefacts' (both referring to file group-type entity types).",
+        "Datasets": {
+          "description": "The list of 'Datasets' or data containers holding the actual data. The record ids are usually internal surrogate keys enabling the association of dataset records with work-product-component records, namely via 'DatasetIDs' and 'Artefacts.ResourceID' (both referring to 'dataset' group-type entity types).",
           "type": "array",
           "items": {
-            "$ref": "../file/GenericFile.1.0.0.json"
+            "$ref": "GenericDataset.1.0.0.json"
           }
         }
       }
