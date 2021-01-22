@@ -1,6 +1,8 @@
+/* Licensed Materials - Property of IBM              */		
+/* (c) Copyright IBM Corp. 2020. All Rights Reserved.*/
+
 package org.opengroup.osdu.schema.provider.ibm.security;
 /**
- * Copyright 2020 IBM Corp. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
