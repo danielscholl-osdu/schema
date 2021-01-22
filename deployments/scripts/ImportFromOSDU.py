@@ -37,12 +37,6 @@ class ImportFromOSDU(object):
         else:
             print('Unrecognized universe: {}'.format(arguments.u))
 
-    @staticmethod
-    def __generated_target(file):
-        if file.endswith('abstractResources.json'):
-            return None
-        return file.replace('Authoring', 'Generated')
-
     def discover_schemas(self, deployments, folder_parts):
         files = Utility.find_files(folder_parts, deployments)
         files = sorted(files)  # this brings abstract to the front, less work for dependency chasing.
@@ -64,6 +58,9 @@ class ImportFromOSDU(object):
                 }
                 if group_type is not None and group_type not in self.IGNORE_GROUP_TYPES:
                     schema_file['group-type'] = group_type
+                elif group_type is not None and group_type == 'manifest':
+                    schema_file['group-type'] = self.__get_group_type_from_schema_kind(file)
+
                 if version is not None:
                     schema_file['version'] = version
                 else:
@@ -82,6 +79,16 @@ class ImportFromOSDU(object):
         if len(infos) > 0:
             self.info = Utility.load_json(infos[-1])
 
+    @staticmethod
+    def __get_group_type_from_schema_kind(file: str):
+        msc = Utility.load_json(file)
+        kind = msc.get('x-osdu-schema-source')
+        et = kind.split(':')[2]
+        gt = None
+        if ImportFromOSDU.SEPARATOR in et:
+            gt = et.split(ImportFromOSDU.SEPARATOR)[0]
+        return gt
+
     def copy_and_record_dependencies(self):
         remove_me = list()
         if self.__status() == 'DEVELOPMENT':
@@ -96,7 +103,8 @@ class ImportFromOSDU(object):
                 path = os.path.join(schema_file['target'], kind_file)
                 schema = Utility.load_json(schema_file['source'])
                 schema_file['dependencies'] = self.find_references(schema)
-                schema_info = self.__make_schema_info(schema_file, schema)
+                entity_info = copy.deepcopy(schema_file)
+                schema_info = self.__make_schema_info(entity_info, schema)
                 to_load = {'schemaInfo': schema_info, 'schema': schema}
                 Utility.save_json(to_load, path)
             else:
@@ -249,6 +257,13 @@ class ImportFromOSDU(object):
         if isinstance(entity_file, dict):
             version = entity_file['version']
             entity = entity_file['entity']
+            if not is_file:
+                parts = list()
+                gt = entity_file.get('group-type')
+                if gt is not None:
+                    parts.append(gt)
+                parts.append(entity)
+                entity = self.SEPARATOR.join(parts)
         else:
             version = '.'.join([self.__major(), self.__minor(), self.__patch()])
             entity = entity_file

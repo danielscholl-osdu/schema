@@ -22,15 +22,15 @@
     "description": "Generic reference object containing the universal group-type properties of a Work Product Component for inclusion in data type specific Work Product Component objects",
     "type": "object",
     "properties": {
-      "Files": {
+      "Datasets": {
         "type": "array",
         "items": {
           "description": "The SRN which identifies this OSDU File resource.",
           "type": "string",
-          "pattern": "^[\\w\\-\\.]+:file\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
+          "pattern": "^[\\w\\-\\.]+:dataset\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
           "x-osdu-relationship": [
             {
-              "GroupType": "file"
+              "GroupType": "dataset"
             }
           ]
         }
@@ -60,10 +60,10 @@
             "ResourceID": {
               "description": "The SRN which identifies this OSDU Artefact resource.",
               "type": "string",
-              "pattern": "^[\\w\\-\\.]+:file\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
+              "pattern": "^[\\w\\-\\.]+:dataset\\-\\-[\\w\\-\\.]+:.+:[0-9]*$",
               "x-osdu-relationship": [
                 {
-                  "GroupType": "file"
+                  "GroupType": "dataset"
                 }
               ]
             }

@@ -32,6 +32,18 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractBusinessRule/osdu..wks..AbstractBusinessRule..1.0.0.dev.json"
   },
   {
+    "kind": "osdu:wks:AbstractCommonResources:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractCommonResources/osdu..wks..AbstractCommonResources..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:AbstractCompressionInfo:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractCompressionInfo/osdu..wks..AbstractCompressionInfo..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:AbstractDataset:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractDataset/osdu..wks..AbstractDataset..1.0.0.dev.json"
+  },
+  {
     "kind": "osdu:wks:AbstractFacilityOperator:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityOperator/osdu..wks..AbstractFacilityOperator..1.0.0.dev.json"
   },
@@ -54,6 +66,18 @@
   {
     "kind": "osdu:wks:AbstractFacilityVerticalMeasurement:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityVerticalMeasurement/osdu..wks..AbstractFacilityVerticalMeasurement..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:AbstractFileSourceInfo:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFileSourceInfo/osdu..wks..AbstractFileSourceInfo..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:AbstractFile:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFile/osdu..wks..AbstractFile..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:AbstractFileCollection:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFileCollection/osdu..wks..AbstractFileCollection..1.0.0.dev.json"
   },
   {
     "kind": "osdu:wks:AbstractGeoBasinContext:1.0.0",
@@ -112,6 +136,14 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractReferenceType/osdu..wks..AbstractReferenceType..1.0.0.dev.json"
   },
   {
+    "kind": "osdu:wks:AbstractSystemProperties:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractSystemProperties/osdu..wks..AbstractSystemProperties..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:AbstractVectorHeaderMapping:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractVectorHeaderMapping/osdu..wks..AbstractVectorHeaderMapping..1.0.0.dev.json"
+  },
+  {
     "kind": "osdu:wks:AbstractWPCGroupType:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractWPCGroupType/osdu..wks..AbstractWPCGroupType..1.0.0.dev.json"
   },
@@ -128,28 +160,44 @@
     "relativePath": "shared-schemas/osdu/data-collection/DataCollection/osdu..wks..DataCollection..1.0.0.dev.json"
   },
   {
-    "kind": "osdu:wks:file--File:1.0.0",
-    "relativePath": "shared-schemas/osdu/file/File/osdu..wks..File..1.0.0.dev.json"
+    "kind": "osdu:wks:dataset--File.CompressedVectorHeaders:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.CompressedVectorHeaders/osdu..wks..File.CompressedVectorHeaders..1.0.0.dev.json"
   },
   {
-    "kind": "osdu:wks:file--GenericFile:1.0.0",
-    "relativePath": "shared-schemas/osdu/file/GenericFile/osdu..wks..GenericFile..1.0.0.dev.json"
+    "kind": "osdu:wks:dataset--File.Generic:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.Generic/osdu..wks..File.Generic..1.0.0.dev.json"
   },
   {
-    "kind": "osdu:wks:reference-data--GenericReferenceData:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/GenericReferenceData/osdu..wks..GenericReferenceData..1.0.0.dev.json"
+    "kind": "osdu:wks:dataset--File.WITSML:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.WITSML/osdu..wks..File.WITSML..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:dataset--FileCollection.Generic:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Generic/osdu..wks..FileCollection.Generic..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:dataset--FileCollection.SEGY:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.SEGY/osdu..wks..FileCollection.SEGY..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:dataset--GenericDataset:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/GenericDataset/osdu..wks..GenericDataset..1.0.0.dev.json"
   },
   {
     "kind": "osdu:wks:master-data--GenericMasterData:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/GenericMasterData/osdu..wks..GenericMasterData..1.0.0.dev.json"
+    "relativePath": "shared-schemas/osdu/manifest/GenericMasterData/osdu..wks..GenericMasterData..1.0.0.dev.json"
+  },
+  {
+    "kind": "osdu:wks:reference-data--GenericReferenceData:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/GenericReferenceData/osdu..wks..GenericReferenceData..1.0.0.dev.json"
   },
   {
     "kind": "osdu:wks:work-product--GenericWorkProduct:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product/GenericWorkProduct/osdu..wks..GenericWorkProduct..1.0.0.dev.json"
+    "relativePath": "shared-schemas/osdu/manifest/GenericWorkProduct/osdu..wks..GenericWorkProduct..1.0.0.dev.json"
   },
   {
     "kind": "osdu:wks:work-product-component--GenericWorkProductComponent:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/GenericWorkProductComponent/osdu..wks..GenericWorkProductComponent..1.0.0.dev.json"
+    "relativePath": "shared-schemas/osdu/manifest/GenericWorkProductComponent/osdu..wks..GenericWorkProductComponent..1.0.0.dev.json"
   },
   {
     "kind": "osdu:wks:Manifest:1.0.0",

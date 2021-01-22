@@ -91,9 +91,9 @@ class Utility(object):
         entity = parts[1].replace('.json', '')
         if '.' in entity:  # OSDU R3 contains version in file name
             vps = entity.split('.') # filename: <entityType>.major.minor.patch - 4 parts
-            if len(vps) == 4:
-                entity = vps[0]
-                version = '.'.join(vps[1:])
+            if len(vps) >= 4:
+                version = '.'.join([vps[-3], vps[-2], vps[-1]])
+                entity = entity.replace('.'+version, '')
             else:
                 exit('Error in entity name/version: {} expected <entityType>.major.minor.patch.json'.format(entity))
         parts = parts[0].split(os.sep)
