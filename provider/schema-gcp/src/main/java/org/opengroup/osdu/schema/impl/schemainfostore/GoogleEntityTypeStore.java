@@ -69,7 +69,7 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.ENTITYTYPE_KIND).newKey(entityTypeId);
         Entity entity = datastore.get(key);
@@ -85,14 +85,13 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
      * Method to create entityType in google store of dataPartitionId GCP
      *
      * @param entityType
-     * @param dataPartitionId
      * @return entityType object
      * @throws ApplicationException
      * @throws BadRequestException
      */
     @Override
     public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.ENTITYTYPE_KIND).newKey(entityType.getEntityTypeId());
         Entity entity = getEntityObject(key);
