@@ -16,9 +16,11 @@ variables:
   AZURE_BUILD_SUBDIR: provider/schema-azure
   AZURE_TEST_SUBDIR: testing/schema-test-core
   AZURE_DEPLOYMENTS_SUBDIR: deployments/scripts/azure
-  INTEGRATION_TESTER: $AZURE_PRINCIPAL_ID
-  AZURE_TESTER_SERVICEPRINCIPAL_SECRET: $AZURE_PRINCIPAL_SECRET
+  AZURE_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
+  AZURE_CLIENT_ID: $AZURE_PRINCIPAL_ID
+  AZURE_CLIENT_SECRET: $AZURE_PRINCIPAL_SECRET
   DATA_PARTITION: opendes
+  AZURE_AD_APP_RESOURCE_ID: $AZURE_APP_ID
   AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
 
 
@@ -31,7 +33,7 @@ variables:
   OSDU_GCP_SERVICE: schema
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_APPLICATION_NAME: os-schema
-  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_URL,AUTHORIZE_API_KEY=$OSDU_GCP_AUTHORIZE_API_KEY,LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=DEBUG,ACCOUNT_ID_COMMON_PROJECT=$TENANT --vpc-connector=$OSDU_GCP_VPC_CONNECTOR
+  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_URL,AUTHORIZE_API_KEY=$OSDU_GCP_AUTHORIZE_API_KEY,LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=DEBUG,SHARED_TENANT_NAME=$TENANT --vpc-connector=$OSDU_GCP_VPC_CONNECTOR
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -62,4 +64,4 @@ include:
     ref: 'master'
     file: 'cloud-providers/osdu-gcp-cloudrun.yml'
 
-  - local: "/devops/azure/bootstrap.yaml"
+  - local: "/devops/azure/gitlab-bootstrap.yml"

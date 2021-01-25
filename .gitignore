@@ -39,3 +39,7 @@ hs_err_pid*
 *local.properties
 
 dist/
+
+# Environment configuration
+*.env
+.envrc
