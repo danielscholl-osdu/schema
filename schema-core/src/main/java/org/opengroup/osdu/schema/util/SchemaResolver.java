@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -95,9 +96,23 @@ public class SchemaResolver {
                 jsonObject.put(key, value);
             } else if (jsonObject.get(key) instanceof JSONObject) {
                 findAndResolveRef((JSONObject) jsonObject.get(key), refSchemas);
+            } else if (jsonObject.get(key) instanceof JSONArray) {
+                findAndResolveRef(jsonObject.getJSONArray(key), refSchemas);
             }
         }
         return jsonObject;
+    }
+
+    private JSONArray findAndResolveRef(JSONArray jsonArray, Map<String, String> refSchemas)
+            throws BadRequestException, ApplicationException {
+        for (Object object : jsonArray) {
+            if (object instanceof JSONObject) {
+                findAndResolveRef((JSONObject) object, refSchemas);
+            } else if (object instanceof JSONArray) {
+                findAndResolveRef((JSONArray) object, refSchemas);
+            }
+        }
+        return jsonArray;
     }
 
     private String resolveRef(Object object, Map<String, String> refSchemas)
