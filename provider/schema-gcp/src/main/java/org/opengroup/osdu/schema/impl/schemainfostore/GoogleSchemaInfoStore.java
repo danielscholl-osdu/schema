@@ -95,7 +95,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
      */
     @Override
     public SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE).setKind(SchemaConstants.SCHEMA_KIND)
                 .newKey(schemaId);
         Entity entity = datastore.get(key);
@@ -110,14 +110,13 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
      * Method to Create schema in google store of tenantId GCP
      *
      * @param schema
-     * @param tenantId
      * @return schemaInfo object
      * @throws ApplicationException
      * @throws BadRequestException
      */
     @Override
     public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         KeyFactory keyFactory = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.SCHEMA_KIND);
         Entity entity = getEntityObject(schema, datastore, keyFactory);
@@ -140,14 +139,13 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
      * Method to update schema in google store of tenantId GCP
      *
      * @param schema
-     * @param tenantId
      * @return schemaInfo object
      * @throws ApplicationException
      * @throws BadRequestException
      */
     @Override
     public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         KeyFactory keyFactory = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.SCHEMA_KIND);
         Entity entity = getEntityObject(schema, datastore, keyFactory);
@@ -170,7 +168,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
      */
     @Override
     public boolean cleanSchema(String schemaId) throws ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         KeyFactory keyFactory = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.SCHEMA_KIND);
         Key key = keyFactory.newKey(schemaId);
@@ -184,7 +182,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
     @Override
     public String getLatestMinorVerSchema(SchemaInfo schemaInfo) throws ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Query<Entity> query = Query.newEntityQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.SCHEMA_KIND)
                 .setFilter(CompositeFilter.and(
@@ -275,7 +273,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     @Override
     public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
         List<SchemaInfo> schemaList = new LinkedList<>();
-        Datastore datastore = dataStoreFactory.getDatastore(tenantId, SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(tenantId));
         List<Filter> filterList = getFilters(queryParams);
 
         EntityQuery.Builder queryBuilder = Query.newEntityQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
@@ -336,7 +334,7 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
         }
         for (String tenant : tenantList) {
-            Datastore datastore = dataStoreFactory.getDatastore(tenant, SchemaConstants.NAMESPACE);
+            Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(tenant));
             Key schemaKey = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                     .setKind(SchemaConstants.SCHEMA_KIND).newKey(schemaId);
 

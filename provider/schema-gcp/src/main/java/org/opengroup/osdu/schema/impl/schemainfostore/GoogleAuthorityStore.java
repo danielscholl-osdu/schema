@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
+import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -52,6 +53,9 @@ public class GoogleAuthorityStore implements IAuthorityStore {
     private DatastoreFactory dataStoreFactory;
 
     @Autowired
+    private TenantFactory tenantFactory;
+
+    @Autowired
     JaxRsDpsLog log;
 
     /**
@@ -64,7 +68,7 @@ public class GoogleAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority get(String authorityId) throws NotFoundException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.AUTHORITY_KIND).newKey(authorityId);
 
@@ -81,14 +85,13 @@ public class GoogleAuthorityStore implements IAuthorityStore {
      * Method to create authority in google store of dataPartitionId project
      *
      * @param authority
-     * @param dataPartitionId
      * @return Authority object
      * @throws ApplicationException
      * @throws BadRequestException
      */
     @Override
     public Authority create(Authority authority) throws ApplicationException, BadRequestException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE)
                 .setKind(SchemaConstants.AUTHORITY_KIND).newKey(authority.getAuthorityId());
         Entity entity = getEntityObject(key);

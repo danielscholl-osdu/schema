@@ -70,8 +70,7 @@ public class GoogleEntityTypeStoreTest {
         String entityId = "testEntityId";
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.ENTITY_TYPE)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -88,8 +87,7 @@ public class GoogleEntityTypeStoreTest {
         try {
             Mockito.when(headers.getPartitionId()).thenReturn("test");
             Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-            Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                    .thenReturn(dataStore);
+			Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
             Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
             Mockito.when(keyFactory.setKind(SchemaConstants.ENTITY_TYPE)).thenReturn(keyFactory);
             Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -110,8 +108,7 @@ public class GoogleEntityTypeStoreTest {
         System.out.println("testCreate");
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.ENTITY_TYPE)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -127,8 +124,7 @@ public class GoogleEntityTypeStoreTest {
         System.out.println("testCreate_BadRequestException");
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(mockEntityType.getEntityTypeId()).thenReturn("wks");
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.ENTITYTYPE_KIND)).thenReturn(keyFactory);
@@ -153,8 +149,7 @@ public class GoogleEntityTypeStoreTest {
         System.out.println("testCreate_ApplicationException");
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.ENTITYTYPE_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);

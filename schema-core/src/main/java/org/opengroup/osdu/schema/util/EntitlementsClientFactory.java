@@ -14,7 +14,6 @@ limitations under the License.*/
 
 package org.opengroup.osdu.schema.util;
 
-import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlementsFactory> {
 
     @Value("${AUTHORIZE_API}")
@@ -36,8 +34,6 @@ public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlements
     
     @Autowired
    	private HttpResponseBodyMapper bodyMapper;
-
-    private final HttpResponseBodyMapper responseBodyMapper;
 
     @Override
     protected IEntitlementsFactory createInstance() throws Exception {
