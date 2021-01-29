@@ -14,10 +14,15 @@
 
 package org.opengroup.osdu.schema.azure.impl.schemainfostore;
 
+import java.text.MessageFormat;
+
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.schema.azure.definitions.AuthorityDoc;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
+
 import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.schema.azure.definitions.AuthorityDoc;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -65,7 +70,7 @@ public class AzureAuthorityStore implements IAuthorityStore {
 
         String id = headers.getPartitionId() + ":" + authorityId;
 
-        AuthorityDoc authorityDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, headers.getPartitionId(), AuthorityDoc.class)
+        AuthorityDoc authorityDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityId, AuthorityDoc.class)
                 .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
         return authorityDoc.getAuthority();
@@ -83,8 +88,8 @@ public class AzureAuthorityStore implements IAuthorityStore {
         String id = headers.getPartitionId() + ":" + authority.getAuthorityId();
 
         try {
-            AuthorityDoc authorityDoc = new AuthorityDoc(id, headers.getPartitionId(), authority);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, headers.getPartitionId(), authorityDoc);
+            AuthorityDoc authorityDoc = new AuthorityDoc(id, authority);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityDoc);
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);

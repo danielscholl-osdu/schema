@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-    
+
 global:
   replicaCount: 1
 
@@ -19,4 +19,5 @@ image:
   repository: community.opengroup.org:5555/osdu/platform/system/schema-service
   branch: master
   tag: latest
-    
+
+default_tenant: opendes

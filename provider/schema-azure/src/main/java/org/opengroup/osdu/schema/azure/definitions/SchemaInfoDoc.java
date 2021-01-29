@@ -23,6 +23,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SchemaInfoDoc {
     private String id;
-    private String dataPartitionId;
+    private String partitionId;
     private FlattenedSchemaInfo flattenedSchemaInfo;
 }
