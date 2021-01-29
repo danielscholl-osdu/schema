@@ -15,9 +15,9 @@
 package org.opengroup.osdu.schema.azure.impl.schemainfostore;
 
 import java.text.MessageFormat;
+
 import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
-
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.definitions.SourceDoc;
@@ -64,7 +64,7 @@ public class AzureSourceStore implements ISourceStore {
     public Source get(String sourceId) throws NotFoundException, ApplicationException {
 
         String id = headers.getPartitionId().toString() + ":" + sourceId;
-        SourceDoc sourceDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, headers.getPartitionId(), SourceDoc.class)
+        SourceDoc sourceDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceId, SourceDoc.class)
                 .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
         return sourceDoc.getSource();
@@ -82,8 +82,8 @@ public class AzureSourceStore implements ISourceStore {
         String id = headers.getPartitionId() + ":" + source.getSourceId();
 
         try {
-            SourceDoc sourceDoc = new SourceDoc(id, headers.getPartitionId(), source);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, headers.getPartitionId(), sourceDoc);
+            SourceDoc sourceDoc = new SourceDoc(id, source);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceDoc);
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.SOURCE_EXISTS);
