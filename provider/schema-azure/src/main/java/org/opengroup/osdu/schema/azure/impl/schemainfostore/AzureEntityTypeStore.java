@@ -67,7 +67,7 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
 
         String id = headers.getPartitionId() + ":" + entityTypeId;
 
-        EntityTypeDoc entityTypeDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, headers.getPartitionId(), EntityTypeDoc.class)
+        EntityTypeDoc entityTypeDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeId, EntityTypeDoc.class)
                 .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
         return entityTypeDoc.getEntityType();
@@ -85,8 +85,8 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
         String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
 
         try {
-            EntityTypeDoc entityTypeDoc = new EntityTypeDoc(id, headers.getPartitionId(), entityType);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, headers.getPartitionId(), entityTypeDoc);
+            EntityTypeDoc entityTypeDoc = new EntityTypeDoc(id, entityType);
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeDoc);
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);

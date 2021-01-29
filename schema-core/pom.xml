@@ -15,7 +15,7 @@
 
 	<properties>
 		<springfox-version>2.7.0</springfox-version>
-		<os-core-common.version>0.3.23</os-core-common.version>
+		<os-core-common.version>0.3.18</os-core-common.version>
 	</properties>
 
 	<dependencies>
@@ -31,7 +31,6 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -126,7 +125,7 @@
 		</dependency>
 
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -150,7 +149,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.3</version>	
+				<version>0.8.3</version>
 				<executions>
 					<execution>
 						<goals>

@@ -26,3 +26,5 @@ image:
   repository: #{container-registry}#.azurecr.io
   branch: #{ENVIRONMENT_NAME}#
   tag: #{Build.SourceVersion}#
+
+default_tenant: #{DEFAULT_TENANT}#
