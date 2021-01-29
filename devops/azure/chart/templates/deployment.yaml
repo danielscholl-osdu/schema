@@ -1,3 +1,4 @@
+
 #  Copyright © Microsoft Corporation
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -99,3 +100,11 @@ spec:
               value: http://entitlements-azure/entitlements/v1
             - name: entitlements_service_api_key
               value: "OBSOLETE"
+            - name: partition_service_endpoint
+              value: "http://partition/api/partition/v1"
+            - name: shared_partition
+              value: {{ .Values.default_tenant}}
+            - name: azure_istioauth_enabled
+              value: "true"
+
+

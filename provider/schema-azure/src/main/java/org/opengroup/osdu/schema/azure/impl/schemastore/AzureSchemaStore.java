@@ -17,7 +17,7 @@ package org.opengroup.osdu.schema.azure.impl.schemastore;
 import org.opengroup.osdu.azure.blobstorage.BlobStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-import org.opengroup.osdu.schema.azure.di.AzureBootstrapConfig;
+import org.opengroup.osdu.schema.azure.di.CosmosContainerConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
@@ -40,7 +40,7 @@ public class AzureSchemaStore implements ISchemaStore {
     private BlobStore blobStore;
 
     @Autowired
-    private AzureBootstrapConfig config;
+    private CosmosContainerConfig config;
 
     @Autowired
     JaxRsDpsLog log;

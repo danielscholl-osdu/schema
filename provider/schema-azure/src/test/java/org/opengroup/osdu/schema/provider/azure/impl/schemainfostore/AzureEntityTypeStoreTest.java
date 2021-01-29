@@ -62,6 +62,7 @@ public class AzureEntityTypeStoreTest {
 
     private static final String dataPartitionId = "testPartitionId";
     private static final String entityTypeId = "testEntityId";
+    private static final String partitionKey = "testEntityId";
 
     @Before
     public void init() {
@@ -81,7 +82,7 @@ public class AzureEntityTypeStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + entityTypeId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
 
         assertNotNull(store.get(entityTypeId));
@@ -157,7 +158,7 @@ public class AzureEntityTypeStoreTest {
         String id = partitionId + ":" + EntityTypeName;
         EntityType EntityType = new EntityType();
         EntityType.setEntityTypeId(EntityTypeName);
-        return new EntityTypeDoc(id, partitionId, EntityType);
+        return new EntityTypeDoc(id, EntityType);
     }
 
     private AppException getMockAppException(int errorCode) {

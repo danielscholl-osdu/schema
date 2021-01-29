@@ -20,18 +20,18 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureAuthorityStore;
 import org.opengroup.osdu.schema.azure.definitions.AuthorityDoc;
+import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureAuthorityStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
-import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -61,6 +61,7 @@ public class AzureAuthorityStoreTest {
 
     private static final String dataPartitionId = "testPartitionId";
     private static final String authorityId = "testAuthorityId";
+    private static final String partitionKey = "testAuthorityId";
 
     @Before
     public void init() {
@@ -80,7 +81,7 @@ public class AzureAuthorityStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + authorityId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
 
         assertNotNull(store.get(authorityId));
@@ -137,7 +138,7 @@ public class AzureAuthorityStoreTest {
     public void testCreateAuthority_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException, CosmosException {
         AppException exception = getMockAppException(500);
-        doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
+       doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
         try {
             store.create(mockAuthority);
             fail("Should not succeed");
@@ -153,7 +154,7 @@ public class AzureAuthorityStoreTest {
         String id = partitionId + ":" + authorityName;
         Authority authority = new Authority();
         authority.setAuthorityId(authorityName);
-        return new AuthorityDoc(id, partitionId, authority);
+        return new AuthorityDoc(id, authority);
     }
 
     private AppException getMockAppException(int errorCode) {

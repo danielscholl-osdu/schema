@@ -24,6 +24,5 @@ import org.opengroup.osdu.schema.model.Source;
 @NoArgsConstructor
 public class SourceDoc {
     private String id;
-    private String dataPartitionId;
     private Source source;
 }

@@ -14,20 +14,14 @@
 
 package org.opengroup.osdu.schema.azure.di;
 
-import com.azure.cosmos.CosmosClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Named;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CosmosContainerConfig {
-
-    @Autowired
-    private CosmosClient cosmosClient;
-
-    @Autowired
-    private String cosmosDBName;
 
     @Value("${authority.container.name}")
     private String authorityContainerName;
@@ -40,6 +34,24 @@ public class CosmosContainerConfig {
 
     @Value("${source.container.name}")
     private String sourceContainerName;
+    
+    @Value("${azure.cosmosdb.database}")
+    private String cosmosDBName;
+    
+    @Value("${azure.storage.container-name}")
+    private String storageContainer;
+    
+    @Bean
+    @Named("STORAGE_CONTAINER_NAME")
+    public String containerName() {
+        return storageContainer;
+    }
+    
+    @Bean
+    @Named("COSMOS_DB_NAME")
+    public String cosmosDBName() {
+        return cosmosDBName;
+    }
 
     @Bean
     public String authorityContainer() {
