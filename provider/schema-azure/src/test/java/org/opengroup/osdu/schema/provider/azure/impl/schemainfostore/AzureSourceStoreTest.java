@@ -25,8 +25,8 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureSourceStore;
 import org.opengroup.osdu.schema.azure.definitions.SourceDoc;
+import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureSourceStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -81,7 +81,7 @@ public class AzureSourceStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + sourceId),
-                        eq(dataPartitionId),
+                        eq(sourceId),
                         any());
         assertNotNull(store.get(sourceId));
         assertEquals(sourceId, store.get(sourceId).getSourceId());
@@ -98,7 +98,7 @@ public class AzureSourceStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + ""),
-                        eq(dataPartitionId),
+                        eq(sourceId),
                         any());
         try {
             store.get(sourceId);
@@ -113,6 +113,7 @@ public class AzureSourceStoreTest {
 
     @Test
     public void testCreateSource() throws  ApplicationException, BadRequestException {
+        doNothing().when(cosmosStore).createItem(anyString(), any(), any(),any(), any());
         doNothing().when(cosmosStore).createItem(anyString(), any(), any(), any(), any());
         assertNotNull(store.create(mockSource));
     }
@@ -154,7 +155,7 @@ public class AzureSourceStoreTest {
         String id = partitionId + ":" + sourceName;
         Source source = new Source();
         source.setSourceId(sourceName);
-        return new SourceDoc(id, partitionId, source);
+        return new SourceDoc(id, source);
     }
 
     private AppException getMockAppException(int errorCode) {

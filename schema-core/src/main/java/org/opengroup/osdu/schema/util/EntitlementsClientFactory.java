@@ -17,6 +17,8 @@ package org.opengroup.osdu.schema.util;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
+import org.opengroup.osdu.core.common.http.json.HttpResponseBodyMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
@@ -29,11 +31,14 @@ public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlements
 
     @Value("${AUTHORIZE_API_KEY}")
     private String apiKey;
+    
+    @Autowired
+   	private HttpResponseBodyMapper bodyMapper;
 
     @Override
     protected IEntitlementsFactory createInstance() throws Exception {
 
-        return new EntitlementsFactory(EntitlementsAPIConfig.builder().rootUrl(this.api).apiKey(this.apiKey).build());
+    	return new EntitlementsFactory(EntitlementsAPIConfig.builder().rootUrl(this.api).apiKey(this.apiKey).build(), bodyMapper);
     }
 
     @Override

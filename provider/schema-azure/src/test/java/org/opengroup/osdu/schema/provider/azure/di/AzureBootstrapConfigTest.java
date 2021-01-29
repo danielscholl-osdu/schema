@@ -45,24 +45,4 @@ public class AzureBootstrapConfigTest {
         bootstrapConfig.getKeyVaultSecret(kv, "secret-name");
     }
 
-    @Test
-    public void config_returnsCorrectSecret_CosmosKey(){
-        // Test the the cosmosKey is returned correctly.
-        KeyVaultSecret secret = Mockito.mock(KeyVaultSecret.class);
-        doReturn("cosmos-key-secret").when(secret).getValue();
-        doReturn(secret).when(kv).getSecret("opendes-cosmos-primary-key");
-
-        String secretValue = bootstrapConfig.cosmosKey(kv);
-        assertEquals("Secret value was incorrect", "cosmos-key-secret", secretValue);
-    }
-
-    @Test
-    public void config_returnsCorrectSecret_cosmosEndpoint() {
-        KeyVaultSecret secret = Mockito.mock(KeyVaultSecret.class);
-        doReturn("cosmos-endpoint-secret").when(secret).getValue();
-        doReturn(secret).when(kv).getSecret("opendes-cosmos-endpoint");
-
-        String secretValue = bootstrapConfig.cosmosEndpoint(kv);
-        assertEquals("Secret value was incorrect", "cosmos-endpoint-secret", secretValue);
-    }
 }
