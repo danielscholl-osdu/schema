@@ -24,6 +24,5 @@ import org.opengroup.osdu.schema.model.EntityType;
 @NoArgsConstructor
 public class EntityTypeDoc {
     private String id;
-    private String dataPartitionId;
     private EntityType entityType;
 }

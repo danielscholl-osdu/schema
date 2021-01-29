@@ -24,6 +24,5 @@ import org.opengroup.osdu.schema.model.Authority;
 @NoArgsConstructor
 public class AuthorityDoc {
     private String id;
-    private String dataPartitionId;
     private Authority authority;
 }
