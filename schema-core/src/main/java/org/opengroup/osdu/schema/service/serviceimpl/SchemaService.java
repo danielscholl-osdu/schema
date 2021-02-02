@@ -3,12 +3,14 @@ package org.opengroup.osdu.schema.service.serviceimpl;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -20,6 +22,7 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NoSchemaFoundException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.opengroup.osdu.schema.logging.AuditLogger;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
@@ -48,37 +51,36 @@ import com.google.gson.Gson;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class SchemaService implements ISchemaService {
 
-    @Autowired
-    private ISchemaInfoStore schemaInfoStore;
+	private final AuditLogger auditLogger;
 
-    @Autowired
-    private ISchemaStore schemaStore;
+    private final ISchemaInfoStore schemaInfoStore;
 
-    @Autowired
-    private IAuthorityService authorityService;
+    private final ISchemaStore schemaStore;
 
-    @Autowired
-    private ISourceService sourceService;
+    private final IAuthorityService authorityService;
 
-    @Autowired
-    private IEntityTypeService entityTypeService;
+    private final ISourceService sourceService;
 
-    @Autowired
-    private SchemaUtil schemaUtil;
+    private final IEntityTypeService entityTypeService;
 
-    @Autowired
+    private final SchemaUtil schemaUtil;
+
     private SchemaResolver schemaResolver;
     
     @Value("${shared.tenant.name:common}")
 	private String sharedTenant;
 
-    @Autowired
-    JaxRsDpsLog log;
+    final JaxRsDpsLog log;
 
     @Autowired
-    DpsHeaders headers;
+	public void setSchemaResolver(SchemaResolver schemaResolver) {
+		this.schemaResolver = schemaResolver;
+	}
+
+    final DpsHeaders headers;
     
     /**
      * Method to get schema
@@ -99,11 +101,13 @@ public class SchemaService implements ISchemaService {
                 schema = schemaStore.getSchema(sharedTenant, schemaId);
         }
 
+		auditLogger.schemaRetrievedSuccess(Collections.singletonList(schema.toString()));
         return schema;
     }
 
     private void validateSchemaId(String schemaId) throws BadRequestException {
         if (StringUtils.isEmpty(schemaId)) {
+        	auditLogger.schemaRetrievedFailure(Collections.singletonList(schemaId));
             log.error(SchemaConstants.EMPTY_ID);
             throw new BadRequestException(SchemaConstants.EMPTY_ID);
         }
@@ -144,8 +148,12 @@ public class SchemaService implements ISchemaService {
                 try {
                     SchemaInfo schemaInfo = schemaInfoStore.createSchemaInfo(schemaRequest);
                     schemaStore.createSchema(schemaId, schema);
+                    auditLogger.schemaRegisteredSuccess(
+							Collections.singletonList(schemaRequest.toString()));
                     return schemaInfo;
                 } catch (ApplicationException ex) {
+                	auditLogger.schemaRegisteredFailure(
+							Collections.singletonList(schemaRequest.toString()));
                     log.warning(SchemaConstants.SCHEMA_CREATION_FAILED);
                     schemaInfoStore.cleanSchema(schemaId);
                     schemaStore.cleanSchemaProject(schemaId);
@@ -197,10 +205,12 @@ public class SchemaService implements ISchemaService {
             Gson gson = new Gson();
             String schema = schemaResolver.resolveSchema(gson.toJson(schemaRequest.getSchema()));
             SchemaInfo schInfo = schemaInfoStore.updateSchemaInfo(schemaRequest);
+            auditLogger.schemaUpdatedSuccess(Collections.singletonList(schemaRequest.toString()));
             schemaStore.createSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
             log.info(SchemaConstants.SCHEMA_UPDATED);
             return schInfo;
         } else {
+        	auditLogger.schemaUpdatedFailure(Collections.singletonList(schemaRequest.toString()));
             log.error(SchemaConstants.SCHEMA_UPDATE_ERROR);
             throw new BadRequestException(SchemaConstants.SCHEMA_UPDATE_EXCEPTION);
         }
@@ -258,6 +268,13 @@ public class SchemaService implements ISchemaService {
         		.sorted(compareByCreatedDate)
                 .limit(queryParams.getLimit()).collect(Collectors.toList());
 
+        if (schemaFinalList.isEmpty()){
+			auditLogger.searchSchemaFailure(Collections.singletonList(queryParams.toString()));
+        } else {
+			auditLogger.searchSchemaSuccess(schemaFinalList.stream()
+					.map(SchemaInfo::toString)
+					.collect(Collectors.toList()));
+        }
         return SchemaInfoResponse.builder().schemaInfos(schemaFinalList).count(schemaFinalList.size())
                 .offset(queryParams.getOffset()).totalCount(schemaList.size()).build();
     }
