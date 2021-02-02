@@ -69,8 +69,7 @@ public class GoogleAuthorityStoreTest {
         String authorityId = "testAuthorityId";
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.AUTHORITY_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -86,8 +85,7 @@ public class GoogleAuthorityStoreTest {
         try {
             Mockito.when(headers.getPartitionId()).thenReturn("test");
             Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-            Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                    .thenReturn(dataStore);
+			Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
             Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
             Mockito.when(keyFactory.setKind(SchemaConstants.AUTHORITY_KIND)).thenReturn(keyFactory);
             Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -107,8 +105,7 @@ public class GoogleAuthorityStoreTest {
     public void testCreateAuthority() throws NotFoundException, ApplicationException, BadRequestException {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.AUTHORITY_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -126,8 +123,7 @@ public class GoogleAuthorityStoreTest {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         mockGoogleAuthorityStore = Mockito.spy(mockGoogleAuthorityStore);
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.AUTHORITY_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
@@ -152,8 +148,7 @@ public class GoogleAuthorityStoreTest {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         mockGoogleAuthorityStore = Mockito.spy(mockGoogleAuthorityStore);
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-        Mockito.when(dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE))
-                .thenReturn(dataStore);
+		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
         Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
         Mockito.when(keyFactory.setKind(SchemaConstants.AUTHORITY_KIND)).thenReturn(keyFactory);
         Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
