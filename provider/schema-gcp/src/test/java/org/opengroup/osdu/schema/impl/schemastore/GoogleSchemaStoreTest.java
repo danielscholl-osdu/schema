@@ -65,7 +65,7 @@ public class GoogleSchemaStoreTest {
     public void setUp() {
     	 ReflectionTestUtils.setField(schemaStore, "sharedTenant", "common");
     }
-    
+
     @Test
     public void testCreateSchema() throws ApplicationException {
 

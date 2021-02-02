@@ -56,6 +56,16 @@ public class SchemaResolverTest {
     }
 
     @Test
+    public void testResolveSchema_ResolveRefForAttributeInJSONArray()
+            throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
+        String resolvedSchema = new FileUtils().read("/test_schema/resolvedSchema_Ref_AttributeInJsonArray.json");
+        String orginalSchema = new FileUtils().read("/test_schema/originalSchemaWithRef_AttributeInJsonArray.json");
+        String referenceSchema = new FileUtils().read("/test_schema/referenceSchema.json");
+        Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenReturn(referenceSchema);
+        JSONAssert.assertEquals(resolvedSchema, schemaResolver.resolveSchema(orginalSchema), JSONCompareMode.LENIENT);
+    }
+
+    @Test
     public void testResolveSchema_no_definitionblock()
             throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
         String resolvedSchema = new FileUtils().read("/test_schema/resolvedSchemaWithNoDefinationBlock.json");

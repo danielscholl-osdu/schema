@@ -42,3 +42,7 @@ hs_err_pid*
 /venv/
 
 dist/
+
+# Environment configuration
+*.env
+.envrc

@@ -14,14 +14,35 @@
 
 package org.opengroup.osdu.schema.provider.azure.impl.schemainfostore;
 
-import com.google.common.collect.Lists;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppError;
@@ -36,23 +57,15 @@ import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
-import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
+import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import com.google.common.collect.Lists;
 
 public class AzureSchemaInfoStoreTest {
     @Mock
@@ -83,9 +96,10 @@ public class AzureSchemaInfoStoreTest {
     FlattenedSchemaInfo flattenedSchemaInfo;
 
     private static final String dataPartitionId = "testPartitionId";
+    private static final String partitionKey = "os:wks:well:1";
     private static final String CONTENT = "Hello World";
-    private static final String schemaId = "os:wks:well.1.1.1";
-    private static final String supersedingSchemaId = "os:wks:well.1.2.1";
+    private static final String schemaId = "os:wks:well:1.1.1";
+    private static final String supersedingSchemaId = "os:wks:well:1.2.1";
     private static final String commonTenantId = "common";
 
     @Rule
@@ -135,7 +149,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
 
         doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
@@ -156,7 +170,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         schemaInfoStore.getSchemaInfo(schemaId);
     }
@@ -188,7 +202,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
 
@@ -199,7 +213,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + supersedingSchemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
 
@@ -252,7 +266,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         assertTrue(schemaInfoStore.isUnique(schemaId, dataPartitionId));
     }
@@ -267,7 +281,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         assertFalse(schemaInfoStore.isUnique(schemaId, dataPartitionId));
     }
@@ -290,7 +304,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         assertFalse(schemaInfoStore.isUnique(schemaId, commonTenantId));
     }
@@ -305,7 +319,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + supersedingSchemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
 
         doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
@@ -323,7 +337,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         doReturn(Optional.of(schemaInfoDoc))
                 .when(cosmosStore)
@@ -332,7 +346,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + supersedingSchemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
         assertNotNull(schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published()));
@@ -348,7 +362,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + supersedingSchemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         doReturn(Optional.of(schemaInfoDoc))
                 .when(cosmosStore)
@@ -357,7 +371,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
         try {
@@ -382,7 +396,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
 
@@ -402,7 +416,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         doThrow(AppException.class).when(cosmosStore).upsertItem(eq(dataPartitionId), any(), any(), any(), any());
 
@@ -437,7 +451,7 @@ public class AzureSchemaInfoStoreTest {
         assertEquals(1,
                 schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
                         .schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test").latestVersion(false)
-                        .limit(100).offset(0).build(), "test").size());
+                        .limit(100).offset(0).build(), dataPartitionId).size());
     }
 
     @Test
@@ -461,7 +475,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         assertEquals(true, schemaInfoStore.cleanSchema(schemaId));
     }
@@ -475,7 +489,7 @@ public class AzureSchemaInfoStoreTest {
                         any(),
                         any(),
                         eq(dataPartitionId + ":" + schemaId),
-                        eq(dataPartitionId),
+                        eq(partitionKey),
                         any());
         assertEquals(false, schemaInfoStore.cleanSchema(schemaId));
     }

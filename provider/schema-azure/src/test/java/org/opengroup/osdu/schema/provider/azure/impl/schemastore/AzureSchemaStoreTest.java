@@ -26,6 +26,7 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.di.AzureBootstrapConfig;
+import org.opengroup.osdu.schema.azure.di.CosmosContainerConfig;
 import org.opengroup.osdu.schema.azure.impl.schemastore.AzureSchemaStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -42,7 +43,7 @@ public class AzureSchemaStoreTest {
     BlobStore blobStore;
 
     @Mock
-    AzureBootstrapConfig config;
+    CosmosContainerConfig config;
 
     @Mock
     DpsHeaders headers;

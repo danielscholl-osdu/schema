@@ -16,7 +16,7 @@
 global:
 
   # Service(s) Replica Count
-  replicaCount: 1
+  replicaCount: 2
 
 ################################################################################
 # Specify the Gitlab branch being used for image creation
@@ -26,3 +26,5 @@ image:
   repository: #{container-registry}#.azurecr.io
   branch: #{ENVIRONMENT_NAME}#
   tag: #{Build.SourceVersion}#
+
+default_tenant: #{DEFAULT_TENANT}#

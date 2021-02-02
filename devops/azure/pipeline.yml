@@ -11,12 +11,12 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
 trigger:
   batch: true
   branches:
     include:
       - master
+
   paths:
     exclude:
       - /**/*.md
@@ -50,6 +50,8 @@ variables:
   - name: 'MAVEN_CACHE_FOLDER'
     value: $(Pipeline.Workspace)/.m2/repository
   - name: SKIP_TESTS
+    value: 'false'
+  - name: SKIP_DEPLOY
     value: 'false'
 
 stages:

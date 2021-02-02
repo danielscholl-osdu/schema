@@ -29,6 +29,7 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NoSchemaFoundException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.opengroup.osdu.schema.logging.AuditLogger;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
@@ -80,6 +81,9 @@ public class SchemaServiceTest {
 
     @Mock
     JaxRsDpsLog log;
+
+    @Mock
+    AuditLogger auditLogger;
     
     @Value("${shared.tenant.name:common}")
 	private String sharedTenant;
@@ -91,7 +95,8 @@ public class SchemaServiceTest {
     
     @Before
     public void setUp() {
-    	 ReflectionTestUtils.setField(schemaService, "sharedTenant", "common");
+        schemaService.setSchemaResolver(schemaResolver);
+        ReflectionTestUtils.setField(schemaService, "sharedTenant", "common");
     }
     
     @Test
@@ -115,6 +120,7 @@ public class SchemaServiceTest {
     @Test
     public void testGetSchema_FetchCommonProjectTest()
             throws BadRequestException, NotFoundException, ApplicationException {
+        ReflectionTestUtils.setField(schemaService, "sharedTenant", sharedTenant);
         String dataPartitionId = "private";
         Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
         String schemaId = "os..wks..well.1.1";
@@ -125,6 +131,7 @@ public class SchemaServiceTest {
 
     @Test
     public void testGetSchema_NotFoundException() throws BadRequestException, NotFoundException, ApplicationException {
+        ReflectionTestUtils.setField(schemaService, "sharedTenant", sharedTenant);
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
         String dataPartitionId = "private";

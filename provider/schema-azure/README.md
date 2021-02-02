@@ -38,18 +38,21 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 | `LOG_PREFIX` | `schema` | Logging prefix | no | - |
 | `AUTHORIZE_API` | ex `https://foo-entitlements.azurewebsites.net` | Entitlements API endpoint | no | output of infrastructure deployment |
 | `AUTHORIZE_API_KEY` | `********` | The API key clients will need to use when calling the entitlements | yes | -- |
+| `partition_service_endpoint` |  ex `https://foo-partition.azurewebsites.net` | Partition Service API endpoint | no | output of infrastructure deployment |
+| `azure.activedirectory.app-resource-id` | `********` | AAD client application ID  | yes | output of infrastructure deployment |
 | `azure.application-insights.instrumentation-key` | `********` | API Key for App Insights | yes | output of infrastructure deployment |
 | `azure.activedirectory.client-id` | `********` | AAD client application ID | yes | output of infrastructure deployment |
 | `azure.activedirectory.AppIdUri` | `api://${azure.activedirectory.client-id}` | URI for AAD Application | no | -- |
 | `azure.activedirectory.session-stateless` | `true` | Flag run in stateless mode (needed by AAD dependency) | no | -- |
-| `cosmosdb_account` | ex `devintosdur2cosmosacct` | Cosmos account name | no | output of infrastructure deployment |
-| `cosmosdb_database` | ex `dev-osdu-r2-db` | Cosmos database for storage documents | no | output of infrastructure deployment |
 | `azure.storage.account-name` | ex `foo-storage-account` | Storage account for storing documents | no | output of infrastructure deployment |
 | `azure.storage.enable-https` | `true` | Used by spring boot starter library | no | - |
 | `KEYVAULT_URI` | ex `https://foo-keyvault.vault.azure.net/` | URI of KeyVault that holds application secrets | no | output of infrastructure deployment |
 | `AZURE_CLIENT_ID` | `********` | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username` |
 | `AZURE_TENANT_ID` | `********` | AD tenant to authenticate users from | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-tenant-id` |
 | `AZURE_CLIENT_SECRET` | `********` | Secret for `$AZURE_CLIENT_ID` | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password` |
+| `partition_service_endpoint` | ex `https//foo-partition.azurewebsites.net/api/partition/v1` | Partition API endpoint | no | output of infrastructure deployment |
+| `azure_istioauth_enabled` | `true` | Flag to Disable AAD auth | no | -- |
+| `shared_partition` | `opendes` | Default Partition for Public Shared Schemas | no | -- |
 | `server.port` | ex `8085` | port for schema service | no | -- |
 
 
@@ -108,11 +111,11 @@ After configuring your environment as specified above, you can follow these step
     ```bash
     mvn --projects schema-core,provider/schema-azure clean install
     ```
-2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Azure, run the below command : 
-    ```bash 
-    # Running Azure : 
-    java -jar  provider\schema-gcp\target\os-schema-azure-0.0.1-SNAPSHOT-spring-boot.jar
-3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used: 
+2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Azure, run the below command :
+    ```bash
+    # Running Azure :
+    java -jar  provider/schema-azure/target/os-schema-azure-0.0.1-SNAPSHOT-spring-boot.jar
+3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used:
     ```bash
     server.servlet.contextPath=/api/schema-service/v1/
     server.port=8080
@@ -123,19 +126,28 @@ After configuring your environment as specified above, you can follow these step
 
 After the service has started it should be accessible via a web browser by visiting [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html). If the request does not fail, you can then run the integration tests.
 
-### Running automated integration tests:
-These tests validate functionality of schema service. 
-
 They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
-Below command has to be run post building complete project.
-    
 
-    cd testing/schema-test-core
+```bash
+# build + run Azure integration tests.
+#
+# Note: this assumes that the environment variables for integration tests as outlined
+#       above are already exported in your environment.
+$ (cd testing/schema-test-core && mvn clean verify)
+```
+
+Additionally if you were trying to isolate specific variables the following can be executed
+
+```bash
+cd testing/schema-test-core
     mvn verify -DVENDOR=azure -DHOST=http://localhost:8080 -DPRIVATE_TENANT1=opendes -DPRIVATE_TENANT2=tenant2 -DSHARED_TENANT=common -Dcucumber.options="--tags @SchemaService"
-    
+```
+
 Below command can be run through azure-pipeline.yml after setting environment variables in the pipeline.
 
 	verify "-Dcucumber.options=--tags @SchemaService"
+
+
 
 ## Debugging
 
@@ -153,7 +165,7 @@ Copyright © Microsoft Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+You may obtain a copy of the License at
 
 [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 

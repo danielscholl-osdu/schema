@@ -83,7 +83,6 @@ public class GoogleSchemaStore implements ISchemaStore {
     /**
      * Method to write schema to google Storage given Tenant ProjectInfo
      *
-     * @param dataPartitionId
      * @param filePath
      * @param content
      * @return schema object
