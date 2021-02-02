@@ -68,7 +68,7 @@ public class GoogleSourceStore implements ISourceStore {
      */
     @Override
     public Source get(String sourceId) throws NotFoundException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE).setKind(SchemaConstants.SOURCE_KIND)
                 .newKey(sourceId);
         Entity entity = datastore.get(key);
@@ -83,13 +83,11 @@ public class GoogleSourceStore implements ISourceStore {
     /**
      * Method to create Source in google store of dataPartitionId GCP
      *
-     * @param Source
-     * @param dataPartitionId
      * @return Source object
      */
     @Override
     public Source create(Source source) throws BadRequestException, ApplicationException {
-        Datastore datastore = dataStoreFactory.getDatastore(headers.getPartitionId(), SchemaConstants.NAMESPACE);
+        Datastore datastore = dataStoreFactory.getDatastore(tenantFactory.getTenantInfo(headers.getPartitionId()));
         Key key = datastore.newKeyFactory().setNamespace(SchemaConstants.NAMESPACE).setKind(SchemaConstants.SOURCE_KIND)
                 .newKey(source.getSourceId());
         Entity entity = getEntityObject(key);

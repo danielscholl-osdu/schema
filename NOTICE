@@ -246,6 +246,7 @@ The following software have components provided under the terms of this license:
 - Google Cloud Core HTTP (from https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-core-http)
 - Google Cloud Core gRPC (from https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-core-grpc)
 - Google Cloud Datastore (from https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-datastore)
+- Google Cloud Key Management Service (KMS) API v1-rev22-1.23.0 (from )
 - Google Cloud Logging (from https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-logging)
 - Google Cloud Pub/Sub (from https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-pubsub)
 - Google Cloud Storage (from https://github.com/GoogleCloudPlatform/google-cloud-java/tree/master/google-cloud-storage)
