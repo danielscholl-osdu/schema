@@ -38,6 +38,9 @@ target/
 hs_err_pid*
 *local.properties
 
+# Python virtualenv
+/venv/
+
 dist/
 
 # Environment configuration

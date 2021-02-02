@@ -2,7 +2,9 @@ import os
 import json
 import fnmatch
 import requests
+import pathlib
 import urllib.parse
+
 
 class RunEnv(object):
 
@@ -68,9 +70,8 @@ class Utility(object):
         return None
 
     @staticmethod
-    def find_files(directory_parts=None, root=os.path.abspath(__file__)):
+    def find_files(directory_parts=None, root=os.path.abspath(__file__), search_expression='*.json'):
         """Find all JSON files in optional sub-path components and root"""
-        wildcard = '*.json'
         found = list()
         if directory_parts is None:
             directory_parts = []
@@ -78,16 +79,25 @@ class Utility(object):
         for part in directory_parts:
             path = os.path.join(path, part)
         for root, dirs, files in os.walk(path):
-            for one_file in fnmatch.filter(files, wildcard):
+            for one_file in fnmatch.filter(files, search_expression):
                 found.append(os.path.join(root, one_file))
         return found
 
     @staticmethod
     def get_entity_folder_from_file(file, folder_parts):
+        version = None  # OSDU R2 has no version in the file name
         top_level = folder_parts[-1]
         parts = os.path.split(file)
         entity = parts[1].replace('.json', '')
+        if '.' in entity:  # OSDU R3 contains version in file name
+            vps = entity.split('.') # filename: <entityType>.major.minor.patch - 4 parts
+            if len(vps) >= 4:
+                version = '.'.join([vps[-3], vps[-2], vps[-1]])
+                entity = entity.replace('.'+version, '')
+            else:
+                exit('Error in entity name/version: {} expected <entityType>.major.minor.patch.json'.format(entity))
         parts = parts[0].split(os.sep)
+        group_type = parts[-1]
         folders = list()
         collect = False
         for part in parts:
@@ -95,7 +105,7 @@ class Utility(object):
                 collect = True
             elif collect:
                 folders.append(part)
-        return entity, folders
+        return group_type, entity, version, folders
 
     @staticmethod
     def __get_root_path(root):
@@ -115,12 +125,13 @@ class Utility(object):
     @staticmethod
     def save_json(schema, path, sort_keys=False):
         "Save a JSON schema to a file given as path"
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w") as text_file:
             json.dump(schema, text_file, sort_keys=sort_keys, indent=2)
 
     @staticmethod
     def get_relative_path(base_path, path):
-        return os.path.relpath(path, base_path)
+        return pathlib.Path(os.path.relpath(path, base_path)).as_posix()
 
     @staticmethod
     def path_to_deployments():
