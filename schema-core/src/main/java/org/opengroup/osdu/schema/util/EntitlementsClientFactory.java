@@ -19,6 +19,7 @@ import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
 import org.opengroup.osdu.core.common.http.json.HttpResponseBodyMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
@@ -27,25 +28,27 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlementsFactory> {
 
-    @Value("${AUTHORIZE_API}")
-    private String api;
+  @Value("${AUTHORIZE_API}")
+  private String api;
 
-    @Value("${AUTHORIZE_API_KEY}")
-    private String apiKey;
-    
-    @Autowired
-   	private HttpResponseBodyMapper bodyMapper;
+  @Value("${AUTHORIZE_API_KEY}")
+  private String apiKey;
 
-    private final HttpResponseBodyMapper responseBodyMapper;
+  @Autowired
+  private HttpResponseBodyMapper bodyMapper;
 
-    @Override
-    protected IEntitlementsFactory createInstance() throws Exception {
+  private final HttpResponseBodyMapper responseBodyMapper;
 
-        return new EntitlementsFactory(EntitlementsAPIConfig.builder().rootUrl(this.api).apiKey(this.apiKey).build(), responseBodyMapper);
-    }
+  @Override
+  protected IEntitlementsFactory createInstance() throws Exception {
 
-    @Override
-    public Class<?> getObjectType() {
-        return IEntitlementsFactory.class;
-    }
+    return new EntitlementsFactory(
+        EntitlementsAPIConfig.builder().rootUrl(this.api).apiKey(this.apiKey).build(),
+        responseBodyMapper);
+  }
+
+  @Override
+  public Class<?> getObjectType() {
+    return IEntitlementsFactory.class;
+  }
 }
