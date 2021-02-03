@@ -1,0 +1,17 @@
+aws_bootstrap:
+  stage: bootstrap
+  image: python:3.8
+  needs: ["aws-update-ecs"]
+  script:
+    - pip install -r $AWS_DEPLOYMENTS_SUBDIR/requirements.txt
+    - chmod +x $AWS_DEPLOYMENTS_SUBDIR/bootstrap.sh
+    - $AWS_DEPLOYMENTS_SUBDIR/bootstrap.sh
+  only:
+    variables:
+      - $AWS == 'true'
+
+aws-test-java:
+  needs: ["aws_bootstrap"]
+  only:
+    variables:
+      - $AWS == 'true'
