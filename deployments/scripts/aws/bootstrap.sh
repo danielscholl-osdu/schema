@@ -12,6 +12,8 @@ if [ -z "$DEPLOYMENTS_BASE_DIR" ];
 then export DEPLOYMENTS_BASE_DIR=deployments;
 fi
 
+pip3 install -r $AWS_DEPLOYMENTS_SUBDIR/requirements.txt
+
 echo $AWS_BASE_URL
 export AWS_SCHEMA_SERVICE_URL=$AWS_BASE_URL/api/schema-service/v1/schema
 BEARER_TOKEN=`python3 $AWS_DEPLOYMENTS_SUBDIR/Token.py`
