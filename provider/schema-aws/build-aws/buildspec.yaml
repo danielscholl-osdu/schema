@@ -70,6 +70,10 @@ phases:
       - chmod +x ./testing/schema-test-aws/build-aws/prepare-dist.sh
       - ./testing/schema-test-aws/build-aws/prepare-dist.sh
 
+      #Copy R3 data def bootstrap scripts to dist
+      - chmod +x ./deployments/scripts/aws/prepare-dist.sh
+      - ./deployments/scripts/aws/prepare-dist.sh
+
       - echo "Logging into Docker Hub..."
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
