@@ -27,9 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
-import org.opengroup.osdu.core.common.http.ResponseHeaders;
+import org.opengroup.osdu.core.common.http.ResponseHeadersFactory;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,6 +41,12 @@ public class ResponseHeaderFIlter implements Filter {
     @Autowired
     private DpsHeaders dpsHeaders;
 
+    // defaults to * for any front-end, string must be comma-delimited if more than one domain
+    @Value("${ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS:*}")
+    String ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS;
+
+    private ResponseHeadersFactory responseHeadersFactory = new ResponseHeadersFactory();
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -49,8 +56,8 @@ public class ResponseHeaderFIlter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         this.dpsHeaders.addCorrelationIdIfMissing();
-        Map<String, List<Object>> standardHeaders = ResponseHeaders.STANDARD_RESPONSE_HEADERS;
-        for (Map.Entry<String, List<Object>> header : standardHeaders.entrySet()) {
+        Map<String, String> responseHeaders = responseHeadersFactory.getResponseHeaders(ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS);
+        for(Map.Entry<String, String> header : responseHeaders.entrySet()){
             httpResponse.addHeader(header.getKey(), header.getValue().toString());
         }
         httpResponse.addHeader(DpsHeaders.CORRELATION_ID, this.dpsHeaders.getCorrelationId());
