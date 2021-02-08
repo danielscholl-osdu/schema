@@ -41,5 +41,6 @@ chmod +x "${INTEGRATION_TEST_OUTPUT_BIN_DIR}"/install-deps.sh
 #mvn clean -f "$INTEGRATION_TEST_SOURCE_DIR_CORE"/pom.xml
 cp -R "$INTEGRATION_TEST_SOURCE_DIR_CORE"/* "${INTEGRATION_TEST_OUTPUT_DIR}"/
 cp -R "$INTEGRATION_TEST_SOURCE_DIR_AWS"/* "${INTEGRATION_TEST_OUTPUT_DIR}"/
-#Copying parent pom referenced by schema-test-core pom..likely to change in near future
-cp ./pom.xml "${OUTPUT_DIR}"
+
+#copy testing parent pom to output
+cp "$INTEGRATION_TEST_SOURCE_DIR/pom.xml" "${OUTPUT_DIR}/testing"
