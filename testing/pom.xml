@@ -18,8 +18,7 @@
   </licenses>
 
   <modules>
-    <module>schema-test-core</module>
-    <module>schema-test-aws</module>
+    <module>schema-test-core</module>    
     <module>schema-test-gcp</module>
   </modules>
 
