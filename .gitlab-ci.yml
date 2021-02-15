@@ -34,6 +34,7 @@ variables:
   OSDU_GCP_SERVICE: schema
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_APPLICATION_NAME: os-schema
+  OSDU_GCP_TESTS_SUBDIR: testing/schema-test-core
   OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_URL,AUTHORIZE_API_KEY=$OSDU_GCP_AUTHORIZE_API_KEY,LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=DEBUG,SHARED_TENANT_NAME=$TENANT --vpc-connector=$OSDU_GCP_VPC_CONNECTOR
 
 include:
@@ -44,10 +45,7 @@ include:
     file: "build/maven.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: "scanners/fossa.yml"
-
-# - project: "osdu/platform/ci-cd-pipelines"
-#   file: "cloud-providers/gcp.yml"
+    file: "scanners/fossa-maven.yml"
 
   - project: 'osdu/platform/ci-cd-pipelines'
     file: 'cloud-providers/aws.yml'
@@ -67,3 +65,22 @@ include:
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/aws/bootstrap.yaml"
+
+osdu-gcp-test:
+  image: maven:3.6.3-jdk-8
+  script:
+    - >
+      mvn verify
+      --batch-mode
+      --quiet
+      -s $CI_PROJECT_DIR/.mvn/community-maven.settings.xml
+      -f $OSDU_GCP_TESTS_SUBDIR/pom.xml
+      > test-results.log
+  artifacts:
+    when: always
+    paths:
+      - test-results.log
+      - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
+    reports:
+      junit:
+        - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
