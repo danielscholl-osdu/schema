@@ -385,9 +385,13 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		for (String tenant : tenantList) {
 			String id = tenant + ":" + schemaId;
 			String partitionKey = createSchemaInfoPartitionKey(schemaKindToSchemaIdentity(schemaId));
-			Boolean exists = cosmosStore.findItem(tenant, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
-			if (exists) {
-				return false;
+			try {
+				Boolean exists = cosmosStore.findItem(tenant, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
+				if (exists) {
+					return false;
+				}
+			} catch (AppException ex) {
+				log.warning(String.format("Error occurred while performing uniqueness check in tenant '%s'", tenant), ex);
 			}
 		}
 		return true;
