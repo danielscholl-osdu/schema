@@ -257,6 +257,31 @@ public class AzureSchemaInfoStoreTest {
     }
 
     @Test
+    public void testIsUnique_ApplicationException() throws ApplicationException {
+        TenantInfo tenant1 = new TenantInfo();
+        tenant1.setName(commonTenantId);
+        tenant1.setDataPartitionId(commonTenantId);
+        TenantInfo tenant2 = new TenantInfo();
+        tenant2.setName(dataPartitionId);
+        tenant2.setDataPartitionId(dataPartitionId);
+        Collection<TenantInfo> tenants = Lists.newArrayList(tenant1, tenant2);
+        when(this.tenantFactory.listTenantInfo()).thenReturn(tenants);
+        Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
+
+        // An error is encountered while checking uniqueness in one tenant.
+        doThrow(AppException.class)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(partitionKey),
+                        any());
+        assertTrue(schemaInfoStore.isUnique(schemaId, commonTenantId));
+    }
+
+    @Test
     public void testIsUnique_True() throws ApplicationException {
 
         doReturn(Optional.empty())
