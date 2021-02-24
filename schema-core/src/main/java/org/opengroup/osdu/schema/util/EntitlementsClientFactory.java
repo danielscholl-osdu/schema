@@ -14,7 +14,6 @@ limitations under the License.*/
 
 package org.opengroup.osdu.schema.util;
 
-import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
@@ -25,30 +24,25 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlementsFactory> {
 
-  @Value("${AUTHORIZE_API}")
-  private String api;
+    @Value("${AUTHORIZE_API}")
+    private String api;
 
-  @Value("${AUTHORIZE_API_KEY}")
-  private String apiKey;
+    @Value("${AUTHORIZE_API_KEY}")
+    private String apiKey;
+    
+    @Autowired
+   	private HttpResponseBodyMapper bodyMapper;
 
-  @Autowired
-  private HttpResponseBodyMapper bodyMapper;
+    @Override
+    protected IEntitlementsFactory createInstance() throws Exception {
 
-  private final HttpResponseBodyMapper responseBodyMapper;
+    	return new EntitlementsFactory(EntitlementsAPIConfig.builder().rootUrl(this.api).apiKey(this.apiKey).build(), bodyMapper);
+    }
 
-  @Override
-  protected IEntitlementsFactory createInstance() throws Exception {
-
-    return new EntitlementsFactory(
-        EntitlementsAPIConfig.builder().rootUrl(this.api).apiKey(this.apiKey).build(),
-        responseBodyMapper);
-  }
-
-  @Override
-  public Class<?> getObjectType() {
-    return IEntitlementsFactory.class;
-  }
+    @Override
+    public Class<?> getObjectType() {
+        return IEntitlementsFactory.class;
+    }
 }
