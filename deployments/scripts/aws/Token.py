@@ -19,7 +19,7 @@ import jwt;
 class AwsToken(object):
 
     def get_aws_id_token(self):
-      if os.environ["AWS_COGNITO_REGION"]:
+      if os.getenv("AWS_COGNITO_REGION") is not None:      
           region = os.environ["AWS_COGNITO_REGION"]
       else:
           region = os.environ["AWS_REGION"]
