@@ -2,6 +2,9 @@ aws_bootstrap:
   stage: bootstrap
   image: python:3.8
   needs: ["aws-update-ecs"]
+  extends:
+    - .aws
+    - .aws_variables
   script:
     - pip install -r $AWS_DEPLOYMENTS_SUBDIR/requirements.txt
     - chmod +x $AWS_DEPLOYMENTS_SUBDIR/bootstrap.sh
