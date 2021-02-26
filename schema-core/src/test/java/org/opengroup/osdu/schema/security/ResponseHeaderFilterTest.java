@@ -39,7 +39,6 @@ public class ResponseHeaderFilterTest {
     public void test_ResponseHeaderFiler_Options() throws IOException, ServletException {
 
         Mockito.when(httpServletRequest.getMethod()).thenReturn("OPTIONS");
-        org.springframework.test.util.ReflectionTestUtils.setField(responseHeaderFIlter, "ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS", "custom-domain");
         responseHeaderFIlter.doFilter(httpServletRequest, httpServletResponse, chain);
         assertNotNull(httpServletResponse);
         responseHeaderFIlter.destroy();
@@ -50,7 +49,6 @@ public class ResponseHeaderFilterTest {
     public void test_ResponseHeaderFiler_Get() throws IOException, ServletException {
 
         Mockito.when(httpServletRequest.getMethod()).thenReturn("GET");
-        org.springframework.test.util.ReflectionTestUtils.setField(responseHeaderFIlter, "ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS", "custom-domain");
         responseHeaderFIlter.doFilter(httpServletRequest, httpServletResponse, chain);
         assertNotNull(httpServletResponse);
         responseHeaderFIlter.destroy();
