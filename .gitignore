@@ -46,3 +46,6 @@ dist/
 # Environment configuration
 *.env
 .envrc
+
+# Python gen files
+*.pyc
