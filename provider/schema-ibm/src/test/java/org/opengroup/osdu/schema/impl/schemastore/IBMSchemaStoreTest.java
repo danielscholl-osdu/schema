@@ -15,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-
+import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.ibm.objectstorage.CloudObjectStorageFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -36,6 +36,9 @@ public class IBMSchemaStoreTest {
 
 	@Mock
 	DpsHeaders headers;
+	
+	@Mock
+	TenantInfo tenant;
 
 	@Mock
 	CloudObjectStorageFactory cosFactory;
@@ -88,6 +91,7 @@ public class IBMSchemaStoreTest {
 		Mockito.when(cosFactory.getClient()).thenReturn(s3Client);
 		Mockito.when(cosFactory.getBucketName(dataPartitionId, BUCKET)).thenReturn(bucketName);
 		Mockito.when(s3Client.getObjectAsString(bucketName, SCHEMA_ID)).thenReturn(CONTENT);
+		Mockito.when(tenant.getName()).thenReturn(dataPartitionId);
 
 		Assert.assertEquals(CONTENT, schemaStore.getSchema(dataPartitionId, SCHEMA_ID));
 	}

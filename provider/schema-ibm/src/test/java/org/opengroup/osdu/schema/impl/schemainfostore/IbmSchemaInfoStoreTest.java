@@ -94,6 +94,9 @@ public class IbmSchemaInfoStoreTest {
 	@Mock
 	IBMSchemaStore schemaStore;
    
+	@Mock
+	TenantInfo tenant;
+	
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     
@@ -424,9 +427,11 @@ public class IbmSchemaInfoStoreTest {
     	List<SchemaDoc> schemaDocsList = new LinkedList<>();
     	schemaDocsList.add(schemaDoc);
     	schemaDocsList.add(latestSchemaDoc);
+    	Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
     	Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
         Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
         Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
+        Mockito.when(tenant.getName()).thenReturn(dataPartitionId);
         
         assertEquals(2, schemaInfoStore.getSchemaInfoList(
                 QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),

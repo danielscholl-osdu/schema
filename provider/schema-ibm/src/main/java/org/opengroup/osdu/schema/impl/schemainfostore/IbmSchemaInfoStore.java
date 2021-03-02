@@ -28,6 +28,7 @@ import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.opengroup.osdu.schema.exceptions.UnauthorizedException;
 import org.opengroup.osdu.schema.impl.schemainfostore.util.IbmDocumentStore;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
@@ -68,6 +69,9 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	@Inject
 	private TenantFactory tenantFactory;
 	
+	@Inject
+	private TenantInfo tenant;
+	
 	@Autowired
     private ISchemaStore schemaStore;
 	
@@ -83,6 +87,11 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 
 	@Override
 	public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
+		try {
+			tenant.getName();
+		} catch (Exception e) {
+			throw new UnauthorizedException("Unauthorized");
+		}
 		Set<String> tenantList = new HashSet<>();
 		tenantList.add(sharedTenant);
 		tenantList.add(tenantId);
@@ -120,6 +129,11 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	 */
 	@Override
 	public SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+		try {
+			tenant.getName();
+		} catch (Exception e) {
+			throw new UnauthorizedException("Unauthorized");
+		}
 		if (db.contains(schemaId)) {
 			SchemaDoc sd = db.find(SchemaDoc.class, schemaId);
 			return sd.getSchemaInfo();
@@ -259,7 +273,12 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 
 	@Override
 	public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
-		
+		try {
+			tenant.getName();
+		} catch (Exception e) {
+			throw new UnauthorizedException("Unauthorized");
+		}
+
 		long numRecords = LIMIT_SIZE;
 		if (Long.valueOf(queryParams.getLimit()) != null) {
 			numRecords = Long.valueOf(queryParams.getLimit());

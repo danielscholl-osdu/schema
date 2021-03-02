@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.annotation.RequestScope;
 
+import org.opengroup.osdu.schema.exceptions.UnauthorizedException;
+import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
 import com.ibm.cloud.objectstorage.services.s3.model.AmazonS3Exception;
 import com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata;
@@ -43,6 +45,9 @@ public class IBMSchemaStore implements ISchemaStore {
 	
 	@Inject
 	private JaxRsDpsLog logger;
+	
+	@Inject
+	private TenantInfo tenant;
 
 	AmazonS3 s3Client;
 
@@ -67,6 +72,12 @@ public class IBMSchemaStore implements ISchemaStore {
 		// dataPartitionId not used b/c getting from header
 		
 		String content = null;
+		try {
+			tenant.getName();
+		} catch (Exception e) {
+			throw new UnauthorizedException("Unauthorized");
+		}
+
 		try {
 			content = getObjectAsString(schemaId);
 		} catch (AmazonS3Exception s3Exp) {
