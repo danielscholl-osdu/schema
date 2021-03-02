@@ -30,7 +30,7 @@
 
 	<properties>
 		<osdu.corelibazure.version>0.0.40</osdu.corelibazure.version>
-		<osdu.oscorecommon.version>0.3.18</osdu.oscorecommon.version>
+		<osdu.oscorecommon.version>0.3.28</osdu.oscorecommon.version>
 		<osdu.os-schema-core.version>0.6.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
 		<cucumber.version>5.4.0</cucumber.version>
@@ -45,6 +45,12 @@
 				<version>${osdu.corelibazure.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.opengroup.osdu</groupId>
+						<artifactId>os-core-common</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -63,14 +69,14 @@
 
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>core-lib-azure</artifactId>
-			<version>${osdu.corelibazure.version}</version>
+			<artifactId>os-core-common</artifactId>
+			<version>${osdu.oscorecommon.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>os-core-common</artifactId>
-			<version>${osdu.oscorecommon.version}</version>
+			<artifactId>core-lib-azure</artifactId>
+			<version>${osdu.corelibazure.version}</version>
 		</dependency>
 
 		<dependency>
