@@ -30,7 +30,7 @@
 
 	<properties>
 		<osdu.corelibazure.version>0.0.40</osdu.corelibazure.version>
-		<osdu.oscorecommon.version>0.3.28</osdu.oscorecommon.version>
+		<osdu.oscorecommon.version>0.6.9</osdu.oscorecommon.version>
 		<osdu.os-schema-core.version>0.8.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
 		<cucumber.version>5.4.0</cucumber.version>
