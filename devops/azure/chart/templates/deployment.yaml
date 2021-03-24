@@ -52,7 +52,7 @@ spec:
               readOnly: true
           env:
             - name: spring_application_name
-              value: schema
+              value: {{ .Chart.Name }}
             - name: LOG_PREFIX
               value: "schema"
             - name: server.servlet.contextPath
