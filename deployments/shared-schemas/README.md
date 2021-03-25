@@ -19,13 +19,13 @@ POST/PUT requests:
 {
   "schemaInfo": {
     "schemaIdentity": {
-      "authority": "osdu",
+      "authority": "{{schema-authority}}",
       "source": "wks",
-      "entity": "work-product-component.WellLog",
+      "entityType": "work-product-component--WellLog",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "osdu:wks:work-product-component.WellLog:1.0.0"
+      "id": "{{schema-authority}}:wks:work-product-component--WellLog:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -51,19 +51,21 @@ done via the [DeploySharedSchemas.py](../scripts/DeploySharedSchemas.py):
 
 ```shell script
 python deployments\scripts\DeploySharedSchemas.py -h
-usage: DeploySharedSchemas.py [-h] [-l L] [-u U]
+usage: DeploySharedSchemas.py [-h] [-a A] [-l L] [-u U]
 
 Given a path to an load sequence file, load/update the schemas listed in the
 load sequence file.
 
 optional arguments:
   -h, --help  show this help message and exit
+  -a A        The schema authority or partition-id to replace (default via
+              Env)
   -l L        The path to the load sequence file, e.g. load_sequence.?.?.?
   -u U        The complete URL to the Schema Service.
 
 
 example:
-python deployments\scripts\DeploySharedSchemas.py -l load_sequence.1.0.0.json -u https://opengroup.test.org/api/schema-service/v1/schema
+python deployments\scripts\DeploySharedSchemas.py -l load_sequence.1.0.0.json -a osdu -u https://opengroup.test.org/api/schema-service/v1/schema
 ```
 
 
