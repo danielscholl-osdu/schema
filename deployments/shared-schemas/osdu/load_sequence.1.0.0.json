@@ -1,786 +1,790 @@
 [
   {
-    "kind": "opendes:wks:AbstractAccessControlList:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractAccessControlList.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractAccessControlList:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractAccessControlList.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractAliasNames:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractAliasNames.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractAliasNames.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractAnyCrsFeatureCollection:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractAnyCrsFeatureCollection.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractAnyCrsFeatureCollection:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractAnyCrsFeatureCollection.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractCoordinates:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractCoordinates.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractCoordinates:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractCoordinates.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFeatureCollection:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFeatureCollection.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFeatureCollection:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFeatureCollection.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractSpatialLocation:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractSpatialLocation.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractSpatialLocation:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractSpatialLocation.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractBinGrid:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractBinGrid.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractBinGrid:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractBinGrid.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractBusinessRule:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractBusinessRule.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractBusinessRule:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractBusinessRule.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractCommonResources:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractCommonResources.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractCommonResources:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractCommonResources.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractCompressionInfo:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractCompressionInfo.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractCompressionInfo:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractCompressionInfo.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractDataset:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractDataset.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractDataset:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractDataset.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFacilityOperator:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityOperator.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFacilityOperator:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityOperator.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFacilityState:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityState.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFacilityState:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityState.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFacilityEvent:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityEvent.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFacilityEvent:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityEvent.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFacilitySpecification:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilitySpecification.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFacilitySpecification:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilitySpecification.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFacility:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFacility.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFacility:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFacility.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFacilityVerticalMeasurement:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityVerticalMeasurement.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFacilityVerticalMeasurement:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFacilityVerticalMeasurement.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFileSourceInfo:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFileSourceInfo.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFileSourceInfo:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFileSourceInfo.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFile:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFile.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFile:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFile.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractFileCollection:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractFileCollection.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractFileCollection:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractFileCollection.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractGeoBasinContext:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoBasinContext.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractGeoBasinContext:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoBasinContext.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractGeoPoliticalContext:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoPoliticalContext.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractGeoPoliticalContext:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoPoliticalContext.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractGeoFieldContext:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoFieldContext.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractGeoFieldContext:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoFieldContext.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractGeoPlayContext:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoPlayContext.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractGeoPlayContext:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoPlayContext.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractGeoProspectContext:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoProspectContext.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractGeoProspectContext:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoProspectContext.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractGeoContext:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoContext.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractGeoContext:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractGeoContext.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractLegalParentList:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractLegalParentList.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractLegalParentList:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractLegalParentList.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractLegalTags:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractLegalTags.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractLegalTags:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractLegalTags.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractMaster:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractMaster.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractMaster:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractMaster.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractMetaItem:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractMetaItem.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractMetaItem:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractMetaItem.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractPersistableReference:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractPersistableReference.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractPersistableReference:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractPersistableReference.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractProject:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractProject.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractProject:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractProject.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractQualityMetric:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractQualityMetric.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractQualityMetric:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractQualityMetric.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractReferenceType:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractReferenceType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractReferenceType:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractReferenceType.1.0.0.json"
   },
   {
-    "kind": "schema-namespace:source-context:entity-type:0.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractSystemProperties.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractVectorHeaderMapping:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractVectorHeaderMapping.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractVectorHeaderMapping:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractVectorHeaderMapping.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractWPCGroupType:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractWPCGroupType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractWPCGroupType:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractWPCGroupType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractWellboreDrillingReason:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractWellboreDrillingReason.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractWellboreDrillingReason:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractWellboreDrillingReason.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:AbstractWorkProductComponent:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractWorkProductComponent.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:AbstractWorkProductComponent:1.0.0",
-    "relativePath": "shared-schemas/osdu/abstract/AbstractWorkProductComponent.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ActivityType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ActivityType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ActivityType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ActivityType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ActualIndicatorType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ActualIndicatorType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ActualIndicatorType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ActualIndicatorType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Agreement:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Agreement.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Agreement:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Agreement.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--AgreementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/AgreementType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--AgreementType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/AgreementType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--AliasNameType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/AliasNameType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--AliasNameType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/AliasNameType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--AliasNameTypeClass:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/AliasNameTypeClass.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--AliasNameTypeClass:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/AliasNameTypeClass.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--AnisotropyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/AnisotropyType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--AnisotropyType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/AnisotropyType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ArtefactRole:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ArtefactRole.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ArtefactRole:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ArtefactRole.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ArtificialLiftType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ArtificialLiftType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ArtificialLiftType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ArtificialLiftType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--AzimuthReferenceType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/AzimuthReferenceType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--AzimuthReferenceType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/AzimuthReferenceType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Basin:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Basin.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Basin:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Basin.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--BasinType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/BasinType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--BasinType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/BasinType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--BinGridDefinitionMethodType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/BinGridDefinitionMethodType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--BinGridDefinitionMethodType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/BinGridDefinitionMethodType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--CalculationMethodType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CalculationMethodType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--CalculationMethodType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/CalculationMethodType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--CompressionMethodType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CompressionMethodType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--CompressionMethodType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/CompressionMethodType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ContractorType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ContractorType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ContractorType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ContractorType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateReferenceSystem:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--CoordinateReferenceSystem:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--CoordinateTransformation:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--Currency:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/Currency.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--Currency:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/Currency.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--CurveIndexDimensionType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CurveIndexDimensionType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--CurveIndexDimensionType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/CurveIndexDimensionType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:DataCollection:1.0.0",
+    "relativePath": "shared-schemas/osdu/data-collection/DataCollection.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:DataCollection:1.0.0",
-    "relativePath": "shared-schemas/osdu/data-collection/DataCollection.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--DataQuality:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/DataQuality.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--DataQuality:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/DataQuality.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--DataRulePurposeType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DataRulePurposeType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--DataRulePurposeType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/DataRulePurposeType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--DimensionType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DimensionType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--DimensionType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/DimensionType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--DiscretisationSchemeType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DiscretisationSchemeType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--DiscretisationSchemeType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/DiscretisationSchemeType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--Document:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/Document.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--Document:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/Document.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--DocumentType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DocumentType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--DocumentType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/DocumentType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--DrillingReasonType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DrillingReasonType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--DrillingReasonType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/DrillingReasonType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--EncodingFormatType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/EncodingFormatType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--EncodingFormatType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/EncodingFormatType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ExistenceKind:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ExistenceKind.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ExistenceKind:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ExistenceKind.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--FacilityEventType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FacilityEventType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--FacilityEventType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/FacilityEventType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--FacilityStateType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FacilityStateType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--FacilityStateType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/FacilityStateType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--FacilityType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FacilityType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--FacilityType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/FacilityType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--FaultSystem:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/FaultSystem.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--FaultSystem:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/FaultSystem.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--FeatureType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FeatureType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--FeatureType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/FeatureType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Field:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Field.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Field:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Field.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.CompressedVectorHeaders:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.CompressedVectorHeaders.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:dataset--File.CompressedVectorHeaders:1.0.0",
-    "relativePath": "shared-schemas/osdu/dataset/File.CompressedVectorHeaders.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.Generic:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.Generic.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:dataset--File.Generic:1.0.0",
-    "relativePath": "shared-schemas/osdu/dataset/File.Generic.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.WITSML:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.WITSML.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:dataset--File.WITSML:1.0.0",
-    "relativePath": "shared-schemas/osdu/dataset/File.WITSML.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Bluware.OpenVDS:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Bluware.OpenVDS.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:dataset--FileCollection.Generic:1.0.0",
-    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Generic.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Generic:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Generic.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:dataset--FileCollection.SEGY:1.0.0",
-    "relativePath": "shared-schemas/osdu/dataset/FileCollection.SEGY.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.SEGY:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.SEGY.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:dataset--GenericDataset:1.0.0",
-    "relativePath": "shared-schemas/osdu/manifest/GenericDataset.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Slb.OpenZGY:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Slb.OpenZGY.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--GenericMasterData:1.0.0",
-    "relativePath": "shared-schemas/osdu/manifest/GenericMasterData.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:dataset--GenericDataset:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/GenericDataset.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--GenericReferenceData:1.0.0",
-    "relativePath": "shared-schemas/osdu/manifest/GenericReferenceData.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--GenericMasterData:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/GenericMasterData.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product--GenericWorkProduct:1.0.0",
-    "relativePath": "shared-schemas/osdu/manifest/GenericWorkProduct.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--GenericReferenceData:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/GenericReferenceData.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--GenericWorkProductComponent:1.0.0",
-    "relativePath": "shared-schemas/osdu/manifest/GenericWorkProductComponent.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product--GenericWorkProduct:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/GenericWorkProduct.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--GeoPoliticalEntity:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/GeoPoliticalEntity.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--GenericWorkProductComponent:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/GenericWorkProductComponent.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--GeoPoliticalEntityType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/GeoPoliticalEntityType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--GeoPoliticalEntity:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/GeoPoliticalEntity.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--GeologicalFormation:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/GeologicalFormation.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--GeoPoliticalEntityType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/GeoPoliticalEntityType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--HeaderKeyName:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/HeaderKeyName.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--GeologicalFormation:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/GeologicalFormation.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--InterpolationMethod:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/InterpolationMethod.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--HeaderKeyName:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/HeaderKeyName.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LegalStatus:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LegalStatus.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--InterpolationMethod:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/InterpolationMethod.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LicenseState:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LicenseState.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LegalStatus:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LegalStatus.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LineageRelationshipType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LineageRelationshipType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LicenseState:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LicenseState.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LinerType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LinerType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LineageRelationshipType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LineageRelationshipType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LogCurveBusinessValue:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LogCurveBusinessValue.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LinerType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LinerType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LogCurveFamily:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LogCurveFamily.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LogCurveBusinessValue:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LogCurveBusinessValue.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LogCurveMainFamily:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LogCurveMainFamily.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LogCurveFamily:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LogCurveFamily.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LogCurveType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LogCurveType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LogCurveMainFamily:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LogCurveMainFamily.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--LogType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/LogType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LogCurveType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LogCurveType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:Manifest:1.0.0",
-    "relativePath": "shared-schemas/osdu/manifest/Manifest.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--LogType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/LogType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--MarkerType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/MarkerType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:Manifest:1.0.0",
+    "relativePath": "shared-schemas/osdu/manifest/Manifest.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--MaterialType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/MaterialType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--MarkerType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/MarkerType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--NotionalSeismicLine:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/NotionalSeismicLine.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--MaterialType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/MaterialType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--OSDUJsonExtensions:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/OSDUJsonExtensions.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--NotionalSeismicLine:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/NotionalSeismicLine.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--OSDURegion:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/OSDURegion.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--OSDUJsonExtensions:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/OSDUJsonExtensions.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ObjectiveType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ObjectiveType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--OSDURegion:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/OSDURegion.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ObligationType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ObligationType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ObjectiveType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ObjectiveType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--OperatingEnvironment:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/OperatingEnvironment.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ObligationType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ObligationType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Organisation:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Organisation.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--OperatingEnvironment:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/OperatingEnvironment.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--OrganisationType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/OrganisationType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Organisation:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Organisation.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGContextType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGContextType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--OrganisationType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/OrganisationType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGCurveFamily:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveFamily.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGContextType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGContextType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGCurveLithoType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveLithoType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGCurveFamily:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveFamily.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGCurveMainFamily:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveMainFamily.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGCurveLithoType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveLithoType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGCurveMnemonic:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveMnemonic.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGCurveMainFamily:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveMainFamily.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGCurveProbability:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveProbability.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGCurveMnemonic:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveMnemonic.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGCurveProcessingType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveProcessingType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGCurveProbability:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveProbability.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PPFGCurveTransformModelType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveTransformModelType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGCurveProcessingType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveProcessingType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--PPFGDataset:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/PPFGDataset.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PPFGCurveTransformModelType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PPFGCurveTransformModelType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ParameterType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ParameterType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--PPFGDataset:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/PPFGDataset.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PetroleumSystemElementType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PetroleumSystemElementType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ParameterType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ParameterType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Play:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Play.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PetroleumSystemElementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PetroleumSystemElementType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PlayType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PlayType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Play:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Play.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ProcessingParameterType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ProcessingParameterType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PlayType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PlayType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ProjectRole:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ProjectRole.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ProcessingParameterType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ProcessingParameterType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ProjectStateType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ProjectStateType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ProjectRole:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ProjectRole.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PropertyFieldRepresentationType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PropertyFieldRepresentationType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ProjectStateType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ProjectStateType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--PropertyNameType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/PropertyNameType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PropertyFieldRepresentationType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PropertyFieldRepresentationType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Prospect:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Prospect.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--PropertyNameType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PropertyNameType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ProspectType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ProspectType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Prospect:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Prospect.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--QualitativeSpatialAccuracyType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/QualitativeSpatialAccuracyType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ProspectType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ProspectType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--QualityDataRule:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/QualityDataRule.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--QualitativeSpatialAccuracyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/QualitativeSpatialAccuracyType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--QualityDataRuleSet:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/QualityDataRuleSet.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--QualityDataRule:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/QualityDataRule.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--QuantitativeAccuracyBand:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/QuantitativeAccuracyBand.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--QualityDataRuleSet:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/QualityDataRuleSet.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ResourceCurationStatus:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ResourceCurationStatus.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--QuantitativeAccuracyBand:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/QuantitativeAccuracyBand.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ResourceLifecycleStatus:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ResourceLifecycleStatus.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ResourceCurationStatus:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ResourceCurationStatus.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--ResourceSecurityClassification:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/ResourceSecurityClassification.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ResourceLifecycleStatus:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ResourceLifecycleStatus.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SchemaFormatType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SchemaFormatType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ResourceSecurityClassification:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ResourceSecurityClassification.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SectionType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SectionType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SchemaFormatType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SchemaFormatType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Seismic2DInterpretationSet:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Seismic2DInterpretationSet.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SectionType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SectionType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Seismic3DInterpretationSet:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Seismic3DInterpretationSet.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Seismic2DInterpretationSet:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Seismic2DInterpretationSet.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--SeismicAcquisitionSurvey:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/SeismicAcquisitionSurvey.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Seismic3DInterpretationSet:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Seismic3DInterpretationSet.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicAttributeType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicAttributeType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--SeismicAcquisitionSurvey:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/SeismicAcquisitionSurvey.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--SeismicBinGrid:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/SeismicBinGrid.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicAttributeType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicAttributeType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicBinGridType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicBinGridType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--SeismicBinGrid:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/SeismicBinGrid.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicDomainType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicDomainType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicBinGridType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicBinGridType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicEnergySourceType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicEnergySourceType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicDomainType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicDomainType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicFaultType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicFaultType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicEnergySourceType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicEnergySourceType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicFilteringType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicFilteringType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicFaultType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicFaultType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicGeometryType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicGeometryType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicFilteringType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicFilteringType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--SeismicHorizon:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/SeismicHorizon.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicGeometryType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicGeometryType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicHorizonType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicHorizonType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--SeismicHorizon:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/SeismicHorizon.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--SeismicLineGeometry:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/SeismicLineGeometry.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicHorizonType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicHorizonType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicMigrationType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicMigrationType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--SeismicLineGeometry:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/SeismicLineGeometry.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicPickingType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicPickingType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicMigrationType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicMigrationType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--SeismicProcessingProject:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/SeismicProcessingProject.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicPickingType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicPickingType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicProcessingStageType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicProcessingStageType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--SeismicProcessingProject:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/SeismicProcessingProject.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicStackingType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicStackingType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicProcessingStageType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicProcessingStageType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--SeismicTraceData:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/SeismicTraceData.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicStackingType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicStackingType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicTraceDataDimensionalityType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicTraceDataDimensionalityType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--SeismicTraceData:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/SeismicTraceData.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SeismicWaveType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SeismicWaveType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicTraceDataDimensionalityType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicTraceDataDimensionalityType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SpatialGeometryType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SpatialGeometryType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SeismicWaveType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SeismicWaveType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--SpatialParameterType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/SpatialParameterType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SpatialGeometryType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SpatialGeometryType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--StandardsOrganisation:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/StandardsOrganisation.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--SpatialParameterType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SpatialParameterType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--StringClass:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/StringClass.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--StandardsOrganisation:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/StandardsOrganisation.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TectonicSettingType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TectonicSettingType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--StringClass:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/StringClass.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--TubularAssembly:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/TubularAssembly.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TectonicSettingType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TectonicSettingType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularAssemblyStatusType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularAssemblyStatusType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--TubularAssembly:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/TubularAssembly.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularAssemblyType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularAssemblyType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularAssemblyStatusType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularAssemblyStatusType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--TubularComponent:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/TubularComponent.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularAssemblyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularAssemblyType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularComponentConnectionType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentConnectionType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--TubularComponent:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/TubularComponent.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularComponentGrade:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentGrade.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularComponentConnectionType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentConnectionType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularComponentPinBoxType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentPinBoxType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularComponentGrade:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentGrade.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularComponentType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularComponentPinBoxType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentPinBoxType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--TubularUmbilical:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/TubularUmbilical.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularComponentType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularComponentType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularUmbilicalServiceType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularUmbilicalServiceType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--TubularUmbilical:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/TubularUmbilical.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--TubularUmbilicalType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/TubularUmbilicalType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularUmbilicalServiceType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularUmbilicalServiceType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:type--Type:1.0.0",
-    "relativePath": "shared-schemas/osdu/type/Type.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--TubularUmbilicalType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularUmbilicalType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--UnitOfMeasure:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/UnitOfMeasure.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:type--Type:1.0.0",
+    "relativePath": "shared-schemas/osdu/type/Type.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--UnitQuantity:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/UnitQuantity.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--UnitOfMeasure:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/UnitOfMeasure.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--VelocityAnalysisMethod:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/VelocityAnalysisMethod.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--UnitQuantity:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/UnitQuantity.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--VelocityDirectionType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/VelocityDirectionType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--VelocityAnalysisMethod:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/VelocityAnalysisMethod.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--VelocityModeling:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/VelocityModeling.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--VelocityDirectionType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/VelocityDirectionType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--VelocityType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/VelocityType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--VelocityModeling:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/VelocityModeling.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--VerticalMeasurementPath:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/VerticalMeasurementPath.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--VelocityType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/VelocityType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--VerticalMeasurementSource:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/VerticalMeasurementSource.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--VerticalMeasurementPath:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/VerticalMeasurementPath.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--VerticalMeasurementType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/VerticalMeasurementType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--VerticalMeasurementSource:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/VerticalMeasurementSource.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Well:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Well.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--VerticalMeasurementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/VerticalMeasurementType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--WellInterestType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/WellInterestType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Well:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Well.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--WellLog:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--WellInterestType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellInterestType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:master-data--Wellbore:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Wellbore.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--WellboreMarkerSet:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:master-data--Wellbore:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Wellbore.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product-component--WellboreTrajectory:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--WellboreMarkerSet:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--WellboreTrajectoryType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/WellboreTrajectoryType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:reference-data--WordFormatType:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/WordFormatType.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--WellboreTrajectoryType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellboreTrajectoryType.1.0.0.json"
   },
   {
-    "kind": "opendes:wks:work-product--WorkProduct:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product/WorkProduct.1.0.0.dev.json"
+    "kind": "{{schema-authority}}:wks:reference-data--WordFormatType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WordFormatType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product--WorkProduct:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product/WorkProduct.1.0.0.json"
   }
 ]
