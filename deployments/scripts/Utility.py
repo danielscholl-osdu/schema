@@ -14,8 +14,9 @@ class RunEnv(object):
     STORAGE_SERVICE_URL = None
     DATA_PARTITION = os.environ.get('DATA_PARTITION')
     SCHEMA_AUTHORITY = os.environ.get('SCHEMA_AUTHORITY')
-    OSDU = ['shared-schemas', 'osdu']
-    LOAD_SEQUENCE = 'load_sequence.1.0.0.json'
+    SCHEMAS_FOLDER = 'shared-schemas'
+    DEFAULT_BOOTSTRAP_OPTIONS = '[{"authority": "osdu", "folder": "osdu", "load-sequence": "load_sequence.1.0.0.json"}]'
+    BOOTSTRAP_OPTIONS = os.environ.get('BOOTSTRAP_OPTIONS', DEFAULT_BOOTSTRAP_OPTIONS)
 
     def __init__(self):
         """Empty constructor"""
@@ -119,9 +120,12 @@ class Utility(object):
     @staticmethod
     def load_json(path):
         """Load a JSON file"""
-        with open(path, "r", encoding='utf-8') as text_file:
-            j_obj = json.load(text_file)
-        return j_obj
+        try:
+            with open(path, "r", encoding='utf-8') as text_file:
+                j_obj = json.load(text_file)
+            return j_obj
+        except FileNotFoundError as e:
+            exit("Given File path not found::{}".format(str(e)))
 
     @staticmethod
     def save_json(schema, path, sort_keys=False):

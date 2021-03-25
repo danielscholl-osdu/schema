@@ -19,24 +19,9 @@ class DeploySharedSchemas:
         parser = argparse.ArgumentParser(
             description="Given a path to an load sequence file, load/update the schemas "
                         "listed in the load sequence file.")
-        parser.add_argument('-a', type=str,
-                            help='The schema authority or partition-id to replace (default via Env)',
-                            default=None)
-        parser.add_argument('-l', type=str,
-                            help='The path to the load sequence file, e.g. load_sequence.?.?.?',
-                            default=None)
         parser.add_argument('-u', help='The complete URL to the Schema Service.',
                             default=None)
         arguments = parser.parse_args()
-        if arguments.l is not None:
-            RunEnv.LOAD_SEQUENCE = arguments.l
-        if arguments.a is not None:
-            self.schema_authority = arguments.a
-        elif RunEnv.SCHEMA_AUTHORITY:
-            self.schema_authority = RunEnv.SCHEMA_AUTHORITY
-        else:
-            self.schema_authority = 'osdu'  # default
-
         if arguments.u is not None:
             RunEnv.SCHEMA_SERVICE_URL = arguments.u
         if RunEnv.SCHEMA_SERVICE_URL is None:
@@ -51,7 +36,6 @@ class DeploySharedSchemas:
             'Authorization': RunEnv.BEARER_TOKEN
         }
         print('Current data-partition-id: {}'.format(RunEnv.DATA_PARTITION))
-        print('Current schema-authority:  {}'.format(self.schema_authority))
         ok, error_mess = RunEnv().is_ok()
         if not ok:
             exit('Error: environment setting incomplete: {}'.format(error_mess))
@@ -61,12 +45,21 @@ class DeploySharedSchemas:
         deployments = Utility.path_to_deployments()
         start = time.time()
 
-        sequence = Utility.load_json(os.path.join(deployments, *RunEnv.OSDU, RunEnv.LOAD_SEQUENCE))
+        bootstrap_options = json.loads(RunEnv.BOOTSTRAP_OPTIONS)
+        for option in bootstrap_options:
+            try:
+                schema_path = option['folder']
+                schema_authority = option['authority']
+                load_sequence = option['load-sequence']
+            except KeyError as e:
+                exit('Key missing in bootstrap-options::{}'.format(str(e)))
+
+        sequence = Utility.load_json(os.path.join(deployments, RunEnv.SCHEMAS_FOLDER, schema_path, load_sequence))
         for item in sequence:
             self.schema_registered = None
             schema_file = os.path.join(deployments, item['relativePath'])
             schema = open(schema_file, 'r').read()
-            schema = schema.replace(self.SCHEMA_AUTHORITY_TO_REPLACE, self.schema_authority)
+            schema = schema.replace(self.SCHEMA_AUTHORITY_TO_REPLACE, schema_authority)
             kind = self.__kind_from_schema_info(schema)
             self.__register_one(kind, schema, messages)
 
