@@ -54,24 +54,24 @@ class DeploySharedSchemas:
             except KeyError as e:
                 exit('Key missing in bootstrap-options::{}'.format(str(e)))
 
-        sequence = Utility.load_json(os.path.join(deployments, RunEnv.SCHEMAS_FOLDER, schema_path, load_sequence))
-        for item in sequence:
-            self.schema_registered = None
-            schema_file = os.path.join(deployments, item['relativePath'])
-            schema = open(schema_file, 'r').read()
-            schema = schema.replace(self.SCHEMA_AUTHORITY_TO_REPLACE, schema_authority)
-            kind = self.__kind_from_schema_info(schema)
-            self.__register_one(kind, schema, messages)
+            sequence = Utility.load_json(os.path.join(deployments, RunEnv.SCHEMAS_FOLDER, schema_path, load_sequence))
+            for item in sequence:
+                self.schema_registered = None
+                schema_file = os.path.join(deployments, item['relativePath'])
+                schema = open(schema_file, 'r').read()
+                schema = schema.replace(self.SCHEMA_AUTHORITY_TO_REPLACE, schema_authority)
+                kind = self.__kind_from_schema_info(schema)
+                self.__register_one(kind, schema, messages)
 
-        elapsed = time.time() - start
-        print('This update took {:.2f} seconds.'.format(elapsed))
-        if len(messages) != 0:
-            print('Following schemas failed:')
-            print('\n'.join(messages))
-            exit(1)
-        else:
-            print('All {} schemas registered, updated or '
-                  'left unchanged because of status PUBLISHED.'.format(str(len(sequence))))
+            elapsed = time.time() - start
+            print('This update took {:.2f} seconds.'.format(elapsed))
+            if len(messages) != 0:
+                print('Following schemas failed:')
+                print('\n'.join(messages))
+                exit(1)
+            else:
+                print('All {} schemas registered, updated or '
+                      'left unchanged because of status PUBLISHED.'.format(str(len(sequence))))
 
     @staticmethod
     def __kind_from_schema_info(schema_as_str: str) -> str:
