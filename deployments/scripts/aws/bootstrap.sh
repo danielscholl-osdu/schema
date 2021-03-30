@@ -21,7 +21,6 @@ if [ -z "$BEARER_TOKEN" ];
 then BEARER_TOKEN=`python3 $AWS_DEPLOYMENTS_SUBDIR/Token.py`;
 export BEARER_TOKEN=$BEARER_TOKEN
 fi
-echo Bearer Token: $BEARER_TOKEN
 export APP_KEY=""
 export DATA_PARTITION=common
 python3 $DEPLOYMENTS_BASE_DIR/scripts/DeploySharedSchemas.py -l load_sequence.1.0.0.json -u $AWS_SCHEMA_SERVICE_URL
