@@ -13,8 +13,10 @@ class RunEnv(object):
     SCHEMA_SERVICE_URL = None
     STORAGE_SERVICE_URL = None
     DATA_PARTITION = os.environ.get('DATA_PARTITION')
-    OSDU = ['shared-schemas', 'osdu']
-    LOAD_SEQUENCE = 'load_sequence.0.2.0.json'
+    SCHEMA_AUTHORITY = os.environ.get('SCHEMA_AUTHORITY')
+    SCHEMAS_FOLDER = 'shared-schemas'
+    DEFAULT_BOOTSTRAP_OPTIONS = '[{"authority": "osdu", "folder": "osdu", "load-sequence": "load_sequence.1.0.0.json"}]'
+    BOOTSTRAP_OPTIONS = os.environ.get('BOOTSTRAP_OPTIONS', DEFAULT_BOOTSTRAP_OPTIONS)
 
     def __init__(self):
         """Empty constructor"""
@@ -118,9 +120,12 @@ class Utility(object):
     @staticmethod
     def load_json(path):
         """Load a JSON file"""
-        with open(path, "r", encoding='utf-8') as text_file:
-            j_obj = json.load(text_file)
-        return j_obj
+        try:
+            with open(path, "r", encoding='utf-8') as text_file:
+                j_obj = json.load(text_file)
+            return j_obj
+        except FileNotFoundError as e:
+            exit("Given File path not found::{}".format(str(e)))
 
     @staticmethod
     def save_json(schema, path, sort_keys=False):
@@ -152,7 +157,7 @@ class StorageService(object):
         url = '{}/schemas/{}'.format(self.url, urllib.parse.quote_plus(kind))
         response = requests.request("GET", url, headers=self.headers)
         if response.status_code in range(200, 300):
-            schema = json.loads(response.text, encoding='utf-8')
+            schema = json.loads(response.text)
         else:
             messages.append('Error: Storage Service GET schema {}, {}'.format(response.status_code, response.text))
         return response.status_code in range(200, 300), schema
@@ -167,7 +172,7 @@ class StorageService(object):
                 url += '&cursor={}'.format(cursor)
             response = requests.request("GET", url, headers=self.headers)
             if response.status_code in range(200, 300):
-                rs = json.loads(response.text, encoding='utf-8')
+                rs = json.loads(response.text)
                 cursor = rs['cursor']
                 carry_on = len(rs['results']) > 0
                 for kind in rs['results']:
@@ -188,7 +193,7 @@ class SchemaService(object):
         url = '{}/{}'.format(self.url, kind)
         response = requests.request("GET", url, headers=self.headers)
         if response.status_code in range(200,300):
-            schema = json.loads(response.text, encoding='utf-8')
+            schema = json.loads(response.text)
         return response.status_code in range(200,300), schema
 
     def post_or_put_schema(self, kind: str, schema: dict, schema_status: str, messages: list):
@@ -242,11 +247,9 @@ class SchemaService(object):
         response = requests.request("GET", url, headers=self.headers)
         schema_infos = list()
         if response.status_code in range(200,300):
-            r = json.loads(response.text, encoding='utf-8')
+            r = json.loads(response.text)
             schema_infos = r['schemaInfos']
         for info in schema_infos:
             if self.__match(info['schemaIdentity'], si):
                 return response.status_code in range(200,300), info
         return response.status_code in range(200,300), None
-
-
