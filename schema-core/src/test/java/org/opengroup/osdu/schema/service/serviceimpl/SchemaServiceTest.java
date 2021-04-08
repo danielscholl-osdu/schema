@@ -34,6 +34,7 @@ import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.service.IAuthorityService;
@@ -87,6 +88,9 @@ public class SchemaServiceTest {
     
     @Value("${shared.tenant.name:common}")
 	private String sharedTenant;
+    
+    @Mock
+    IMessageBus messageBus;
     
     private Date currDate = new Date();
 

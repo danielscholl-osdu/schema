@@ -50,6 +50,12 @@ public class AuditLogger {
 	public void schemaUpdatedFailure(List<String> resources){
 		this.writeLog(this.getAuditEvents().getSchemaUpdated(AuditStatus.FAILURE, resources));
 	}
+	public void schemaNotificationSuccess(List<String> resources){
+		this.writeLog(this.getAuditEvents().getSchemaUpdated(AuditStatus.SUCCESS, resources));
+	}
+	public void schemaNotificationFailure(List<String> resources){
+		this.writeLog(this.getAuditEvents().getSchemaUpdated(AuditStatus.FAILURE, resources));
+	}
 
 	private void writeLog(AuditPayload log) {
 		this.logger.audit(log);
