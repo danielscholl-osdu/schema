@@ -17,6 +17,7 @@ package org.opengroup.osdu.schema.azure;
 import org.opengroup.osdu.azure.dependencies.AzureOSDUConfig;
 import org.opengroup.osdu.schema.azure.di.AzureBootstrapConfig;
 import org.opengroup.osdu.schema.azure.di.CosmosContainerConfig;
+import org.opengroup.osdu.schema.azure.di.EventGridConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,7 +32,8 @@ public class SchemaApplication {
                 SchemaApplication.class,
                 AzureBootstrapConfig.class,
                 AzureOSDUConfig.class,
-                CosmosContainerConfig.class
+                CosmosContainerConfig.class,
+                EventGridConfig.class
         };
         SpringApplication.run(sources, args);
     }

@@ -106,5 +106,9 @@ spec:
               value: {{ .Values.default_tenant}}
             - name: azure_istioauth_enabled
               value: "true"
+            - name: event_grid_enabled
+              value: "false"
+            - name: event_grid_topic
+              value: "schemachangedtopic"
 
 
