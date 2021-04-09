@@ -23,4 +23,5 @@ export BEARER_TOKEN=$BEARER_TOKEN
 fi
 export APP_KEY=""
 export DATA_PARTITION=common
-python3 $DEPLOYMENTS_BASE_DIR/scripts/DeploySharedSchemas.py -l load_sequence.1.0.0.json -u $AWS_SCHEMA_SERVICE_URL
+
+python3 $DEPLOYMENTS_BASE_DIR/scripts/DeploySharedSchemas.py -u $AWS_SCHEMA_SERVICE_URL
