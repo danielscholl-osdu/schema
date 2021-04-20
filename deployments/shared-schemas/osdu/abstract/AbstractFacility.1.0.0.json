@@ -40,6 +40,9 @@
       "FacilityOperators": {
         "description": "The history of operator organizations of the facility.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "nested"
+        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractFacilityOperator:1.0.0"
         }
@@ -97,6 +100,9 @@
       "FacilityNameAliases": {
         "description": "DEPRECATED: please use data.NameAliases. Alternative names, including historical, by which this facility is/has been known.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0"
         }
@@ -104,6 +110,9 @@
       "FacilityStates": {
         "description": "The history of life cycle states the facility has been through.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractFacilityState:1.0.0"
         }
@@ -111,6 +120,9 @@
       "FacilityEvents": {
         "description": "A list of key facility events.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractFacilityEvent:1.0.0"
         }
@@ -118,6 +130,9 @@
       "FacilitySpecifications": {
         "description": "facilitySpecification maintains the specification like slot name, wellbore drilling permit number, rig name etc.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractFacilitySpecification:1.0.0"
         }

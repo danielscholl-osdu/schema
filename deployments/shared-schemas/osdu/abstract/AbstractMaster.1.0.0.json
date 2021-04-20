@@ -25,6 +25,9 @@
     "properties": {
       "NameAliases": {
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "description": "Alternative names, including historical, by which this master data is/has been known (it should include all the identifiers).",
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0"
@@ -32,6 +35,9 @@
       },
       "GeoContexts": {
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "description": "List of geographic entities which provide context to the master data. This may include multiple types or multiple values of the same type.",
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractGeoContext:1.0.0"

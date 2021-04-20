@@ -134,6 +134,9 @@
               },
               "Markers": {
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "nested"
+                },
                 "items": {
                   "type": "object",
                   "properties": {
