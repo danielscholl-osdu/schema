@@ -113,4 +113,5 @@ public class SchemaConstants {
     public final static String EVENT_SUBJECT = "schemachanged";
     public final static String SCHEMA_CREATE_EVENT_TYPE = "create";
     public final static String SCHEMA_UPDATE_EVENT_TYPE = "update";
+    public final static String KIND = "kind";
 }
