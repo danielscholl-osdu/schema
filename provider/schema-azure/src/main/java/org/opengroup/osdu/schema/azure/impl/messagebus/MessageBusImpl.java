@@ -15,21 +15,12 @@ import org.opengroup.osdu.schema.azure.di.EventGridConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.logging.AuditLogger;
 import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
-import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
-import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
-import org.opengroup.osdu.schema.service.IAuthorityService;
-import org.opengroup.osdu.schema.service.IEntityTypeService;
-import org.opengroup.osdu.schema.service.ISourceService;
-import org.opengroup.osdu.schema.util.SchemaUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.microsoft.azure.eventgrid.models.EventGridEvent;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 public class MessageBusImpl implements IMessageBus {
 
 	@Autowired
@@ -41,16 +32,18 @@ public class MessageBusImpl implements IMessageBus {
 	@Autowired
 	private EventGridConfig eventGridConfig;
 
-	private final AuditLogger auditLogger;
+	@Autowired
+	private AuditLogger auditLogger;
 
-	final JaxRsDpsLog log;
+	@Autowired
+	private JaxRsDpsLog log;
 
 
 	private final static String EVENT_DATA_VERSION = "1.0";
 
 	@Override
 	public void publishMessage(DpsHeaders headers, String schemaId, String eventType) {
-		if (eventGridConfig.isPublishingToEventGridEnabled()) {
+		if (eventGridConfig.isPublishToEventGridEnabled()) {
 			logger.info("Generating event of type {}",eventType);
 			try {
 				publishToEventGrid(headers, schemaId, eventType);
