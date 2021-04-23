@@ -17,7 +17,6 @@ import org.opengroup.osdu.schema.logging.AuditLogger;
 import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.microsoft.azure.eventgrid.models.EventGridEvent;
 
 @Component
@@ -63,17 +62,19 @@ public class MessageBusImpl implements IMessageBus {
 	private void publishToEventGrid(DpsHeaders headers, String schemaId, String eventType) {
 
 		List<EventGridEvent> eventsList = new ArrayList<>();
-
+		
 		HashMap<String, Object> data = new HashMap<>();
-		data.put("id", schemaId);
+		data.put(SchemaConstants.KIND, schemaId);
 		data.put(DpsHeaders.ACCOUNT_ID, headers.getPartitionIdWithFallbackToAccountId());
 		data.put(DpsHeaders.DATA_PARTITION_ID, headers.getPartitionIdWithFallbackToAccountId());
 		data.put(DpsHeaders.CORRELATION_ID, headers.getCorrelationId());
-		String messageId = UUID.randomUUID().toString();
 		
+		HashMap<String, Object> pubsubMessage = new HashMap<>();
+		pubsubMessage.put("data", data);
+		
+		String messageId = UUID.randomUUID().toString();
 		//EventGridEvent supports array of messages to be triggered in a batch but at present we do not support 
 		//schema creation in bulk so generating one event at a time.
-		
 		eventsList.add(new EventGridEvent(
 				messageId,
 				SchemaConstants.EVENT_SUBJECT,
