@@ -15,7 +15,7 @@ public class MessageBusImpl implements IMessageBus{
 	@Override
 	public void publishMessage(DpsHeaders headers, String schemaId, String eventType) {
 		// TODO Auto-generated method stub
-		logger.warning("publish message not implemented ye");
+		logger.warning("publish message not implemented yet");
 
 	}
 
