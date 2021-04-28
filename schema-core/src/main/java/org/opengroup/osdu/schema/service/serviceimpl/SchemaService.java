@@ -10,11 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
-import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
@@ -43,12 +41,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.gson.Gson;
-
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -156,7 +152,7 @@ public class SchemaService implements ISchemaService {
                     SchemaInfo schemaInfo = schemaInfoStore.createSchemaInfo(schemaRequest);
                     schemaStore.createSchema(schemaId, schema);
                     auditLogger.schemaRegisteredSuccess(Collections.singletonList(schemaRequest.toString()));
-                    messageBus.publishMessage(headers, schemaId, SchemaConstants.SCHEMA_CREATE_EVENT_TYPE);
+                    messageBus.publishMessage(schemaId, SchemaConstants.SCHEMA_CREATE_EVENT_TYPE);
                     return schemaInfo;
                 } catch (ApplicationException ex) {
                 	auditLogger.schemaRegisteredFailure(
@@ -214,7 +210,7 @@ public class SchemaService implements ISchemaService {
             SchemaInfo schInfo = schemaInfoStore.updateSchemaInfo(schemaRequest);
             auditLogger.schemaUpdatedSuccess(Collections.singletonList(schemaRequest.toString()));
             schemaStore.createSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
-            messageBus.publishMessage(headers, createdSchemaId, SchemaConstants.SCHEMA_UPDATE_EVENT_TYPE);
+            messageBus.publishMessage(createdSchemaId, SchemaConstants.SCHEMA_UPDATE_EVENT_TYPE);
             log.info(SchemaConstants.SCHEMA_UPDATED);
             return schInfo;
         } else {

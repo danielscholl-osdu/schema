@@ -19,6 +19,17 @@ public class EventGridConfigTest {
         // Positive Case
         EventGridConfig eventGridConfig = new EventGridConfig(true, VALID_TOPIC_NAME);
         assertEquals(VALID_TOPIC_NAME, eventGridConfig.getCustomTopicName());
+        assertEquals(true, eventGridConfig.isEventGridEnabled());
+        
+        // Positive Case
+        eventGridConfig = new EventGridConfig(false, VALID_TOPIC_NAME);
+        assertEquals(VALID_TOPIC_NAME, eventGridConfig.getCustomTopicName());
+        assertEquals(false, eventGridConfig.isEventGridEnabled());
+        
+        eventGridConfig = new EventGridConfig(false, INVALID_TOPIC_NAME);
+        assertEquals(INVALID_TOPIC_NAME, eventGridConfig.getCustomTopicName());
+        assertEquals(false, eventGridConfig.isEventGridEnabled());
+
 
         // Negative Cases
         RuntimeException runtimeException = Assertions.assertThrows(RuntimeException.class,

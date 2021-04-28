@@ -1,34 +1,30 @@
 package org.opengroup.osdu.schema.azure.di;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 
 @Configuration
 public class EventGridConfig {
 
+	private boolean eventGridEnabled;
 
-	public boolean isPublishToEventGridEnabled() {
-		return publishToEventGridEnabled;
+	private String eventGridCustomTopic;
+
+	public boolean isEventGridEnabled() {
+		return eventGridEnabled;
 	}
 
 	public String getCustomTopicName() {
 		return eventGridCustomTopic;
 	}
 
-	private boolean publishToEventGridEnabled;
-
-	private String eventGridCustomTopic;
-
-
-	public EventGridConfig(@Value("#{new Boolean('${azure.publishToEventGrid:false}')}") boolean publish,
-			@Value("#{new String('${azure.eventGridTopic:schema-change-alert}')}") String topicName) {
-		if (publish) {
-            if ((topicName.isEmpty())) {
+	public EventGridConfig(@Value("#{new Boolean('${azure.eventGrid.enabled:false}')}") boolean publish,
+			@Value("#{new String('${azure.eventGrid.topicName:schemachangedtopic}')}") String topicName) {
+		if (publish && StringUtils.isEmpty(topicName)) {
                 throw new RuntimeException("Missing EventGrid Configuration");
-            }
         }
 		
-		this.publishToEventGridEnabled = publish;
+		this.eventGridEnabled = publish;
 		this.eventGridCustomTopic = topicName;
 	}
 

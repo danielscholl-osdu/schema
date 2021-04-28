@@ -76,6 +76,7 @@ public class SchemaConstants {
     public static final String EMPTY_ID = "The id provided is empty";
     public static final String SCHEMA_CREATION_FAILED = "Schema creation failed";
     public static final String SCHEMA_NOTIFICATION_FAILED = "Failed to publish the schema notification.";
+    public static final String SCHEMA_NOTIFICATION_IS_DISABLED = "Schema event notification is turned off.";
     public static final String SCHEMA_UPDATE_FAILED = "Schema updation failed";
     public static final String SCHEMA_UPDATE_EXCEPTION = "Only schema in developement stage can be updated";
     public static final String SCHEMA_PUT_CREATE_EXCEPTION = "Only schema in developement stage can be created through put";
