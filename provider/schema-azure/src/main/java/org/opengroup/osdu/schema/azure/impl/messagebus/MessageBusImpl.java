@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
 import org.joda.time.DateTime;
 import org.opengroup.osdu.azure.eventgrid.EventGridTopicStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -33,40 +32,40 @@ public class MessageBusImpl implements IMessageBus {
 
 	@Autowired
 	private AuditLogger auditLogger;
-
+	
 	@Autowired
-	private JaxRsDpsLog log;
+	DpsHeaders headers;
 
 
 	private final static String EVENT_DATA_VERSION = "1.0";
 
 	@Override
-	public void publishMessage(DpsHeaders headers, String schemaId, String eventType) {
-		if (eventGridConfig.isPublishToEventGridEnabled()) {
+	public void publishMessage(String schemaId, String eventType) {
+		if (eventGridConfig.isEventGridEnabled()) {
 			logger.info("Generating event of type {}",eventType);
 			try {
-				publishToEventGrid(headers, schemaId, eventType);
+				publishToEventGrid(schemaId, eventType);
 				auditLogger.schemaNotificationSuccess(Collections.singletonList(schemaId));
 			}catch (AppException ex) {
 				
 				//We do not want to fail schema creation if notification delivery has failed, hence just logging the exception
 				auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
-				log.warning(SchemaConstants.SCHEMA_NOTIFICATION_FAILED);
+				logger.warning(SchemaConstants.SCHEMA_NOTIFICATION_FAILED);
 			}
 
 		}else {
-			logger.info("Schema event notification is turned off.");
+			logger.info(SchemaConstants.SCHEMA_NOTIFICATION_IS_DISABLED);
 		}
 	}
 
-	private void publishToEventGrid(DpsHeaders headers, String schemaId, String eventType) {
+	private void publishToEventGrid(String schemaId, String eventType) {
 
 		List<EventGridEvent> eventsList = new ArrayList<>();
 		
 		HashMap<String, Object> data = new HashMap<>();
 		data.put(SchemaConstants.KIND, schemaId);
 		data.put(DpsHeaders.ACCOUNT_ID, headers.getPartitionIdWithFallbackToAccountId());
-		data.put(DpsHeaders.DATA_PARTITION_ID, headers.getPartitionIdWithFallbackToAccountId());
+		data.put(DpsHeaders.DATA_PARTITION_ID, headers.getPartitionId());
 		data.put(DpsHeaders.CORRELATION_ID, headers.getCorrelationId());
 		
 		HashMap<String, Object> pubsubMessage = new HashMap<>();
