@@ -34,9 +34,6 @@
       "ProjectNames": {
         "description": "DEPRECATED: please use data.NameAliases. The history of Project names, codes, and other business identifiers.",
         "type": "array",
-        "x-osdu-indexing": {
-          "type": "flattened"
-        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0"
         }

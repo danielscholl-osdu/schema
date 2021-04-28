@@ -100,9 +100,6 @@
       "FacilityNameAliases": {
         "description": "DEPRECATED: please use data.NameAliases. Alternative names, including historical, by which this facility is/has been known.",
         "type": "array",
-        "x-osdu-indexing": {
-          "type": "flattened"
-        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0"
         }
