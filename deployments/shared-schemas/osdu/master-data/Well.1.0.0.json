@@ -135,6 +135,9 @@
               "VerticalMeasurements": {
                 "description": "List of all depths and elevations pertaining to the well, like, water depth, mud line elevation, etc.",
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "nested"
+                },
                 "items": {
                   "allOf": [
                     {

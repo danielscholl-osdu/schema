@@ -95,8 +95,7 @@
         "title": "Checksum",
         "description": "Checksum of file bytes - a hexadecimal number with even number of bytes.",
         "example": "d41d8cd98f00b204e9800998ecf8427e",
-        "pattern": "^([0-9a-fA-F]{2})+$",
-        "x-osdu-skip-indexing": true
+        "pattern": "^([0-9a-fA-F]{2})+$"
       },
       "ChecksumAlgorithm": {
         "type": "string",

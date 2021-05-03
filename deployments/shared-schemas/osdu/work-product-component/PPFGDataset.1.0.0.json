@@ -230,6 +230,9 @@
               "Curves": {
                 "description": "Array of curve that constitutes the whole PPFG Dataset",
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "nested"
+                },
                 "items": {
                   "type": "object",
                   "properties": {

@@ -176,6 +176,9 @@
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "x-osdu-indexing": {
+                    "type": "flattened"
+                  },
                   "properties": {
                     "ObligationTypeID": {
                       "description": "Reference to the general class of obligation, such as nondisclosure, termination of use, non-assignment, export restriction, limitation on derivatives.",

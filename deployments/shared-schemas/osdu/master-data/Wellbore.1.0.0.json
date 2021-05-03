@@ -134,6 +134,9 @@
               "VerticalMeasurements": {
                 "description": "List of all depths and elevations pertaining to the wellbore, like, plug back measured depth, total measured depth, KB elevation",
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "nested"
+                },
                 "items": {
                   "allOf": [
                     {

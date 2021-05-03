@@ -213,6 +213,9 @@
               },
               "Faults": {
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "nested"
+                },
                 "description": "Array of Faults that comprise the Fault System",
                 "items": {
                   "type": "object",
