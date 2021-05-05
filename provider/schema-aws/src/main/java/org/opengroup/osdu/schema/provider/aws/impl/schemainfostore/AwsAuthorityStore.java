@@ -13,7 +13,8 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -24,9 +25,9 @@ import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.opengroup.osdu.schema.provider.aws.models.AuthorityDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IAuthorityStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.text.MessageFormat;
 
@@ -40,30 +41,34 @@ public class AwsAuthorityStore implements IAuthorityStore {
   private JaxRsDpsLog logger;
 
   @Inject
-  private AwsServiceConfig serviceConfig;
+  private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
 
-  private DynamoDBQueryHelper queryHelper;
+  @Value("${aws.dynamodb.authorityTable.ssm.relativePath}")
+  String authorityTableParameterRelativePath;
 
-  @PostConstruct
-  public void init() {
-    // TODO: serviceConfig.environment isn't correct and needs to be table prefix. Maybe the "-" will fix it
-    queryHelper = new DynamoDBQueryHelper(serviceConfig.getDynamoDbEndpoint(),
-            serviceConfig.getAmazonRegion(),
-            serviceConfig.getDynamoDbTablePrefix());
+  private DynamoDBQueryHelperV2 getAuthorityTableQueryHelper() {
+    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, authorityTableParameterRelativePath);
   }
+
 
   @Override
   public Authority get(String authorityId) throws NotFoundException, ApplicationException {
-     String id = headers.getPartitionId() + ":" + authorityId;
-     AuthorityDoc result = queryHelper.loadByPrimaryKey(AuthorityDoc.class, id);
-     if (result == null) {
-       throw new NotFoundException(SchemaConstants.INVALID_INPUT);
-     }
-     return result.getAuthority();
+    
+    DynamoDBQueryHelperV2 queryHelper = getAuthorityTableQueryHelper();
+    
+    String id = headers.getPartitionId() + ":" + authorityId;
+    AuthorityDoc result = queryHelper.loadByPrimaryKey(AuthorityDoc.class, id);
+    if (result == null) {
+      throw new NotFoundException(SchemaConstants.INVALID_INPUT);
+    }
+    return result.getAuthority();
   }
 
   @Override
-  public Authority create(Authority authority) throws ApplicationException, BadRequestException {
+  public Authority create(Authority authority) throws ApplicationException, BadRequestException {    
+    
+    DynamoDBQueryHelperV2 queryHelper = getAuthorityTableQueryHelper();
+
     String id = headers.getPartitionId() + ":" + authority.getAuthorityId();
 
     AuthorityDoc doc = new AuthorityDoc();

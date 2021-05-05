@@ -23,6 +23,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opengroup.osdu.core.aws.s3.S3ClientFactory;
+import org.opengroup.osdu.core.aws.s3.S3ClientWithBucket;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -57,6 +59,14 @@ public class AwsSchemaStoreTest {
   @Mock
   private JaxRsDpsLog logger;
 
+  @Mock
+  private S3ClientFactory s3ClientFactory;
+
+  @Mock
+  private S3ClientWithBucket s3ClientWithBucket;
+
+  private String schemaBucketName="bucket";
+
   @Before
   public void beforeAll() {
 
@@ -65,9 +75,15 @@ public class AwsSchemaStoreTest {
   @Before
   public void setUp() {
     serviceConfig.amazonRegion = "us-east-1";
-    serviceConfig.s3DataBucket = "bucket";
     serviceConfig.environment = "test";
-    serviceConfig.s3Endpoint = "endpoint";
+
+    Mockito.when(s3ClientWithBucket.getS3Client()).thenReturn(s3);
+
+    Mockito.when(s3ClientWithBucket.getBucketName()).thenReturn(schemaBucketName);
+    
+    Mockito.when(s3ClientFactory.getS3ClientForPartition(Mockito.anyString(), Mockito.any()))
+      .thenReturn(s3ClientWithBucket);
+
   }
 
   @After
@@ -79,10 +95,10 @@ public class AwsSchemaStoreTest {
     String filePath = "file/path";
     String content = "content";
     String dataPartitionId = "partitionid";
-    URL file = new URL("http", "localhost", "file" );
-    Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
+    URL file = new URL("http", "localhost", "file" );    
+    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
     doReturn(null).when(s3).putObject(Mockito.any());
-    Mockito.when(s3.getUrl(Mockito.eq(serviceConfig.s3DataBucket), Mockito.eq("schema/partitionid/file/path")))
+    Mockito.when(s3.getUrl(Mockito.eq(schemaBucketName), Mockito.eq("schema/partitionid/file/path")))
       .thenReturn(new URL("http", "localhost", "file" ));
     String result = schemaStore.createSchema(filePath, content);
     Assert.assertEquals(file.toString(), result);
@@ -124,8 +140,8 @@ public class AwsSchemaStoreTest {
   public void cleanSchemaProject() throws ApplicationException {
     String schemaId = "file";
     String dataPartitionId = "partitionid";
-    Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
-    doNothing().when(s3).deleteObject(Mockito.eq(serviceConfig.s3DataBucket), Mockito.eq("schema/partitionid/file"));
+    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
+    doNothing().when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/partitionid/file"));
     Boolean result = schemaStore.cleanSchemaProject(schemaId);
     Assert.assertEquals(true, result);
   }
@@ -134,8 +150,8 @@ public class AwsSchemaStoreTest {
   public void cleanSchemaProject_S3Exception() throws ApplicationException {
     String schemaId = "file";
     String dataPartitionId = "partitionid";
-    Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
-    doThrow(SdkClientException.class).when(s3).deleteObject(Mockito.eq(serviceConfig.s3DataBucket), Mockito.eq("schema/partitionid/file"));
+    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
+    doThrow(SdkClientException.class).when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/partitionid/file"));
     Boolean result = schemaStore.cleanSchemaProject(schemaId);
     Assert.assertEquals(false, result);
   }

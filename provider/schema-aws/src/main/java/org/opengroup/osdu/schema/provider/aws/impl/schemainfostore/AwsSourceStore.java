@@ -13,7 +13,8 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -21,12 +22,11 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Source;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.opengroup.osdu.schema.provider.aws.models.SourceDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISourceStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.text.MessageFormat;
 
@@ -42,19 +42,20 @@ public class AwsSourceStore implements ISourceStore {
   private JaxRsDpsLog log;
 
   @Inject
-  private AwsServiceConfig serviceConfig;
+  private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
 
-  private DynamoDBQueryHelper queryHelper;
+  @Value("${aws.dynamodb.sourceTable.ssm.relativePath}")
+  String sourceTableParameterRelativePath;
 
-  @PostConstruct
-  public void init() {
-    queryHelper = new DynamoDBQueryHelper(serviceConfig.getDynamoDbEndpoint(),
-            serviceConfig.getAmazonRegion(),
-            serviceConfig.getDynamoDbTablePrefix());
+  private DynamoDBQueryHelperV2 getSourceTableQueryHelper() {
+    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, sourceTableParameterRelativePath);
   }
 
   @Override
   public Source get(String sourceId) throws NotFoundException, ApplicationException {
+
+    DynamoDBQueryHelperV2 queryHelper = getSourceTableQueryHelper();
+
     String id = headers.getPartitionId() + ":" + sourceId;
     SourceDoc result = queryHelper.loadByPrimaryKey(SourceDoc.class, id);
     if (result == null) {
@@ -76,6 +77,9 @@ public class AwsSourceStore implements ISourceStore {
     } catch (NotFoundException e) { }
 
     try {
+
+      DynamoDBQueryHelperV2 queryHelper = getSourceTableQueryHelper();
+
       String id = headers.getPartitionId() + ":" + source.getSourceId();
       SourceDoc sourceDoc = new SourceDoc(id, headers.getPartitionId(), source);
       queryHelper.save(sourceDoc);
