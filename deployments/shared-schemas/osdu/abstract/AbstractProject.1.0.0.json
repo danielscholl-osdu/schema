@@ -57,6 +57,9 @@
       "FundsAuthorizations": {
         "description": "The history of expenditure approvals.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "nested"
+        },
         "items": {
           "type": "object",
           "properties": {
@@ -116,6 +119,9 @@
       "Contractors": {
         "description": "References to organisations which supplied services to the Project.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "type": "object",
           "properties": {
@@ -151,6 +157,9 @@
       "Personnel": {
         "description": "List of key individuals supporting the Project.  This could be Abstracted for re-use, and could reference a separate Persons master data object.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "type": "object",
           "properties": {
@@ -186,6 +195,9 @@
       "ProjectSpecifications": {
         "description": "General parameters defining the configuration of the Project.  In the case of a seismic acquisition project it is like receiver interval, source depth, source type.  In the case of a processing project, it is like replacement velocity, reference datum above mean sea level.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "type": "object",
           "properties": {
@@ -248,6 +260,9 @@
       "ProjectStates": {
         "description": "The history of life cycle states that the Project has been through..",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "type": "object",
           "properties": {

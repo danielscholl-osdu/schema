@@ -241,6 +241,9 @@
               "SeismicAttributes": {
                 "type": "array",
                 "description": "Summary of measurements included with horizon in addition to depth attribute.",
+                "x-osdu-indexing": {
+                  "type": "flattened"
+                },
                 "items": {
                   "type": "object",
                   "description": "Summary of measurements included with horizon in addition to depth attribute.",

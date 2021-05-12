@@ -128,6 +128,9 @@
               },
               "Artefacts": {
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "flattened"
+                },
                 "description": "An array of Artefacts - each artefact has a Role, Resource tuple. An artefact is distinct from the file, in the sense certain valuable information is generated during loading process (Artefact generation process). Examples include retrieving location data, performing an OCR which may result in the generation of artefacts which need to be preserved distinctly",
                 "items": {
                   "type": "object",

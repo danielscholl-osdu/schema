@@ -120,6 +120,9 @@
               "SeismicLineGeometries": {
                 "description": "The set of processing geometries comprising the 2D Interpretation Survey (often referred to as survey in the context of an interpretation application but not a survey in the context of acquisition).",
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "flattened"
+                },
                 "items": {
                   "type": "object",
                   "properties": {

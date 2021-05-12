@@ -53,6 +53,9 @@
       "GeoContexts": {
         "description": "List of geographic entities which provide context to the WPC.  This may include multiple types or multiple values of the same type.",
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractGeoContext:1.0.0"
         }
@@ -80,6 +83,9 @@
       },
       "LineageAssertions": {
         "type": "array",
+        "x-osdu-indexing": {
+          "type": "flattened"
+        },
         "description": "Defines relationships with other objects (any kind of Resource) upon which this work product component depends.  The assertion is directed only from the asserting WPC to ancestor objects, not children.  It should not be used to refer to files or artefacts within the WPC -- the association within the WPC is sufficient and Artefacts are actually children of the main WPC file. They should be recorded in the Data.Artefacts[] array.",
         "items": {
           "type": "object",
