@@ -49,13 +49,13 @@ public class SchemaResolver {
         JSONObject originalSchema = new JSONObject(schema);
 
         Map<String, String> refSchemas = new HashMap<>();
-
+        findAndResolveRef(originalSchema, refSchemas);
         JSONObject definition = fetchObjectFromJSON(originalSchema, SchemaConstants.DEFINITIONS);
         Map<String, Object> definitionMap = new HashMap<>();
         if (definition != null) {
             definitionMap = definition.toMap();
         }
-        findAndResolveRef(originalSchema, refSchemas);
+
 
         for (Map.Entry<String, String> entry : refSchemas.entrySet()) {
 
