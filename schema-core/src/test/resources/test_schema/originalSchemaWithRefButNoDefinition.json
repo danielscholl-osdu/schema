@@ -4,20 +4,17 @@
   "description": "The entity well.",
   "title": "Well",
   "type": "object",
-  "definitions": {},
   "properties": {
+    "person": {
+      "description": "Information for person",
+      "title": "Information for person",
+      "$ref": "#/definitions/person"
+    },
     "locationOriginalCRS": {
       "description": "The well's original location as AnyCrsFeatureCollection - a structure similar to but distinct from GeoJSON.",
       "title": "Original CRS Location",
       "$ref": "os:wks:anyCrsFeatureCollection.1.0"
     },
-    "allOf": [
-      [
-        {
-          "$ref": "os:wks:anyCrsFeatureCollection.1.0"
-        }
-      ]
-    ],
     "locationWGS84": {
       "description": "The well's location as GeoJSON FeatureCollection.",
       "title": "WGS84 Location",
@@ -43,4 +40,5 @@
       }
     }
   }
+
 }

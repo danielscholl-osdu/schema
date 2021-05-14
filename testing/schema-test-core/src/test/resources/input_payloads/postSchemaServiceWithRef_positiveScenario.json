@@ -17,9 +17,18 @@
    "description":"Theentitywell.",
    "title":"Well",
    "type":"object",
-   "definitions":{
-
-   },
+    "definitions":{
+      "anyCrsFeatureCollection.1.0": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "anyCrsFeatureCollection",
+        "type": "object"
+      },
+      "slb..wks..well.1.0": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "slb..wks..well",
+        "type": "object"
+      }
+    },
    "properties":{
       "locationOriginalCRS":{
          "description":"Thewell'soriginallocationasAnyCrsFeatureCollection-astructuresimilartobutdistinctfromGeoJSON.",
