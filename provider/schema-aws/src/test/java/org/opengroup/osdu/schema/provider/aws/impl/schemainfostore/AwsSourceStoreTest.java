@@ -20,7 +20,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -47,7 +48,10 @@ public class AwsSourceStoreTest {
   private DpsHeaders headers;
 
   @Mock
-  private DynamoDBQueryHelper queryHelper;
+  private DynamoDBQueryHelperV2 queryHelper;
+
+  @Mock
+  private DynamoDBQueryHelperFactory queryHelperFactory;
 
   @Mock
   private JaxRsDpsLog logger;
@@ -55,9 +59,10 @@ public class AwsSourceStoreTest {
   @Before
   public void setUp() throws Exception {
     serviceConfig.amazonRegion = "us-east-1";
-    serviceConfig.s3DataBucket = "bucket";
     serviceConfig.environment = "test";
-    serviceConfig.s3Endpoint = "endpoint";
+
+    Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
+    .thenReturn(queryHelper);
   }
 
   @Rule

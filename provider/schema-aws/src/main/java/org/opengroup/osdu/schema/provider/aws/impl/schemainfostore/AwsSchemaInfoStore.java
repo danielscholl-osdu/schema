@@ -25,11 +25,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
@@ -42,7 +42,6 @@ import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.opengroup.osdu.schema.provider.aws.models.SchemaInfoDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
@@ -64,28 +63,34 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   private ITenantFactory tenantFactory;
 
   @Inject
-  private JaxRsDpsLog log;
-
-  @Inject
-  private AwsServiceConfig serviceConfig;
+  private JaxRsDpsLog log;  
 
   @Inject
   private ISchemaStore schemaStore;
 
-  private DynamoDBQueryHelper queryHelper;
+  @Inject
+  private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
+
+  @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}")
+  String schemaInfoTableParameterRelativePath;
   
   @Value("${shared.tenant.name:common}")
   private String sharedTenant;
 
-  @PostConstruct
-  public void init() {
-    queryHelper = new DynamoDBQueryHelper(serviceConfig.getDynamoDbEndpoint(),
-            serviceConfig.getAmazonRegion(),
-            serviceConfig.getDynamoDbTablePrefix());
+  private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper() {
+    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, schemaInfoTableParameterRelativePath);
   }
+
+  private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper(String dataPartitionId) {
+    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(dataPartitionId, schemaInfoTableParameterRelativePath);
+  }
+
 
   @Override
   public SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+
     String id = headers.getPartitionId() + ":" + schemaId;
     SchemaInfoDoc result = queryHelper.loadByPrimaryKey(SchemaInfoDoc.class, id);
     if (result == null) {
@@ -100,6 +105,8 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     // it doesn't pass that entity into this method or update properties in the request that shouldn't change, like
     // createdBy and createdOn.  This causes the need to query the entity twice which is inefficient.
     // This should be fixed
+
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
 
     String partitionId = headers.getPartitionId();
     String userEmail = headers.getUserEmail();
@@ -128,6 +135,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Override
   public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+
     String partitionId = headers.getPartitionId();
     String userEmail = headers.getUserEmail();
     String id = partitionId + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
@@ -158,6 +168,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Override
   public String getLatestMinorVerSchema(SchemaInfo schemaInfo) throws ApplicationException {
+
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+
     String dataPartitionId = headers.getPartitionId();
     SchemaInfoDoc fullSchemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, headers.getPartitionId());
 
@@ -192,6 +205,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
     // TODO: how should the system handle empty query params i.e. &scope=
     // is it equal to empty string or should the qualifier be removed?
+
+
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenantId);
 
     List<String> filters = new ArrayList<>();
     Map<String, AttributeValue> valueMap = new HashMap<>();
@@ -254,7 +270,8 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
 
  @Override
-  public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
+  public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {    
+
    Set<String> tenantList = new HashSet<>();
    tenantList.add(sharedTenant);
    tenantList.add(tenantId);
@@ -267,6 +284,8 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
    }
 
    for (String tenant : tenantList) {
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenant);
+
      String id = tenant + ":" + schemaId;
      SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
      schemaInfoDoc.setId(id);
@@ -279,6 +298,8 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Override
   public boolean cleanSchema(String schemaId) throws ApplicationException {
+
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
 
     String id = headers.getPartitionId() + ":" + schemaId;
     SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
@@ -294,6 +315,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
 
   private void validateSupersededById(SchemaIdentity superseding_schema, String tenantId) throws ApplicationException, BadRequestException {
+    
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenantId);
+    
     if (superseding_schema != null) {
       String id = tenantId + ":" + superseding_schema.getId();
       SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
