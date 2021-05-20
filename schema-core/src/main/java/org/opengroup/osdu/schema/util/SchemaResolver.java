@@ -62,7 +62,7 @@ public class SchemaResolver {
             if (entry.getValue() == null) {
                 if (!definitionMap.containsKey(entry.getKey())) {
                     throw new BadRequestException(
-                            String.format("Invalid input, %s no definition but provided as reference", entry.getKey()));
+                            String.format("Invalid input, no '%s' definition found but provided as a reference", entry.getKey()));
                 }
             } else {
                 JSONObject refSchema = new JSONObject(entry.getValue());

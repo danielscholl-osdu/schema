@@ -127,7 +127,7 @@ public class SchemaResolverTest {
         Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenReturn(referenceSchema);
         expectedException.expect(BadRequestException.class);
         expectedException.expectMessage(
-                "Invalid input, person no definition but provided as reference");
+                "Invalid input, no 'person' definition found but provided as a reference");
         schemaResolver.resolveSchema(originalSchema);
         fail("Should not succeed");
     }
