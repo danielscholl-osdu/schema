@@ -249,6 +249,7 @@ The following software have components provided under the terms of this license:
 - AWS Java SDK for Amazon Rekognition (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon Route 53 Auto Naming (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon Route 53 Resolver (from https://aws.amazon.com/sdkforjava)
+- AWS Java SDK for Amazon Route53 (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon S3 (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon S3 on Outposts (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon SES (from https://aws.amazon.com/sdkforjava)
