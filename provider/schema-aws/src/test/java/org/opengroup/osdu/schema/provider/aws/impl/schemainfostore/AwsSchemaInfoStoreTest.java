@@ -23,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -42,7 +44,10 @@ public class AwsSchemaInfoStoreTest {
 	private DpsHeaders headers;
 
 	@Mock
-	private DynamoDBQueryHelper queryHelper;
+	private DynamoDBQueryHelperFactory queryHelperFactory;
+
+	@Mock
+	private DynamoDBQueryHelperV2 queryHelper;
 
 	@Mock
 	private JaxRsDpsLog logger;
@@ -50,15 +55,12 @@ public class AwsSchemaInfoStoreTest {
 	@Before
 	public void setUp() throws Exception {
 		serviceConfig.amazonRegion = "us-east-1";
-		serviceConfig.s3DataBucket = "bucket";
 		serviceConfig.environment = "test";
-		serviceConfig.s3Endpoint = "s3endpoint";
-		serviceConfig.dynamoDbEndpoint = "dbendpoint";
-		serviceConfig.dynamoDbTablePrefix = "pre-";
 
 		ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
 
-
+		Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(String.class), Mockito.any()))
+		.thenReturn(queryHelper);
 
 	}
 
