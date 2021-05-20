@@ -29,8 +29,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +44,7 @@ import org.opengroup.osdu.azure.eventgrid.EventGridTopicStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.di.EventGridConfig;
-import org.opengroup.osdu.schema.constants.SchemaConstants;
+import org.opengroup.osdu.schema.azure.impl.messagebus.model.SchemaPubSubInfo;
 import org.opengroup.osdu.schema.logging.AuditLogger;
 
 import com.microsoft.azure.eventgrid.models.EventGridEvent;
@@ -102,21 +104,28 @@ public class MessageBusImplTest {
     	doNothing().when(this.eventGridTopicStore).publishToEventGridTopic(anyString(), anyString(), anyList());;
     	ArgumentCaptor<ArrayList<EventGridEvent>> captorList = ArgumentCaptor.forClass(ArrayList.class);
     	
+    	
+    	SchemaPubSubInfo[] schemaPubSubMsgs = new SchemaPubSubInfo [1];
+		schemaPubSubMsgs[0]=new SchemaPubSubInfo("dummy","schema_create");
+    	
     	HashMap<String, Object> data = new HashMap<>();
-		data.put(SchemaConstants.KIND, "dummy");
+		data.put("data", schemaPubSubMsgs);
 		data.put(DpsHeaders.ACCOUNT_ID, DATA_PARTITION_WITH_FALLBACK_ACCOUNT_ID);
 		data.put(DpsHeaders.DATA_PARTITION_ID, PARTITION_ID);
 		data.put(DpsHeaders.CORRELATION_ID, CORRELATION_ID);
         
 		//Call publish Message
-    	messageBusImpl.publishMessage("dummy", "dummy");
+    	messageBusImpl.publishMessage("dummy", "schema_create");
         
     	//Assert that eventGridTopicStore is called once
         verify(this.eventGridTopicStore, times(1)).publishToEventGridTopic(anyString(), anyString(), captorList.capture());
         ArrayList<EventGridEvent> eventGridList = captorList.getValue();
         assertNotNull(eventGridList);
         assertThat(eventGridList.size(), is(equalTo(1)));
-        assertEquals(eventGridList.get(0).data(), data);
+        
+        HashMap<String, Object> outputData = (HashMap<String, Object>)eventGridList.get(0).data();
+        assertEquals(((SchemaPubSubInfo[])outputData.get("data"))[0].getKind(), "dummy");
+        assertEquals(((SchemaPubSubInfo[])outputData.get("data"))[0].getOp(), "schema_create");
 
     }
 
