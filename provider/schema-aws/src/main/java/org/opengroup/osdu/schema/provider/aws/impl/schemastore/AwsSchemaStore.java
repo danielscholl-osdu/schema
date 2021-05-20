@@ -17,14 +17,17 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+
+import org.opengroup.osdu.core.aws.s3.IS3ClientFactory;
+import org.opengroup.osdu.core.aws.s3.S3ClientWithBucket;
 import org.opengroup.osdu.core.aws.s3.S3Config;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -40,23 +43,32 @@ public class AwsSchemaStore implements ISchemaStore {
   private DpsHeaders headers;
 
   @Inject
-  private AwsServiceConfig serviceConfig;
-
-  @Inject
   private JaxRsDpsLog logger;
 
-  private AmazonS3 s3;
+  @Inject
+  private IS3ClientFactory s3ClientFactory;
 
-  @PostConstruct
-  public void init() {
-    s3 = new S3Config(serviceConfig.getS3Endpoint(),
-            serviceConfig.getAmazonRegion()).amazonS3();
-  }
+  @Value("${aws.s3.schemaBucket.ssm.relativePath}")
+  private String s3SchemaBucketParameterRelativePath;
+
+
+  private S3ClientWithBucket getS3ClientWithBucket() {
+    String dataPartitionId = headers.getPartitionIdWithFallbackToAccountId();
+    return getS3ClientWithBucket(dataPartitionId);
+  } 
+
+  private S3ClientWithBucket getS3ClientWithBucket( String dataPartitionId) {    
+    return s3ClientFactory.getS3ClientForPartition(dataPartitionId, s3SchemaBucketParameterRelativePath);
+  } 
+
 
   @Override
   public String createSchema(String filePath, String content) throws ApplicationException {
-    // should this be headers.getPartitionIdWithFallbackToAccountId ??
-    String path = resolvePath(headers.getPartitionId(), filePath);
+
+    S3ClientWithBucket s3ClientWithBucket = getS3ClientWithBucket();
+    AmazonS3 s3 = s3ClientWithBucket.getS3Client();
+    
+    String path = resolvePath(headers.getPartitionIdWithFallbackToAccountId(), filePath);
     byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
     int bytesSize = bytes.length;
 
@@ -67,7 +79,7 @@ public class AwsSchemaStore implements ISchemaStore {
 
     String bucket;
     try {
-      bucket = serviceConfig.s3DataBucket;
+      bucket = s3ClientWithBucket.getBucketName();
       PutObjectRequest req = new PutObjectRequest(bucket, path, newStream, metadata);
       s3.putObject(req);
 
@@ -83,11 +95,14 @@ public class AwsSchemaStore implements ISchemaStore {
     // first this method is called with the callers partitionid, then if not found, its called with the
     // common project id which is "common".  Not sure why this isn't passed into the createSchema call.
 
+    S3ClientWithBucket s3ClientWithBucket = getS3ClientWithBucket(dataPartitionId);
+    AmazonS3 s3 = s3ClientWithBucket.getS3Client();
+
     String content;
     String path = resolvePath(dataPartitionId, filePath);
     try {
 
-      content = s3.getObjectAsString(serviceConfig.s3DataBucket, path);
+      content = s3.getObjectAsString(s3ClientWithBucket.getBucketName(), path);
     } catch (AmazonS3Exception ex) {
       if (ex.getErrorCode().equals("NoSuchKey")) {  // or could be ex.getStatusCode == 404 (depends)
         logger.error("AwsSchemaStore", String.format(SchemaConstants.SCHEMA_NOT_PRESENT, ex.getErrorMessage()));
@@ -112,8 +127,12 @@ public class AwsSchemaStore implements ISchemaStore {
   @Override
   public boolean cleanSchemaProject(String schemaId) throws ApplicationException {
     logger.info("Delete schema: " + schemaId);
+
+    S3ClientWithBucket s3ClientWithBucket = getS3ClientWithBucket();
+    AmazonS3 s3 = s3ClientWithBucket.getS3Client();
+
     try {
-      s3.deleteObject(serviceConfig.s3DataBucket, resolvePath(headers.getPartitionId(), schemaId));
+      s3.deleteObject(s3ClientWithBucket.getBucketName(), resolvePath(headers.getPartitionIdWithFallbackToAccountId(), schemaId));
       logger.info("Schema deleted: " + schemaId);
       return true;
     } catch (Exception  e) {

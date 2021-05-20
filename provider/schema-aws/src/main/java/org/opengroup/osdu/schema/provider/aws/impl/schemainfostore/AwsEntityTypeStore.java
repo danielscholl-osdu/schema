@@ -13,7 +13,8 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -21,12 +22,11 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.EntityType;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.opengroup.osdu.schema.provider.aws.models.EntityTypeDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IEntityTypeStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.text.MessageFormat;
 
@@ -40,19 +40,20 @@ public class AwsEntityTypeStore implements IEntityTypeStore {
   private JaxRsDpsLog log;
 
   @Inject
-  private AwsServiceConfig serviceConfig;
+  private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
 
-  private DynamoDBQueryHelper queryHelper;
+  @Value("${aws.dynamodb.entityTypeTable.ssm.relativePath}")
+  String entityTypeTableParameterRelativePath;
 
-  @PostConstruct
-  public void init() {
-    queryHelper = new DynamoDBQueryHelper(serviceConfig.getDynamoDbEndpoint(),
-            serviceConfig.getAmazonRegion(),
-            serviceConfig.getDynamoDbTablePrefix());
+  private DynamoDBQueryHelperV2 getEntityTypeTableQueryHelper() {
+    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, entityTypeTableParameterRelativePath);
   }
 
   @Override
   public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
+
+    DynamoDBQueryHelperV2 queryHelper = getEntityTypeTableQueryHelper();
+
     String id = headers.getPartitionId() + ":" + entityTypeId;
     EntityTypeDoc result = queryHelper.loadByPrimaryKey(EntityTypeDoc.class, id);
     if (result == null) {
@@ -63,6 +64,9 @@ public class AwsEntityTypeStore implements IEntityTypeStore {
 
   @Override
   public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
+    
+    DynamoDBQueryHelperV2 queryHelper = getEntityTypeTableQueryHelper();
+
     String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
 
     EntityTypeDoc doc = new EntityTypeDoc();
