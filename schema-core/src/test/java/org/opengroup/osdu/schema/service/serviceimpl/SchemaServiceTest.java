@@ -4,12 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
-
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
+import static org.mockito.Mockito.*;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,6 +32,7 @@ import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.service.IAuthorityService;
@@ -87,6 +86,9 @@ public class SchemaServiceTest {
     
     @Value("${shared.tenant.name:common}")
 	private String sharedTenant;
+    
+    @Mock
+    IMessageBus messageBus;
     
     private Date currDate = new Date();
 
@@ -170,8 +172,10 @@ public class SchemaServiceTest {
         Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaInfoStore.createSchemaInfo(schReqPubInt)).thenReturn(schInfo);
+        
         assertEquals(SchemaStatus.PUBLISHED,
                 schemaService.createSchema(schReqPubInt).getStatus());
+        verify(messageBus, times(1)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -201,6 +205,7 @@ public class SchemaServiceTest {
         Mockito.when(schemaInfoStore.createSchemaInfo(schReq))
                 .thenReturn(schInfo);
         assertEquals(schInfo, schemaService.createSchema(schReq));
+        verify(messageBus, times(1)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -229,6 +234,7 @@ public class SchemaServiceTest {
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString()))
                 .thenThrow(ApplicationException.class);
         schemaService.createSchema(schReq);
+        verify(messageBus, times(0)).publishMessage(anyString(), anyString());
     }
 
     @Test
@@ -257,8 +263,8 @@ public class SchemaServiceTest {
         Mockito.when(schemaResolver.resolveSchema(Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaStore.createSchema(Mockito.anyString(), Mockito.anyString())).thenReturn("{}");
         Mockito.when(schemaInfoStore.createSchemaInfo(schReqPub)).thenReturn(schInfoPub);
-        
         assertEquals(SchemaStatus.PUBLISHED, schemaService.createSchema(schReqPub).getStatus());
+        verify(messageBus, times(1)).publishMessage( anyString(), anyString());
 
     }
 
@@ -280,6 +286,7 @@ public class SchemaServiceTest {
                 .thenReturn(true);
         Mockito.when(schemaInfoStore.isUnique(schemaId, tenantId)).thenReturn(false);
         schemaService.createSchema(getMockSchemaObject_published());
+        verify(messageBus, times(0)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -297,6 +304,7 @@ public class SchemaServiceTest {
         Mockito.when(schemaInfoStore.getLatestMinorVerSchema(getMockSchemaInfo_Published_InternalScope()))
                 .thenReturn(latestSchema);
         schemaService.createSchema(schReqBreakingChange);
+        verify(messageBus, times(0)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -331,8 +339,7 @@ public class SchemaServiceTest {
         Mockito.when(schemaInfoStore.createSchemaInfo(mockSchReqPubInt))
                 .thenReturn(mockSchInfoPubInt);
         assertEquals(mockSchInfoPubInt, schemaService.createSchema(mockSchReqPubInt));
-
-        schemaService.createSchema(schReqBreakingChange);
+        verify(messageBus, times(1)).publishMessage(anyString(), anyString());
     }
 
     @Test
@@ -354,6 +361,7 @@ public class SchemaServiceTest {
         Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
                 schReqPub.getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(false);
         schemaService.createSchema(schReqPub);
+        verify(messageBus, times(0)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -374,6 +382,7 @@ public class SchemaServiceTest {
         Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
                 schReqPub.getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(true);
         schemaService.createSchema(schReqPub);
+        verify(messageBus, times(0)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -393,8 +402,8 @@ public class SchemaServiceTest {
                 schReqPub.getSchemaInfo().getSchemaIdentity().getSource())).thenReturn(false);
         Mockito.when(entityTypeService.checkAndRegisterEntityTypeIfNotPresent(
                 schReqPub.getSchemaInfo().getSchemaIdentity().getEntityType())).thenReturn(true);
-
         schemaService.createSchema(schReqPub);
+        verify(messageBus, times(0)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -408,6 +417,7 @@ public class SchemaServiceTest {
         when(schemaInfoStore.isUnique(schemaId, "common")).thenReturn(false);
         when(schemaInfoStore.isUnique(schemaId, "tenant")).thenReturn(false);
         schemaService.createSchema(getMockSchemaObject_published());
+        verify(messageBus, times(0)).publishMessage( anyString(), anyString());
     }
 
     @Test
@@ -429,6 +439,7 @@ public class SchemaServiceTest {
             fail("Should not succeed");
 
         } catch (BadRequestException e) {
+        	verify(messageBus, times(0)).publishMessage( anyString(), anyString());
             assertEquals(SchemaConstants.SCHEMA_UPDATE_EXCEPTION, e.getMessage());
         } catch (Exception e) {
             fail("Should not get different exception");
@@ -453,6 +464,7 @@ public class SchemaServiceTest {
             fail("Should not succeed");
 
         } catch (BadRequestException e) {
+        	verify(messageBus, times(0)).publishMessage( anyString(), anyString());
             assertEquals(SchemaConstants.SCHEMA_PUT_CREATE_EXCEPTION, e.getMessage());
         } catch (Exception e) {
             fail("Should not get different exception");
@@ -477,6 +489,7 @@ public class SchemaServiceTest {
             fail("Should not succeed");
 
         } catch (NoSchemaFoundException e) {
+        	verify(messageBus, times(0)).publishMessage( anyString(), anyString());
             assertEquals(SchemaConstants.INVALID_SCHEMA_UPDATE, e.getMessage());
         } catch (Exception e) {
             fail("Should not get different exception");
@@ -503,6 +516,7 @@ public class SchemaServiceTest {
             fail("Should not succeed");
 
         } catch (BadRequestException e) {
+        	verify(messageBus, times(0)).publishMessage( anyString(), anyString());
             assertEquals(SchemaConstants.SCHEMA_PUT_CREATE_EXCEPTION, e.getMessage());
         } catch (Exception e) {
             fail("Should not get different exception");
@@ -518,6 +532,7 @@ public class SchemaServiceTest {
         Mockito.when(schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Development()))
                 .thenReturn(getMockSchemaInfo_development_status());
         assertNotNull(schemaService.updateSchema(getMockSchemaObject_Development()));
+        verify(messageBus, times(1)).publishMessage( anyString(), anyString());
     }
 
     @Test

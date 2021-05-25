@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -29,6 +28,7 @@ import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaInfoResponse;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.model.SchemaUpsertResponse;
+import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.service.IAuthorityService;
@@ -45,6 +45,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Schema Service to register, get and update schema.
@@ -74,6 +75,8 @@ public class SchemaService implements ISchemaService {
 	private String sharedTenant;
 
     final JaxRsDpsLog log;
+    
+    private final IMessageBus messageBus;
 
     @Autowired
 	public void setSchemaResolver(SchemaResolver schemaResolver) {
@@ -148,8 +151,8 @@ public class SchemaService implements ISchemaService {
                 try {
                     SchemaInfo schemaInfo = schemaInfoStore.createSchemaInfo(schemaRequest);
                     schemaStore.createSchema(schemaId, schema);
-                    auditLogger.schemaRegisteredSuccess(
-							Collections.singletonList(schemaRequest.toString()));
+                    auditLogger.schemaRegisteredSuccess(Collections.singletonList(schemaRequest.toString()));
+                    messageBus.publishMessage(schemaId, SchemaConstants.SCHEMA_CREATE_EVENT_TYPE);
                     return schemaInfo;
                 } catch (ApplicationException ex) {
                 	auditLogger.schemaRegisteredFailure(
@@ -207,6 +210,7 @@ public class SchemaService implements ISchemaService {
             SchemaInfo schInfo = schemaInfoStore.updateSchemaInfo(schemaRequest);
             auditLogger.schemaUpdatedSuccess(Collections.singletonList(schemaRequest.toString()));
             schemaStore.createSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
+            messageBus.publishMessage(createdSchemaId, SchemaConstants.SCHEMA_UPDATE_EVENT_TYPE);
             log.info(SchemaConstants.SCHEMA_UPDATED);
             return schInfo;
         } else {
