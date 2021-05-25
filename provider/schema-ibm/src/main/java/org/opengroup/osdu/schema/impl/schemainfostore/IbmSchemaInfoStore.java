@@ -272,6 +272,9 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	}
 
 	@Override
+	/**
+	 * Modefied the method on May 24th 2021, for having a configurable Max limit on a open select (select with no query params)
+	 */
 	public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
 		try {
 			tenant.getName();
@@ -284,7 +287,7 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 			numRecords = Long.valueOf(queryParams.getLimit());
 		}
 		
-		String selectorWithoutFilter = "{ \"selector\": {} }";
+		String selectorWithoutFilter = "{ \"selector\": {} , \"limit\": "+numRecords+" }";
 		String finalQuery = null;
 		Selector selector = getSelector(queryParams);
 		
