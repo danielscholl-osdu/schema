@@ -17,12 +17,16 @@
 
 package org.opengroup.osdu.schema.impl.schemainfostore;
 
+import com.google.cloud.Timestamp;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.DatastoreException;
+import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.Key;
 import java.text.MessageFormat;
-
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
-import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -31,12 +35,6 @@ import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IAuthorityStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.google.cloud.Timestamp;
-import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.DatastoreException;
-import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.Key;
 
 /**
  * Repository class to to register authority in Google store.
@@ -53,7 +51,7 @@ public class GoogleAuthorityStore implements IAuthorityStore {
     private DatastoreFactory dataStoreFactory;
 
     @Autowired
-    private TenantFactory tenantFactory;
+    private ITenantFactory tenantFactory;
 
     @Autowired
     JaxRsDpsLog log;

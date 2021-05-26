@@ -37,6 +37,9 @@ In order to run the service locally or remotely, you will need to have the follo
 | `SERVER_SERVLET_CONTEXPATH` | `/api/schema-service/v1` | Servlet context path | no | - |
 | `AUTHORIZE_API` | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint | no | output of infrastructure deployment |
 | `ACCOUNT_ID_COMMON_PROJECT` | ex `common` | Shared account id | no | - |
+| `SERVICE_PARTITION_ENABLED` | `true` OR `false` | Allow to configure TenantInfo provision by Partition service | no | - |
+| `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
+| `PARTITION_API` | ex `http://localhost:8081/api/partition/v1` | Partition service endpoint | no | - |
 | `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
 | `GCLOUD_PROJECT` | `******` | Cloud project id, you only need this if running locally | no | https://console.cloud.google.com |
 
