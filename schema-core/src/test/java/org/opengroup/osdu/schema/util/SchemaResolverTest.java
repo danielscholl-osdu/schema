@@ -118,4 +118,27 @@ public class SchemaResolverTest {
         fail("Should not succeed");
 
     }
+
+    @Test
+    public void testResolveSchema_noDefinitionForRef()
+            throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
+        String originalSchema = new FileUtils().read("/test_schema/originalSchemaWithRefButNoDefinition.json");
+        String referenceSchema = new FileUtils().read("/test_schema/referenceSchema.json");
+        Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenReturn(referenceSchema);
+        expectedException.expect(BadRequestException.class);
+        expectedException.expectMessage(
+                "Invalid input, no 'person' definition found but provided as a reference");
+        schemaResolver.resolveSchema(originalSchema);
+        fail("Should not succeed");
+    }
+
+    @Test
+    public void testResolveSchema_withDefinitionForRef()
+            throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
+        String resolvedSchema = new FileUtils().read("/test_schema/resolvedSchemaWithDefinition.json");
+        String originalSchema = new FileUtils().read("/test_schema/originalSchemaRefWithDefinition.json");
+        String referenceSchema = new FileUtils().read("/test_schema/referenceSchema.json");
+        Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenReturn(referenceSchema);
+        JSONAssert.assertEquals(resolvedSchema, schemaResolver.resolveSchema(originalSchema), JSONCompareMode.NON_EXTENSIBLE);
+    }
 }
