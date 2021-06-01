@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -83,6 +84,18 @@ public class SchemaResolverTest {
         expectedException.expect(BadRequestException.class);
         expectedException.expectMessage("Invalid Request, https://ggl.json not resolvable");
         schemaResolver.resolveSchema(orginalSchema);
+    }
+    
+    @Test
+    public void testResolveSchema_RefResolutionUnderDefinitions()
+            throws JSONException, BadRequestException, ApplicationException, NotFoundException, IOException {
+        String orginalSchema = new FileUtils().read("/test_schema/originalSchemaWithRefInsideDefinationBlock.json");
+        String referenceSchema = new FileUtils().read("/test_schema/referenceSchemaWithDefinitionBlock.json");
+        String expectedOutPut = new FileUtils().read("/test_schema/resolvedSchemaWithRefInsideDefinationBlock.json");
+        Mockito.when(schemaService.getSchema("os:wks:anyCrsFeatureCollection.1.0")).thenReturn(referenceSchema);
+        String resolvedSchema = schemaResolver.resolveSchema(orginalSchema);
+        System.out.println(resolvedSchema);
+        JSONAssert.assertEquals(new JSONObject(expectedOutPut), new JSONObject(resolvedSchema), JSONCompareMode.STRICT);
     }
 
     @Test
