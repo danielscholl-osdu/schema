@@ -102,7 +102,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		SchemaInfoDoc schemaInfoDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitioningKey, SchemaInfoDoc.class)
                 .orElseThrow(() -> new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT));
 		
-		return getSchemaInfoObject(schemaInfoDoc.getFlattenedSchemaInfo());
+		return getSchemaInfoObject(schemaInfoDoc.getFlattenedSchemaInfo(), headers.getPartitionId());
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		}
 
 		log.info(SchemaConstants.SCHEMA_INFO_CREATED);
-		return getSchemaInfoObject(flattenedSchemaInfo);
+		return getSchemaInfoObject(flattenedSchemaInfo, headers.getPartitionId());
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		}
 
 		log.info(SchemaConstants.SCHEMA_INFO_UPDATED);
-		return getSchemaInfoObject(flattenedSchemaInfo);
+		return getSchemaInfoObject(flattenedSchemaInfo, headers.getPartitionId());
 	}
 
 	/**
@@ -268,13 +268,13 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 				.build();
 	}
 
-	private SchemaInfo getSchemaInfoObject(FlattenedSchemaInfo flattenedSchemaInfo) {
+	private SchemaInfo getSchemaInfoObject(FlattenedSchemaInfo flattenedSchemaInfo, String dataPartitionId) {
 		SchemaIdentity superSededBy = null;
 		if (!flattenedSchemaInfo.getSupersededBy().isEmpty()) {
-			String id = headers.getPartitionId() + ":" + flattenedSchemaInfo.getSupersededBy();
+			String id = dataPartitionId + ":" + flattenedSchemaInfo.getSupersededBy();
 			SchemaIdentity schemaIdentity = schemaKindToSchemaIdentity(flattenedSchemaInfo.getSupersededBy());
 			String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
-			SchemaInfoDoc doc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).get();
+			SchemaInfoDoc doc = cosmosStore.findItem(dataPartitionId, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).get();
 			superSededBy = getSchemaIdentity(doc.getFlattenedSchemaInfo());
 		}
 
@@ -357,7 +357,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		List<SchemaInfo> schemaList = new LinkedList<>();
 		for (SchemaInfoDoc info: schemaInfoList)
 		{
-			schemaList.add(getSchemaInfoObject(info.getFlattenedSchemaInfo()));
+			schemaList.add(getSchemaInfoObject(info.getFlattenedSchemaInfo(), tenantId));
 		}
 
 		if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
