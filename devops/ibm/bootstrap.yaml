@@ -1,0 +1,19 @@
+ibm_bootstrap:
+  stage: bootstrap
+  image: python:3.8
+  needs: ["ibm-deploy"]
+  extends:
+    - .ibm_variables
+  script:
+    - pip install -r $IBM_DEPLOYMENTS_SUBDIR/requirements.txt
+    - chmod +x $IBM_DEPLOYMENTS_SUBDIR/bootstrap.sh
+    - $IBM_DEPLOYMENTS_SUBDIR/bootstrap.sh
+  only:
+    variables:
+      - $IBM == 'true'
+
+ibm-test:
+  needs: ["ibm_bootstrap"]
+  only:
+    variables:
+      - $IBM == 'true'

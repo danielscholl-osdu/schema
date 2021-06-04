@@ -11,6 +11,8 @@ variables:
   IBM_BUILD_SUBDIR: provider/schema-ibm
   IBM_INT_TEST_SUBDIR: testing/schema-test-core
   IBM_TEST_CMD: verify
+  IBM_DEPLOYMENTS_SUBDIR: deployments/scripts/ibm
+  IBM_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
 
   AZURE_SERVICE: schema
   AZURE_BUILD_SUBDIR: provider/schema-azure
@@ -65,6 +67,7 @@ include:
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/aws/bootstrap.yaml"
+  - local: "/devops/ibm/bootstrap.yaml"
 
 osdu-gcp-test:
   image: maven:3.6.3-jdk-8
