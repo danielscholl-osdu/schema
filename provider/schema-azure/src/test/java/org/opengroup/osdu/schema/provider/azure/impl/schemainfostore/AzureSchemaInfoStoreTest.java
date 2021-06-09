@@ -466,6 +466,17 @@ public class AzureSchemaInfoStoreTest {
         assertEquals(1,
                 schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), dataPartitionId).size());
     }
+    
+    @Test
+    public void testGetSchemaInfoList_Withoutqueryparam_FailedWhenSearchedIntoSharedPartition()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        List<SchemaInfoDoc> schemaInfoDocsList = new LinkedList<>();
+        schemaInfoDocsList.add(getMockSchemaInfoDoc());
+        doReturn(new ArrayList<>()).when(cosmosStore).queryItems(eq("common"), any(), any(), any(), any(), any());
+
+        assertEquals(0,
+                schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), dataPartitionId).size());
+    }
 
     @Test
     public void testGetSchemaInfoList_withqueryparam()
