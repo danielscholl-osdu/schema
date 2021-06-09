@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -471,11 +472,12 @@ public class AzureSchemaInfoStoreTest {
     public void testGetSchemaInfoList_Withoutqueryparam_FailedWhenSearchedIntoSharedPartition()
             throws NotFoundException, ApplicationException, BadRequestException {
         List<SchemaInfoDoc> schemaInfoDocsList = new LinkedList<>();
-        schemaInfoDocsList.add(getMockSchemaInfoDoc());
-        doReturn(new ArrayList<>()).when(cosmosStore).queryItems(eq("common"), any(), any(), any(), any(), any());
-
-        assertEquals(0,
-                schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), dataPartitionId).size());
+        schemaInfoDocsList.add(getMockSchemaInfoDocWithSupersededBy());
+        doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(eq(dataPartitionId), any(), any(), any(), any(), any());
+        doThrow(new NoSuchElementException()).when(cosmosStore).findItem(eq("common"), any(), any(), any(), any(), any());
+        doReturn(Optional.of(getMockSchemaInfoDoc())).when(cosmosStore).findItem(eq(dataPartitionId), any(), any(), any(), any(), any());
+        schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), dataPartitionId);
+        expectedException.none();
     }
 
     @Test
@@ -541,6 +543,12 @@ public class AzureSchemaInfoStoreTest {
         String id = headers.getPartitionId() + ":" + schemaId;
 
         return new SchemaInfoDoc(id, headers.getPartitionId(), getFlattenedSchemaInfo());
+    }
+    
+    private SchemaInfoDoc getMockSchemaInfoDocWithSupersededBy() {
+        String id = headers.getPartitionId() + ":" + schemaId;
+
+        return new SchemaInfoDoc(id, headers.getPartitionId(), getFlattenedSchemaInfo_SupersededBy());
     }
 
     private FlattenedSchemaInfo getFlattenedSchemaInfo() {
