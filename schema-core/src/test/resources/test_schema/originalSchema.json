@@ -11,9 +11,6 @@
         "title": "Original CRS Location",
         "$ref": "os:wks:anyCrsFeatureCollection.1.0"
       },
-       "allOf": {
-                "$ref": "#/definition/os:wks:well.1.0"
-      },
       "locationWGS84": {
         "description": "The well's location as GeoJSON FeatureCollection.",
         "title": "WGS84 Location",

@@ -11,6 +11,8 @@ variables:
   IBM_BUILD_SUBDIR: provider/schema-ibm
   IBM_INT_TEST_SUBDIR: testing/schema-test-core
   IBM_TEST_CMD: verify
+  IBM_DEPLOYMENTS_SUBDIR: deployments/scripts/ibm
+  IBM_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
 
   AZURE_SERVICE: schema
   AZURE_BUILD_SUBDIR: provider/schema-azure
@@ -35,7 +37,7 @@ variables:
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_APPLICATION_NAME: os-schema
   OSDU_GCP_TESTS_SUBDIR: testing/schema-test-core
-  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_URL,AUTHORIZE_API_KEY=$OSDU_GCP_AUTHORIZE_API_KEY,LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=DEBUG,SHARED_TENANT_NAME=$TENANT --vpc-connector=$OSDU_GCP_VPC_CONNECTOR
+  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_URL,AUTHORIZE_API_KEY=$OSDU_GCP_AUTHORIZE_API_KEY,LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=DEBUG,SHARED_TENANT_NAME=$TENANT,PARTITION_API=$OSDU_GCP_PARTITION_API,GOOGLE_AUDIENCES=$GOOGLE_AUDIENCE --vpc-connector=$OSDU_GCP_VPC_CONNECTOR
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -65,6 +67,7 @@ include:
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/aws/bootstrap.yaml"
+  - local: "/devops/ibm/bootstrap.yaml"
 
 osdu-gcp-test:
   image: maven:3.6.3-jdk-8

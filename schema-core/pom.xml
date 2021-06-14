@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
-		<version>0.9.0-SNAPSHOT</version>
+		<version>0.10.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -13,7 +13,7 @@
 
 	<properties>
 		<springfox-version>2.7.0</springfox-version>
-		<os-core-common.version>0.3.28</os-core-common.version>
+		<os-core-common.version>0.9.0</os-core-common.version>
 	</properties>
 
 	<dependencies>

@@ -249,6 +249,7 @@ The following software have components provided under the terms of this license:
 - AWS Java SDK for Amazon Rekognition (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon Route 53 Auto Naming (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon Route 53 Resolver (from https://aws.amazon.com/sdkforjava)
+- AWS Java SDK for Amazon Route53 (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon S3 (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon S3 on Outposts (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for Amazon SES (from https://aws.amazon.com/sdkforjava)
@@ -352,6 +353,7 @@ The following software have components provided under the terms of this license:
 - Guava ListenableFuture only (from )
 - Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
+- Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - HPPC Collections (from http://labs.carrotsearch.com)
 - Hibernate Validator Engine (from )
 - Hibernate Validator Engine (from )
@@ -433,8 +435,8 @@ The following software have components provided under the terms of this license:
 - Microsoft Azure Java Core Library (from https://github.com/Azure/azure-sdk-for-java)
 - Microsoft Azure Netty HTTP Client Library (from https://github.com/Azure/azure-sdk-for-java)
 - Microsoft Azure SDK for SQL API of Azure Cosmos DB Service (from https://github.com/Azure/azure-sdk-for-java)
-- Mockito (from http://www.mockito.org)
 - Mockito (from http://mockito.org)
+- Mockito (from http://www.mockito.org)
 - Netty Reactive Streams HTTP support (from )
 - Netty Reactive Streams Implementation (from )
 - Netty/Buffer (from http://netty.io/)
@@ -534,6 +536,7 @@ The following software have components provided under the terms of this license:
 - datastore-v1-proto-client (from )
 - elasticsearch-core (from https://github.com/elastic/elasticsearch)
 - elasticsearch-geo (from https://github.com/elastic/elasticsearch)
+- error-prone annotations (from )
 - error-prone annotations (from )
 - google-auth (from https://github.com/GoogleCloudPlatform/google-auth-library-python)
 - io.grpc:grpc-alts (from https://github.com/grpc/grpc-java)
@@ -839,6 +842,7 @@ The following software have components provided under the terms of this license:
 - Azure Spring Boot AutoConfigure (from https://github.com/Microsoft/azure-spring-boot)
 - Checker Qual (from https://checkerframework.org)
 - Checker Qual (from https://checkerframework.org)
+- Checker Qual (from https://checkerframework.org)
 - Cucumber Expressions (from https://github.com/cucumber/cucumber-expressions-java)
 - Cucumber Tag Expressions (from https://github.com/cucumber/tag-expressions-java)
 - Cucumber-JVM: Core (from )
@@ -874,8 +878,8 @@ The following software have components provided under the terms of this license:
 - Microsoft Azure client library for KeyVault Secrets (from https://github.com/Azure/azure-sdk-for-java)
 - Microsoft Azure common module for Storage (from https://github.com/Azure/azure-sdk-for-java)
 - Microsoft Azure internal Avro module for Storage (from https://github.com/Azure/azure-sdk-for-java)
-- Mockito (from http://www.mockito.org)
 - Mockito (from http://mockito.org)
+- Mockito (from http://www.mockito.org)
 - Netty/Codec/HTTP (from )
 - Netty/Codec/HTTP (from )
 - Netty/Common (from )
@@ -945,6 +949,7 @@ SPL-1.0
 The following software have components provided under the terms of this license:
 
 - Checker Qual (from https://checkerframework.org)
+- Checker Qual (from https://checkerframework.org)
 
 ========================================================================
 WTFPL
@@ -962,6 +967,7 @@ The following software have components provided under the terms of this license:
 - AWS Java SDK :: SDK Core (from https://aws.amazon.com/sdkforjava)
 - AWS SDK for Java - Models (from https://aws.amazon.com/sdkforjava)
 - Asynchronous Http Client (from )
+- Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
@@ -987,6 +993,7 @@ unknown
 The following software have components provided under the terms of this license:
 
 - Byte Buddy (without dependencies) (from )
+- Checker Qual (from https://checkerframework.org)
 - JSON in Java (from https://github.com/douglascrockford/JSON-java)
 - JUnit (from http://junit.org)
 - JUnit (from http://junit.org)

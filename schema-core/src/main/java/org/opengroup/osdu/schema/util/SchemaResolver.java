@@ -49,23 +49,29 @@ public class SchemaResolver {
         JSONObject originalSchema = new JSONObject(schema);
 
         Map<String, String> refSchemas = new HashMap<>();
-
+        findAndResolveRef(originalSchema, refSchemas);
         JSONObject definition = fetchObjectFromJSON(originalSchema, SchemaConstants.DEFINITIONS);
         Map<String, Object> definitionMap = new HashMap<>();
         if (definition != null) {
             definitionMap = definition.toMap();
         }
-        findAndResolveRef(originalSchema, refSchemas);
+
 
         for (Map.Entry<String, String> entry : refSchemas.entrySet()) {
 
-            JSONObject refSchema = new JSONObject(entry.getValue());
-            JSONObject refSchemaDef = fetchObjectFromJSON(refSchema, SchemaConstants.DEFINITIONS);
-            if (refSchemaDef != null)
-                definitionMap.putAll(refSchemaDef.toMap());
-            refSchema.remove(SchemaConstants.DEFINITIONS);
-            definitionMap.put(entry.getKey(), refSchema);
-
+            if (entry.getValue() == null) {
+                if (!definitionMap.containsKey(entry.getKey())) {
+                    throw new BadRequestException(
+                            String.format("Invalid input, no '%s' definition found but provided as a reference", entry.getKey()));
+                }
+            } else {
+                JSONObject refSchema = new JSONObject(entry.getValue());
+                JSONObject refSchemaDef = fetchObjectFromJSON(refSchema, SchemaConstants.DEFINITIONS);
+                if (refSchemaDef != null)
+                    definitionMap.putAll(refSchemaDef.toMap());
+                refSchema.remove(SchemaConstants.DEFINITIONS);
+                definitionMap.put(entry.getKey(), refSchema);
+            }
         }
         if (!definitionMap.isEmpty()) {
             originalSchema.put(SchemaConstants.DEFINITIONS, definitionMap);
@@ -119,6 +125,7 @@ public class SchemaResolver {
             throws BadRequestException, ApplicationException {
         String value = String.valueOf(object);
         if (value.startsWith("#")) {
+            refSchemas.put(value.substring(value.lastIndexOf('/') + 1), null);
             return value;
         } else if (value.startsWith("https")) {
             String refSchema = getSchemaFromExternal(value);

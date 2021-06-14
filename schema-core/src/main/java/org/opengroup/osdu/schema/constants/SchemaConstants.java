@@ -75,6 +75,8 @@ public class SchemaConstants {
     public static final String ENTITY_TYPE_EXISTS_EXCEPTION = "EntityType already registered with Id: {0}";
     public static final String EMPTY_ID = "The id provided is empty";
     public static final String SCHEMA_CREATION_FAILED = "Schema creation failed";
+    public static final String SCHEMA_NOTIFICATION_FAILED = "Failed to publish the schema notification.";
+    public static final String SCHEMA_NOTIFICATION_IS_DISABLED = "Schema event notification is turned off.";
     public static final String SCHEMA_UPDATE_FAILED = "Schema updation failed";
     public static final String SCHEMA_UPDATE_EXCEPTION = "Only schema in developement stage can be updated";
     public static final String SCHEMA_PUT_CREATE_EXCEPTION = "Only schema in developement stage can be created through put";
@@ -107,4 +109,10 @@ public class SchemaConstants {
     public static final String CORRELATION_ID = "correlation-id";
 
     public static final String APPLICATION_NAME = "Schema Service";
+    
+  //pub-sub message
+    public final static String EVENT_SUBJECT = "schemachanged";
+    public final static String SCHEMA_CREATE_EVENT_TYPE = "create";
+    public final static String SCHEMA_UPDATE_EVENT_TYPE = "update";
+    public final static String KIND = "kind";
 }
