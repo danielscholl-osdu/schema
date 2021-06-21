@@ -17,6 +17,21 @@
 
 package org.opengroup.osdu.schema.impl.schemainfostore;
 
+import com.google.cloud.Timestamp;
+import com.google.cloud.datastore.Blob;
+import com.google.cloud.datastore.BlobValue;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.DatastoreException;
+import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.EntityQuery;
+import com.google.cloud.datastore.Key;
+import com.google.cloud.datastore.KeyFactory;
+import com.google.cloud.datastore.Query;
+import com.google.cloud.datastore.QueryResults;
+import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
+import com.google.cloud.datastore.StructuredQuery.Filter;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
+import com.google.gson.Gson;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,8 +40,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
+import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
@@ -45,22 +61,6 @@ import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfo
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-
-import com.google.cloud.Timestamp;
-import com.google.cloud.datastore.Blob;
-import com.google.cloud.datastore.BlobValue;
-import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.DatastoreException;
-import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.EntityQuery;
-import com.google.cloud.datastore.Key;
-import com.google.cloud.datastore.KeyFactory;
-import com.google.cloud.datastore.Query;
-import com.google.cloud.datastore.QueryResults;
-import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
-import com.google.cloud.datastore.StructuredQuery.Filter;
-import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
-import com.google.gson.Gson;
 
 /**
  * Repository class to to register Schema in Google store.
@@ -340,9 +340,15 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
 
             Query<Key> query = Query.newKeyQueryBuilder().setNamespace(SchemaConstants.NAMESPACE)
                     .setKind(SchemaConstants.SCHEMA_KIND).setFilter(PropertyFilter.eq("__key__", schemaKey)).build();
-            QueryResults<Key> keys = datastore.run(query);
-            if (keys.hasNext())
-                return false;
+            try {
+                QueryResults<Key> keys = datastore.run(query);
+                if (keys.hasNext()) {
+                    return false;
+                }
+            } catch (DatastoreException e) {
+                throw new AppException(HttpStatus.SC_BAD_REQUEST, "Schema uniqueness check failed",
+                    String.format("Misconfigured tenant-info for %s, not possible to check schema uniqueness", tenant));
+            }
         }
         return true;
     }
