@@ -21,6 +21,7 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.definitions.SourceDoc;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -28,6 +29,7 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Source;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISourceStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -53,6 +55,9 @@ public class AzureSourceStore implements ISourceStore {
     @Autowired
     JaxRsDpsLog log;
 
+    @Autowired
+    SystemResourceConfig systemResourceConfig;
+
     /**
      * Method to create Source in azure store
      * @param sourceId
@@ -64,8 +69,15 @@ public class AzureSourceStore implements ISourceStore {
     public Source get(String sourceId) throws NotFoundException, ApplicationException {
 
         String id = headers.getPartitionId().toString() + ":" + sourceId;
-        SourceDoc sourceDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceId, SourceDoc.class)
-                .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        SourceDoc sourceDoc;
+
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            sourceDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), sourceContainer, id, sourceId, SourceDoc.class)
+                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        } else {
+            sourceDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceId, SourceDoc.class)
+                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        }
 
         return sourceDoc.getSource();
     }
@@ -83,7 +95,11 @@ public class AzureSourceStore implements ISourceStore {
 
         try {
             SourceDoc sourceDoc = new SourceDoc(id, source);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceDoc);
+            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+                cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), sourceContainer, id, sourceDoc);
+            } else {
+                cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceDoc);
+            }
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.SOURCE_EXISTS);

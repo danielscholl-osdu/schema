@@ -26,12 +26,15 @@ import org.opengroup.osdu.core.common.model.http.AppError;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.definitions.SourceDoc;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureSourceStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Source;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -60,14 +63,22 @@ public class AzureSourceStoreTest {
     @Mock
     JaxRsDpsLog log;
 
+    @Mock
+    SystemResourceConfig systemResourceConfig;
+
     private static final String dataPartitionId = "testPartitionId";
     private static final String sourceId = "testSourceId";
+    private static final String partitionKey = "testSourceId";
+    private static final String sharedTenantId = "common";
+    private static final String systemCosmosDBName = "osdu-system-db";
 
     @Before
     public void init() {
         initMocks(this);
         Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
         Mockito.when(mockSource.getSourceId()).thenReturn(sourceId);
+        Mockito.when(systemResourceConfig.getSharedTenant()).thenReturn(sharedTenantId);
+        Mockito.when(systemResourceConfig.getCosmosDatabase()).thenReturn(systemCosmosDBName);
     }
 
     @Test
@@ -82,6 +93,23 @@ public class AzureSourceStoreTest {
                         any(),
                         eq(dataPartitionId + ":" + sourceId),
                         eq(sourceId),
+                        any());
+        assertNotNull(store.get(sourceId));
+        assertEquals(sourceId, store.get(sourceId).getSourceId());
+    }
+
+    @Test
+    public void testGetSource_PublicSchemas() throws NotFoundException, ApplicationException, IOException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        SourceDoc sourceDoc = getSourceDoc(dataPartitionId, sourceId);
+        Optional<SourceDoc> cosmosItem = Optional.of(sourceDoc);
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(systemCosmosDBName),
+                        any(),
+                        eq(sharedTenantId + ":" + sourceId),
+                        eq(partitionKey),
                         any());
         assertNotNull(store.get(sourceId));
         assertEquals(sourceId, store.get(sourceId).getSourceId());
@@ -112,9 +140,40 @@ public class AzureSourceStoreTest {
     }
 
     @Test
+    public void testGetSource_NotFoundException_PublicSchemas() throws IOException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        String sourceId = "";
+        Optional<SourceDoc> cosmosItem = Optional.empty();
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(systemCosmosDBName),
+                        any(),
+                        eq(sharedTenantId + ":" + ""),
+                        eq(sourceId),
+                        any());
+        try {
+            store.get(sourceId);
+            fail("Should not succeed");
+        } catch (NotFoundException e) {
+            assertEquals("bad input parameter", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
     public void testCreateSource() throws  ApplicationException, BadRequestException {
         doNothing().when(cosmosStore).createItem(anyString(), any(), any(),any(), any());
         doNothing().when(cosmosStore).createItem(anyString(), any(), any(), any(), any());
+        assertNotNull(store.create(mockSource));
+    }
+
+    @Test
+    public void testCreateSource_PublicSchemas() throws  ApplicationException, BadRequestException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        doNothing().when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testSourceId"), any());
         assertNotNull(store.create(mockSource));
     }
 
@@ -135,10 +194,44 @@ public class AzureSourceStoreTest {
     }
 
     @Test
+    public void testCreateSource_BadRequestException_PublicSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        AppException exception = getMockAppException(409);
+        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testSourceId"), any());
+        try {
+            store.create(mockSource);
+            fail("Should not succeed");
+        } catch (BadRequestException e) {
+            assertEquals("Source already registered with Id: testSourceId", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
     public void testCreateSource_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException, CosmosException {
         AppException exception = getMockAppException(500);
         doThrow(exception).when(cosmosStore).createItem(eq(dataPartitionId), any(), any(), any(), any());
+
+        try {
+            store.create(mockSource);
+            fail("Should not succeed");
+        } catch (ApplicationException e) {
+            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
+    public void testCreateSource_ApplicationException_PublicSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException, CosmosException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        AppException exception = getMockAppException(500);
+        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testSourceId"), any());
 
         try {
             store.create(mockSource);
