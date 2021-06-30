@@ -18,11 +18,13 @@ import org.opengroup.osdu.azure.blobstorage.BlobStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.di.CosmosContainerConfig;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -45,6 +47,9 @@ public class AzureSchemaStore implements ISchemaStore {
     @Autowired
     JaxRsDpsLog log;
 
+    @Autowired
+    SystemResourceConfig systemResourceConfig;
+
     /**
      * Method to get schema from azure Storage given Tenant ProjectInfo
      *
@@ -59,7 +64,12 @@ public class AzureSchemaStore implements ISchemaStore {
     public String getSchema(String dataPartitionId, String filePath) throws ApplicationException, NotFoundException {
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
         try {
-            String content = blobStore.readFromStorageContainer(dataPartitionId, filePath, config.containerName());
+            String content = null;
+            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+                content = blobStore.readFromStorageContainer(filePath, systemResourceConfig.getStorageContainerName());
+            } else {
+                content = blobStore.readFromStorageContainer(dataPartitionId, filePath, config.containerName());
+            }
             if (content != null)
                 return content;
             else
@@ -84,7 +94,11 @@ public class AzureSchemaStore implements ISchemaStore {
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
 
         try {
-            blobStore.writeToStorageContainer(dataPartitionId, filePath, content, config.containerName());
+            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+                blobStore.writeToStorageContainer(filePath, content, systemResourceConfig.getStorageContainerName());
+            } else {
+                blobStore.writeToStorageContainer(dataPartitionId, filePath, content, config.containerName());
+            }
             log.info(SchemaConstants.SCHEMA_CREATED);
             return filePath;
         } catch (Exception ex) {
@@ -105,7 +119,11 @@ public class AzureSchemaStore implements ISchemaStore {
 
         try
         {
-            return blobStore.deleteFromStorageContainer(dataPartitionId, filePath, config.containerName());
+            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+                return blobStore.deleteFromStorageContainer(filePath, systemResourceConfig.getStorageContainerName());
+            } else {
+                return blobStore.deleteFromStorageContainer(dataPartitionId, filePath, config.containerName());
+            }
         }
         catch (Exception e)
         {

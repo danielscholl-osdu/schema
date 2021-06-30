@@ -20,6 +20,7 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.definitions.EntityTypeDoc;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -27,6 +28,7 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.EntityType;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IEntityTypeStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import lombok.extern.java.Log;
@@ -55,6 +57,9 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
     @Autowired
     JaxRsDpsLog log;
 
+    @Autowired
+    SystemResourceConfig systemResourceConfig;
+
     /**
      * Method to get entity type from azure store
      * @param entityTypeId
@@ -66,9 +71,15 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
     public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
 
         String id = headers.getPartitionId() + ":" + entityTypeId;
+        EntityTypeDoc entityTypeDoc;
 
-        EntityTypeDoc entityTypeDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeId, EntityTypeDoc.class)
-                .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            entityTypeDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), entityTypeContainer, id, entityTypeId, EntityTypeDoc.class)
+                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        } else {
+            entityTypeDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeId, EntityTypeDoc.class)
+                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        }
 
         return entityTypeDoc.getEntityType();
     }
@@ -86,7 +97,11 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
 
         try {
             EntityTypeDoc entityTypeDoc = new EntityTypeDoc(id, entityType);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeDoc);
+            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+                cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), entityTypeContainer, id, entityTypeDoc);
+            } else {
+                cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeDoc);
+            }
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
