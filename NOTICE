@@ -714,6 +714,7 @@ CDDL-1.1
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- JavaBeans Activation Framework (from )
 - JavaBeans(TM) Activation Framework (from http://java.sun.com/javase/technologies/desktop/javabeans/jaf/index.jsp)
 - tomcat-embed-core (from http://tomcat.apache.org/)
 
@@ -787,6 +788,7 @@ GPL-2.0-only
 The following software have components provided under the terms of this license:
 
 - Expression Language 3.0 (from https://projects.eclipse.org/projects/ee4j.el)
+- JavaBeans Activation Framework (from )
 - JavaMail API (from )
 - jakarta.annotation-api (from https://projects.eclipse.org/projects/ee4j.ca)
 - javax.annotation-api (from http://jcp.org/en/jsr/detail?id=250)
@@ -800,6 +802,7 @@ The following software have components provided under the terms of this license:
 - Checker Qual (from https://checkerframework.org)
 - Expression Language 3.0 (from https://projects.eclipse.org/projects/ee4j.el)
 - Google Guice - Core Library (from )
+- JavaBeans Activation Framework (from )
 - JavaMail API (from )
 - jakarta.annotation-api (from https://projects.eclipse.org/projects/ee4j.ca)
 - tomcat-embed-core (from http://tomcat.apache.org/)
