@@ -17,6 +17,7 @@ variables:
   AZURE_SERVICE: schema
   AZURE_BUILD_SUBDIR: provider/schema-azure
   AZURE_TEST_SUBDIR: testing/schema-test-core
+  AZURE_ONLY_TEST_SUBDIR: testing/schema-test-azure
   AZURE_DEPLOYMENTS_SUBDIR: deployments/scripts/azure
   AZURE_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
   AZURE_CLIENT_ID: $AZURE_PRINCIPAL_ID
