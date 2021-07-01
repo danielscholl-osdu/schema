@@ -16,6 +16,10 @@ public class SchemaConstants {
 
     // authority
     public static final String AUTHORITY_KIND = "authority";
+    
+  //Delimeters
+    public static final String SCHEMA_KIND_DELIMITER = ":";
+    public static final String SCHEMA_Version_DELIMITER = ".";
 
     // schema
     public static final String SCHEMA_KIND = "schema";
@@ -31,6 +35,8 @@ public class SchemaConstants {
     public static final String SCHEMA = "schema";
     public static final String SCOPE = "scope";
     public static final String STATUS = "status";
+    public static final String XOSDU_TAG = "x-osdu";
+    public static final String TITLE_TAG = "title";
 
     // general
     public static final String ALREADY_EXISTS = "ALREADY_EXISTS";
@@ -103,6 +109,8 @@ public class SchemaConstants {
     public static final String SCHEMA_ID_EXISTS = "Schema Id is already present";
     public static final String INVALID_UPDATE_OPERATION = "Update/Create failed because schema id is present in another tenant";
     public static final String UNAUTHORIZED_EXCEPTION = "User is unauthorized to perform this action";
+    public static final String BREAKING_CHANGES_PATCH = "Patch version validation failed. Changes requiring a minor or major version increment were found; analysed version: {0} and {1}. Updating the schema version to a higher minor or major version is required.";
+    public static final String BREAKING_CHANGES_MINOR = "Minor version validation failed. Breaking changes were found; analysed versions {0} and {1}. Updating the schema version to a higher major version is required.";
 
     // OSDU
     public static final String DATA_PARTITION_ID = "data-partition-id";
@@ -110,9 +118,50 @@ public class SchemaConstants {
 
     public static final String APPLICATION_NAME = "Schema Service";
     
-  //pub-sub message
+    //pub-sub message
     public final static String EVENT_SUBJECT = "schemachanged";
     public final static String SCHEMA_CREATE_EVENT_TYPE = "create";
     public final static String SCHEMA_UPDATE_EVENT_TYPE = "update";
     public final static String KIND = "kind";
+    
+  //Schema Validation Constants
+    public static enum SkipTags
+    {
+        TITLE("title"), 
+        DESCRIPTION("description"),
+        EXAMPLES("examples"),
+        EXAMPLE("example"),
+        PATTERN("pattern"),
+        ID("$id"),
+        COMMENT("$comment");
+        private final String value;
+        private SkipTags(String value)
+        {
+            this.value = value;
+        }
+        public String getValue()
+        {
+            return this.value;
+        }
+    }
+    
+    //Schema Composition Tags
+    public static enum CompositionTags
+    {
+        ALL_OF("allOf"),
+        ONE_OF("oneOf"),
+        ANY_OF("anyOf");
+
+        private final String value;
+
+        private CompositionTags(String value)
+        {
+            this.value = value;
+        }
+
+        public String getValue()
+        {
+            return this.value;
+        }
+    }
 }

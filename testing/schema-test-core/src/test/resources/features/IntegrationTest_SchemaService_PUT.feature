@@ -30,7 +30,7 @@ Feature: To verify functionality of PUT schema Service
 
   @SchemaService
   Scenario Outline: Verify that Schema Service's PUT API throws error if update is requested for schema which is not in development status.
-    Given I hit schema service PUT API with <InputPayload>, data-partition-id as <tenant> and mark schema as <status>.
+    Given I hit schema service PUT API with <InputPayload>, data-partition-id as <tenant> and mark schema as <status>
     When I hit schema service PUT API with <InputPayload>, data-partition-id as <tenant>
     Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
 
@@ -196,8 +196,8 @@ Feature: To verify functionality of PUT schema Service
   Scenario Outline: Verify whether schema can not be registered with already existing major, but increased minor version
     Given I hit schema service PUT API with <InputPayload>, data-partition-id as <tenant>
     Given I hit schema service PUT API with <EmptyInputPayload>, data-partition-id as <tenant> with increased minor version only
-    Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
 
     Examples: 
-      | EmptyInputPayload                                    | InputPayload                                           | ReponseStatusCode | tenant    | ResponseMessage                                        |
-      | "/input_payloads/postSchemaService_EmptySchema.json" | "/input_payloads/inputPayloadWithExistingVersion.json" | "400"             | "TENANT1" | "/output_payloads/SchemaPost_BreakingChangeError.json" |
+      | EmptyInputPayload                                    | InputPayload                                           | ReponseStatusCode | tenant    | ResponseMessage                                             |
+      | "/input_payloads/postSchemaService_EmptySchema.json" | "/input_payloads/inputPayloadWithExistingVersion.json" | "400"             | "TENANT1" | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |

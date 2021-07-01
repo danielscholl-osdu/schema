@@ -304,7 +304,7 @@ public class SchemaServiceStepDef_GET implements En {
 					}
 				});
 
-		Then("Then service should respond back with status code {string} or {string}",
+		Then("service should respond back with status code {string} or {string}",
 				(String ResponseStatusCode, String AlternateStatusCode) -> {
 					HttpResponse response = this.context.getHttpResponse();
 					if (response != null) {

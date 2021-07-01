@@ -1,0 +1,43 @@
+{
+   "$schema":"http://json-schema.org/draft-07/schema#",
+   "$id":"https://schema.osdu.opengroup.org/json/dataset/schema-with-id-added.json",
+   "type":"object",
+   "title":"My schema - Changed",
+   "additionalProperties":true,
+   "definitions":{
+      
+   },
+   "properties":{
+      "AddressLine1":{
+         "type":"string",
+         "$comment":"This is a mandatory attribute",
+         "description":"This should be the apartment number and building name"
+      },
+      "AddressLine2":{
+         "type":"string"
+      },
+      "City":{
+         "type":"string"
+      }
+   },
+   "required":[
+      "AddressLine1",
+      "AddressLine2"
+   ],
+   "oneOf":[
+      {
+         "type":"object",
+         "properties":{
+            "County":{
+               "type":"string"
+            },
+            "PostCode":{
+               "type":"string"
+            }
+         },
+         "required":[
+            "PostCode"
+         ]
+      }
+   ]
+}
