@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Method to validate if field with SchemaConstraint annotation is in form of
  * Json Object
  */
-public class SchemaValidator implements ConstraintValidator<SchemaConstraint, Object> {
+public class SchemaRequestValidator implements ConstraintValidator<SchemaRequestConstraint, Object> {
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {

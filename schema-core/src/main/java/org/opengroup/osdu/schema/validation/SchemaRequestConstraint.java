@@ -12,10 +12,10 @@ import javax.validation.Payload;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 
 @Documented
-@Constraint(validatedBy = SchemaValidator.class)
+@Constraint(validatedBy = SchemaRequestValidator.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SchemaConstraint {
+public @interface SchemaRequestConstraint {
     String message() default SchemaConstants.INVALID_SCHEMA_INPUT;
 
     Class<?>[] groups() default {};

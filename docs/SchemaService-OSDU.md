@@ -4,6 +4,7 @@
 - [Concepts](#concepts)
 - [How to use this service?](#using_this_service)
 - [Current limitation](#limitation)
+- [Schema Validation](#schema-validation)
 
 
 ## Introduction <a name="introduction"></a>
@@ -244,5 +245,70 @@ The following parameters are required to create a schema:
 | schemaVersionPatch | Patch version of the schema                       | schemaVersionPatch : 0                   | String   | Yes               |
 | schema             | Schema definition                                 | JSON object. Please refer example above. | Object   | No                |
 
+
+## Schema Validation <a name="schema-validation"></a>
+
+Schema service does multiple checks on different levels to make sure the inserted schema fits into validations on major, minor and patch version levels.
+Following is the list of all validations that is performed while creating/updating any schema into the system.
+
+Schema version constitutes three parts, MAJOR, MINOR, and PATCH. Depending upon the nature of changes done to the structure of schema, the application may force the user to update the version number. At a high level, the upgrading versions would be required when:
+  * PATCH version when you make backwards compatible bug fixes or documentation/decoration changes
+  * MINOR version when you add functionality or contents in a backwards compatible manner, and
+  * MAJOR version when you make incompatible schema changes. e.g.Whenever an attribute is removed or `type` of an attribute is updated
+  
+##### Permitted Changes for PATCH Version Increments:
+
+Changes in the values of following attributes is permitted at patch version increment. They are non-mandatory attributes so addition or removal of any of these attributes is permitted.
+  * title
+  * description
+  * example/examples
+  * pattern
+  * $id
+  * $comment
+  * any JSON extension tag starting with x-osdu
+
+##### Permitted Changes for MINOR Version Increments: 
+
+In addition to all permitted changes in PATCH versions, the following actions are permitted:
+1. Adding properties to existing data and nested structures
+2. Adding object structures to below arrays:
+  * [allOf](https://json-schema.org/understanding-json-schema/reference/combining.html#allof) : To validate against allOf, the given data must be valid against all of the given subschemas
+  * [oneOf](https://json-schema.org/understanding-json-schema/reference/combining.html#oneof) : To validate against oneOf, the given data must be valid against exactly one of the given subschemas
+  * [anyOf](https://json-schema.org/understanding-json-schema/reference/combining.html#anyof) : To validate against anyOf, the given data must be valid against any (one or more) of the given subschemas
+3. Changing the indices of objects containing title inside oneof or allof arrays
+4. Changing indices of ref attributes keeping same text values
+5. Changing the order of required attribute
+
+Explicitly not permitted is changing
+1. The list of [required](https://json-schema.org/understanding-json-schema/reference/object.html#required-properties) properties
+2. The state of [additionalProperties](https://json-schema.org/understanding-json-schema/reference/object.html#additional-properties)
+  * If `additionalProperties` is not present in original schema then it cannot be added with value as false
+  * If `additionalProperties` is present with value equal to false then cannot be removed/altered
+  * Value of `additionalProperties` cannot be changed from true to false
+3. Changing type of any attribute
+
+It is permitted to declare existing properties as deprecated, preferable with instructions how to migrate from the previous to the next version. The documentation will automatically mark properties with strike-through if the description starts with "DEPRECATED: " .
+
+##### Permitted Changes for MAJOR Version Increments:
+	
+Any changes are permitted, specifically
+1. Removal of properties
+2. Removal of structures in allOf, oneOf, anyOf
+3. Changing the list of required properties
+4. Changing the state of additionalProperties
+5. Changing the indices of attributes without title in oneof and allof arrays
+6. Changing type of any attribute
+7. Breaking change introduced in external schema of `ref` attribute
+
+Following table gives you error message when breaking change is introduced at any level:
+
+##### Error codes along with message
+
+| Error Code | Condition      | Error Message |
+|------------|----------------|---------------|
+| 400        | When breaking change not allowed at patch versionlevel |Patch version validation failed. Changes requiring a minor or major version increment were found; analysed version: 2.2.15 and 2.2.14. Updating the schema version to a higher minor or major version is required.|
+| 400        | When breaking change not allowed at minor version level |  Minor version validation failed. Breaking changes were found; analysed versions 1013.2.0 and 1013.1.0. Updating the schema version to a higher major version is required.|
+
+Note: The above array message would contain given schema version and existing schema in the system
 
 

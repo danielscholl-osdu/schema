@@ -21,6 +21,7 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NoSchemaFoundException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.opengroup.osdu.schema.exceptions.SchemaVersionException;
 import org.opengroup.osdu.schema.logging.AuditLogger;
 import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
@@ -35,12 +36,16 @@ import org.opengroup.osdu.schema.service.IAuthorityService;
 import org.opengroup.osdu.schema.service.IEntityTypeService;
 import org.opengroup.osdu.schema.service.ISchemaService;
 import org.opengroup.osdu.schema.service.ISourceService;
+import org.opengroup.osdu.schema.util.SchemaComparatorByVersion;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
+import org.opengroup.osdu.schema.validation.SchemaVersionValidatorFactory;
+import org.opengroup.osdu.schema.validation.SchemaVersionValidatorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -68,8 +73,10 @@ public class SchemaService implements ISchemaService {
     private final IEntityTypeService entityTypeService;
 
     private final SchemaUtil schemaUtil;
-
+    
     private SchemaResolver schemaResolver;
+    
+    private final SchemaVersionValidatorFactory versionValidatorFactory;
     
     @Value("${shared.tenant.name:common}")
 	private String sharedTenant;
@@ -131,13 +138,7 @@ public class SchemaService implements ISchemaService {
         if (schemaInfoStore.isUnique(schemaId, dataPartitionId)) {
             setScope(schemaRequest, dataPartitionId);
 
-            String latestMinorSchema = schemaInfoStore.getLatestMinorVerSchema(schemaRequest.getSchemaInfo());
-
-            Gson gson = new Gson();
-            if (StringUtils.isNotEmpty(latestMinorSchema)) {
-                schemaUtil.checkBreakingChange(gson.toJson(schemaRequest.getSchema()), latestMinorSchema);
-            }
-            String schema = schemaResolver.resolveSchema(gson.toJson(schemaRequest.getSchema()));
+            String schema = resolveAndCheckBreakingChanges(schemaRequest);
 
             Boolean authority = authorityService.checkAndRegisterAuthorityIfNotPresent(
                     schemaRequest.getSchemaInfo().getSchemaIdentity().getAuthority());
@@ -205,8 +206,7 @@ public class SchemaService implements ISchemaService {
         if (SchemaStatus.DEVELOPMENT.equals(schemaInfo.getStatus())) {
             log.info(MessageFormat.format(SchemaConstants.SCHEMA_UPDATION_STARTED, createdSchemaId));
             setScope(schemaRequest, dataPartitionId);
-            Gson gson = new Gson();
-            String schema = schemaResolver.resolveSchema(gson.toJson(schemaRequest.getSchema()));
+            String schema = resolveAndCheckBreakingChanges(schemaRequest);
             SchemaInfo schInfo = schemaInfoStore.updateSchemaInfo(schemaRequest);
             auditLogger.schemaUpdatedSuccess(Collections.singletonList(schemaRequest.toString()));
             schemaStore.createSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
@@ -235,6 +235,15 @@ public class SchemaService implements ISchemaService {
         schemaRequest.getSchemaInfo().getSchemaIdentity().setId(schemaId);
         return schemaId;
     }
+    
+    private String resolveAndCheckBreakingChanges(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException {
+
+		Gson gson = new Gson();
+		String schemaInRequestPayload = gson.toJson(schemaRequest.getSchema());
+		String fullyResolvedInputSchema = schemaResolver.resolveSchema(schemaInRequestPayload);
+		compareFullyResolvedSchema(schemaRequest.getSchemaInfo(), fullyResolvedInputSchema);
+		return fullyResolvedInputSchema;
+	}
 
     @Override
     public SchemaInfoResponse getSchemaInfoList(QueryParams queryParams)
@@ -343,6 +352,7 @@ public class SchemaService implements ISchemaService {
     	
 		List<SchemaInfo> latestSchemaList = new ArrayList<>();
 		Map<String, SchemaInfo> latestSchemaMap = new HashMap<>();
+		SchemaComparatorByVersion schemaComparatorByVersion = new SchemaComparatorByVersion();
 
 		for(SchemaInfo schemaInfo :filteredSchemaList) {
 			
@@ -351,7 +361,7 @@ public class SchemaService implements ISchemaService {
 
 			SchemaInfo value = latestSchemaMap.get(key);
 			
-			if(compareSchemaVersion(schemaInfo, value) >= 0) 
+			if(schemaComparatorByVersion.compare(schemaInfo, value) >= 0) 
 				latestSchemaMap.put(key, schemaInfo);
 			
 		}
@@ -373,28 +383,45 @@ public class SchemaService implements ISchemaService {
 				schemaInfo.getSchemaIdentity().getEntityType());
 	}
 	
-	/****
-	 * This method compares the schema versions of two SchemaInfo attribute. The comparison is done based on the following order <br>
-	 * 1. Major Version <br>
-	 * 2. Minor Version <br>
-	 * 3. Patch Version <br>
-	 * 
-	 * @param scInfo1 SchemaInfo version
-	 * @param scInfo2 SchemaInfo
-	 * @return Returns positive integer if version of scInfo1 is greater than version of scInfo2
-	 */
-	private int compareSchemaVersion(SchemaInfo scInfo1, SchemaInfo scInfo2){
+	private void compareFullyResolvedSchema(SchemaInfo inputSchemaInfo, String resolvedInputSchema) throws BadRequestException, ApplicationException {
+		try {
+			SchemaInfo[] schemaInfoToCompareWith = schemaUtil.findSchemaToCompare(inputSchemaInfo);
 
-		Comparator<SchemaInfo> compareByMajor = 
-				(s1,s2) -> s1.getSchemaIdentity().getSchemaVersionMajor().compareTo(s2.getSchemaIdentity().getSchemaVersionMajor());
+			for(SchemaInfo existingSchemaInfo : schemaInfoToCompareWith) {
+				if(null == existingSchemaInfo)
+					continue;
 
-		Comparator<SchemaInfo> compareByMinor = 
-				(s1,s2) -> s1.getSchemaIdentity().getSchemaVersionMinor().compareTo(s2.getSchemaIdentity().getSchemaVersionMinor());
-		
-		Comparator<SchemaInfo> compareByPatch = 
-				(s1,s2) -> s1.getSchemaIdentity().getSchemaVersionPatch().compareTo(s2.getSchemaIdentity().getSchemaVersionPatch());
+				String existingSchemaInStore = getSchema(existingSchemaInfo.getSchemaIdentity().getId()).toString();
 
-		
-		return compareByMajor.thenComparing(compareByMinor).thenComparing(compareByPatch).compare(scInfo1, scInfo2);
+				try {
+					//Compare Major version of the schemas are different
+					if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMajor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMajor()) != 0) {
+						continue;
+						//Compare Minor version is greater or smaller
+					}else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) < 0){
+						versionValidatorFactory.getSchemaVersionValidator(SchemaVersionValidatorType.MINOR).validate(resolvedInputSchema, existingSchemaInStore);
+					}else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) > 0) {
+						versionValidatorFactory.getSchemaVersionValidator(SchemaVersionValidatorType.MINOR).validate(existingSchemaInStore, resolvedInputSchema);
+					}else {
+						versionValidatorFactory.getSchemaVersionValidator(SchemaVersionValidatorType.PATCH).validate(existingSchemaInStore, resolvedInputSchema);
+					}
+				}catch (SchemaVersionException exc) {
+					log.error("Failed to resolve the schema and find breaking changes. Reason :" + exc.getMessage());
+
+					String message = MessageFormat.format(exc.getMessage(), StringUtils.substringAfterLast(inputSchemaInfo.getSchemaIdentity().getId(), SchemaConstants.SCHEMA_KIND_DELIMITER),
+							StringUtils.substringAfterLast(existingSchemaInfo.getSchemaIdentity().getId(), SchemaConstants.SCHEMA_KIND_DELIMITER));
+					throw new BadRequestException(message);
+				}
+			}
+
+
+		}  catch ( NotFoundException e) {
+			throw new ApplicationException("Schema not found to evaluate breaking changes.");
+		}catch (JSONException exc) {
+			log.error("Failed to resolve the schema and find breaking changes. Reason :"+exc.getMessage());
+			throw new BadRequestException("Bad Input, invalid json");
+		}
+
 	}
+	
 }
