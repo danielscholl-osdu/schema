@@ -283,7 +283,7 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 		}
 
 		long numRecords = LIMIT_SIZE;
-		if (Long.valueOf(queryParams.getLimit()) != null) {
+		if (Long.valueOf(queryParams.getLimit()) != null && Long.valueOf(queryParams.getLimit()) != 0) {
 			numRecords = Long.valueOf(queryParams.getLimit());
 		}
 		
