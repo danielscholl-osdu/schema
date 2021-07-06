@@ -5,7 +5,7 @@
 data:
   log_level: ""
   authorize_api: ""
-  authorize_api_key: ""
+  authorize_api_key: "Null"
   partition_api: ""
   google_audiences: ""
   shared_tenant_name: ""
