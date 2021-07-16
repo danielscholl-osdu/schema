@@ -46,7 +46,7 @@
       "EncodingFormatTypeID": {
         "type": "string",
         "title": "Encoding Format Type ID",
-        "description": "EncodingFormatType ID reference value relationship. It can me a mime-type or media-type.",
+        "description": "EncodingFormatType ID reference value relationship. It can be a mime-type or media-type.",
         "example": "namespace:reference-data--EncodingFormatType:text%2Fcsv:",
         "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-EncodingFormatType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [

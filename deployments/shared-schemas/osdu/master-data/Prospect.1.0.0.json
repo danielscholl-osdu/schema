@@ -116,8 +116,8 @@
             "properties": {
               "ProspectID": {
                 "type": "string",
-                "title": "Prospect ID",
-                "description": "System generated unique identifier for a Prospect."
+                "title": "External Prospect Identifier",
+                "description": "Native identifier from a Master Data Management System or other trusted source external to OSDU - stored here in order to allow for multi-system connection and synchronization. If used, the \"Source\" property should identify that source system."
               },
               "ProspectName": {
                 "type": "string",
