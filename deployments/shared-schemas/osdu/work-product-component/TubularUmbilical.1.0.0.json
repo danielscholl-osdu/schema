@@ -224,7 +224,7 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "NOT APPROVED!",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-supported-file-formats": [
       "WITSML",
       "csv"

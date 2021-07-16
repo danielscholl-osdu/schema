@@ -4,6 +4,10 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractAccessControlList.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:AbstractActivityParameter:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractActivityParameter.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractAliasNames.1.0.0.json"
   },
@@ -128,8 +132,20 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractProject.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:AbstractProjectActivity:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractProjectActivity.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:AbstractPropertyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractPropertyType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:AbstractQualityMetric:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractQualityMetric.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:AbstractReferencePropertyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractReferencePropertyType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:AbstractReferenceType:1.0.0",
@@ -138,6 +154,10 @@
   {
     "kind": "{{schema-authority}}:wks:AbstractVectorHeaderMapping:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractVectorHeaderMapping.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:AbstractWPCActivity:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractWPCActivity.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:AbstractWPCGroupType:1.0.0",
@@ -150,6 +170,18 @@
   {
     "kind": "{{schema-authority}}:wks:AbstractWorkProductComponent:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractWorkProductComponent.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--Activity:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/Activity.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--ActivityTemplate:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/ActivityTemplate.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--ActivityTemplateArc:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/ActivityTemplateArc.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--ActivityType:1.0.0",
@@ -206,6 +238,14 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--CalculationMethodType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/CalculationMethodType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--Collection:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Collection.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--CollectionPurpose:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CollectionPurpose.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--CompressionMethodType:1.0.0",
@@ -480,6 +520,14 @@
     "relativePath": "shared-schemas/osdu/work-product-component/PPFGDataset.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--ParameterKind:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ParameterKind.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--ParameterRole:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ParameterRole.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--ParameterType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/ParameterType.1.0.0.json"
   },
@@ -514,6 +562,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--PropertyNameType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/PropertyNameType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--PropertyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PropertyType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:master-data--Prospect:1.0.0",
@@ -664,8 +716,16 @@
     "relativePath": "shared-schemas/osdu/reference-data/StringClass.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--SurveyToolType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SurveyToolType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--TectonicSettingType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/TectonicSettingType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--TrajectoryStationPropertyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TrajectoryStationPropertyType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--TubularAssembly:1.0.0",
@@ -720,6 +780,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/UnitOfMeasure.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--UnitOfMeasureConfiguration:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/UnitOfMeasureConfiguration.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--UnitQuantity:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/UnitQuantity.1.0.0.json"
   },
@@ -764,6 +828,14 @@
     "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.1.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellLogSamplingDomainType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellLogSamplingDomainType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:master-data--Wellbore:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/Wellbore.1.0.0.json"
   },
@@ -774,6 +846,10 @@
   {
     "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.1.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellboreTrajectoryType:1.0.0",

@@ -47,7 +47,9 @@ load sequence per schema version. An example can be found
 ## Upload schema definitions
 
 Once the loading instructions are completed, the schema registration can be launched. this is
-done via the [DeploySharedSchemas.py](../scripts/DeploySharedSchemas.py):
+done via the [DeploySharedSchemas.py](../scripts/DeploySharedSchemas.py). Important parameters, i.e.
+the target schema authority and the path to the load-sequence file are in code in `DEFAULT_BOOTSTRAP_OPTIONS`
+[Utility.py](../scripts/Utility.py#L18). The DeploySharedSchemas.py options are as follows:
 
 ```shell script
 python deployments\scripts\DeploySharedSchemas.py -h
@@ -58,14 +60,11 @@ load sequence file.
 
 optional arguments:
   -h, --help  show this help message and exit
-  -a A        The schema authority or partition-id to replace (default via
-              Env)
-  -l L        The path to the load sequence file, e.g. load_sequence.?.?.?
   -u U        The complete URL to the Schema Service.
 
 
 example:
-python deployments\scripts\DeploySharedSchemas.py -l load_sequence.1.0.0.json -a osdu -u https://opengroup.test.org/api/schema-service/v1/schema
+python deployments\scripts\DeploySharedSchemas.py -u https://opengroup.test.org/api/schema-service/v1/schema
 ```
 
 

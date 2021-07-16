@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "dataset--GenericDataset",
+      "entityType": "reference-data--ParameterRole",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:dataset--GenericDataset:1.0.0"
+      "id": "{{schema-authority}}:wks:reference-data--ParameterRole:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/dataset/GenericDataset.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/reference-data/ParameterRole.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:dataset--GenericDataset:1.0.0",
-    "title": "GenericDataset",
-    "description": "An auto-generated placeholder schema representing dataset group-type records in data loading/ingestion/creation manifests. Do not use this kind for actual records.",
+    "x-osdu-schema-source": "osdu:wks:reference-data--ParameterRole:1.0.0",
+    "title": "ParameterRole",
+    "description": "Reference value type describing how an activity  parameter was used by an activity, such as input, output, control, constraint, agent, predecessor activity, successor activity.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^(surrogate-key:.+|[\\w\\-\\.]+:dataset\\-\\-[\\w\\-\\.]+:[\\w\\-\\.\\:\\%]+)$",
-        "example": "namespace:dataset--GenericDataset:b792625f-5cb1-56c5-9699-eb35259e1f9f"
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ParameterRole:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:reference-data--ParameterRole:575b6f15-e3d4-5055-a803-0d35c45a6d8e"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:dataset--GenericDataset:1.0.0"
+        "example": "osdu:wks:reference-data--ParameterRole:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -109,69 +109,17 @@
             "$ref": "{{schema-authority}}:wks:AbstractCommonResources:1.0.0"
           },
           {
-            "title": "AbstractDataset",
-            "description": "Schema fragment holding properties common for all datasets.",
+            "$ref": "{{schema-authority}}:wks:AbstractReferenceType:1.0.0"
+          },
+          {
+            "type": "object",
+            "properties": {}
+          },
+          {
             "type": "object",
             "properties": {
-              "Name": {
-                "type": "string",
-                "title": "Name",
-                "description": "An optional name of the dataset, e.g. a user friendly file or file collection name.",
-                "example": "Dataset X221/15"
-              },
-              "Description": {
-                "type": "string",
-                "title": "Description",
-                "description": "An optional, textual description of the dataset.",
-                "example": "As originally delivered by ACME.com."
-              },
-              "TotalSize": {
-                "type": "string",
-                "title": "Total Size",
-                "description": "Total size of the dataset in bytes; for files it is the same as declared in FileSourceInfo.FileSize or the sum of all individual files. Implemented as string. The value must be convertible to a long integer (sizes can become very large).",
-                "format": "integer",
-                "pattern": "^[0-9]+$",
-                "example": 13245217273
-              },
-              "EncodingFormatTypeID": {
-                "type": "string",
-                "title": "Encoding Format Type ID",
-                "description": "EncodingFormatType ID reference value relationship. It can be a mime-type or media-type.",
-                "example": "namespace:reference-data--EncodingFormatType:text%2Fcsv:",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-EncodingFormatType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                "x-osdu-relationship": [
-                  {
-                    "GroupType": "reference-data",
-                    "EntityType": "EncodingFormatType"
-                  }
-                ]
-              },
-              "SchemaFormatTypeID": {
-                "type": "string",
-                "title": "Schema Format Type ID",
-                "description": "Relationship to the SchemaFormatType reference value.",
-                "example": "namespace:reference-data--SchemaFormatType:CWLS%20LAS3:",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-SchemaFormatType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                "x-osdu-relationship": [
-                  {
-                    "GroupType": "reference-data",
-                    "EntityType": "SchemaFormatType"
-                  }
-                ]
-              },
-              "Endian": {
-                "type": "string",
-                "description": "Endianness of binary value.  Enumeration: \"BIG\", \"LITTLE\".  If absent, applications will need to interpret from context indicators.",
-                "enum": [
-                  "BIG",
-                  "LITTLE"
-                ]
-              },
-              "DatasetProperties": {
-                "type": "object",
-                "title": "Dataset Properties",
-                "description": "Placeholder for a specialization.",
-                "example": {}
+              "ExtensionProperties": {
+                "type": "object"
               }
             }
           }
@@ -183,6 +131,17 @@
       "acl",
       "legal"
     ],
-    "x-osdu-inheriting-from-kind": []
+    "additionalProperties": false,
+    "x-osdu-review-status": "Accepted",
+    "x-osdu-governance-model": "OPEN",
+    "x-osdu-governance-authorities": [
+      "OSDU"
+    ],
+    "x-osdu-inheriting-from-kind": [
+      {
+        "name": "ReferenceType",
+        "kind": "osdu:wks:AbstractReferenceType:1.0.0"
+      }
+    ]
   }
 }

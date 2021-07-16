@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Play",
+      "entityType": "master-data--ActivityTemplateArc",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Play:1.0.0"
+      "id": "{{schema-authority}}:wks:master-data--ActivityTemplateArc:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Play.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/master-data/ActivityTemplateArc.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Play:1.0.0",
-    "title": "Play",
-    "description": "A named area that likely contains a combination of certain geological factors making it prospective for mineral exploration. It is often considered to be a set of prospects with a common set of characteristics.",
+    "x-osdu-schema-source": "osdu:wks:master-data--ActivityTemplateArc:1.0.0",
+    "title": "ActivityTemplateArc",
+    "description": "An 'arc' establishing a link between ActivityTemplate input and output parameters.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Play:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Play:e39ac112-8182-5814-91f2-5c7a43518897"
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-ActivityTemplateArc:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:master-data--ActivityTemplateArc:908c2239-bea8-59ec-a918-24b5994f6fa8"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Play:1.0.0"
+        "example": "osdu:wks:master-data--ActivityTemplateArc:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -114,49 +114,102 @@
           {
             "type": "object",
             "properties": {
-              "PlayID": {
+              "Name": {
                 "type": "string",
-                "title": "External Play Identifier",
-                "description": "Native identifier from a Master Data Management System or other trusted source external to OSDU - stored here in order to allow for multi-system connection and synchronization. If used, the \"Source\" property should identify that source system."
+                "title": "Name",
+                "description": "The name of this input/output parameter definition set."
               },
-              "PlayName": {
-                "type": "string",
-                "description": "Preferred name for a Play."
-              },
-              "PlayNameAliases": {
+              "OutputInputArcs": {
                 "type": "array",
-                "description": "DEPRECATED: please use data.NameAliases. Set of alternative names for a Play.",
+                "title": "Output Input Arcs",
+                "description": "The array of arcs, which associate ActivityTemplate outputs to ActivityTemplate inputs.",
                 "items": {
-                  "$ref": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0"
+                  "type": "object",
+                  "title": "Arc",
+                  "description": "An 'arc' establishing a link between a single pair of ActivityTemplate input and output parameters.",
+                  "properties": {
+                    "ProducingActivityTemplateID": {
+                      "type": "string",
+                      "title": "Producing Activity Template ID",
+                      "description": "The relationship to the producing ActivityTemplate.",
+                      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-ActivityTemplate:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "master-data",
+                          "EntityType": "ActivityTemplate"
+                        }
+                      ]
+                    },
+                    "ProducingParameterTitle": {
+                      "type": "string",
+                      "title": "Producing Parameter Title",
+                      "description": "The Title of the producing ActivityTemplate Parameter array element."
+                    },
+                    "ConsumingActivityTemplateID": {
+                      "type": "string",
+                      "title": "Consuming Activity Template ID",
+                      "description": "The relationship to the consuming ActivityTemplate.",
+                      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-ActivityTemplate:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "master-data",
+                          "EntityType": "ActivityTemplate"
+                        }
+                      ]
+                    },
+                    "ConsumingParameterTitle": {
+                      "type": "string",
+                      "title": "Consuming Parameter Title",
+                      "description": "The Title of the consuming ActivityTemplate Parameter array element."
+                    }
+                  },
+                  "required": [
+                    "ProducingActivityTemplateID",
+                    "ProducingParameterTitle",
+                    "ConsumingActivityTemplateID",
+                    "ConsumingParameterTitle"
+                  ]
                 }
               },
-              "PlayDescription": {
-                "type": "string",
-                "description": "Textual description about a Play."
-              },
-              "EffectiveDate": {
-                "type": "string",
-                "description": "Date when a Play goes into effect.",
-                "format": "date-time",
-                "x-osdu-frame-of-reference": "DateTime"
-              },
-              "TerminationDate": {
-                "type": "string",
-                "description": "Date when a Play is no longer in effect.",
-                "format": "date-time",
-                "x-osdu-frame-of-reference": "DateTime"
-              },
-              "PlayTypeID": {
-                "type": "string",
-                "title": "Play Type ID",
-                "description": "The type of play as defined in PlayType.",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-PlayType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                "x-osdu-relationship": [
-                  {
-                    "GroupType": "reference-data",
-                    "EntityType": "PlayType"
-                  }
-                ]
+              "ActivityArcs": {
+                "type": "array",
+                "title": "Activity Arcs",
+                "description": "The array of arcs, which link pairs of ActivityTemplate as predecessor and successor.",
+                "items": {
+                  "type": "object",
+                  "title": "Arc",
+                  "description": "An 'arc' establishing a link between a single pair of ActivityTemplate input and output parameters.",
+                  "properties": {
+                    "PrecedingActivityTemplateID": {
+                      "type": "string",
+                      "title": "Preceding Activity Template ID",
+                      "description": "The relationship to the ActivityTemplate first in a pair of ActivityTemplates in the context of a workflow.",
+                      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-ActivityTemplate:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "master-data",
+                          "EntityType": "ActivityTemplate"
+                        }
+                      ]
+                    },
+                    "SucceedingActivityTemplateID": {
+                      "type": "string",
+                      "title": "Succeeding Activity Template ID",
+                      "description": "The relationship to the ActivityTemplate succeeding the first ActivityTemplate in the workflow.",
+                      "pattern": "^[\\w\\-\\.]+:master-data\\-\\-ActivityTemplate:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "master-data",
+                          "EntityType": "ActivityTemplate"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "PrecedingActivityTemplateID",
+                    "SucceedingActivityTemplateID"
+                  ]
+                }
               }
             }
           },
