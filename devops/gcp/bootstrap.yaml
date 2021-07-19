@@ -1,0 +1,24 @@
+osdu_gcp_bootstrap:
+  stage: bootstrap
+  image: python:3.8
+  needs: ["osdu-gcp-deploy"]
+  extends:
+    - .osdu-gcp-variables
+  variables:
+    JSON_KEY: $OSDU_GCP_INTEGRATION_TESTER
+    AUDIENCE: $GOOGLE_AUDIENCE
+    DATA_PARTITION: $OSDU_TENANT
+  script:
+    - pip install -r $OSDU_GCP_DEPLOYMENTS_SUBDIR/requirements.txt
+    - export BEARER_TOKEN=$(python $OSDU_GCP_DEPLOYMENTS_SUBDIR/Token.py)
+    - python $OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR/DeploySharedSchemas.py -u $OSDU_GCP_SCHEMA_URL/api/schema-service/v1/schema
+
+  only:
+    variables:
+      - $OSDU_GCP == 'true'
+
+osdu-gcp-test:
+  needs: ["osdu_gcp_bootstrap"]
+  only:
+    variables:
+      - $OSDU_GCP == 'true'
