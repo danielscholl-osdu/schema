@@ -44,6 +44,10 @@ analyze:
     type: pip
     target: deployments/scripts/google
     path: deployments/scripts/google
+  - name: ibm
+    type: pip
+    target: deployments/scripts/ibm
+    path: deployments/scripts/ibm
   - name: scripts
     type: pip
     target: deployments/scripts
