@@ -31,6 +31,7 @@ import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.definitions.FlattenedSchemaInfo;
 import org.opengroup.osdu.schema.azure.definitions.SchemaInfoDoc;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
@@ -81,6 +82,9 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	private String sharedTenant;
 
 	@Autowired
+	SystemResourceConfig systemResourceConfig;
+
+	@Autowired
 	JaxRsDpsLog log;
 
 	/**
@@ -99,10 +103,10 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		SchemaIdentity  schemaIdentity = schemaKindToSchemaIdentity(schemaId);
 		String partitioningKey =  createSchemaInfoPartitionKey(schemaIdentity);
 
-		SchemaInfoDoc schemaInfoDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitioningKey, SchemaInfoDoc.class)
-                .orElseThrow(() -> new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT));
+		SchemaInfoDoc schemaInfoDoc = findItemInCosmosStore(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitioningKey, SchemaInfoDoc.class)
+				.orElseThrow(() -> new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT));
 		
-		return getSchemaInfoObject(schemaInfoDoc.getFlattenedSchemaInfo());
+		return getSchemaInfoObject(schemaInfoDoc.getFlattenedSchemaInfo(), headers.getPartitionId());
 	}
 
 	/**
@@ -120,7 +124,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		String partitionKey = createSchemaInfoPartitionKey(schema.getSchemaInfo().getSchemaIdentity());
 		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, partitionKey, flattenedSchemaInfo);
 		try {
-			cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey, schemaInfoDoc);
+			crateItemInCosmos(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey, schemaInfoDoc);
 		} catch (AppException ex) {
 			if (ex.getError().getCode() == 409) {
 				log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
@@ -132,7 +136,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		}
 
 		log.info(SchemaConstants.SCHEMA_INFO_CREATED);
-		return getSchemaInfoObject(flattenedSchemaInfo);
+		return getSchemaInfoObject(flattenedSchemaInfo, headers.getPartitionId());
 	}
 
 	/**
@@ -150,14 +154,14 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		String partitionKey = createSchemaInfoPartitionKey(schema.getSchemaInfo().getSchemaIdentity());
 		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, partitionKey, flattenedSchemaInfo);
 		try {
-			cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey,schemaInfoDoc);
+			upsertItemInCosmos(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey,schemaInfoDoc);
 		} catch (Exception ex) {
 			log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
 			throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
 		}
 
 		log.info(SchemaConstants.SCHEMA_INFO_UPDATED);
-		return getSchemaInfoObject(flattenedSchemaInfo);
+		return getSchemaInfoObject(flattenedSchemaInfo, headers.getPartitionId());
 	}
 
 	/**
@@ -175,13 +179,13 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
 
 		// Check whether SchemaInfo already exists
-		Boolean exists = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
+		Boolean exists = findItemInCosmosStore(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
 		if (!exists) {
 			return false;
 		}
 
 		// Delete the item.
-		cosmosStore.deleteItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, headers.getPartitionId());
+		deleteItemInCosmos(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, headers.getPartitionId());
 		return true;
 	}
 
@@ -209,7 +213,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 		pars.add(new SqlParameter("@entityType", schemaInfo.getSchemaIdentity().getEntityType()));
 		pars.add(new SqlParameter("@majorVersion", schemaInfo.getSchemaIdentity().getSchemaVersionMajor()));
 		
-		List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
+		List<SchemaInfoDoc> schemaInfoList = queryItemsInCosmos(headers.getPartitionId(), cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
 		TreeMap<Long, String> sortedMap = new TreeMap<>(Collections.reverseOrder());
 		for (SchemaInfoDoc info : schemaInfoList)
@@ -244,7 +248,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			SchemaIdentity schemaIdentity = schemaKindToSchemaIdentity(schemaInfo.getSupersededBy().getId());
 			String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
 
-			if ( !cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, FlattenedSchemaInfo.class).isPresent()) {
+			if ( !findItemInCosmosStore(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, FlattenedSchemaInfo.class).isPresent()) {
 				log.error(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
 				throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
 			}
@@ -268,13 +272,13 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 				.build();
 	}
 
-	private SchemaInfo getSchemaInfoObject(FlattenedSchemaInfo flattenedSchemaInfo) {
+	private SchemaInfo getSchemaInfoObject(FlattenedSchemaInfo flattenedSchemaInfo, String dataPartitionId) {
 		SchemaIdentity superSededBy = null;
 		if (!flattenedSchemaInfo.getSupersededBy().isEmpty()) {
-			String id = headers.getPartitionId() + ":" + flattenedSchemaInfo.getSupersededBy();
+			String id = dataPartitionId + ":" + flattenedSchemaInfo.getSupersededBy();
 			SchemaIdentity schemaIdentity = schemaKindToSchemaIdentity(flattenedSchemaInfo.getSupersededBy());
 			String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
-			SchemaInfoDoc doc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).get();
+			SchemaInfoDoc doc = findItemInCosmosStore(dataPartitionId, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).get();
 			superSededBy = getSchemaIdentity(doc.getFlattenedSchemaInfo());
 		}
 
@@ -352,12 +356,12 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			query.getParameters().add(new SqlParameter(param, parameterMap.get(param)));
 		}
 
-		List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(tenantId, cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
+		List<SchemaInfoDoc> schemaInfoList = queryItemsInCosmos(tenantId, cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
 
 		List<SchemaInfo> schemaList = new LinkedList<>();
 		for (SchemaInfoDoc info: schemaInfoList)
 		{
-			schemaList.add(getSchemaInfoObject(info.getFlattenedSchemaInfo()));
+			schemaList.add(getSchemaInfoObject(info.getFlattenedSchemaInfo(), tenantId));
 		}
 
 		if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
@@ -386,7 +390,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			String id = tenant + ":" + schemaId;
 			String partitionKey = createSchemaInfoPartitionKey(schemaKindToSchemaIdentity(schemaId));
 			try {
-				Boolean exists = cosmosStore.findItem(tenant, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
+				Boolean exists = findItemInCosmosStore(tenant, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
 				if (exists) {
 					return false;
 				}
@@ -467,6 +471,73 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 				":"+schemaIdentity.getSource()+
 				":"+schemaIdentity.getEntityType()+
 				":"+schemaIdentity.getSchemaVersionMajor().toString();
+	}
+
+	private <T> Optional<T> findItemInCosmosStore(
+			String dataPartitionId,
+			String dataBaseName,
+			String containerName,
+			String id,
+			String partitionKey,
+			Class<T> clazz) {
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+			return cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), containerName, id, partitionKey, clazz);
+		} else {
+			return cosmosStore.findItem(dataPartitionId, dataBaseName, containerName, id, partitionKey, clazz);
+		}
+	}
+
+	private <T> void crateItemInCosmos(
+			String dataPartitionId,
+			String dataBaseName,
+			String containerName,
+			String partitionKey,
+			T item) {
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+			cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), containerName, partitionKey, item);
+		} else {
+			cosmosStore.createItem(dataPartitionId, dataBaseName, containerName, partitionKey, item);
+		}
+	}
+
+	private <T> void upsertItemInCosmos(
+			String dataPartitionId,
+			String dataBaseName,
+			String containerName,
+			String partitionKey,
+			T item) {
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+			cosmosStore.upsertItem(systemResourceConfig.getCosmosDatabase(), containerName, partitionKey, item);
+		} else {
+			cosmosStore.upsertItem(dataPartitionId, dataBaseName, containerName, partitionKey, item);
+		}
+	}
+
+	private <T> void deleteItemInCosmos(
+			String dataPartitionId,
+			String dataBaseName,
+			String containerName,
+			String id,
+			String partitionKey) {
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+			cosmosStore.deleteItem(systemResourceConfig.getCosmosDatabase(), containerName, id, partitionKey);
+		} else {
+			cosmosStore.deleteItem(dataPartitionId, dataBaseName, containerName, id, partitionKey);
+		}
+	}
+
+	private  <T> List<T> queryItemsInCosmos(
+			String dataPartitionId,
+			String cosmosDBName,
+			String collection,
+			SqlQuerySpec query,
+			CosmosQueryRequestOptions options,
+			Class<T> clazz) {
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+			return cosmosStore.queryItems(systemResourceConfig.getCosmosDatabase(), collection, query, options, clazz);
+		} else {
+			return cosmosStore.queryItems(dataPartitionId, cosmosDBName, collection, query, options, clazz);
+		}
 	}
 }
 

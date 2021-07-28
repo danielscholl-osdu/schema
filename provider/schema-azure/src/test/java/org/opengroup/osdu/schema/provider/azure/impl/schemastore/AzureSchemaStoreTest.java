@@ -21,16 +21,19 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.opengroup.osdu.azure.blobstorage.BlobStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.di.AzureBootstrapConfig;
 import org.opengroup.osdu.schema.azure.di.CosmosContainerConfig;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.azure.impl.schemastore.AzureSchemaStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -51,20 +54,28 @@ public class AzureSchemaStoreTest {
     @Mock
     JaxRsDpsLog log;
 
+    @Mock
+    SystemResourceConfig systemResourceConfig;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     private static final String dataPartitionId = "dataPartitionId";
+    private static final String sharedTenantId = "common";
     private static final String FILE_PATH = "/test-folder/test-file";
     private static final String CONTENT = "Hello World";
     private static final String containerName = "opendes";
+    private static final String systemContainerName = "systemContainer";
     private static final String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
+    private static final String filePathPublic = sharedTenantId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
 
     @Before
     public void init(){
         initMocks(this);
         doReturn(dataPartitionId).when(headers).getPartitionId();
         when(config.containerName()).thenReturn(containerName);
+        Mockito.when(systemResourceConfig.getStorageContainerName()).thenReturn(systemContainerName);
+        Mockito.when(systemResourceConfig.getSharedTenant()).thenReturn(sharedTenantId);
     }
 
     @Test
@@ -74,11 +85,27 @@ public class AzureSchemaStoreTest {
     }
 
     @Test
+    public void testGetSchema_PublicSchemas() throws ApplicationException, NotFoundException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        doReturn(CONTENT).when(blobStore).readFromStorageContainer(filePathPublic, systemContainerName);
+        Assert.assertEquals(CONTENT, schemaStore.getSchema(sharedTenantId, FILE_PATH));
+    }
+
+    @Test
     public void testGetSchema_NotFound() throws ApplicationException, NotFoundException {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
         doReturn(null).when(blobStore).readFromStorageContainer(dataPartitionId, filePath, containerName);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
+    }
+
+    @Test
+    public void testGetSchema_NotFound_PublicSchemas() throws ApplicationException, NotFoundException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        expectedException.expect(NotFoundException.class);
+        expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
+        doReturn(null).when(blobStore).readFromStorageContainer(filePathPublic, systemContainerName);
+        schemaStore.getSchema(sharedTenantId, FILE_PATH);
     }
 
     @Test
@@ -91,8 +118,27 @@ public class AzureSchemaStoreTest {
     }
 
     @Test
+    public void testGetSchema_Failure_PublicSchemas() throws ApplicationException, NotFoundException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        expectedException.expect(NotFoundException.class);
+        expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
+
+        doThrow(AppException.class).when(blobStore).readFromStorageContainer(filePathPublic, systemContainerName);
+        schemaStore.getSchema(sharedTenantId, FILE_PATH);
+    }
+
+    @Test
     public void testDeleteSchema() throws ApplicationException {
         doReturn(true).when(blobStore).deleteFromStorageContainer(dataPartitionId, filePath, containerName);
+
+        Boolean result = schemaStore.cleanSchemaProject(FILE_PATH);
+        Assert.assertEquals(true, result);
+    }
+
+    @Test
+    public void testDeleteSchema_PublicSchemas() throws ApplicationException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        doReturn(true).when(blobStore).deleteFromStorageContainer(filePathPublic, systemContainerName);
 
         Boolean result = schemaStore.cleanSchemaProject(FILE_PATH);
         Assert.assertEquals(true, result);
@@ -108,10 +154,28 @@ public class AzureSchemaStoreTest {
     }
 
     @Test
+    public void testDeleteSchema_Failure_PublicSchemas() throws ApplicationException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        expectedException.expect(ApplicationException.class);
+        expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
+
+        doThrow(AppException.class).when(blobStore).deleteFromStorageContainer(filePathPublic, systemContainerName);
+        schemaStore.cleanSchemaProject(FILE_PATH);
+    }
+
+    @Test
     public void testCreateSchema() throws ApplicationException {
 
         doNothing().when(blobStore).writeToStorageContainer(dataPartitionId, filePath, CONTENT, containerName);
         Assert.assertEquals(filePath, schemaStore.createSchema(FILE_PATH, CONTENT));
+    }
+
+    @Test
+    public void testCreateSchema_PublicSchemas() throws ApplicationException {
+
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        doNothing().when(blobStore).writeToStorageContainer(filePathPublic, CONTENT, systemContainerName);
+        Assert.assertEquals(filePathPublic, schemaStore.createSchema(FILE_PATH, CONTENT));
     }
 
     @Test
@@ -120,6 +184,16 @@ public class AzureSchemaStoreTest {
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
         doThrow(AppException.class).when(blobStore).writeToStorageContainer(dataPartitionId, filePath, CONTENT, containerName);
+        schemaStore.createSchema(FILE_PATH, CONTENT);
+    }
+
+    @Test
+    public void testCreateSchema_Failure_PublicSchemas() throws ApplicationException {
+        Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
+        expectedException.expect(ApplicationException.class);
+        expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
+
+        doThrow(AppException.class).when(blobStore).writeToStorageContainer(filePathPublic, CONTENT, systemContainerName);
         schemaStore.createSchema(FILE_PATH, CONTENT);
     }
 }

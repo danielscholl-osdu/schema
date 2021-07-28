@@ -1,0 +1,15 @@
+# Default values for schema-configmap.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+data:
+  log_level: ""
+  authorize_api: ""
+  authorize_api_key: "Null"
+  partition_api: ""
+  google_audiences: ""
+  shared_tenant_name: ""
+
+conf:
+  configmap: "schema-config"
+  app_name: "schema"

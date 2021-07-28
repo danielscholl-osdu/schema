@@ -14,10 +14,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
@@ -476,6 +478,26 @@ public class GoogleSchemaInfoStoreTest {
         Mockito.when(keyFactory.newKey(schemaId)).thenReturn(key);
         doThrow(DatastoreException.class).when(dataStore).delete(key);
         assertEquals(false, schemaInfoStore.cleanSchema(schemaId));
+    }
+
+    @Test
+    public void testMisconfiguredTenantInfoShouldThrowException() throws ApplicationException {
+        Key storageKey = mock(Key.class);
+        KeyFactory storageKeyFactory = mock(KeyFactory.class);
+        String schemaId = "schemaId";
+        String tenantId = "common";
+        Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
+        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        when(keyFactory.newKey(schemaId)).thenReturn(key);
+        when(storageKeyFactory.newKey(schemaId)).thenReturn(storageKey);
+        when(dataStore.run(ArgumentMatchers.any())).thenThrow(new DatastoreException(401,"",""));
+        expectedException.expect(AppException.class);
+        expectedException.expectMessage("Misconfigured tenant-info for common, not possible to check schema uniqueness");
+        schemaInfoStore.isUnique(schemaId, tenantId);
     }
 
     private SchemaRequest getMockSchemaObject_Published() {

@@ -21,6 +21,7 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.azure.definitions.AuthorityDoc;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 
 import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
@@ -31,6 +32,7 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IAuthorityStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.text.MessageFormat;
@@ -58,6 +60,9 @@ public class AzureAuthorityStore implements IAuthorityStore {
     @Autowired
     JaxRsDpsLog log;
 
+    @Autowired
+    SystemResourceConfig systemResourceConfig;
+
     /**
      * Method to get Authority from Azure store
      * @param authorityId
@@ -69,9 +74,15 @@ public class AzureAuthorityStore implements IAuthorityStore {
     public Authority get(String authorityId) throws NotFoundException, ApplicationException {
 
         String id = headers.getPartitionId() + ":" + authorityId;
+        AuthorityDoc authorityDoc;
 
-        AuthorityDoc authorityDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityId, AuthorityDoc.class)
-                .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            authorityDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), authorityContainer, id, authorityId, AuthorityDoc.class)
+                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        } else {
+            authorityDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityId, AuthorityDoc.class)
+                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
+        }
 
         return authorityDoc.getAuthority();
     }
@@ -89,7 +100,11 @@ public class AzureAuthorityStore implements IAuthorityStore {
 
         try {
             AuthorityDoc authorityDoc = new AuthorityDoc(id, authority);
-            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityDoc);
+            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+                cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), authorityContainer, id, authorityDoc);
+            } else {
+                cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityDoc);
+            }
         } catch (AppException ex) {
             if (ex.getError().getCode() == 409) {
                 log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);

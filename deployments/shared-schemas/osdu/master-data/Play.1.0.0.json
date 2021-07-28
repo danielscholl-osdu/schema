@@ -116,8 +116,8 @@
             "properties": {
               "PlayID": {
                 "type": "string",
-                "title": "Play ID",
-                "description": "System generated unique identifier for a Play."
+                "title": "External Play Identifier",
+                "description": "Native identifier from a Master Data Management System or other trusted source external to OSDU - stored here in order to allow for multi-system connection and synchronization. If used, the \"Source\" property should identify that source system."
               },
               "PlayName": {
                 "type": "string",

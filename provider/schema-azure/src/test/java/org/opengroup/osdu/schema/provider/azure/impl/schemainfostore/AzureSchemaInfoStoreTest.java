@@ -22,11 +22,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
@@ -35,6 +31,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -43,6 +40,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppError;
@@ -52,6 +50,7 @@ import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.definitions.FlattenedSchemaInfo;
 import org.opengroup.osdu.schema.azure.definitions.SchemaInfoDoc;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.azure.impl.schemainfostore.AzureSchemaInfoStore;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.enums.SchemaScope;
@@ -95,12 +94,16 @@ public class AzureSchemaInfoStoreTest {
     @Mock
     FlattenedSchemaInfo flattenedSchemaInfo;
 
+    @Mock
+    SystemResourceConfig systemResourceConfig;
+
     private static final String dataPartitionId = "testPartitionId";
     private static final String partitionKey = "os:wks:well:1";
     private static final String CONTENT = "Hello World";
     private static final String schemaId = "os:wks:well:1.1.1";
     private static final String supersedingSchemaId = "os:wks:well:1.2.1";
     private static final String commonTenantId = "common";
+    private static final String systemCosmosDBName = "osdu-system-db";
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -108,8 +111,10 @@ public class AzureSchemaInfoStoreTest {
     @Before
     public void init() {
         initMocks(this);
-        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", commonTenantId);
         doReturn(dataPartitionId).when(headers).getPartitionId();
+        Mockito.when(systemResourceConfig.getCosmosDatabase()).thenReturn(systemCosmosDBName);
+        Mockito.when(systemResourceConfig.getSharedTenant()).thenReturn(commonTenantId);
     }
 
     @Test
@@ -158,6 +163,26 @@ public class AzureSchemaInfoStoreTest {
     }
 
     @Test
+    public void testGetSchemaInfo_NotEmpty_PublicSchemas() throws NotFoundException, ApplicationException {
+        Mockito.when(headers.getPartitionId()).thenReturn(commonTenantId);
+        Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(systemCosmosDBName),
+                        any(),
+                        eq(commonTenantId + ":" + schemaId),
+                        eq(partitionKey),
+                        any());
+
+        doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
+        SchemaInfo schemaInfo = schemaInfoStore.getSchemaInfo(schemaId);
+        assertNotNull(schemaInfo);
+        verify(this.cosmosStore, times(1)).findItem(any(), any(), eq("common:os:wks:well:1.1.1"), eq("os:wks:well:1"), eq(SchemaInfoDoc.class));
+        verify(this.cosmosStore, times(0)).findItem(anyString(), anyString(), anyString(), anyString(), anyString(), any());
+    }
+
+    @Test
     public void testGetSchemaInfo_Empty() throws NotFoundException, ApplicationException {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
@@ -190,6 +215,25 @@ public class AzureSchemaInfoStoreTest {
         doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
 
         assertNotNull(schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published()));
+    }
+
+    @Test
+    public void testCreateSchemaInfo_Positive_PublicSchemas() throws ApplicationException, BadRequestException {
+        Mockito.when(headers.getPartitionId()).thenReturn(commonTenantId);
+        // the schema is not present in schemaInfoStore
+        doReturn(Optional.empty())
+                .when(cosmosStore)
+                .findItem(
+                        eq(systemCosmosDBName),
+                        any(),
+                        eq(commonTenantId + ":" + schemaId),
+                        anyString(),
+                        any());
+        doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
+
+        assertNotNull(schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published()));
+        verify(this.cosmosStore, times(1)).createItem(any(), any(), eq("os:wks:well:1"), any());
+        verify(this.cosmosStore, times(0)).createItem(anyString(), anyString(), anyString(), anyString(), any());
     }
 
     @Test
@@ -312,6 +356,23 @@ public class AzureSchemaInfoStoreTest {
     }
 
     @Test
+    public void testIsUnique_False_PublicSchemas() throws ApplicationException {
+        Mockito.when(headers.getPartitionId()).thenReturn(commonTenantId);
+        Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(systemCosmosDBName),
+                        any(),
+                        eq(commonTenantId + ":" + schemaId),
+                        eq(partitionKey),
+                        any());
+        assertFalse(schemaInfoStore.isUnique(schemaId, commonTenantId));
+        verify(this.cosmosStore, times(1)).findItem(any(), any(), anyString(), anyString(), any());
+        verify(this.cosmosStore, times(0)).findItem(anyString(), anyString(), anyString(), anyString(), anyString(), any());
+    }
+
+    @Test
     public void testIsUnique_False_CommomTenant() throws ApplicationException {
         TenantInfo tenant1 = new TenantInfo();
         tenant1.setName(commonTenantId);
@@ -349,6 +410,25 @@ public class AzureSchemaInfoStoreTest {
 
         doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
         assertNotNull(schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published()));
+    }
+
+    @Test
+    public void testUpdateSchemaInfo_PublicSchemas() throws NotFoundException, ApplicationException, BadRequestException {
+        Mockito.when(headers.getPartitionId()).thenReturn(commonTenantId);
+        Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(systemCosmosDBName),
+                        any(),
+                        eq(commonTenantId + ":" + supersedingSchemaId),
+                        eq(partitionKey),
+                        any());
+
+        doReturn(getFlattenedSchemaInfo()).when(schemaInfoDoc).getFlattenedSchemaInfo();
+        assertNotNull(schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published()));
+        verify(this.cosmosStore, times(1)).upsertItem(any(), any(), any(), any());
+        verify(this.cosmosStore, times(0)).upsertItem(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -466,6 +546,18 @@ public class AzureSchemaInfoStoreTest {
         assertEquals(1,
                 schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), dataPartitionId).size());
     }
+    
+    @Test
+    public void testGetSchemaInfoList_Withoutqueryparam_FailedWhenSearchedIntoSharedPartition()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        List<SchemaInfoDoc> schemaInfoDocsList = new LinkedList<>();
+        schemaInfoDocsList.add(getMockSchemaInfoDocWithSupersededBy());
+        doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(eq(dataPartitionId), any(), any(), any(), any(), any());
+        doThrow(new NoSuchElementException()).when(cosmosStore).findItem(eq("common"), any(), any(), any(), any(), any());
+        doReturn(Optional.of(getMockSchemaInfoDoc())).when(cosmosStore).findItem(eq(dataPartitionId), any(), any(), any(), any(), any());
+        schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), dataPartitionId);
+        expectedException.none();
+    }
 
     @Test
     public void testGetSchemaInfoList_withqueryparam()
@@ -506,6 +598,22 @@ public class AzureSchemaInfoStoreTest {
     }
 
     @Test
+    public void testCleanSchema_Success_PublicSchemas() throws ApplicationException {
+        doReturn(commonTenantId).when(headers).getPartitionId();
+        doReturn(Optional.of(schemaInfoDoc))
+                .when(cosmosStore)
+                .findItem(
+                        eq(systemCosmosDBName),
+                        any(),
+                        eq(commonTenantId + ":" + schemaId),
+                        eq(partitionKey),
+                        any());
+        assertEquals(true, schemaInfoStore.cleanSchema(schemaId));
+        verify(cosmosStore, times(1)).deleteItem(any(), any(), any(), any());
+        verify(cosmosStore, times(0)).deleteItem(any(), any(), any(), any(), any());
+    }
+
+    @Test
     public void testCleanSchema_Failure() throws ApplicationException {
         doReturn(Optional.empty())
                 .when(cosmosStore)
@@ -530,6 +638,12 @@ public class AzureSchemaInfoStoreTest {
         String id = headers.getPartitionId() + ":" + schemaId;
 
         return new SchemaInfoDoc(id, headers.getPartitionId(), getFlattenedSchemaInfo());
+    }
+    
+    private SchemaInfoDoc getMockSchemaInfoDocWithSupersededBy() {
+        String id = headers.getPartitionId() + ":" + schemaId;
+
+        return new SchemaInfoDoc(id, headers.getPartitionId(), getFlattenedSchemaInfo_SupersededBy());
     }
 
     private FlattenedSchemaInfo getFlattenedSchemaInfo() {

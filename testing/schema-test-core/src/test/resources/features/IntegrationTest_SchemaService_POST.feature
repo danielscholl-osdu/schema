@@ -8,7 +8,7 @@ Feature: To verify functionality of POST schema Service
 
   @SchemaService
   Scenario Outline: Verify that Schema Service's POST API creates a empty private schema correctly.
-    Given I hit schema service POST API with <InputPayload> and data-partition-id as <tenant>
+    Given I hit schema service POST API with <InputPayload> and data-partition-id as <tenant> and update versions
     Then service should respond back with <ReponseStatusCode> and <ResponseMessage>
     And schema service should respond back with <ReponseStatusCodeForGET> and <ResponseMessageforGET>
 
@@ -63,10 +63,10 @@ Feature: To verify functionality of POST schema Service
       | "/input_payloads/postSchema_withEntityAttributeInPayload.json" | "TENANT1" | "400"             | "/output_payloads/PostSchema_EntityNotAllowedError.json"   |
       | "/input_payloads/postSchema_flattenedSchemaAsInput.json"       | "TENANT1" | "400"             | "/output_payloads/PostSchema_InvalidInputSchemaError.json" |
 
-  @SchemaService
+  @Not_Running
   Scenario Outline: Verify that Schema Service supersededBy functionality work correctly
     Given I hit schema service POST API for supersededBy with <InputPayload> and data-partition-id as <tenant>
-    Then the post service for supersededBy should respond back with <ReponseStatusCode> and <ResponseMessage>
+    Then post service for supersededBy should respond back with <ReponseStatusCode> and <ResponseMessage>
 
     Examples: 
       | InputPayload                                           | tenant    | ReponseStatusCode | ResponseMessage                                                    |
@@ -76,8 +76,8 @@ Feature: To verify functionality of POST schema Service
   Scenario Outline: Verify whether schema can not be registered with already existing major, but increased minor version
     Given I hit schema service POST API with <InputPayload> and data-partition-id as <tenant>
     Given I hit schema service POST API with <EmptyInputPayload> and data-partition-id as <tenant> with increased minor version only
-    Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
 
     Examples: 
-      | EmptyInputPayload                                    | InputPayload                                           | ReponseStatusCode | ResponseMessage                                        | tenant    |
-      | "/input_payloads/postSchemaService_EmptySchema.json" | "/input_payloads/inputPayloadWithExistingVersion.json" | "400"             | "/output_payloads/SchemaPost_BreakingChangeError.json" | "TENANT1" |
+      | EmptyInputPayload                                    | InputPayload                                           | ReponseStatusCode | ResponseMessage                                             | tenant    |
+      | "/input_payloads/postSchemaService_EmptySchema.json" | "/input_payloads/inputPayloadWithExistingVersion.json" | "400"             | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" | "TENANT1" |
