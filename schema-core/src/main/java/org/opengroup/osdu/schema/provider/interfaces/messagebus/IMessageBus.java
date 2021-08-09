@@ -15,6 +15,12 @@
  */
 package org.opengroup.osdu.schema.provider.interfaces.messagebus;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 public interface IMessageBus {
 	void publishMessage(String schemaId, String eventType);
+
+	default void publishMessageForPublicSchema(String schemaId, String eventType) {
+		throw new NotImplementedException();
+	}
 }
