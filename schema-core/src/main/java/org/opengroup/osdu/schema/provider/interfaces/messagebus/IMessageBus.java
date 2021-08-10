@@ -20,7 +20,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public interface IMessageBus {
 	void publishMessage(String schemaId, String eventType);
 
-	default void publishMessageForPublicSchema(String schemaId, String eventType) {
+	default void publishMessageForSystemSchema(String schemaId, String eventType) {
 		throw new NotImplementedException();
 	}
 }

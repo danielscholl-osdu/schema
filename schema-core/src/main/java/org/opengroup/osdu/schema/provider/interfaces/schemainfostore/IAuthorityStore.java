@@ -10,13 +10,13 @@ public interface IAuthorityStore {
 
 	Authority get(String authorityId) throws NotFoundException, ApplicationException;
 
-	default Authority getPublicAuthority(String authorityId) throws NotFoundException, ApplicationException {
+	default Authority getSystemAuthority(String authorityId) throws NotFoundException, ApplicationException {
 		throw new NotImplementedException();
 	}
 
 	Authority create(Authority authority) throws ApplicationException, BadRequestException;
 
-	default Authority createPublicAuthority(Authority authority) throws ApplicationException, BadRequestException {
+	default Authority createSystemAuthority(Authority authority) throws ApplicationException, BadRequestException {
 		throw new NotImplementedException();
 	}
 

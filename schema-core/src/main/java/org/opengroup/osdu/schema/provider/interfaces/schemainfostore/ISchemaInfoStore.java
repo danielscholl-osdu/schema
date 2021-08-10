@@ -15,19 +15,19 @@ public interface ISchemaInfoStore {
 
     SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException;
 
-    default SchemaInfo updatePublicSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+    default SchemaInfo updateSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         throw new NotImplementedException();
     }
 
     SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException;
 
-    default SchemaInfo createPublicSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+    default SchemaInfo createSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         throw new NotImplementedException();
     }
 
     SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException;
 
-    default SchemaInfo getPublicSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+    default SchemaInfo getSystemSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
         throw new NotImplementedException();
     }
 
@@ -35,19 +35,19 @@ public interface ISchemaInfoStore {
 
     List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException;
 
-    default List<SchemaInfo> getPublicSchemaInfoList(QueryParams queryParams) throws ApplicationException {
+    default List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) throws ApplicationException {
         throw new NotImplementedException();
     }
 
     boolean isUnique(String schemaId, String tenantId) throws ApplicationException;
 
-    default boolean isUnique(String schemaId) throws ApplicationException {
+    default boolean isUniqueSystemSchema(String schemaId) throws ApplicationException {
         throw new NotImplementedException();
     }
 
     boolean cleanSchema(String schemaId) throws ApplicationException;
 
-    default boolean cleanPublicSchema(String schemaId) throws ApplicationException {
+    default boolean cleanSystemSchema(String schemaId) throws ApplicationException {
         throw new NotImplementedException();
     }
 }

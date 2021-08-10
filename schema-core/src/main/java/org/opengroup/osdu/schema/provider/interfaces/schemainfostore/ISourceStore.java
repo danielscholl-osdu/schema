@@ -10,13 +10,13 @@ public interface ISourceStore {
 
 	Source get(String sourceId) throws NotFoundException, ApplicationException;
 
-	default Source getPublicSource(String sourceId) throws NotFoundException, ApplicationException {
+	default Source getSystemSource(String sourceId) throws NotFoundException, ApplicationException {
 		throw new NotImplementedException();
 	}
 
 	Source create(Source source) throws BadRequestException, ApplicationException;
 
-	default Source createPublicSource(Source source) throws BadRequestException, ApplicationException {
+	default Source createSystemSource(Source source) throws BadRequestException, ApplicationException {
 		throw new NotImplementedException();
 	}
 

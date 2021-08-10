@@ -10,13 +10,13 @@ public interface IEntityTypeStore {
 
 	EntityType get(String entityTypeId) throws NotFoundException, ApplicationException;
 
-	default EntityType getPublicEntity(String entityTypeId) throws NotFoundException, ApplicationException {
+	default EntityType getSystemEntity(String entityTypeId) throws NotFoundException, ApplicationException {
 		throw new NotImplementedException();
 	}
 
 	EntityType create(EntityType entityType) throws BadRequestException, ApplicationException;
 
-	default EntityType createPublicEntity(EntityType entityType) throws BadRequestException, ApplicationException {
+	default EntityType createSystemEntity(EntityType entityType) throws BadRequestException, ApplicationException {
 		throw new NotImplementedException();
 	}
 
