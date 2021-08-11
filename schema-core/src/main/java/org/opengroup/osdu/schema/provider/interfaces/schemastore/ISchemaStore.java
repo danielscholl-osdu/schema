@@ -14,7 +14,7 @@ public interface ISchemaStore {
 
     String getSchema(String dataPartitionId, String filePath) throws NotFoundException, ApplicationException;
 
-    default String getSystemSchema(String dataPartitionId, String filePath) throws NotFoundException, ApplicationException {
+    default String getSystemSchema(String filePath) throws NotFoundException, ApplicationException {
         throw new NotImplementedException();
     }
 
