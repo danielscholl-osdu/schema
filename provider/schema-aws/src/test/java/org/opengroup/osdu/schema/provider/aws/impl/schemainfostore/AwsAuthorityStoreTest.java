@@ -31,7 +31,6 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.opengroup.osdu.schema.provider.aws.models.AuthorityDoc;
 
 import static org.junit.Assert.assertEquals;
@@ -41,9 +40,6 @@ public class AwsAuthorityStoreTest {
 
   @InjectMocks
   private AwsAuthorityStore authorityStore;
-
-  @Mock
-  private AwsServiceConfig serviceConfig;
 
   @Mock
   private DpsHeaders headers;
@@ -59,8 +55,6 @@ public class AwsAuthorityStoreTest {
 
   @Before
   public void setUp() throws Exception {
-    serviceConfig.amazonRegion = "us-east-1";
-    serviceConfig.environment = "test";    
 
     Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
     .thenReturn(queryHelper);
