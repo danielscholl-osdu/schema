@@ -154,7 +154,8 @@
                 "description": "Document language as listed in the ISO 639-3 https://en.wikipedia.org/wiki/ISO_639, https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes",
                 "type": "string"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -162,7 +163,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

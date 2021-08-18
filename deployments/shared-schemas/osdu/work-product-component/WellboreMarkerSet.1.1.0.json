@@ -5,9 +5,9 @@
       "source": "wks",
       "entityType": "work-product-component--WellboreMarkerSet",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
+      "schemaVersionMinor": 1,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:work-product-component--WellboreMarkerSet:1.0.0"
+      "id": "{{schema-authority}}:wks:work-product-component--WellboreMarkerSet:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,9 +15,9 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/work-product-component/WellboreMarkerSet.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/work-product-component/WellboreMarkerSet.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:work-product-component--WellboreMarkerSet:1.0.0",
+    "x-osdu-schema-source": "osdu:wks:work-product-component--WellboreMarkerSet:1.1.0",
     "title": "WellboreMarkerSet",
     "description": "Wellbore Markers identify the depth in a wellbore, measured below a reference elevation, at which a person or an automated process identifies a noteworthy observation, which is usually a change in the rock that intersects that wellbore. Formation Marker data includes attributes/properties that put these depths in context. Formation Markers are sometimes known as picks or formation tops.",
     "type": "object",
@@ -34,7 +34,7 @@
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:work-product-component--WellboreMarkerSet:1.0.0"
+        "example": "osdu:wks:work-product-component--WellboreMarkerSet:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -119,7 +119,8 @@
             "properties": {
               "WellboreID": {
                 "type": "string",
-                "description": "Wellbore ID",
+                "title": "Wellbore ID",
+                "description": "The Wellbore ID, to which the markers in this set belong.",
                 "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Wellbore:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                 "x-osdu-relationship": [
                   {
@@ -130,10 +131,60 @@
               },
               "VerticalMeasurement": {
                 "$ref": "{{schema-authority}}:wks:AbstractFacilityVerticalMeasurement:1.0.0",
+                "title": "Vertical Measurement",
                 "description": "References an entry in the Vertical Measurement array for the Wellbore identified by WellboreID, which defines the vertical reference datum for all marker measured depths of the Wellbore Marker Set Markers array."
+              },
+              "AvailableMarkerProperties": {
+                "type": "array",
+                "title": "Available Marker Properties",
+                "description": "The array of MarkerProperty definitions describing the available properties for this instance of WellboreMarkerSet.",
+                "x-osdu-indexing": {
+                  "type": "flattened"
+                },
+                "items": {
+                  "type": "object",
+                  "title": "MarkerProperty",
+                  "description": "A set of properties describing a marker property which is available for this instance of a WellboreMarkerSet.",
+                  "properties": {
+                    "MarkerPropertyTypeID": {
+                      "type": "string",
+                      "title": "Marker Property Type ID",
+                      "description": "The reference to a marker property type - or if interpreted as CSV columns, the 'well-known column type. It is a relationship to a reference-data--MarkerPropertyType record id.",
+                      "example": "partition-id:reference-data--MarkerPropertyType:MissingThickness:",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-MarkerPropertyType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "reference-data",
+                          "EntityType": "MarkerPropertyType"
+                        }
+                      ]
+                    },
+                    "MarkerPropertyUnitID": {
+                      "type": "string",
+                      "title": "Marker Property Unit ID",
+                      "description": "Unit of Measure for the marker properties of type MarkerPropertyType.",
+                      "example": "partition-id:reference-data--UnitOfMeasure:ft:",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "reference-data",
+                          "EntityType": "UnitOfMeasure"
+                        }
+                      ]
+                    },
+                    "Name": {
+                      "type": "string",
+                      "title": "Name",
+                      "description": "The name of the marker property (e.g. column in a CSV document) as originally found. If absent The name of the MarkerPropertyType is intended to be used.",
+                      "example": "MissingThickness"
+                    }
+                  }
+                }
               },
               "Markers": {
                 "type": "array",
+                "title": "Markers",
+                "description": "The array of marker meta data in this set.",
                 "x-osdu-indexing": {
                   "type": "nested"
                 },
@@ -147,6 +198,11 @@
                     "MarkerMeasuredDepth": {
                       "type": "number",
                       "description": "The depth at which the Marker was noted.",
+                      "x-osdu-frame-of-reference": "UOM:length"
+                    },
+                    "MarkerSubSeaVerticalDepth": {
+                      "type": "number",
+                      "description": "The Marker's TVD converted to a Sub-Sea Vertical depth, i.e., below Mean Sea Level. Note that TVD values above MSL are negative. This is the same as true vertical depth referenced to the vertical CRS \u201cMSL depth\u201d.",
                       "x-osdu-frame-of-reference": "UOM:length"
                     },
                     "MarkerDate": {

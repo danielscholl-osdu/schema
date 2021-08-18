@@ -445,7 +445,8 @@
                 "title": "Is Regular Flag",
                 "description": "Boolean property indicating the sampling mode of the ReferenceCurveID. True means all reference curve values are regularly spaced (see SamplingInterval); false means irregular or discrete sample spacing."
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -453,7 +454,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

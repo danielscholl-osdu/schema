@@ -117,7 +117,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }
@@ -131,7 +132,7 @@
     "x-osdu-governance-authorities": [
       "None"
     ],
-    "x-osdu-governance-model": "LOCAL",
+    "x-osdu-governance-model": "OPEN",
     "x-osdu-inheriting-from-kind": [
       {
         "name": "ReferenceType",

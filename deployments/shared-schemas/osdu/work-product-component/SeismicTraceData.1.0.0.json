@@ -409,7 +409,7 @@
               "ReplacementVelocity": {
                 "type": "number",
                 "description": "Value used to produce vertical static shifts in data",
-                "x-osdu-frame-of-reference": "UOM:velocity"
+                "x-osdu-frame-of-reference": "UOM:length per time"
               },
               "ShiftApplied": {
                 "type": "number",
@@ -478,12 +478,12 @@
               "RangeAmplitudeMax": {
                 "type": "number",
                 "description": "The actual maximum amplitude value found in the dataset.",
-                "x-osdu-frame-of-reference": "UOM:impedance"
+                "x-osdu-frame-of-reference": "UOM:"
               },
               "RangeAmplitudeMin": {
                 "type": "number",
                 "description": "The actual minimum amplitude value found in the dataset.",
-                "x-osdu-frame-of-reference": "UOM:impedance"
+                "x-osdu-frame-of-reference": "UOM:"
               },
               "StackAngleRangeMax": {
                 "type": "number",
@@ -526,7 +526,8 @@
                   }
                 ]
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -534,7 +535,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }
