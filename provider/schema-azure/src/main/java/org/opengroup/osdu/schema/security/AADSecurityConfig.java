@@ -45,6 +45,7 @@ public class AADSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/security",
                         "/swagger",
                         "/swagger-ui.html",
+                        "/info",
                         "/webjars/**").permitAll()
                 .anyRequest().authenticated()
             .and()
