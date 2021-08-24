@@ -2,7 +2,7 @@ package org.opengroup.osdu.schema.provider.interfaces.schemastore;
 
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 public interface ISchemaStore {
 

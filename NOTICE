@@ -469,21 +469,6 @@ The following software have components provided under the terms of this license:
 - Spring AOP (from https://github.com/spring-projects/spring-framework)
 - Spring Beans (from https://github.com/spring-projects/spring-framework)
 - Spring Beans (from https://github.com/spring-projects/spring-framework)
-- Spring Boot (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot)
-- Spring Boot (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot)
-- Spring Boot AutoConfigure (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-autoconfigure)
-- Spring Boot AutoConfigure (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-autoconfigure)
-- Spring Boot Dependencies (from https://projects.spring.io/spring-boot/#)
-- Spring Boot Dependencies (from https://projects.spring.io/spring-boot/#)
-- Spring Boot Logging Starter (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-logging)
-- Spring Boot Starter (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter)
-- Spring Boot Starter (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter)
-- Spring Boot Test (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-test)
-- Spring Boot Test (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-test)
-- Spring Boot Test Auto-Configure (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-test-autoconfigure)
-- Spring Boot Test Auto-Configure (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-test-autoconfigure)
-- Spring Boot Test Starter (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-test)
-- Spring Boot Test Starter (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-starters/spring-boot-starter-test)
 - Spring Commons Logging Bridge (from https://github.com/spring-projects/spring-framework)
 - Spring Commons Logging Bridge (from https://github.com/spring-projects/spring-framework)
 - Spring Context (from https://github.com/spring-projects/spring-framework)
@@ -527,7 +512,7 @@ The following software have components provided under the terms of this license:
 - elasticsearch-x-content (from https://github.com/elastic/elasticsearch)
 - error-prone annotations (from https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations)
 - error-prone annotations (from https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations)
-- google-auth (from https://github.com/GoogleCloudPlatform/google-auth-library-python)
+- google-auth (from https://github.com/googleapis/google-auth-library-python)
 - grpc-google-cloud-pubsub-v1 (from https://repo1.maven.org/maven2/com/google/api/grpc/grpc-google-cloud-pubsub-v1)
 - io.grpc:grpc-alts (from https://github.com/grpc/grpc-java)
 - io.grpc:grpc-api (from https://github.com/grpc/grpc-java)
@@ -576,18 +561,29 @@ The following software have components provided under the terms of this license:
 - rest-high-level (from https://github.com/elastic/elasticsearch)
 - rxjava (from https://github.com/ReactiveX/RxJava)
 - server (from https://github.com/elastic/elasticsearch)
+- spring-boot (from https://spring.io/projects/spring-boot)
+- spring-boot (from https://spring.io/projects/spring-boot)
 - spring-boot-actuator (from https://spring.io/projects/spring-boot)
 - spring-boot-actuator (from https://spring.io/projects/spring-boot)
 - spring-boot-actuator-autoconfigure (from https://spring.io/projects/spring-boot)
 - spring-boot-actuator-autoconfigure (from https://spring.io/projects/spring-boot)
+- spring-boot-autoconfigure (from https://spring.io/projects/spring-boot)
+- spring-boot-autoconfigure (from https://spring.io/projects/spring-boot)
+- spring-boot-dependencies (from https://spring.io/projects/spring-boot)
+- spring-boot-dependencies (from https://spring.io/projects/spring-boot)
+- spring-boot-starter (from https://spring.io/projects/spring-boot)
+- spring-boot-starter (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-actuator (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-actuator (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-json (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-json (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-log4j2 (from https://spring.io/projects/spring-boot)
+- spring-boot-starter-logging (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-reactor-netty (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-security (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-security (from https://spring.io/projects/spring-boot)
+- spring-boot-starter-test (from https://spring.io/projects/spring-boot)
+- spring-boot-starter-test (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-tomcat (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-tomcat (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-validation (from https://spring.io/projects/spring-boot)
@@ -595,6 +591,10 @@ The following software have components provided under the terms of this license:
 - spring-boot-starter-web (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-web (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-webflux (from https://spring.io/projects/spring-boot)
+- spring-boot-test (from https://spring.io/projects/spring-boot)
+- spring-boot-test (from https://spring.io/projects/spring-boot)
+- spring-boot-test-autoconfigure (from https://spring.io/projects/spring-boot)
+- spring-boot-test-autoconfigure (from https://spring.io/projects/spring-boot)
 - spring-security-config (from http://spring.io/spring-security)
 - spring-security-config (from http://spring.io/spring-security)
 - spring-security-core (from http://spring.io/spring-security)
@@ -653,7 +653,8 @@ The following software have components provided under the terms of this license:
 - Hamcrest (from http://hamcrest.org/JavaHamcrest/)
 - Hamcrest Core (from http://hamcrest.org/)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
-- JavaBeans Activation Framework API jar (from )
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf)
+- Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api)
 - Lucene Common Analyzers (from https://repo1.maven.org/maven2/org/apache/lucene/lucene-analyzers-common)
 - Lucene Core (from https://repo1.maven.org/maven2/org/apache/lucene/lucene-core)
 - Lucene Suggest (from https://repo1.maven.org/maven2/org/apache/lucene/lucene-suggest)
@@ -671,7 +672,6 @@ The following software have components provided under the terms of this license:
 - Spring Core (from https://github.com/spring-projects/spring-framework)
 - ThreeTen backport (from https://www.threeten.org/threetenbp)
 - google (from http://breakingcode.wordpress.com/)
-- jakarta.xml.bind-api (from )
 
 ========================================================================
 CC-BY-2.5
@@ -968,8 +968,8 @@ PHP-3.01
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- JavaBeans Activation Framework API jar (from )
-- jakarta.xml.bind-api (from )
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf)
+- Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api)
 
 ========================================================================
 Public-Domain
@@ -983,7 +983,7 @@ Python-2.0
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- google-auth (from https://github.com/GoogleCloudPlatform/google-auth-library-python)
+- google-auth (from https://github.com/googleapis/google-auth-library-python)
 
 ========================================================================
 SPL-1.0
@@ -1066,8 +1066,8 @@ The following software have components provided under the terms of this license:
 - JUnit Platform Engine API (from https://junit.org/junit5/)
 - JUnit Platform Engine API (from https://junit.org/junit5/)
 - JUnit Vintage Engine (from https://junit.org/junit5/)
-- JavaBeans Activation Framework API jar (from )
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf)
+- Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api)
 - Spongy Castle (from http://rtyley.github.io/spongycastle/)
-- jakarta.xml.bind-api (from )
 
 
