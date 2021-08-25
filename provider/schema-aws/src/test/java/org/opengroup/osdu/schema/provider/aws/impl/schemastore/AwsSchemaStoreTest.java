@@ -30,7 +30,6 @@ import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,8 +43,6 @@ public class AwsSchemaStoreTest {
   @InjectMocks
   private AwsSchemaStore schemaStore;
 
-  @Mock
-  private AwsServiceConfig serviceConfig;
 
   @Mock
   private DpsHeaders headers;
@@ -74,8 +71,6 @@ public class AwsSchemaStoreTest {
 
   @Before
   public void setUp() {
-    serviceConfig.amazonRegion = "us-east-1";
-    serviceConfig.environment = "test";
 
     Mockito.when(s3ClientWithBucket.getS3Client()).thenReturn(s3);
 

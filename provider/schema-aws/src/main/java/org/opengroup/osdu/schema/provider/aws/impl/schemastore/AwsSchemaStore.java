@@ -20,7 +20,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import org.opengroup.osdu.core.aws.s3.IS3ClientFactory;
 import org.opengroup.osdu.core.aws.s3.S3ClientWithBucket;
-import org.opengroup.osdu.core.aws.s3.S3Config;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -30,7 +29,6 @@ import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

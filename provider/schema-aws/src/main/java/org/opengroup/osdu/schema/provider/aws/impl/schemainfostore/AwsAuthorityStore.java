@@ -22,7 +22,6 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.opengroup.osdu.schema.provider.aws.models.AuthorityDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IAuthorityStore;
 import org.springframework.beans.factory.annotation.Value;

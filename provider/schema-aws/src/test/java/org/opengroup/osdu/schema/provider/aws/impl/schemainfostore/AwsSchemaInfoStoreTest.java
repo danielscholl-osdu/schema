@@ -28,7 +28,6 @@ import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
-import org.opengroup.osdu.schema.provider.aws.config.AwsServiceConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,9 +35,6 @@ public class AwsSchemaInfoStoreTest {
 
 	@InjectMocks
 	private AwsSchemaInfoStore schemaInfoStore;
-
-	@Mock
-	private AwsServiceConfig serviceConfig;
 
 	@Mock
 	private DpsHeaders headers;
@@ -54,8 +50,6 @@ public class AwsSchemaInfoStoreTest {
 
 	@Before
 	public void setUp() throws Exception {
-		serviceConfig.amazonRegion = "us-east-1";
-		serviceConfig.environment = "test";
 
 		ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
 
