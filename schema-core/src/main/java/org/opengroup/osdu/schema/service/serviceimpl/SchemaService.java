@@ -277,8 +277,9 @@ public class SchemaService implements ISchemaService {
         
         Comparator<SchemaInfo> compareByCreatedDate = (s1,s2) -> s1.getDateCreated().compareTo(s2.getDateCreated());
 
-        List<SchemaInfo> schemaFinalList = schemaList.stream().skip(queryParams.getOffset())
+        List<SchemaInfo> schemaFinalList = schemaList.stream()
         		.sorted(compareByCreatedDate)
+        		.skip(queryParams.getOffset())
                 .limit(queryParams.getLimit()).collect(Collectors.toList());
 
         if (schemaFinalList.isEmpty()){
