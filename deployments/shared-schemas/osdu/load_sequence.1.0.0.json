@@ -840,12 +840,12 @@
     "relativePath": "shared-schemas/osdu/reference-data/WellInterestType.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.0.0.json"
-  },
-  {
     "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.1.0",
     "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellLogSamplingDomainType:1.0.0",
@@ -864,12 +864,12 @@
     "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.1.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.0.0.json"
-  },
-  {
     "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.1.0",
     "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellboreTrajectoryType:1.0.0",
