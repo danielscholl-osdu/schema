@@ -31,6 +31,7 @@ public class AADSecurityConfigWithIstioEnabled extends WebSecurityConfigurerAdap
                         "/configuration/security",
                         "/swagger",
                         "/swagger-ui.html",
+                        "/info",
                         "/schema",
                         "/schema/**",
                         "/webjars/**").permitAll()
