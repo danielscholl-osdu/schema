@@ -1,9 +1,10 @@
 aws_bootstrap:
   stage: bootstrap
-  image: python:3.8
-  needs: ["aws-update-ecs"]
+  image: $CI_REGISTRY/osdu/platform/deployment-and-operations/base-containers-aws/aws-python/aws-python:v1.0-py3.8
+  needs: [{ job: 'aws-update-ecs', optional: true }, { job: 'aws-update-eks', optional: true }]
   extends:
     - .aws
+    - .aws_common_variables
     - .aws_variables
   script:
     - pip install -r $AWS_DEPLOYMENTS_SUBDIR/requirements.txt
