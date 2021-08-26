@@ -3,6 +3,7 @@ package org.opengroup.osdu.schema.security;
 import com.azure.spring.autoconfigure.aad.UserPrincipal;
 import com.nimbusds.jwt.JWTClaimsSet;
 import net.minidev.json.JSONArray;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -48,7 +49,7 @@ public class AzureIstioSecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final FilterChain filterChain) throws ServletException, IOException {
         final String istioPayload = servletRequest.getHeader(X_ISTIO_CLAIMS_PAYLOAD);
 
-        LOGGER.info(String.format("Received headers list: %s", Collections.list(servletRequest.getHeaderNames())));
+        LOGGER.debug("Received headers list: {}", Collections.list(servletRequest.getHeaderNames()));
 
         try {
             if (hasText(istioPayload)) {
@@ -77,7 +78,7 @@ public class AzureIstioSecurityFilter extends OncePerRequestFilter {
             }
         } catch (ParseException ex) {
             LOGGER.error("Failed to initialize UserPrincipal.", ex);
-            throw new ServletException(ex);
+            throw new AppException(500, "Unable to parse claims in istio payload", ex.getMessage());
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
