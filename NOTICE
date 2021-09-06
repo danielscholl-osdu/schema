@@ -539,7 +539,7 @@ The following software have components provided under the terms of this license:
 - project ':json-path' (from https://github.com/jayway/JsonPath)
 - proto-google-cloud-logging-v2 (from https://repo1.maven.org/maven2/com/google/api/grpc/proto-google-cloud-logging-v2)
 - proto-google-cloud-pubsub-v1 (from https://github.com/googleapis/java-pubsub/proto-google-cloud-pubsub-v1)
-- proto-google-common-protos (from https://github.com/googleapis/api-client-staging)
+- proto-google-common-protos (from https://github.com/googleapis/java-iam/proto-google-common-protos)
 - proto-google-iam-v1 (from https://github.com/googleapis/java-iam/proto-google-iam-v1)
 - rank-eval (from https://github.com/elastic/elasticsearch)
 - requests (from https://requests.readthedocs.io)
