@@ -141,3 +141,19 @@ All 120 schemas registered or updated.
 ```
 
 In case of errors, the list of failed creations/updates are summarized at the end.
+
+### Environment clean up (GCP)
+Schema bootstrapping used during new platform configuration, creates schema records in Datastore, that cannot be cleaned up during deinstallation.
+If platform deployment must be re-installed, the cleanup script must be runned.
+Scripts for cleanup schemas can be found in [DatastoreCleanUp.py](../scripts/DatastoreCleanUp.py) 
+
+```bash
+pip install -r gcp-deployment-requirements.txt
+```
+You will need to have the following environment variables defined to run scripts.
+| name | value | description | sensitive? | source |
+| ---  | ---   | ---         | ---        | ---    |
+| `DATA_PARTITION` | ex `osdu`| Data partition id| no | - |
+| `SCHEMA_NAMESPACE` | ex `dataecosystem`| If not specified default `dataecosystem` will be used | no | - |
+| `SCHEMA_KIND` | ex `schema`| If not specified default `schema` will be used  | no | - |
+| `GOOGLE_APPLICATION_CREDENTIALS` | ex`usr/key.json` | Google Service account credentials with delete access to Datastore | yes | - |

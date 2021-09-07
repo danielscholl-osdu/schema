@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @ConditionalOnProperty(value = "azure.istio.auth.enabled", havingValue = "true", matchIfMissing = true)
 public class AADSecurityConfigWithIstioEnabled extends WebSecurityConfigurerAdapter {
     @Autowired
-    private AADAppRoleStatelessAuthenticationFilter appRoleAuthFilter;
+    private AzureIstioSecurityFilter azureIstioSecurityFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -37,6 +37,6 @@ public class AADSecurityConfigWithIstioEnabled extends WebSecurityConfigurerAdap
                         "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(appRoleAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(azureIstioSecurityFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
