@@ -20,13 +20,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.opengroup.osdu.azure.eventgrid.EventGridTopicStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.di.EventGridConfig;
+import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.azure.impl.messagebus.model.SchemaPubSubInfo;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.logging.AuditLogger;
@@ -49,15 +53,26 @@ public class MessageBusImpl implements IMessageBus {
 	private AuditLogger auditLogger;
 	@Autowired
 	DpsHeaders headers;
+	@Autowired
+	private ITenantFactory tenantFactory;
+
+	@Autowired
+	SystemResourceConfig systemResourceConfig;
 
 	private final static String EVENT_DATA_VERSION = "1.0";
 
 	@Override
 	public void publishMessage(String schemaId, String eventType) {
+		// This if block will be removed once schema-core starts consuming *System* methods.
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+			this.publishMessageForSystemSchema(schemaId, eventType);
+			return;
+		}
+
 		if (eventGridConfig.isEventGridEnabled()) {
 			logger.info("Generating event of type {}",eventType);
 			try {
-				publishToEventGrid(schemaId, eventType);
+				publishToEventGrid(schemaId, eventType, headers.getPartitionId());
 				auditLogger.schemaNotificationSuccess(Collections.singletonList(schemaId));
 			}catch (AppException ex) {
 				
@@ -71,7 +86,38 @@ public class MessageBusImpl implements IMessageBus {
 		}
 	}
 
-	private void publishToEventGrid(String schemaId, String eventType) {
+	/**
+	 * Method to publish schema create notification for system schemas.
+	 * @param schemaId
+	 * @param eventType
+	 */
+	@Override
+	public void publishMessageForSystemSchema(String schemaId, String eventType) {
+		if (eventGridConfig.isEventGridEnabled()) {
+			logger.info("Generating event of type {}",eventType);
+			try {
+				// Publish the event for all the tenants.
+				List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getName)
+						.collect(Collectors.toList());
+
+				for (String tenant : privateTenantList) {
+					publishToEventGrid(schemaId, eventType, tenant);
+				}
+
+				auditLogger.schemaNotificationSuccess(Collections.singletonList(schemaId));
+			}catch (AppException ex) {
+
+				//We do not want to fail schema creation if notification delivery has failed, hence just logging the exception
+				auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
+				logger.warning(SchemaConstants.SCHEMA_NOTIFICATION_FAILED);
+			}
+
+		}else {
+			logger.info(SchemaConstants.SCHEMA_NOTIFICATION_IS_DISABLED);
+		}
+	}
+
+	private void publishToEventGrid(String schemaId, String eventType, String dataPartitionId) {
 
 		String messageId = UUID.randomUUID().toString();
 		SchemaPubSubInfo[] schemaPubSubMsgs = new SchemaPubSubInfo [1];
@@ -79,8 +125,8 @@ public class MessageBusImpl implements IMessageBus {
 		List<EventGridEvent> eventsList = new ArrayList<>();
 		HashMap<String, Object> message = new HashMap<>();
 		message.put("data", schemaPubSubMsgs);
-		message.put(DpsHeaders.ACCOUNT_ID, headers.getPartitionIdWithFallbackToAccountId());
-		message.put(DpsHeaders.DATA_PARTITION_ID, headers.getPartitionIdWithFallbackToAccountId());
+		message.put(DpsHeaders.ACCOUNT_ID, dataPartitionId);
+		message.put(DpsHeaders.DATA_PARTITION_ID, dataPartitionId);
 		message.put(DpsHeaders.CORRELATION_ID, headers.getCorrelationId());
 		
 		//EventGridEvent supports array of messages to be triggered in a batch but at present we do not support 
@@ -95,7 +141,7 @@ public class MessageBusImpl implements IMessageBus {
 				);
 		eventsList.add(eventGridEvent);
 		logger.info("Schema event created: " + messageId);
-		eventGridTopicStore.publishToEventGridTopic(headers.getPartitionId(), eventGridConfig.getCustomTopicName(), eventsList);
+		eventGridTopicStore.publishToEventGridTopic(dataPartitionId, eventGridConfig.getCustomTopicName(), eventsList);
 		logger.info("Schema event generated successfully");
 	}
 

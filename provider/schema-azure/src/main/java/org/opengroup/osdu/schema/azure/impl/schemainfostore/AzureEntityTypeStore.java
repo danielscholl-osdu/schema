@@ -69,17 +69,31 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.getSystemEntity(entityTypeId);
+        }
 
         String id = headers.getPartitionId() + ":" + entityTypeId;
         EntityTypeDoc entityTypeDoc;
+        entityTypeDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeId, EntityTypeDoc.class)
+                .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            entityTypeDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), entityTypeContainer, id, entityTypeId, EntityTypeDoc.class)
-                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
-        } else {
-            entityTypeDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeId, EntityTypeDoc.class)
-                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
-        }
+        return entityTypeDoc.getEntityType();
+    }
+
+    /**
+     * Method to get system Entity
+     * @param entityTypeId
+     * @return
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public EntityType getSystemEntity(String entityTypeId) throws NotFoundException, ApplicationException {
+        EntityTypeDoc entityTypeDoc;
+        entityTypeDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), entityTypeContainer, entityTypeId, entityTypeId, EntityTypeDoc.class)
+                .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
         return entityTypeDoc.getEntityType();
     }
@@ -93,27 +107,51 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
-        String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.createSystemEntity(entityType);
+        }
 
+        String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
         try {
             EntityTypeDoc entityTypeDoc = new EntityTypeDoc(id, entityType);
-            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-                cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), entityTypeContainer, id, entityTypeDoc);
-            } else {
-                cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeDoc);
-            }
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, entityTypeContainer, id, entityTypeDoc);
         } catch (AppException ex) {
-            if (ex.getError().getCode() == 409) {
-                log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
-                throw new BadRequestException(MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
-                        entityType.getEntityTypeId()));
-            } else {
-                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-                throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-            }
+            handleAppException(ex, entityType);
         }
 
         log.info(SchemaConstants.ENTITY_TYPE_CREATED);
         return entityType;
+    }
+
+    /**
+     * Method to create a system Entity
+     * @param entityType
+     * @return
+     * @throws BadRequestException
+     * @throws ApplicationException
+     */
+    @Override
+    public EntityType createSystemEntity(EntityType entityType) throws BadRequestException, ApplicationException {
+        try {
+            EntityTypeDoc entityTypeDoc = new EntityTypeDoc(entityType.getEntityTypeId(), entityType);
+            cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), entityTypeContainer, entityType.getEntityTypeId(), entityTypeDoc);
+        } catch (AppException ex) {
+            handleAppException(ex, entityType);
+        }
+
+        log.info(SchemaConstants.ENTITY_TYPE_CREATED);
+        return entityType;
+    }
+
+    private void handleAppException(AppException ex, EntityType entityType) throws BadRequestException, ApplicationException {
+        if (ex.getError().getCode() == 409) {
+            log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
+            throw new BadRequestException(MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
+                    entityType.getEntityTypeId()));
+        } else {
+            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+        }
     }
 }
