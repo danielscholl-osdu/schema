@@ -62,14 +62,40 @@ public class AzureSchemaStore implements ISchemaStore {
      */
     @Override
     public String getSchema(String dataPartitionId, String filePath) throws ApplicationException, NotFoundException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+            return this.getSystemSchema(filePath);
+        }
+
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
         try {
             String content = null;
-            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
-                content = blobStore.readFromStorageContainer(filePath, systemResourceConfig.getStorageContainerName());
-            } else {
-                content = blobStore.readFromStorageContainer(dataPartitionId, filePath, config.containerName());
-            }
+            content = blobStore.readFromStorageContainer(dataPartitionId, filePath, config.containerName());
+
+            if (content != null)
+                return content;
+            else
+                throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
+        }
+        catch (Exception ex) {
+            throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
+        }
+    }
+
+    /**
+     * Method to get a system schema
+     * @param filePath
+     * @return
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public String getSystemSchema(String filePath) throws NotFoundException, ApplicationException {
+        filePath = filePath + SchemaConstants.JSON_EXTENSION;
+        try {
+            String content = null;
+            content = blobStore.readFromStorageContainer(filePath, systemResourceConfig.getStorageContainerName());
+
             if (content != null)
                 return content;
             else
@@ -90,15 +116,34 @@ public class AzureSchemaStore implements ISchemaStore {
 
     @Override
     public String createSchema(String filePath, String content) throws ApplicationException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.createSystemSchema(filePath, content);
+        }
+
         String dataPartitionId = headers.getPartitionId();
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
-
         try {
-            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-                blobStore.writeToStorageContainer(filePath, content, systemResourceConfig.getStorageContainerName());
-            } else {
-                blobStore.writeToStorageContainer(dataPartitionId, filePath, content, config.containerName());
-            }
+            blobStore.writeToStorageContainer(dataPartitionId, filePath, content, config.containerName());
+            log.info(SchemaConstants.SCHEMA_CREATED);
+            return filePath;
+        } catch (Exception ex) {
+            throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Method to create a system schema
+     * @param filePath
+     * @param content
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public String createSystemSchema(String filePath, String content) throws ApplicationException {
+        filePath = filePath + SchemaConstants.JSON_EXTENSION;
+        try {
+            blobStore.writeToStorageContainer(filePath, content, systemResourceConfig.getStorageContainerName());
             log.info(SchemaConstants.SCHEMA_CREATED);
             return filePath;
         } catch (Exception ex) {
@@ -114,16 +159,35 @@ public class AzureSchemaStore implements ISchemaStore {
      */
     @Override
     public boolean cleanSchemaProject(String schemaId) throws ApplicationException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.cleanSystemSchemaProject(schemaId);
+        }
+
         String dataPartitionId = headers.getPartitionId();
         String filePath = dataPartitionId + ":" + schemaId + SchemaConstants.JSON_EXTENSION;
-
         try
         {
-            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-                return blobStore.deleteFromStorageContainer(filePath, systemResourceConfig.getStorageContainerName());
-            } else {
-                return blobStore.deleteFromStorageContainer(dataPartitionId, filePath, config.containerName());
-            }
+            return blobStore.deleteFromStorageContainer(dataPartitionId, filePath, config.containerName());
+        }
+        catch (Exception e)
+        {
+            throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Method to delete a system schema.
+     * @param schemaId
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public boolean cleanSystemSchemaProject(String schemaId) throws ApplicationException {
+        String filePath = schemaId + SchemaConstants.JSON_EXTENSION;
+        try
+        {
+            return blobStore.deleteFromStorageContainer(filePath, systemResourceConfig.getStorageContainerName());
         }
         catch (Exception e)
         {

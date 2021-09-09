@@ -97,16 +97,36 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+		// This if block will be removed once schema-core starts consuming *System* methods.
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+			return this.getSystemSchemaInfo(schemaId);
+		}
 
 		String id = headers.getPartitionId() + ":" + schemaId;
 
 		SchemaIdentity  schemaIdentity = schemaKindToSchemaIdentity(schemaId);
 		String partitioningKey =  createSchemaInfoPartitionKey(schemaIdentity);
 
-		SchemaInfoDoc schemaInfoDoc = findItemInCosmosStore(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitioningKey, SchemaInfoDoc.class)
+		SchemaInfoDoc schemaInfoDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitioningKey, SchemaInfoDoc.class)
 				.orElseThrow(() -> new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT));
 		
 		return getSchemaInfoObject(schemaInfoDoc.getFlattenedSchemaInfo(), headers.getPartitionId());
+	}
+
+	/**
+	 * Method to get system schema info.
+	 * @param schemaId
+	 * @return
+	 * @throws ApplicationException
+	 * @throws NotFoundException
+	 */
+	@Override
+	public SchemaInfo getSystemSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+		SchemaIdentity  schemaIdentity = schemaKindToSchemaIdentity(schemaId);
+		String partitioningKey =  createSchemaInfoPartitionKey(schemaIdentity);
+		SchemaInfoDoc schemaInfoDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), schemaInfoContainer, schemaId, partitioningKey, SchemaInfoDoc.class)
+				.orElseThrow(() -> new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT));
+		return getSchemaInfoObject(schemaInfoDoc.getFlattenedSchemaInfo(), null);
 	}
 
 	/**
@@ -119,24 +139,47 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+		// This if block will be removed once schema-core starts consuming *System* methods.
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+			return this.createSystemSchemaInfo(schema);
+		}
+
 		String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
-		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
+		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema, headers.getPartitionId());
 		String partitionKey = createSchemaInfoPartitionKey(schema.getSchemaInfo().getSchemaIdentity());
 		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, partitionKey, flattenedSchemaInfo);
 		try {
-			crateItemInCosmos(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey, schemaInfoDoc);
+			cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey, schemaInfoDoc);
 		} catch (AppException ex) {
-			if (ex.getError().getCode() == 409) {
-				log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
-				throw new BadRequestException(SchemaConstants.SCHEMA_ID_EXISTS);
-			} else {
-				log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-				throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
-			}
+			this.handleSchemaCreateException(ex);
 		}
 
 		log.info(SchemaConstants.SCHEMA_INFO_CREATED);
 		return getSchemaInfoObject(flattenedSchemaInfo, headers.getPartitionId());
+	}
+
+	/**
+	 * Method to create system schema info.
+	 * @param schema
+	 * @return
+	 * @throws ApplicationException
+	 * @throws BadRequestException
+	 */
+	@Override
+	public SchemaInfo createSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+		String id = schema.getSchemaInfo().getSchemaIdentity().getId();
+		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema, null);
+		String partitionKey = createSchemaInfoPartitionKey(schema.getSchemaInfo().getSchemaIdentity());
+		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, partitionKey, flattenedSchemaInfo);
+
+		try {
+			cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), schemaInfoContainer, partitionKey, schemaInfoDoc);
+		} catch (AppException ex) {
+			this.handleSchemaCreateException(ex);
+		}
+
+		log.info(SchemaConstants.SCHEMA_INFO_CREATED);
+		return getSchemaInfoObject(flattenedSchemaInfo, null);
 	}
 
 	/**
@@ -149,12 +192,17 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+		// This if block will be removed once schema-core starts consuming *System* methods.
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+			return this.updateSystemSchemaInfo(schema);
+		}
+
 		String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
-		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema);
+		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema, headers.getPartitionId());
 		String partitionKey = createSchemaInfoPartitionKey(schema.getSchemaInfo().getSchemaIdentity());
 		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, partitionKey, flattenedSchemaInfo);
 		try {
-			upsertItemInCosmos(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey,schemaInfoDoc);
+			cosmosStore.upsertItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, partitionKey,schemaInfoDoc);
 		} catch (Exception ex) {
 			log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
 			throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
@@ -162,6 +210,31 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 
 		log.info(SchemaConstants.SCHEMA_INFO_UPDATED);
 		return getSchemaInfoObject(flattenedSchemaInfo, headers.getPartitionId());
+	}
+
+	/**
+	 * method to update system schema info.
+	 * @param schema
+	 * @return
+	 * @throws ApplicationException
+	 * @throws BadRequestException
+	 */
+	@Override
+	public SchemaInfo updateSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+		String id = schema.getSchemaInfo().getSchemaIdentity().getId();
+		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema, null);
+		String partitionKey = createSchemaInfoPartitionKey(schema.getSchemaInfo().getSchemaIdentity());
+		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(id, partitionKey, flattenedSchemaInfo);
+
+		try {
+			cosmosStore.upsertItem(systemResourceConfig.getCosmosDatabase(), schemaInfoContainer, partitionKey,schemaInfoDoc);
+		} catch (Exception ex) {
+			log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+			throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+		}
+
+		log.info(SchemaConstants.SCHEMA_INFO_UPDATED);
+		return getSchemaInfoObject(flattenedSchemaInfo, null);
 	}
 
 	/**
@@ -173,19 +246,45 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public boolean cleanSchema(String schemaId) throws ApplicationException {
+		// This if block will be removed once schema-core starts consuming *System* methods.
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+			return this.cleanSystemSchema(schemaId);
+		}
+
 		String id = headers.getPartitionId() + ":" + schemaId;
 
 		SchemaIdentity  schemaIdentity = schemaKindToSchemaIdentity(schemaId);
 		String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
 
 		// Check whether SchemaInfo already exists
-		Boolean exists = findItemInCosmosStore(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
+		Boolean exists = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
 		if (!exists) {
 			return false;
 		}
 
 		// Delete the item.
-		deleteItemInCosmos(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, headers.getPartitionId());
+		cosmosStore.deleteItem(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, headers.getPartitionId());
+		return true;
+	}
+
+	/**
+	 * method to clean up system schema info
+	 * @param schemaId
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@Override
+	public boolean cleanSystemSchema(String schemaId) throws ApplicationException {
+		SchemaIdentity  schemaIdentity = schemaKindToSchemaIdentity(schemaId);
+		String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
+		// Check whether SchemaInfo already exists
+		Boolean exists = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), schemaInfoContainer, schemaId, partitionKey, SchemaInfoDoc.class).isPresent();
+		if (!exists) {
+			return false;
+		}
+
+		// Delete the item.
+		cosmosStore.deleteItem(systemResourceConfig.getCosmosDatabase(), schemaInfoContainer, schemaId, partitionKey);
 		return true;
 	}
 
@@ -229,18 +328,142 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	}
 
 	/**
+	 * Method to get schema info list for a given tenant.
+	 * @param queryParams
+	 * @param tenantId
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@Override
+	public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
+		// This if block will be removed once schema-core starts consuming *System* methods.
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(tenantId)) {
+			return this.getSystemSchemaInfoList(queryParams);
+		}
+
+		SqlQuerySpec query = this.prepareSqlQuery(queryParams);
+		CosmosQueryRequestOptions options = this.prepareCosmosQueryRequestOptions(queryParams);
+
+		List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(tenantId, cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
+		List<SchemaInfo> schemaList = new LinkedList<>();
+		for (SchemaInfoDoc info: schemaInfoList)
+		{
+			schemaList.add(getSchemaInfoObject(info.getFlattenedSchemaInfo(), tenantId));
+		}
+
+		if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
+			return getLatestVersionSchemaList(schemaList);
+		}
+
+		return schemaList;
+	}
+
+	/**
+	 * Method to get schema info list for system schemas.
+	 * @param queryParams
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@Override
+	public List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) throws ApplicationException {
+		SqlQuerySpec query = this.prepareSqlQuery(queryParams);
+		CosmosQueryRequestOptions options = this.prepareCosmosQueryRequestOptions(queryParams);
+
+		List<SchemaInfoDoc> schemaInfoList = cosmosStore.queryItems(systemResourceConfig.getCosmosDatabase(),schemaInfoContainer, query, options, SchemaInfoDoc.class);
+		List<SchemaInfo> schemaList = new LinkedList<>();
+		for (SchemaInfoDoc info: schemaInfoList)
+		{
+			schemaList.add(getSchemaInfoObject(info.getFlattenedSchemaInfo(), null));
+		}
+
+		if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
+			return getLatestVersionSchemaList(schemaList);
+		}
+
+		return schemaList;
+	}
+
+	@Override
+	public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
+		// This if block will be removed once schema-core starts consuming *System* methods.
+		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(tenantId)) {
+			return this.isUniqueSystemSchema(schemaId);
+		}
+
+		// Check for uniqueness in the system schemas
+		String partitionKey = createSchemaInfoPartitionKey(schemaKindToSchemaIdentity(schemaId));
+		Boolean exists = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(),schemaInfoContainer, schemaId, partitionKey, SchemaInfoDoc.class).isPresent();
+		if (exists) {
+			return false;
+		}
+
+		// Check for uniqueness in current tenant.
+		String id = tenantId + ":" + schemaId;
+		try {
+			exists = cosmosStore.findItem(tenantId, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
+			if (exists) {
+				return false;
+			}
+		} catch (AppException ex) {
+			log.warning(String.format("Error occurred while performing uniqueness check in tenant '%s'", tenantId), ex);
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean isUniqueSystemSchema(String schemaId) throws ApplicationException {
+		// Check whether the target schema is already part of system schemas
+		String partitionKey = createSchemaInfoPartitionKey(schemaKindToSchemaIdentity(schemaId));
+		Boolean exists = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(),schemaInfoContainer, schemaId, partitionKey, SchemaInfoDoc.class).isPresent();
+		if (exists) {
+			return false;
+		}
+
+		// Check in other tenants
+		Set<String> tenantList = new HashSet<>();
+		List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getName)
+				.collect(Collectors.toList());
+		tenantList.addAll(privateTenantList);
+
+		for (String tenant : tenantList) {
+			String id = tenant + ":" + schemaId;
+
+			// don't check in the erstwhile common tenant
+			if (tenant.equalsIgnoreCase(sharedTenant)) {
+				continue;
+			}
+
+			try {
+				Boolean existsInTenant = findItemInCosmosStore(tenant, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
+				if (existsInTenant) {
+					return false;
+				}
+			} catch (AppException ex) {
+				log.warning(String.format("Error occurred while performing uniqueness check in tenant '%s'", tenant), ex);
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Creates schemaInfo object and populates required properties.
 	 *
-	 * @param schema
+	 * @param schemaRequest
+	 * @param dataPartitionId
 	 * @return
 	 */
-	private FlattenedSchemaInfo populateSchemaInfo(SchemaRequest schemaRequest)
+	private FlattenedSchemaInfo populateSchemaInfo(SchemaRequest schemaRequest, String dataPartitionId)
 			throws BadRequestException {
 		SchemaInfo schemaInfo = schemaRequest.getSchemaInfo();
 		// check for super-seeding schemas
 		String supersededById = "";
 		if (schemaInfo.getSupersededBy() != null) {
-			String id = headers.getPartitionId() + ":" + schemaInfo.getSupersededBy().getId();
+			String id = schemaInfo.getSupersededBy().getId();
+
+			if (dataPartitionId != null && !dataPartitionId.isEmpty()) {
+				id = dataPartitionId + ":" + id;
+			}
 
 			if (schemaInfo.getSupersededBy().getId() == null)
 				throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
@@ -248,7 +471,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			SchemaIdentity schemaIdentity = schemaKindToSchemaIdentity(schemaInfo.getSupersededBy().getId());
 			String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
 
-			if ( !findItemInCosmosStore(headers.getPartitionId(), cosmosDBName, schemaInfoContainer, id, partitionKey, FlattenedSchemaInfo.class).isPresent()) {
+			if ( !findItemInCosmosStore(dataPartitionId, cosmosDBName, schemaInfoContainer, id, partitionKey, FlattenedSchemaInfo.class).isPresent()) {
 				log.error(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
 				throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
 			}
@@ -272,14 +495,23 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 				.build();
 	}
 
-	private SchemaInfo getSchemaInfoObject(FlattenedSchemaInfo flattenedSchemaInfo, String dataPartitionId) {
+	private SchemaInfo getSchemaInfoObject(FlattenedSchemaInfo flattenedSchemaInfo, String dataPartitionId) throws ApplicationException {
 		SchemaIdentity superSededBy = null;
 		if (!flattenedSchemaInfo.getSupersededBy().isEmpty()) {
-			String id = dataPartitionId + ":" + flattenedSchemaInfo.getSupersededBy();
+			String id = flattenedSchemaInfo.getSupersededBy();
+			if ( dataPartitionId != null && !dataPartitionId.isEmpty()) {
+				id = dataPartitionId + ":" + id;
+			}
+
 			SchemaIdentity schemaIdentity = schemaKindToSchemaIdentity(flattenedSchemaInfo.getSupersededBy());
 			String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
-			SchemaInfoDoc doc = findItemInCosmosStore(dataPartitionId, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).get();
-			superSededBy = getSchemaIdentity(doc.getFlattenedSchemaInfo());
+			try {
+				SchemaInfoDoc doc = findItemInCosmosStore(dataPartitionId, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).get();
+				superSededBy = getSchemaIdentity(doc.getFlattenedSchemaInfo());
+			} catch (AppException ex) {
+				log.error(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+				throw new ApplicationException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+			}
 		}
 
 		return SchemaInfo.builder().createdBy(flattenedSchemaInfo.getCreatedBy())
@@ -300,8 +532,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 				.schemaVersionPatch(flattenedSchemaInfo.getPatchVersion()).build();
 	}
 
-	@Override
-	public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
+	private SqlQuerySpec prepareSqlQuery(QueryParams queryParams) {
 		String queryText = "SELECT * FROM c WHERE 1=1 ";
 		HashMap<String, Object> parameterMap = new HashMap<>();
 
@@ -356,49 +587,25 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			query.getParameters().add(new SqlParameter(param, parameterMap.get(param)));
 		}
 
-		List<SchemaInfoDoc> schemaInfoList = queryItemsInCosmos(tenantId, cosmosDBName,schemaInfoContainer, query, options, SchemaInfoDoc.class);
-
-		List<SchemaInfo> schemaList = new LinkedList<>();
-		for (SchemaInfoDoc info: schemaInfoList)
-		{
-			schemaList.add(getSchemaInfoObject(info.getFlattenedSchemaInfo(), tenantId));
-		}
-
-		if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
-			return getLatestVersionSchemaList(schemaList);
-		}
-
-		return schemaList;
+		return query;
 	}
 
-	@Override
-	public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
-		Set<String> tenantList = new HashSet<>();
-        tenantList.add(sharedTenant);
-		tenantList.add(tenantId);
+	private CosmosQueryRequestOptions prepareCosmosQueryRequestOptions(QueryParams queryParams) {
+		CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
 
-		/* TODO : Below code enables uniqueness check across tenants and is redundant now. This will be handled/updated as part
-        	of data partition changes.
-		 */
-        if (tenantId.equalsIgnoreCase(sharedTenant)) {
-			List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getName)
-					.collect(Collectors.toList());
-			tenantList.addAll(privateTenantList);
+		SchemaIdentity schemaIdentity =  SchemaIdentity.builder()
+				.authority(queryParams.getAuthority())
+				.source(queryParams.getSource())
+				.entityType(queryParams.getEntityType())
+				.schemaVersionMajor(queryParams.getSchemaVersionMajor()).build();
+		String partitionKeyStr = createSchemaInfoPartitionKey(schemaIdentity);
+
+		if(false == StringUtils.isBlank(partitionKeyStr)) {
+			PartitionKey partitionKey = new PartitionKey(partitionKeyStr);
+			options = options.setPartitionKey(partitionKey);
 		}
 
-		for (String tenant : tenantList) {
-			String id = tenant + ":" + schemaId;
-			String partitionKey = createSchemaInfoPartitionKey(schemaKindToSchemaIdentity(schemaId));
-			try {
-				Boolean exists = findItemInCosmosStore(tenant, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
-				if (exists) {
-					return false;
-				}
-			} catch (AppException ex) {
-				log.warning(String.format("Error occurred while performing uniqueness check in tenant '%s'", tenant), ex);
-			}
-		}
-		return true;
+		return options;
 	}
 
 	private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {
@@ -459,7 +666,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	}
 
 	private String createSchemaInfoPartitionKey(SchemaIdentity schemaIdentity) {
-		
+
 		if(StringUtils.isBlank(schemaIdentity.getAuthority())
 				|| StringUtils.isBlank(schemaIdentity.getSource())
 				|| StringUtils.isBlank(schemaIdentity.getEntityType())
@@ -480,49 +687,12 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			String id,
 			String partitionKey,
 			Class<T> clazz) {
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+		if (dataPartitionId == null ||
+				dataPartitionId.isEmpty() ||
+				systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
 			return cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), containerName, id, partitionKey, clazz);
 		} else {
 			return cosmosStore.findItem(dataPartitionId, dataBaseName, containerName, id, partitionKey, clazz);
-		}
-	}
-
-	private <T> void crateItemInCosmos(
-			String dataPartitionId,
-			String dataBaseName,
-			String containerName,
-			String partitionKey,
-			T item) {
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
-			cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), containerName, partitionKey, item);
-		} else {
-			cosmosStore.createItem(dataPartitionId, dataBaseName, containerName, partitionKey, item);
-		}
-	}
-
-	private <T> void upsertItemInCosmos(
-			String dataPartitionId,
-			String dataBaseName,
-			String containerName,
-			String partitionKey,
-			T item) {
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
-			cosmosStore.upsertItem(systemResourceConfig.getCosmosDatabase(), containerName, partitionKey, item);
-		} else {
-			cosmosStore.upsertItem(dataPartitionId, dataBaseName, containerName, partitionKey, item);
-		}
-	}
-
-	private <T> void deleteItemInCosmos(
-			String dataPartitionId,
-			String dataBaseName,
-			String containerName,
-			String id,
-			String partitionKey) {
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
-			cosmosStore.deleteItem(systemResourceConfig.getCosmosDatabase(), containerName, id, partitionKey);
-		} else {
-			cosmosStore.deleteItem(dataPartitionId, dataBaseName, containerName, id, partitionKey);
 		}
 	}
 
@@ -533,10 +703,23 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			SqlQuerySpec query,
 			CosmosQueryRequestOptions options,
 			Class<T> clazz) {
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+		if (dataPartitionId == null ||
+				dataPartitionId.isEmpty() ||
+				systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
 			return cosmosStore.queryItems(systemResourceConfig.getCosmosDatabase(), collection, query, options, clazz);
 		} else {
 			return cosmosStore.queryItems(dataPartitionId, cosmosDBName, collection, query, options, clazz);
+		}
+	}
+
+
+	private void handleSchemaCreateException(AppException ex) throws BadRequestException, ApplicationException {
+		if (ex.getError().getCode() == 409) {
+			log.warning(SchemaConstants.SCHEMA_ID_EXISTS);
+			throw new BadRequestException(SchemaConstants.SCHEMA_ID_EXISTS);
+		} else {
+			log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+			throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
 		}
 	}
 }
