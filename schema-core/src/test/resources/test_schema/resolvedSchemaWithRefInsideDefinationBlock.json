@@ -491,6 +491,16 @@
                            }
                         ]
                      },
+                     "id": {
+                        "oneOf": [
+                           {
+                              "type": "number"
+                           },
+                           {
+                              "type": "string"
+                           }
+                        ]
+                     },
                      "type":{
                         "type":"string",
                         "enum":[
