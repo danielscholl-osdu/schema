@@ -72,17 +72,32 @@ public class AzureAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority get(String authorityId) throws NotFoundException, ApplicationException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.getSystemAuthority(authorityId);
+        }
 
         String id = headers.getPartitionId() + ":" + authorityId;
         AuthorityDoc authorityDoc;
 
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            authorityDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), authorityContainer, id, authorityId, AuthorityDoc.class)
-                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
-        } else {
-            authorityDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityId, AuthorityDoc.class)
-                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
-        }
+        authorityDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityId, AuthorityDoc.class)
+                .orElseThrow(() -> new NotFoundException("bad input parameter"));
+
+        return authorityDoc.getAuthority();
+    }
+
+    /**
+     * Method to get system Authority
+     * @param authorityId
+     * @return
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public Authority getSystemAuthority(String authorityId) throws NotFoundException, ApplicationException {
+        AuthorityDoc authorityDoc;
+        authorityDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), authorityContainer, authorityId, authorityId, AuthorityDoc.class)
+                .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
         return authorityDoc.getAuthority();
     }
@@ -96,27 +111,52 @@ public class AzureAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority create(Authority authority) throws ApplicationException, BadRequestException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.createSystemAuthority(authority);
+        }
+
         String id = headers.getPartitionId() + ":" + authority.getAuthorityId();
 
         try {
             AuthorityDoc authorityDoc = new AuthorityDoc(id, authority);
-            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-                cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), authorityContainer, id, authorityDoc);
-            } else {
-                cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityDoc);
-            }
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, authorityContainer, id, authorityDoc);
         } catch (AppException ex) {
-            if (ex.getError().getCode() == 409) {
-                log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
-                throw new BadRequestException(MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION,
-                        authority.getAuthorityId()));
-            } else {
-                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-                throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-            }
+            handleAppException(ex, authority);
         }
 
         log.info(SchemaConstants.AUTHORITY_CREATED);
         return authority;
+    }
+
+    /**
+     * Method to register a System Authority
+     * @param authority
+     * @return
+     * @throws ApplicationException
+     * @throws BadRequestException
+     */
+    @Override
+    public Authority createSystemAuthority(Authority authority) throws ApplicationException, BadRequestException {
+        try {
+            AuthorityDoc authorityDoc = new AuthorityDoc(authority.getAuthorityId(), authority);
+            cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), authorityContainer, authority.getAuthorityId(), authorityDoc);
+        } catch (AppException ex) {
+            handleAppException(ex, authority);
+        }
+
+        log.info(SchemaConstants.AUTHORITY_CREATED);
+        return authority;
+    }
+
+    private void handleAppException(AppException ex, Authority authority) throws ApplicationException, BadRequestException {
+        if (ex.getError().getCode() == 409) {
+            log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
+            throw new BadRequestException(MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION,
+                    authority.getAuthorityId()));
+        } else {
+            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+        }
     }
 }
