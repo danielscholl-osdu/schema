@@ -207,12 +207,23 @@ public class SchemaServiceStepDef_GET implements En {
 					JsonObject responseMsg = gsn.fromJson(response.getBody().toString(), JsonObject.class);
 					assertEquals(expectedData.toString(), responseMsg.toString());
 				});
-
+		
 		Given("I hit schema service GET List API with {string} and {string}",
 				(String parameter, String parameterVal) -> {
 
-					//parameterVal = selectVersionFromInput(parameterVal);
+					parameterVal = selectVersionFromInput(parameterVal);
 
+					Map<String, String> queryParams = new HashMap<String, String>();
+					queryParams.put(parameter, parameterVal);
+					HttpRequest httpRequest = HttpRequest.builder()
+							.url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT).queryParams(queryParams)
+							.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
+
+		Given("I hit schema GET List API with {string} and {string}",
+				(String parameter, String parameterVal) -> {
 					Map<String, String> queryParams = new HashMap<String, String>();
 					queryParams.put(parameter, parameterVal);
 					HttpRequest httpRequest = HttpRequest.builder()
@@ -333,7 +344,7 @@ public class SchemaServiceStepDef_GET implements En {
 					}
 					id2 = getSchemaIdByNumber(firstschemaOffset);
 					LOGGER.info("ID1 : " + id1);
-					LOGGER.info("ID2 : " + id2);
+					LOGGER.info("ID : " + id2);
 					assertTrue("Offset validation is successful", id1.equals(id2) );
 				});
 
