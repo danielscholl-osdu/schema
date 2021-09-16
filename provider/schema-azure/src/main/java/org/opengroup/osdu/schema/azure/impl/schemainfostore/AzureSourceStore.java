@@ -67,17 +67,32 @@ public class AzureSourceStore implements ISourceStore {
      */
     @Override
     public Source get(String sourceId) throws NotFoundException, ApplicationException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.getSystemSource(sourceId);
+        }
 
         String id = headers.getPartitionId().toString() + ":" + sourceId;
         SourceDoc sourceDoc;
+        sourceDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceId, SourceDoc.class)
+                .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            sourceDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), sourceContainer, id, sourceId, SourceDoc.class)
-                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
-        } else {
-            sourceDoc = cosmosStore.findItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceId, SourceDoc.class)
-                    .orElseThrow(() -> new NotFoundException("bad input parameter"));
-        }
+        return sourceDoc.getSource();
+    }
+
+    /**
+     * Method to get system Source
+     * @param sourceId
+     * @return
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public Source getSystemSource(String sourceId) throws NotFoundException, ApplicationException {
+        SourceDoc sourceDoc;
+
+        sourceDoc = cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), sourceContainer, sourceId, sourceId, SourceDoc.class)
+                .orElseThrow(() -> new NotFoundException("bad input parameter"));
 
         return sourceDoc.getSource();
     }
@@ -91,27 +106,52 @@ public class AzureSourceStore implements ISourceStore {
      */
     @Override
     public Source create(Source source) throws BadRequestException, ApplicationException {
+        // This if block will be removed once schema-core starts consuming *System* methods.
+        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
+            return this.createSystemSource(source);
+        }
+
         String id = headers.getPartitionId() + ":" + source.getSourceId();
 
         try {
             SourceDoc sourceDoc = new SourceDoc(id, source);
-            if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-                cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), sourceContainer, id, sourceDoc);
-            } else {
-                cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceDoc);
-            }
+            cosmosStore.createItem(headers.getPartitionId(), cosmosDBName, sourceContainer, id, sourceDoc);
         } catch (AppException ex) {
-            if (ex.getError().getCode() == 409) {
-                log.warning(SchemaConstants.SOURCE_EXISTS);
-                throw new BadRequestException(MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION,
-                        source.getSourceId()));
-            } else {
-                log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-                throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-            }
+            handleAppException(ex, source);
         }
 
         log.info(SchemaConstants.SOURCE_CREATED);
         return source;
+    }
+
+    /**
+     * Method tp register a system Source
+     * @param source
+     * @return
+     * @throws BadRequestException
+     * @throws ApplicationException
+     */
+    @Override
+    public Source createSystemSource(Source source) throws BadRequestException, ApplicationException {
+        try {
+            SourceDoc sourceDoc = new SourceDoc(source.getSourceId(), source);
+            cosmosStore.createItem(systemResourceConfig.getCosmosDatabase(), sourceContainer, source.getSourceId(), sourceDoc);
+        } catch (AppException ex) {
+            handleAppException(ex, source);
+        }
+
+        log.info(SchemaConstants.SOURCE_CREATED);
+        return source;
+    }
+
+    private void handleAppException(AppException ex, Source source) throws BadRequestException, ApplicationException {
+        if (ex.getError().getCode() == 409) {
+            log.warning(SchemaConstants.SOURCE_EXISTS);
+            throw new BadRequestException(MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION,
+                    source.getSourceId()));
+        } else {
+            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+        }
     }
 }
