@@ -99,7 +99,7 @@ Feature: To verify functionality of GET schema Service
 
   @SchemaService
   Scenario Outline: Verify that Schema Service's GET list API handles offset filter combinations elegantly with correct success messages
-    Given I hit schema service GET List API with <parameter> and <schemaOffset1>
+    Given I hit schema GET List API with <parameter> and <schemaOffset1>
     Then service should respond back with status code <ReponseStatusCode> and note down id of <schemaOffset2>
     When I hit schema service GET List API with <parameter> and <schemaOffset2>
     Then service should respond back with status code <ReponseStatusCode> and note down id of <schemaOffset1> and compare with earlier id
