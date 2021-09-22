@@ -7,6 +7,7 @@ from Utility import Utility, RunEnv
 
 schema_namespace = os.environ.get("SCHEMA_NAMESPACE")
 schema_kind = os.environ.get("SCHEMA_KIND")
+shared_partition_id = os.environ.get("SHARED_PARTITION_ID", default="osdu")
 default_namespace = "dataecosystem"
 default_kind = "schema"
 
@@ -39,7 +40,7 @@ def cleanup_datastore():
     sequence = Utility.load_json(path)
     for item in sequence:
       complete_key = datastore_client.key(kind_to_use, item['kind'].replace(
-          '{{schema-authority}}', RunEnv.DATA_PARTITION))
+          '{{schema-authority}}', shared_partition_id))
       print("Key to delete: " + complete_key.__str__())
       range = Retry(initial=5, maximum=20, multiplier=2, deadline=120)
       datastore_client.delete(key=complete_key, retry=range)
