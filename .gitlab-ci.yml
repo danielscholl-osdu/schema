@@ -26,7 +26,6 @@ variables:
   AZURE_AD_APP_RESOURCE_ID: $AZURE_APP_ID
   AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
 
-
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   AWS_TEST_SUBDIR: testing/schema-test-core
   AWS_DEPLOYMENTS_SUBDIR: deployments/scripts/aws
@@ -34,16 +33,18 @@ variables:
   AWS_ENVIRONMENT: dev
   AWS_MAVEN_TEST_COMMAND_OVERRIDE: verify
   AWS_DEPLOY_TARGET: EKS
-  AWS_EKS_DEPLOYMENT_NAME: os-schema  
+  AWS_EKS_DEPLOYMENT_NAME: os-schema
 
   OSDU_GCP_SERVICE: schema
   OSDU_GCP_VENDOR: gcp
-  OSDU_GCP_APPLICATION_NAME: os-schema
   OSDU_GCP_TESTS_SUBDIR: testing/schema-test-core
-  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_V2_URL,AUTHORIZE_API_KEY=$OSDU_GCP_AUTHORIZE_API_KEY,LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=DEBUG,SHARED_TENANT_NAME=$TENANT,PARTITION_API=$OSDU_GCP_PARTITION_API,GOOGLE_AUDIENCES=$GOOGLE_AUDIENCE --vpc-connector=$OSDU_GCP_VPC_CONNECTOR
   OSDU_GCP_HELM_PACKAGE_CHARTS: "devops/gcp/deploy devops/gcp/configmap"
   OSDU_GCP_DEPLOYMENTS_SUBDIR: deployments/scripts/google
   OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
+  OSDU_GCP_HELM_CONFIG_SERVICE: schema-config
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE: schema-deploy
+  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: "--set data.log_level=INFO  --set data.authorize_api=$OSDU_GCP_AUTHORIZE_API --set data.google_audiences=$GOOGLE_AUDIENCE --set data.partition_api=$OSDU_GCP_PARTITION_API --set data.shared_tenant_name=$OSDU_GCP_TENANT"
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: "--set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA  --set data.serviceAccountName=workload-identity-schema"
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -55,8 +56,8 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "scanners/fossa-maven.yml"
 
-  - project: 'osdu/platform/ci-cd-pipelines'
-    file: 'cloud-providers/aws.yml'
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/aws.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
@@ -68,8 +69,7 @@ include:
     file: "cloud-providers/azure.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    ref: 'master'
-    file: 'cloud-providers/osdu-gcp-cloudrun.yml'
+    file: "cloud-providers/osdu-gcp-gke.yml"
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/aws/bootstrap.yaml"
@@ -79,13 +79,7 @@ include:
 osdu-gcp-test:
   image: maven:3.6.3-jdk-8
   script:
-    - >
-      mvn verify
-      --batch-mode
-      --quiet
-      -s $CI_PROJECT_DIR/.mvn/community-maven.settings.xml
-      -f $OSDU_GCP_TESTS_SUBDIR/pom.xml
-      > test-results.log
+    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TESTS_SUBDIR/pom.xml
   artifacts:
     when: always
     paths:
