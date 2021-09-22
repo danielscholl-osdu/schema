@@ -152,6 +152,10 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractReferenceType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:AbstractSpatialReference:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractSpatialReference.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:AbstractVectorHeaderMapping:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractVectorHeaderMapping.1.0.0.json"
   },
@@ -238,10 +242,6 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--CalculationMethodType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/CalculationMethodType.1.0.0.json"
-  },
-  {
-    "kind": "{{schema-authority}}:wks:master-data--Collection:1.0.0",
-    "relativePath": "shared-schemas/osdu/master-data/Collection.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--CollectionPurpose:1.0.0",
@@ -344,12 +344,20 @@
     "relativePath": "shared-schemas/osdu/dataset/File.Generic.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:dataset--File.GeoJSON:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.GeoJSON.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:dataset--File.WITSML:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.WITSML.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--FileCollection.Bluware.OpenVDS:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/FileCollection.Bluware.OpenVDS.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Esri.Shape:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Esri.Shape.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--FileCollection.Generic:1.0.0",
@@ -444,6 +452,10 @@
     "relativePath": "shared-schemas/osdu/manifest/Manifest.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--MarkerPropertyType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/MarkerPropertyType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--MarkerType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/MarkerType.1.0.0.json"
   },
@@ -530,6 +542,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--ParameterType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/ParameterType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--PersistedCollection:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/PersistedCollection.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--PetroleumSystemElementType:1.0.0",
@@ -824,12 +840,12 @@
     "relativePath": "shared-schemas/osdu/reference-data/WellInterestType.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.0.0.json"
-  },
-  {
     "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.1.0",
     "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--WellLog:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellLog.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellLogSamplingDomainType:1.0.0",
@@ -844,12 +860,16 @@
     "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.0.0.json"
+    "kind": "{{schema-authority}}:wks:work-product-component--WellboreMarkerSet:1.1.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.1.0",
     "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellboreTrajectory.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellboreTrajectoryType:1.0.0",

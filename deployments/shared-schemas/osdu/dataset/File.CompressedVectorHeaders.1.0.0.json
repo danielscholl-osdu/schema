@@ -122,7 +122,8 @@
           },
           {
             "type": "object",
-            "properties": {}
+            "properties": {},
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -130,7 +131,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

@@ -189,7 +189,8 @@
                 "type": "number",
                 "x-osdu-frame-of-reference": "UOM_via_property:DefaultUnitOfMeasureID"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -197,7 +198,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

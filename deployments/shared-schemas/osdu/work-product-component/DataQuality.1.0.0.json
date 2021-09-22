@@ -141,7 +141,8 @@
                 "description": "The list of evaluated quality metrics for the evaluated data record.",
                 "$ref": "{{schema-authority}}:wks:AbstractQualityMetric:1.0.0"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -149,7 +150,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

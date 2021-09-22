@@ -123,7 +123,8 @@
                 "description": "The Version of the WITSML standard.",
                 "example": "WITSML 1.1.4"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -131,7 +132,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

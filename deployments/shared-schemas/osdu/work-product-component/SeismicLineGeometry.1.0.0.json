@@ -182,7 +182,8 @@
                 "type": "boolean",
                 "description": "Indicates that CMP numbering increases regularly by 1."
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -190,7 +191,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }
