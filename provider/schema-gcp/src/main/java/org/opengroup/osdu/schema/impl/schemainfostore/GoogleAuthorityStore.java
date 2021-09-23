@@ -34,6 +34,7 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IAuthorityStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -56,6 +57,9 @@ public class GoogleAuthorityStore implements IAuthorityStore {
     @Autowired
     JaxRsDpsLog log;
 
+    @Value("${shared.tenant.name:common}")
+    private String sharedTenant;
+
     /**
      * Method to get authority from google store
      *
@@ -77,6 +81,19 @@ public class GoogleAuthorityStore implements IAuthorityStore {
             return mapEntityToDto(entity);
         }
 
+    }
+
+    /**
+     * Method to get System authority from google store
+     * @param authorityId
+     * @return Authority object
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public Authority getSystemAuthority(String authorityId) throws NotFoundException, ApplicationException {
+        this.updateDataPartitionId();
+        return this.get(authorityId);
     }
 
     /**
@@ -109,6 +126,19 @@ public class GoogleAuthorityStore implements IAuthorityStore {
         return mapEntityToDto(entity);
     }
 
+    /**
+     * Method to create System authority in google store of dataPartitionId project
+     * @param authority
+     * @return Authority Object
+     * @throws ApplicationException
+     * @throws BadRequestException
+     */
+    @Override
+    public Authority createSystemAuthority(Authority authority) throws ApplicationException, BadRequestException {
+        this.updateDataPartitionId();
+        return this.create(authority);
+    }
+
     private Authority mapEntityToDto(Entity entity) {
 
         Authority authority = new Authority();
@@ -119,6 +149,10 @@ public class GoogleAuthorityStore implements IAuthorityStore {
 
     private Entity getEntityObject(Key key) {
         return Entity.newBuilder(key).set(SchemaConstants.DATE_CREATED, Timestamp.now()).build();
+    }
+
+    private void updateDataPartitionId() {
+        headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
     }
 
 }

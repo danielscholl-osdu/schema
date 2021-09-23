@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,6 +28,7 @@ import com.google.cloud.datastore.DatastoreException;
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.Key;
 import com.google.cloud.datastore.KeyFactory;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class GoogleSourceStoreTest {
@@ -64,6 +66,13 @@ public class GoogleSourceStoreTest {
     @Mock
     JaxRsDpsLog log;
 
+    private static final String COMMON_TENANT_ID = "common";
+
+    @Before
+    public void setUp() {
+        ReflectionTestUtils.setField(sourceStore, "sharedTenant", COMMON_TENANT_ID);
+    }
+
     @Test
     public void testGet() throws NotFoundException, ApplicationException {
         String sourceId = "sourceId";
@@ -77,6 +86,21 @@ public class GoogleSourceStoreTest {
         Mockito.when(dataStore.get(key)).thenReturn(entity);
         Mockito.when(entity.getKey()).thenReturn(key);
         assertNotNull(sourceStore.get(sourceId));
+    }
+
+    @Test
+    public void testGet_SystemSchemas() throws NotFoundException, ApplicationException {
+        String sourceId = "sourceId";
+        Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.newKey(sourceId)).thenReturn(key);
+        Mockito.when(dataStore.get(key)).thenReturn(entity);
+        Mockito.when(entity.getKey()).thenReturn(key);
+        assertNotNull(sourceStore.getSystemSource(sourceId));
     }
 
     @Test
@@ -102,6 +126,28 @@ public class GoogleSourceStoreTest {
     }
 
     @Test
+    public void testGet_NotFoundException_SystemSchemas() {
+        String sourceId = "";
+        try {
+            Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+            Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+            Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+            Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+            Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
+            Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+            Mockito.when(keyFactory.newKey(sourceId)).thenReturn(key);
+            Mockito.when(dataStore.get(key)).thenReturn(null);
+            sourceStore.getSystemSource(sourceId);
+            fail("Should not succeed");
+        } catch (NotFoundException e) {
+            assertEquals("bad input parameter", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
     public void testCreate() throws NotFoundException, ApplicationException, BadRequestException {
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
@@ -114,6 +160,21 @@ public class GoogleSourceStoreTest {
         Mockito.when(dataStore.add(entity)).thenReturn(entity);
         Mockito.when(mockSource.getSourceId()).thenReturn("wks");
         assertNotNull(sourceStore.create(mockSource));
+    }
+
+    @Test
+    public void testCreate_SystemSchemas() throws NotFoundException, ApplicationException, BadRequestException {
+        Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.newKey("wks")).thenReturn(key);
+        Entity entity = Entity.newBuilder(key).set(SchemaConstants.DATE_CREATED, Timestamp.now()).build();
+        Mockito.when(dataStore.add(entity)).thenReturn(entity);
+        Mockito.when(mockSource.getSourceId()).thenReturn("wks");
+        assertNotNull(sourceStore.createSystemSource(mockSource));
     }
 
     @Test
@@ -131,6 +192,30 @@ public class GoogleSourceStoreTest {
         Mockito.when(mockSource.getSourceId()).thenReturn("wks");
         try {
             sourceStore.create(mockSource);
+            fail("Should not succeed");
+        } catch (BadRequestException e) {
+            assertEquals("Source already registered with Id: wks", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
+    public void testCreate_BadRequestException_SystemSchemas() throws NotFoundException, ApplicationException, BadRequestException {
+        sourceStore = Mockito.spy(sourceStore);
+        Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.newKey("wks")).thenReturn(key);
+        Mockito.when(dataStore.add(Mockito.any(Entity.class)))
+                .thenThrow(new DatastoreException(400, SchemaConstants.ALREADY_EXISTS, SchemaConstants.ALREADY_EXISTS));
+        Mockito.when(mockSource.getSourceId()).thenReturn("wks");
+        try {
+            sourceStore.createSystemSource(mockSource);
             fail("Should not succeed");
         } catch (BadRequestException e) {
             assertEquals("Source already registered with Id: wks", e.getMessage());
@@ -163,4 +248,26 @@ public class GoogleSourceStoreTest {
         }
     }
 
+    @Test
+    public void testCreate_ApplicationException_SystemSchemas() throws NotFoundException, ApplicationException, BadRequestException {
+        sourceStore = Mockito.spy(sourceStore);
+        Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SOURCE_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.newKey("wks")).thenReturn(key);
+        Mockito.when(dataStore.add(Mockito.any(Entity.class))).thenThrow(DatastoreException.class);
+        Mockito.when(mockSource.getSourceId()).thenReturn("wks");
+        try {
+            sourceStore.createSystemSource(mockSource);
+            fail("Should not succeed");
+        } catch (ApplicationException e) {
+            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
 }

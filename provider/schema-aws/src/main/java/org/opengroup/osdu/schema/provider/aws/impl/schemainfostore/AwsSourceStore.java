@@ -47,6 +47,9 @@ public class AwsSourceStore implements ISourceStore {
   @Value("${aws.dynamodb.sourceTable.ssm.relativePath}")
   String sourceTableParameterRelativePath;
 
+  @Value("${shared.tenant.name:common}")
+  private String sharedTenant;
+
   private DynamoDBQueryHelperV2 getSourceTableQueryHelper() {
     return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, sourceTableParameterRelativePath);
   }
@@ -62,6 +65,12 @@ public class AwsSourceStore implements ISourceStore {
       throw new NotFoundException(SOURCE_NOT_FOUND);
     }
     return result.getSource();
+  }
+
+  @Override
+  public Source getSystemSource(String sourceId) throws NotFoundException, ApplicationException {
+    this.updateDataPartitionId();
+    return this.get(sourceId);
   }
 
   @Override
@@ -91,5 +100,15 @@ public class AwsSourceStore implements ISourceStore {
 
     log.info(SchemaConstants.SOURCE_CREATED);
     return source;
+  }
+
+  @Override
+  public Source createSystemSource(Source source) throws BadRequestException, ApplicationException {
+    this.updateDataPartitionId();
+    return this.create(source);
+  }
+
+  private void updateDataPartitionId() {
+    headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
   }
 }

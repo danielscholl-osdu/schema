@@ -32,6 +32,7 @@ import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.aws.models.AuthorityDoc;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -53,11 +54,15 @@ public class AwsAuthorityStoreTest {
   @Mock
   private JaxRsDpsLog logger;
 
+  private static final String COMMON_TENANT_ID = "common";
+
   @Before
   public void setUp() throws Exception {
 
     Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
     .thenReturn(queryHelper);
+
+    ReflectionTestUtils.setField(authorityStore, "sharedTenant", COMMON_TENANT_ID);
   }
 
   @Rule
@@ -78,6 +83,19 @@ public class AwsAuthorityStoreTest {
   }
 
   @Test
+  public void get_SystemSchemas() throws NotFoundException, ApplicationException {
+    String authorityId = "source";
+    Authority expected = new Authority();
+    AuthorityDoc authorityDoc = new AuthorityDoc("id", COMMON_TENANT_ID, expected);
+
+    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(authorityDoc);
+    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+
+    Authority actual = authorityStore.getSystemAuthority(authorityId);
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
   public void create() throws BadRequestException, ApplicationException {
     String partitionId = "partitionId";
     Authority expected = new Authority();
@@ -86,6 +104,17 @@ public class AwsAuthorityStoreTest {
     Mockito.doNothing().when(queryHelper).save(Mockito.any());
     Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
     Authority actual = authorityStore.create(expected);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void create_SystemSchemas() throws BadRequestException, ApplicationException {
+    Authority expected = new Authority();
+
+    Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
+    Mockito.doNothing().when(queryHelper).save(Mockito.any());
+    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+    Authority actual = authorityStore.createSystemAuthority(expected);
     assertEquals(expected, actual);
   }
 }

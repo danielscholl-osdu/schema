@@ -107,6 +107,19 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     }
 
     /**
+     * Method to get System schemaInfo from google store
+     * @param schemaId
+     * @return schemaInfo object
+     * @throws ApplicationException
+     * @throws NotFoundException
+     */
+    @Override
+    public SchemaInfo getSystemSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+        this.updateDataPartitionId();
+        return this.getSchemaInfo(schemaId);
+    }
+
+    /**
      * Method to Create schema in google store of tenantId GCP
      *
      * @param schema
@@ -136,6 +149,19 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     }
 
     /**
+     * Method to Create System schema in google store
+     * @param schema
+     * @return SchemaInfo object
+     * @throws ApplicationException
+     * @throws BadRequestException
+     */
+    @Override
+    public SchemaInfo createSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+        this.updateDataPartitionId();
+        return this.createSchemaInfo(schema);
+    }
+
+    /**
      * Method to update schema in google store of tenantId GCP
      *
      * @param schema
@@ -160,6 +186,19 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
     }
 
     /**
+     * Method to update System schema in google store
+     * @param schema
+     * @return SchemaInfo object
+     * @throws ApplicationException
+     * @throws BadRequestException
+     */
+    @Override
+    public SchemaInfo updateSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+        this.updateDataPartitionId();
+        return this.updateSchemaInfo(schema);
+    }
+
+    /**
      * Method to clean schemaInfo in google datastore of tenantId GCP
      *
      * @param schemaId
@@ -178,6 +217,18 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         } catch (DatastoreException ex) {
             return false;
         }
+    }
+
+    /**
+     * Method to clean System schemaInfo in google datastore
+     * @param schemaId
+     * @return status
+     * @throws ApplicationException
+     */
+    @Override
+    public boolean cleanSystemSchema(String schemaId) throws ApplicationException {
+        this.updateDataPartitionId();
+        return this.cleanSchema(schemaId);
     }
 
     @Override
@@ -293,6 +344,17 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         return schemaList;
     }
 
+    /**
+     * Get schema info list for system schemas
+     * @param queryParams
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) throws ApplicationException {
+        return this.getSchemaInfoList(queryParams, sharedTenant);
+    }
+
     private List<Filter> getFilters(QueryParams queryParams) {
         List<Filter> filterList = new LinkedList<>();
         if (queryParams.getAuthority() != null) {
@@ -353,12 +415,27 @@ public class GoogleSchemaInfoStore implements ISchemaInfoStore {
         return true;
     }
 
-	public String getSharedTenant() {
+    /**
+     * Method to check whether given system schema id is unique or not
+     * @param schemaId
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public boolean isUniqueSystemSchema(String schemaId) throws ApplicationException {
+        return this.isUnique(schemaId, sharedTenant);
+    }
+
+    public String getSharedTenant() {
 		return sharedTenant;
 	}
 
 	public void setSharedTenant(String sharedTenant) {
 		this.sharedTenant = sharedTenant;
 	}
+
+    private void updateDataPartitionId() {
+        headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
+    }
 
 }

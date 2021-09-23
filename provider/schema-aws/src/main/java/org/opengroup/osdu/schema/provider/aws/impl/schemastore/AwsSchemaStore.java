@@ -49,6 +49,8 @@ public class AwsSchemaStore implements ISchemaStore {
   @Value("${aws.s3.schemaBucket.ssm.relativePath}")
   private String s3SchemaBucketParameterRelativePath;
 
+  @Value("${shared.tenant.name:common}")
+  private String sharedTenant;
 
   private S3ClientWithBucket getS3ClientWithBucket() {
     String dataPartitionId = headers.getPartitionIdWithFallbackToAccountId();
@@ -89,6 +91,12 @@ public class AwsSchemaStore implements ISchemaStore {
   }
 
   @Override
+  public String createSystemSchema(String filePath, String content) throws ApplicationException {
+    updateDataPartitionId();
+    return this.createSchema(filePath, content);
+  }
+
+  @Override
   public String getSchema(String dataPartitionId, String filePath) throws NotFoundException, ApplicationException {
     // first this method is called with the callers partitionid, then if not found, its called with the
     // common project id which is "common".  Not sure why this isn't passed into the createSchema call.
@@ -118,6 +126,11 @@ public class AwsSchemaStore implements ISchemaStore {
 
   }
 
+  @Override
+  public String getSystemSchema(String filePath) throws NotFoundException, ApplicationException {
+    return this.getSchema(sharedTenant, filePath);
+  }
+
   private String resolvePath(String dataPartitionId, String filePath) {
     return String.format("schema/%s/%s", dataPartitionId, filePath);
   }
@@ -139,4 +152,13 @@ public class AwsSchemaStore implements ISchemaStore {
     }
   }
 
+  @Override
+  public boolean cleanSystemSchemaProject(String schemaId) throws ApplicationException {
+    this.updateDataPartitionId();
+    return this.cleanSchemaProject(schemaId);
+  }
+
+  private void updateDataPartitionId() {
+    headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
+  }
 }

@@ -33,6 +33,8 @@ public class IbmDocumentStore {
 	private String dbPassword;
 	@Value("${ibm.env.prefix:local-dev}")
 	private String dbNamePrefix;
+	@Value("${shared.tenant.name:common}")
+	private String sharedTenant;
    
 	@Inject
     private DpsHeaders headers;
@@ -50,6 +52,10 @@ public class IbmDocumentStore {
 	
 	public Database getDatabaseForTenant(String tenantId, String dbName) throws MalformedURLException {
 		return cloudantFactory.getDatabase(dbNamePrefix, SchemaConstants.NAMESPACE + "-" + tenantId + "-" + dbName);
+	}
+
+	protected void updateDataPartitionId() {
+		headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
 	}
 
 }

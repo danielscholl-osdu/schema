@@ -44,6 +44,12 @@ public class IbmAuthorityStore extends IbmDocumentStore implements IAuthoritySto
 	}
 
 	@Override
+	public Authority getSystemAuthority(String authorityId) throws NotFoundException, ApplicationException {
+		updateDataPartitionId();
+		return this.get(authorityId);
+	}
+
+	@Override
 	public Authority create(Authority authority) throws ApplicationException, BadRequestException {
 
 		if (db.contains(authority.getAuthorityId())) {
@@ -62,4 +68,9 @@ public class IbmAuthorityStore extends IbmDocumentStore implements IAuthoritySto
 		return sd.getAuthority();
 	}
 
+	@Override
+	public Authority createSystemAuthority(Authority authority) throws ApplicationException, BadRequestException {
+		updateDataPartitionId();
+		return this.create(authority);
+	}
 }
