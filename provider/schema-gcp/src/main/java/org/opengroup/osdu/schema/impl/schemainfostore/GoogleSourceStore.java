@@ -30,6 +30,7 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Source;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISourceStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.cloud.Timestamp;
@@ -59,8 +60,11 @@ public class GoogleSourceStore implements ISourceStore {
     @Autowired
     JaxRsDpsLog log;
 
+    @Value("${shared.tenant.name:common}")
+    private String sharedTenant;
+
     /**
-     * Method to create Source in google store
+     * Method to get Source in google store
      *
      * @param sourceId
      * @return Source object
@@ -78,6 +82,19 @@ public class GoogleSourceStore implements ISourceStore {
             return mapEntityToDto(entity);
         }
 
+    }
+
+    /**
+     * Method to get System Source in google store
+     * @param sourceId
+     * @return Source object
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public Source getSystemSource(String sourceId) throws NotFoundException, ApplicationException {
+        this.updateDataPartitionId();
+        return this.get(sourceId);
     }
 
     /**
@@ -108,6 +125,19 @@ public class GoogleSourceStore implements ISourceStore {
         return mapEntityToDto(entity);
     }
 
+    /**
+     * Method to create System Source in google store
+     * @param source
+     * @return Source object
+     * @throws BadRequestException
+     * @throws ApplicationException
+     */
+    @Override
+    public Source createSystemSource(Source source) throws BadRequestException, ApplicationException {
+        updateDataPartitionId();
+        return this.create(source);
+    }
+
     private Source mapEntityToDto(Entity entity) {
 
         Source source = new Source();
@@ -120,6 +150,10 @@ public class GoogleSourceStore implements ISourceStore {
         Entity.Builder entityBuilder = Entity.newBuilder(key);
         entityBuilder.set(SchemaConstants.DATE_CREATED, Timestamp.now());
         return entityBuilder.build();
+    }
+
+    private void updateDataPartitionId() {
+        headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
     }
 
 }

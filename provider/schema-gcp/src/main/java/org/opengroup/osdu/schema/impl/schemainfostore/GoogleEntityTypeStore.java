@@ -30,6 +30,7 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.EntityType;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IEntityTypeStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.cloud.Timestamp;
@@ -59,6 +60,9 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
     @Autowired
     JaxRsDpsLog log;
 
+    @Value("${shared.tenant.name:common}")
+    private String sharedTenant;
+
     /**
      * Method to get entity type from google store
      *
@@ -79,6 +83,19 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
             return mapEntityToDto(entity);
         }
 
+    }
+
+    /**
+     * Method to get System entity type from google store
+     * @param entityTypeId
+     * @return EntityType object
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public EntityType getSystemEntity(String entityTypeId) throws NotFoundException, ApplicationException {
+        this.updateDataPartitionId();
+        return this.get(entityTypeId);
     }
 
     /**
@@ -111,6 +128,19 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
         return mapEntityToDto(entity);
     }
 
+    /**
+     * Method to create entityType in google store of dataPartitionId GCP
+     * @param entityType
+     * @return EntityType object
+     * @throws BadRequestException
+     * @throws ApplicationException
+     */
+    @Override
+    public EntityType createSystemEntity(EntityType entityType) throws BadRequestException, ApplicationException {
+        this.updateDataPartitionId();
+        return this.create(entityType);
+    }
+
     private EntityType mapEntityToDto(Entity entity) {
 
         EntityType entityType = new EntityType();
@@ -125,4 +155,7 @@ public class GoogleEntityTypeStore implements IEntityTypeStore {
         return entityBuilder.build();
     }
 
+    private void updateDataPartitionId() {
+        headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
+    }
 }

@@ -100,6 +100,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   @Override
+  public SchemaInfo getSystemSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+    this.updateDataPartitionId();
+    return this.getSchemaInfo(schemaId);
+  }
+
+  @Override
   public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
     // The SchemaService calls the getSchemaInfo method and verifies the entity is updateable, however,
     // it doesn't pass that entity into this method or update properties in the request that shouldn't change, like
@@ -134,6 +140,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   @Override
+  public SchemaInfo updateSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+    this.updateDataPartitionId();
+    return this.updateSchemaInfo(schema);
+  }
+
+  @Override
   public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
 
     DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
@@ -164,6 +176,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     }
 
     return schemaInfoDoc.getSchemaInfo();
+  }
+
+  @Override
+  public SchemaInfo createSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+    this.updateDataPartitionId();
+    return this.createSchemaInfo(schema);
   }
 
   @Override
@@ -268,6 +286,10 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     return toReturn;
   }
 
+  @Override
+  public List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) throws ApplicationException {
+    return this.getSchemaInfoList(queryParams, sharedTenant);
+  }
 
  @Override
   public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {    
@@ -297,6 +319,11 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   @Override
+  public boolean isUniqueSystemSchema(String schemaId) throws ApplicationException {
+    return this.isUnique(schemaId, sharedTenant);
+  }
+
+  @Override
   public boolean cleanSchema(String schemaId) throws ApplicationException {
 
     DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
@@ -313,6 +340,11 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     }
   }
 
+  @Override
+  public boolean cleanSystemSchema(String schemaId) throws ApplicationException {
+    this.updateDataPartitionId();
+    return this.cleanSchema(schemaId);
+  }
 
   private void validateSupersededById(SchemaIdentity superseding_schema, String tenantId) throws ApplicationException, BadRequestException {
     
@@ -329,8 +361,6 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
     }
   }
-
-
 
   private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {
     List<SchemaInfo> latestSchemaList = new LinkedList<>();
@@ -373,5 +403,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   private boolean checkAuthorityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
     return schemaInfoObject.getSchemaIdentity().getAuthority()
             .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
+  }
+
+  private void updateDataPartitionId() {
+    headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
   }
 }

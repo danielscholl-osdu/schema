@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
@@ -40,10 +41,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.cloudant.client.api.Database;
 import com.cloudant.client.org.lightcouch.DocumentConflictException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class IbmEntityTypeStoreTest {
-//
+
     @InjectMocks
 	IbmEntityTypeStore mockIbmEntityStore;
     
@@ -66,6 +68,12 @@ public class IbmEntityTypeStoreTest {
 	protected JaxRsDpsLog logger;
     
     private static final String dataPartitionId = "testPartitionId";
+    private static final String COMMON_TENANT_ID = "common";
+
+    @Before
+    public void setUp() {
+        ReflectionTestUtils.setField(mockIbmEntityStore, "sharedTenant", COMMON_TENANT_ID);
+    }
     
     @Test
     public void testGet() throws NotFoundException, ApplicationException, MalformedURLException {
