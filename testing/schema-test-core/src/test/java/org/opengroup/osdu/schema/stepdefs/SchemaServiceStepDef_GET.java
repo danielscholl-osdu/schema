@@ -35,6 +35,8 @@ public class SchemaServiceStepDef_GET implements En {
 	static String[] GetListBaseFilterArray;
 	static String[] GetListVersionFilterArray;
 	String queryParameter;
+	String id1;
+	String id2;
 	private static TreeSet<String> LIST_OF_AVAILABLE_SCHEMAS = new TreeSet<String>();
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -205,7 +207,7 @@ public class SchemaServiceStepDef_GET implements En {
 					JsonObject responseMsg = gsn.fromJson(response.getBody().toString(), JsonObject.class);
 					assertEquals(expectedData.toString(), responseMsg.toString());
 				});
-
+		
 		Given("I hit schema service GET List API with {string} and {string}",
 				(String parameter, String parameterVal) -> {
 
@@ -219,6 +221,18 @@ public class SchemaServiceStepDef_GET implements En {
 					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 					this.context.setHttpResponse(response);
 				});
+
+		Given("I hit schema GET List API with {string} and {string}",
+				(String parameter, String parameterVal) -> {
+					Map<String, String> queryParams = new HashMap<String, String>();
+					queryParams.put(parameter, parameterVal);
+					HttpRequest httpRequest = HttpRequest.builder()
+							.url(TestConstants.HOST + TestConstants.GET_LIST_ENDPOINT).queryParams(queryParams)
+							.httpMethod(HttpRequest.GET).requestHeaders(this.context.getAuthHeaders()).build();
+					HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+					this.context.setHttpResponse(response);
+				});
+
 		Given("I hit schema service GET API with blank {string}", (String header) -> {
 			Map<String, String> authHeaders = this.context.getAuthHeaders();
 
@@ -312,6 +326,27 @@ public class SchemaServiceStepDef_GET implements En {
 								|| AlternateStatusCode.equals(String.valueOf(response.getCode())));
 					}
 				});
+		
+		Then("service should respond back with status code {string} and note down id of {string}",
+				(String ResponseStatusCode, String firstschemaOffset) -> {
+					HttpResponse response = this.context.getHttpResponse();
+					if (response != null) {
+						assertTrue(ResponseStatusCode.equals(String.valueOf(response.getCode())));
+					}
+					id1 = getSchemaIdByNumber(firstschemaOffset);
+				});
+		
+		Then("service should respond back with status code {string} and note down id of {string} and compare with earlier id",
+				(String ResponseStatusCode, String firstschemaOffset) -> {
+					HttpResponse response = this.context.getHttpResponse();
+					if (response != null) {
+						assertTrue(ResponseStatusCode.equals(String.valueOf(response.getCode())));
+					}
+					id2 = getSchemaIdByNumber(firstschemaOffset);
+					LOGGER.info("ID1 : " + id1);
+					LOGGER.info("ID : " + id2);
+					assertTrue("Offset validation is successful", id1.equals(id2) );
+				});
 
 	}
 
@@ -371,6 +406,23 @@ public class SchemaServiceStepDef_GET implements En {
 			}
 			LOGGER.log(Level.INFO, "SchemaParameterMapList - " + this.list_schemaParameterMap.toString());
 		}
+	}
+
+	public String getSchemaIdByNumber(String offsetNo) throws IOException {
+		int offsetVal = Integer.parseInt(offsetNo);
+		String response = this.context.getHttpResponse().getBody();
+		Gson gsn = new Gson();
+		String offsetValId = null;
+		JsonObject schemaInfosList = gsn.fromJson(response, JsonObject.class);
+		JsonArray root = (JsonArray) schemaInfosList.get("schemaInfos");
+		if (root.size() > 0) {
+			JsonObject schemaIdentity_ForEachSchemaStatus = (JsonObject) (root.get(offsetVal).getAsJsonObject());
+			JsonObject schemaIdentity_ForEachSchemaInfo = (JsonObject) root.get(offsetVal).getAsJsonObject()
+					.get("schemaIdentity");
+			offsetValId = schemaIdentity_ForEachSchemaInfo.get("id").getAsString();
+			LOGGER.log(Level.INFO, "SchemaOffsetNumberId is - " + offsetValId);
+		}
+		return offsetValId;
 	}
 
 	private void verifySchemaInfoResponse(String parameterName, String parameterVal) {
