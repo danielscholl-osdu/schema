@@ -30,6 +30,8 @@ import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.springframework.test.util.ReflectionTestUtils;
+
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -64,6 +66,8 @@ public class AwsSchemaStoreTest {
 
   private String schemaBucketName="bucket";
 
+  private static final String COMMON_TENANT_ID = "common";
+
   @Before
   public void beforeAll() {
 
@@ -78,6 +82,7 @@ public class AwsSchemaStoreTest {
     
     Mockito.when(s3ClientFactory.getS3ClientForPartition(Mockito.anyString(), Mockito.any()))
       .thenReturn(s3ClientWithBucket);
+    ReflectionTestUtils.setField(schemaStore, "sharedTenant", COMMON_TENANT_ID);
 
   }
 
@@ -100,12 +105,35 @@ public class AwsSchemaStoreTest {
   }
 
   @Test
+  public void createSchema_SystemSchemas() throws MalformedURLException, ApplicationException {
+    String filePath = "file/path";
+    String content = "content";
+    URL file = new URL("http", "localhost", "file" );
+    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+    lenient().doReturn(null).when(s3).putObject(Mockito.any());
+    Mockito.when(s3.getUrl(Mockito.eq(schemaBucketName), Mockito.eq("schema/" + COMMON_TENANT_ID + "/file/path")))
+            .thenReturn(new URL("http", "localhost", "file" ));
+    String result = schemaStore.createSystemSchema(filePath, content);
+    Assert.assertEquals(file.toString(), result);
+  }
+
+  @Test
   public void getSchema() throws NotFoundException, ApplicationException {
     String dataPartitionId = "partitionid";
     String filePath = "file/path";
     String content = "content";
     Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenReturn(content);
     String result = schemaStore.getSchema(dataPartitionId, filePath);
+    Assert.assertEquals(content, result);
+  }
+
+  @Test
+  public void getSchema_SystemSchemas() throws NotFoundException, ApplicationException {
+    String filePath = "file/path";
+    String content = "content";
+    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenReturn(content);
+    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+    String result = schemaStore.getSystemSchema(filePath);
     Assert.assertEquals(content, result);
   }
 
@@ -122,6 +150,18 @@ public class AwsSchemaStoreTest {
   }
 
   @Test
+  public void getSchema_NotFound_SystemSchemas() throws NotFoundException, ApplicationException {
+    String filePath = "file/path";
+    expectedException.expect(NotFoundException.class);
+    expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
+    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+    AmazonS3Exception toThrow = new AmazonS3Exception("NA");
+    toThrow.setErrorCode("NoSuchKey");
+    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenThrow(toThrow);
+    schemaStore.getSystemSchema(filePath);
+  }
+
+  @Test
   public void getSchema_S3Exception() throws NotFoundException, ApplicationException {
     String dataPartitionId = "partitionid";
     String filePath = "file/path";
@@ -129,6 +169,16 @@ public class AwsSchemaStoreTest {
     expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
     Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenThrow(SdkClientException.class);
     schemaStore.getSchema(dataPartitionId, filePath);
+  }
+
+  @Test
+  public void getSchema_S3Exception_SystemSchemas() throws NotFoundException, ApplicationException {
+    String filePath = "file/path";
+    expectedException.expect(ApplicationException.class);
+    expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
+    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenThrow(SdkClientException.class);
+    schemaStore.getSystemSchema(filePath);
   }
 
   @Test
@@ -142,12 +192,30 @@ public class AwsSchemaStoreTest {
   }
 
   @Test
+  public void cleanSchemaProject_SystemSchemas() throws ApplicationException {
+    String schemaId = "file";
+    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+    doNothing().when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/" + COMMON_TENANT_ID + "/file"));
+    Boolean result = schemaStore.cleanSystemSchemaProject(schemaId);
+    Assert.assertEquals(true, result);
+  }
+
+  @Test
   public void cleanSchemaProject_S3Exception() throws ApplicationException {
     String schemaId = "file";
     String dataPartitionId = "partitionid";
     Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
     doThrow(SdkClientException.class).when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/partitionid/file"));
     Boolean result = schemaStore.cleanSchemaProject(schemaId);
+    Assert.assertEquals(false, result);
+  }
+
+  @Test
+  public void cleanSchemaProject_S3Exception_SystemSchemas() throws ApplicationException {
+    String schemaId = "file";
+    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+    doThrow(SdkClientException.class).when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/" + COMMON_TENANT_ID + "/file"));
+    Boolean result = schemaStore.cleanSystemSchemaProject(schemaId);
     Assert.assertEquals(false, result);
   }
 }

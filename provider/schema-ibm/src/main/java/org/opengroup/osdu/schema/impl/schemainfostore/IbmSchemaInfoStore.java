@@ -118,6 +118,10 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 		return true;
 	}
 
+	@Override
+	public boolean isUniqueSystemSchema(String schemaId) throws ApplicationException {
+		return this.isUnique(schemaId, sharedTenant);
+	}
 
 	/**
 	 * Method to get schemaInfo from IBM store
@@ -141,6 +145,19 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 			throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
 		}
 		
+	}
+
+	/**
+	 * Method to get System schemaInfo from IBM store
+	 * @param schemaId
+	 * @return	Schema info object
+	 * @throws ApplicationException
+	 * @throws NotFoundException
+	 */
+	@Override
+	public SchemaInfo getSystemSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+		this.updateDataPartitionId();
+		return this.getSchemaInfo(schemaId);
 	}
 
 	/**
@@ -176,6 +193,19 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	}
 
 	/**
+	 * Method to Create System schema in IBM store
+	 * @param schema
+	 * @return
+	 * @throws ApplicationException
+	 * @throws BadRequestException
+	 */
+	@Override
+	public SchemaInfo createSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+		this.updateDataPartitionId();
+		return this.createSchemaInfo(schema);
+	}
+
+	/**
 	 * Method to update schema in IBM store
 	 *
 	 * @param schemaRequest
@@ -201,6 +231,19 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	}
 
 	/**
+	 * Method to update System schema in IBM store
+	 * @param schema
+	 * @return
+	 * @throws ApplicationException
+	 * @throws BadRequestException
+	 */
+	@Override
+	public SchemaInfo updateSystemSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
+		this.updateDataPartitionId();
+		return this.updateSchemaInfo(schema);
+	}
+
+	/**
 	 * Method to clean schemaInfo in IBM datastore of tenantId
 	 *
 	 * @param schemaId
@@ -223,6 +266,18 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 			return false;
 		}
 
+	}
+
+	/**
+	 * Method to clean System schemaInfo in IBM datastore
+	 * @param schemaId
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@Override
+	public boolean cleanSystemSchema(String schemaId) throws ApplicationException {
+		this.updateDataPartitionId();
+		return this.cleanSchema(schemaId);
 	}
 
 	@Override
@@ -314,6 +369,17 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
         }
 
 		return schemaList;
+	}
+
+	/**
+	 * Method to fetch system schema info list
+	 * @param queryParams
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@Override
+	public List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) throws ApplicationException {
+		return this.getSchemaInfoList(queryParams, sharedTenant);
 	}
 
 	private Selector getSelector(QueryParams queryParams) throws ApplicationException {
@@ -414,7 +480,4 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
         return schemaInfoObject.getSchemaIdentity().getAuthority()
                 .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
     }
-
-
-
 }

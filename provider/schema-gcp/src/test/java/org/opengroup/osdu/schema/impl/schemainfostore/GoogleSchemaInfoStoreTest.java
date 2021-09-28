@@ -106,12 +106,14 @@ public class GoogleSchemaInfoStoreTest {
     @Mock
     JaxRsDpsLog log;
 
+    private static final String COMMON_TENANT_ID = "common";
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
-    	 ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
+    	 ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", COMMON_TENANT_ID);
     }
 
     @Test
@@ -128,15 +130,16 @@ public class GoogleSchemaInfoStoreTest {
     @Test
     public void testGetSchemaInfo_NotEmptyEntity() throws NotFoundException, ApplicationException {
         String schemaId = "schemaId";
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey(schemaId)).thenReturn(key);
-        Mockito.when(dataStore.get(key)).thenReturn(getMockEntityObject());
+        this.setUpMocks("test", schemaId);
         SchemaInfo schemaInfo = schemaInfoStore.getSchemaInfo(schemaId);
+        assertEquals(SchemaStatus.PUBLISHED, schemaInfo.getStatus());
+    }
+
+    @Test
+    public void testGetSchemaInfo_NotEmptyEntity_SystemSchemas() throws NotFoundException, ApplicationException {
+        String schemaId = "schemaId";
+        this.setUpMocks(COMMON_TENANT_ID, schemaId);
+        SchemaInfo schemaInfo = schemaInfoStore.getSystemSchemaInfo(schemaId);
         assertEquals(SchemaStatus.PUBLISHED, schemaInfo.getStatus());
     }
 
@@ -146,126 +149,101 @@ public class GoogleSchemaInfoStoreTest {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
         String schemaId = "schemaId";
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey(schemaId)).thenReturn(key);
+        this.setUpMocks("test", schemaId);
         Mockito.when(dataStore.get(key)).thenReturn(null);
         schemaInfoStore.getSchemaInfo(schemaId);
     }
 
     @Test
+    public void testGetSchemaInfo_EmptyEntity_SystemSchemas() throws NotFoundException, ApplicationException {
+
+        expectedException.expect(NotFoundException.class);
+        expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
+        String schemaId = "schemaId";
+        this.setUpMocks(COMMON_TENANT_ID, schemaId);
+        Mockito.when(dataStore.get(key)).thenReturn(null);
+        schemaInfoStore.getSystemSchemaInfo(schemaId);
+    }
+
+    @Test
     public void testCreateSchemaInfo_Positive() throws ApplicationException, BadRequestException {
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
+
+        this.setUpMocks("test", "os:wks:well.1.1.1");
         Mockito.when(headers.getUserEmail()).thenReturn("hmadhani@delfi.com");
         Mockito.when(dataStore.add(entity)).thenReturn(entity);
         assertNotNull(schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published()));
     }
 
     @Test
+    public void testCreateSchemaInfo_Positive_SystemSchemas() throws ApplicationException, BadRequestException {
+
+        this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
+        Mockito.when(headers.getUserEmail()).thenReturn("hmadhani@delfi.com");
+        Mockito.when(dataStore.add(entity)).thenReturn(entity);
+        assertNotNull(schemaInfoStore.createSystemSchemaInfo(getMockSchemaObject_Published()));
+    }
+
+    @Test
     public void testIsUnique_True() throws ApplicationException {
-        Key storageKey = mock(Key.class);
-        KeyFactory storageKeyFactory = mock(KeyFactory.class);
         String schemaId = "schemaId";
         String tenantId = "tenant";
-        schemaInfoStore.setSharedTenant(tenantId);
-        Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
-        Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
-        Mockito.when(tenantInfo.getName()).thenReturn("tenant");
-        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        when(keyFactory.newKey(schemaId)).thenReturn(key);
-        when(storageKeyFactory.newKey(schemaId)).thenReturn(storageKey);
-        Query<Key> any = Mockito.any(Query.class);
-        when(dataStore.run(any)).thenReturn(keys);
-        when(keys.hasNext()).thenReturn(false);
+        this.setUpMocksForMultiTenant_PositiveScenario(tenantId, COMMON_TENANT_ID, schemaId);
         assertTrue(schemaInfoStore.isUnique(schemaId, tenantId));
     }
 
     @Test
+    public void testIsUnique_True_SystemSchemas() throws ApplicationException {
+        String schemaId = "schemaId";
+        String tenantId = "common";
+        this.setUpMocksForMultiTenant_PositiveScenario(tenantId, COMMON_TENANT_ID, schemaId);
+        assertTrue(schemaInfoStore.isUniqueSystemSchema(schemaId));
+    }
+
+    @Test
     public void testIsUnique_False() throws ApplicationException {
-        Key storageKey = mock(Key.class);
-        KeyFactory storageKeyFactory = mock(KeyFactory.class);
         String schemaId = "schemaId";
         String tenantId = "tenant";
-        Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
-        Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
-        Mockito.when(tenantInfo.getName()).thenReturn("test");
-        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        when(keyFactory.newKey(schemaId)).thenReturn(key);
-        when(storageKeyFactory.newKey(schemaId)).thenReturn(storageKey);
-        Query<Key> any = Mockito.any(Query.class);
-        when(dataStore.run(any)).thenReturn(keys);
-        when(keys.hasNext()).thenReturn(true);
+        this.setUpMocksForMultiTenant_NegativeScenario(tenantId, COMMON_TENANT_ID, schemaId);
         assertFalse(schemaInfoStore.isUnique(schemaId, tenantId));
     }
 
     @Test
-    public void testIsUnique_False_CommomTenant() throws ApplicationException {
-        Key storageKey = mock(Key.class);
-        KeyFactory storageKeyFactory = mock(KeyFactory.class);
+    public void testIsUnique_False_CommonTenant() throws ApplicationException {
         String schemaId = "schemaId";
         String tenantId = "common";
-        Mockito.when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
-        Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
-        Mockito.when(tenantInfo.getName()).thenReturn("test");
-        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        when(keyFactory.newKey(schemaId)).thenReturn(key);
-        when(storageKeyFactory.newKey(schemaId)).thenReturn(storageKey);
-        Query<Key> any = Mockito.any(Query.class);
-        when(dataStore.run(any)).thenReturn(keys);
-        when(keys.hasNext()).thenReturn(true);
+        this.setUpMocksForMultiTenant_NegativeScenario(tenantId, COMMON_TENANT_ID, schemaId);
         assertFalse(schemaInfoStore.isUnique(schemaId, tenantId));
+    }
+
+    @Test
+    public void testIsUnique_False_CommonTenant_SystemSchemas() throws ApplicationException {
+        String schemaId = "schemaId";
+        String tenantId = "common";
+        this.setUpMocksForMultiTenant_NegativeScenario(tenantId, COMMON_TENANT_ID, schemaId);
+        assertFalse(schemaInfoStore.isUniqueSystemSchema(schemaId));
     }
 
     @Test
     public void testUpdateSchemaInfo() throws NotFoundException, ApplicationException, BadRequestException {
         String tenantId = "test";
-        Mockito.when(headers.getPartitionId()).thenReturn(tenantId);
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
+        this.setUpMocks(tenantId, "os:wks:well.1.1.1");
         Mockito.when(headers.getUserEmail()).thenReturn("hmadhani@delfi.com");
         Mockito.when(dataStore.put(entity)).thenReturn(entity);
         assertNotNull(schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published()));
     }
 
     @Test
+    public void testUpdateSchemaInfo_SystemSchemas() throws NotFoundException, ApplicationException, BadRequestException {
+        this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
+        Mockito.when(headers.getUserEmail()).thenReturn("hmadhani@delfi.com");
+        Mockito.when(dataStore.put(entity)).thenReturn(entity);
+        assertNotNull(schemaInfoStore.updateSystemSchemaInfo(getMockSchemaObject_Published()));
+    }
+
+    @Test
     public void testCreateSchemaInfo_WithSupersededBy()
             throws NotFoundException, ApplicationException, BadRequestException {
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
+        this.setUpMocks("test", "os:wks:well.1.1.1");
         Key mockSupsededKey = Mockito.mock(Key.class);
         Mockito.when(keyFactory.newKey("os:wks:well.1.2.1")).thenReturn(mockSupsededKey);
         Mockito.when(headers.getUserEmail()).thenReturn("hmadhani@delfi.com");
@@ -276,16 +254,23 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     @Test
+    public void testCreateSchemaInfo_WithSupersededBy_SystemSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
+        Key mockSupsededKey = Mockito.mock(Key.class);
+        Mockito.when(keyFactory.newKey("os:wks:well.1.2.1")).thenReturn(mockSupsededKey);
+        Mockito.when(headers.getUserEmail()).thenReturn("hmadhani@delfi.com");
+        Mockito.when(dataStore.add(entity)).thenReturn(entity);
+        Mockito.when(dataStore.get(mockSupsededKey)).thenReturn(entity);
+        Mockito.when(entity.getKey()).thenReturn(mockSupsededKey);
+        assertNotNull(schemaInfoStore.createSystemSchemaInfo(getMockSchemaObject_SuperSededBy()));
+    }
+
+    @Test
     public void testUpdateSchemaInfo_SupersededByException()
             throws NotFoundException, ApplicationException, BadRequestException {
         try {
-            Mockito.when(headers.getPartitionId()).thenReturn("test");
-            Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-			Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-            Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-            Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-            Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-            Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
+            this.setUpMocks("test", "os:wks:well.1.1.1");
             Key mockSupsededKey = Mockito.mock(Key.class);
             Mockito.when(keyFactory.newKey("os:wks:well.1.2.1")).thenReturn(mockSupsededKey);
             Mockito.when(dataStore.add(entity)).thenReturn(entity);
@@ -302,15 +287,29 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     @Test
+    public void testUpdateSchemaInfo_SupersededByException_SystemSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        try {
+            this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
+            Key mockSupsededKey = Mockito.mock(Key.class);
+            Mockito.when(keyFactory.newKey("os:wks:well.1.2.1")).thenReturn(mockSupsededKey);
+            Mockito.when(dataStore.add(entity)).thenReturn(entity);
+            Mockito.when(dataStore.get(mockSupsededKey)).thenReturn(null);
+            Mockito.when(entity.getKey()).thenReturn(mockSupsededKey);
+            schemaInfoStore.updateSystemSchemaInfo(getMockSchemaObject_SuperSededBy());
+            fail("Should not succeed");
+        } catch (BadRequestException e) {
+            assertEquals("Invalid SuperSededBy id", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
     public void testUpdateInfo_SupersededByWithoutIdException()
             throws NotFoundException, ApplicationException, BadRequestException {
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
+        this.setUpMocks("test", "os:wks:well.1.1.1");
         SchemaRequest schemaRequest = getMockSchemaObject_SuperSededByWithoutId();
         expectedException.expect(BadRequestException.class);
         expectedException.expectMessage(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
@@ -318,17 +317,21 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     @Test
+    public void testUpdateInfo_SupersededByWithoutIdException_SystemSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
+        SchemaRequest schemaRequest = getMockSchemaObject_SuperSededByWithoutId();
+        expectedException.expect(BadRequestException.class);
+        expectedException.expectMessage(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+        schemaInfoStore.updateSystemSchemaInfo(schemaRequest);
+    }
+
+    @Test
     public void testCreateSchemaInfo_BadRequestException()
             throws NotFoundException, ApplicationException, BadRequestException {
 
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
+        this.setUpMocks("test", "os:wks:well.1.1.1");
         Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
         Mockito.when(dataStore.add(Mockito.any(Entity.class)))
                 .thenThrow(new DatastoreException(400, SchemaConstants.ALREADY_EXISTS, SchemaConstants.ALREADY_EXISTS));
         try {
@@ -343,17 +346,29 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     @Test
-    public void testCreateSchemaInfo_ApplicationException()
+    public void testCreateSchemaInfo_BadRequestException_SystemSchemas()
             throws NotFoundException, ApplicationException, BadRequestException {
 
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
+        this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
         Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
+        Mockito.when(dataStore.add(Mockito.any(Entity.class)))
+                .thenThrow(new DatastoreException(400, SchemaConstants.ALREADY_EXISTS, SchemaConstants.ALREADY_EXISTS));
+        try {
+            schemaInfoStore.createSystemSchemaInfo(getMockSchemaObject_Published());
+            fail("Should not succeed");
+        } catch (BadRequestException e) {
+            assertEquals(SchemaConstants.SCHEMA_ID_EXISTS, e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
+    public void testCreateSchemaInfo_ApplicationException()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        this.setUpMocks("test", "os:wks:well.1.1.1");
+        Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
         Mockito.when(dataStore.add(Mockito.any(Entity.class))).thenThrow(DatastoreException.class);
         try {
             schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published());
@@ -367,17 +382,27 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     @Test
+    public void testCreateSchemaInfo_ApplicationException_SystemSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
+        Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
+        Mockito.when(dataStore.add(Mockito.any(Entity.class))).thenThrow(DatastoreException.class);
+        try {
+            schemaInfoStore.createSystemSchemaInfo(getMockSchemaObject_Published());
+            fail("Should not succeed");
+        } catch (ApplicationException e) {
+            assertEquals(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT, e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
     public void testUpdateSchemaInfo_ApplicationException()
             throws NotFoundException, ApplicationException, BadRequestException {
-
-        Mockito.when(headers.getPartitionId()).thenReturn("test");
+        this.setUpMocks("test", "os:wks:well.1.1.1");
         Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
-        Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.newKey("os:wks:well.1.1.1")).thenReturn(key);
         Mockito.when(dataStore.put(Mockito.any(Entity.class))).thenThrow(DatastoreException.class);
         try {
             schemaInfoStore.updateSchemaInfo(getMockSchemaObject_Published());
@@ -391,8 +416,24 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     @Test
+    public void testUpdateSchemaInfo_ApplicationException_SystemSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException {
+        this.setUpMocks(COMMON_TENANT_ID, "os:wks:well.1.1.1");
+        Mockito.when(headers.getUserEmail()).thenReturn("dummy-user");
+        Mockito.when(dataStore.put(Mockito.any(Entity.class))).thenThrow(DatastoreException.class);
+        try {
+            schemaInfoStore.updateSystemSchemaInfo(getMockSchemaObject_Published());
+            fail("Should not succeed");
+        } catch (ApplicationException e) {
+            assertEquals("Invalid object, updation failed", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
     public void testGetLatestMinorVersion_Entity() throws NotFoundException, ApplicationException {
-        when(headers.getPartitionId()).thenReturn("tenant");
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
 		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
@@ -428,6 +469,24 @@ public class GoogleSchemaInfoStoreTest {
     }
 
     @Test
+    public void testGetSchemaInfoList_withoutqueryparam_SystemSchemas()
+            throws NotFoundException, ApplicationException, BadRequestException {
+
+        Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+        Mockito.when(tenantInfo.getName()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        Mockito.when(dataStore.run(Mockito.any())).thenReturn(queryResult);
+        Mockito.when(queryResult.hasNext()).thenReturn(true, false);
+        Mockito.when(queryResult.next()).thenReturn(getMockEntityObject());
+        assertEquals(1,
+                schemaInfoStore.getSystemSchemaInfoList(QueryParams.builder().limit(100).offset(0).build()).size());
+    }
+
+    @Test
     public void testGetSchemaInfoList_withqueryparam()
             throws NotFoundException, ApplicationException, BadRequestException {
 
@@ -451,15 +510,14 @@ public class GoogleSchemaInfoStoreTest {
     public void testCleanSchema_Success() throws ApplicationException {
         String schemaId = "schemaId";
         String dataPartitionId = "tenant1";
-        when(headers.getPartitionId()).thenReturn(dataPartitionId);
-        Mockito.when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(tenantInfo);
-        Mockito.when(tenantInfo.getName()).thenReturn("test");
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Key key = mock(Key.class);
-        Mockito.when(keyFactory.newKey(schemaId)).thenReturn(key);
+        this.setUpMocks(dataPartitionId, schemaId);
+        assertEquals(true, schemaInfoStore.cleanSchema(schemaId));
+    }
+
+    @Test
+    public void testCleanSchema_Success_SystemSchemas() throws ApplicationException {
+        String schemaId = "schemaId";
+        this.setUpMocks(COMMON_TENANT_ID, schemaId);
         assertEquals(true, schemaInfoStore.cleanSchema(schemaId));
     }
 
@@ -467,33 +525,24 @@ public class GoogleSchemaInfoStoreTest {
     public void testCleanSchema_Failure() throws ApplicationException {
         String schemaId = "schemaId";
         String dataPartitionId = "tenant1";
-        when(headers.getPartitionId()).thenReturn(dataPartitionId);
-        Mockito.when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(tenantInfo);
-        Mockito.when(tenantInfo.getName()).thenReturn("tenant1");
-		Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        Key key = mock(Key.class);
-        Mockito.when(keyFactory.newKey(schemaId)).thenReturn(key);
+        this.setUpMocks(dataPartitionId, schemaId);
+        doThrow(DatastoreException.class).when(dataStore).delete(key);
+        assertEquals(false, schemaInfoStore.cleanSchema(schemaId));
+    }
+
+    @Test
+    public void testCleanSchema_Failure_SystemSchemas() throws ApplicationException {
+        String schemaId = "schemaId";
+        this.setUpMocks(COMMON_TENANT_ID, schemaId);
         doThrow(DatastoreException.class).when(dataStore).delete(key);
         assertEquals(false, schemaInfoStore.cleanSchema(schemaId));
     }
 
     @Test
     public void testMisconfiguredTenantInfoShouldThrowException() throws ApplicationException {
-        Key storageKey = mock(Key.class);
-        KeyFactory storageKeyFactory = mock(KeyFactory.class);
         String schemaId = "schemaId";
         String tenantId = "common";
-        Mockito.when(tenantFactory.getTenantInfo("common")).thenReturn(tenantInfoCommon);
-        Mockito.when(tenantInfoCommon.getName()).thenReturn("common");
-        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
-        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
-        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
-        when(keyFactory.newKey(schemaId)).thenReturn(key);
-        when(storageKeyFactory.newKey(schemaId)).thenReturn(storageKey);
+        this.setUpMocks(tenantId, schemaId);
         when(dataStore.run(ArgumentMatchers.any())).thenThrow(new DatastoreException(401,"",""));
         expectedException.expect(AppException.class);
         expectedException.expectMessage("Misconfigured tenant-info for common, not possible to check schema uniqueness");
@@ -559,4 +608,40 @@ public class GoogleSchemaInfoStoreTest {
                 .build();
     }
 
+    private void setUpMocks(String dataPartitionId, String schemaId) {
+        Mockito.when(headers.getPartitionId()).thenReturn(dataPartitionId);
+        Mockito.when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(tenantInfo);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.newKey(schemaId)).thenReturn(key);
+        Mockito.when(dataStore.get(key)).thenReturn(getMockEntityObject());
+    }
+
+    private void setUpMocksForMultiTenant_PositiveScenario(String privateTenant, String commonTenant, String schemaId) {
+        this.setUpMocksForMultipleTenants(privateTenant, commonTenant, schemaId);
+        when(keys.hasNext()).thenReturn(false);
+    }
+
+    private void setUpMocksForMultiTenant_NegativeScenario(String privateTenant, String commonTenant, String schemaId) {
+        this.setUpMocksForMultipleTenants(privateTenant, commonTenant, schemaId);
+        when(keys.hasNext()).thenReturn(true);
+    }
+
+    private void setUpMocksForMultipleTenants(String privateTenant, String commonTenant, String schemaId) {
+        schemaInfoStore.setSharedTenant(commonTenant);
+        Mockito.when(tenantFactory.getTenantInfo(privateTenant)).thenReturn(tenantInfo);
+        Mockito.when(tenantFactory.getTenantInfo(commonTenant)).thenReturn(tenantInfoCommon);
+        Mockito.when(tenantInfo.getName()).thenReturn(privateTenant);
+        Mockito.when(tenantInfoCommon.getName()).thenReturn(commonTenant);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfo)).thenReturn(dataStore);
+        Mockito.when(dataStoreFactory.getDatastore(tenantInfoCommon)).thenReturn(dataStore);
+        Mockito.when(dataStore.newKeyFactory()).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setKind(SchemaConstants.SCHEMA_KIND)).thenReturn(keyFactory);
+        Mockito.when(keyFactory.setNamespace(SchemaConstants.NAMESPACE)).thenReturn(keyFactory);
+        when(keyFactory.newKey(schemaId)).thenReturn(key);
+        Query<Key> any = Mockito.any(Query.class);
+        when(dataStore.run(any)).thenReturn(keys);
+    }
 }

@@ -27,7 +27,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @Repository
 @RequestScope
 public class IbmEntityTypeStore extends IbmDocumentStore implements IEntityTypeStore {
-	
+
     @PostConstruct
 	public void init() throws MalformedURLException {
     	initFactory(SchemaConstants.ENTITYTYPE_KIND);
@@ -41,6 +41,12 @@ public class IbmEntityTypeStore extends IbmDocumentStore implements IEntityTypeS
 		} else {
 			throw new NotFoundException(SchemaConstants.INVALID_INPUT);
 		}
+	}
+
+	@Override
+	public EntityType getSystemEntity(String entityTypeId) throws NotFoundException, ApplicationException {
+		updateDataPartitionId();
+    	return this.get(entityTypeId);
 	}
 
 	@Override
@@ -63,5 +69,9 @@ public class IbmEntityTypeStore extends IbmDocumentStore implements IEntityTypeS
 		return sd.getEntityType();
 	}
 
-
+	@Override
+	public EntityType createSystemEntity(EntityType entityType) throws BadRequestException, ApplicationException {
+		updateDataPartitionId();
+    	return this.create(entityType);
+	}
 }

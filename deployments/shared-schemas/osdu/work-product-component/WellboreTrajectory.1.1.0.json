@@ -277,7 +277,7 @@
                     "TrajectoryStationPropertyTypeID": {
                       "type": "string",
                       "title": "Trajectory Station Property Type ID",
-                      "description": "The reference to a trajectory station property type - of if interpreted as channels, the curve or channel name type, identifying e.g. MD, Inclination, Azimuth. This is a relationship to a reference-data--TrajectoryStationPropertyType record id.",
+                      "description": "The reference to a trajectory station property type - or if interpreted as channels, the curve or channel name type, identifying e.g. MD, Inclination, Azimuth. This is a relationship to a reference-data--TrajectoryStationPropertyType record id.",
                       "example": "partition-id:reference-data--TrajectoryStationPropertyType:AzimuthTN:",
                       "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-TrajectoryStationPropertyType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
@@ -303,7 +303,7 @@
                     "Name": {
                       "type": "string",
                       "title": "Name",
-                      "description": "The name of the curve (e.g. column in a CSV document) as originally found. If absent The name of the TrajectoryCurveType is intended to be used.",
+                      "description": "The name of the curve (e.g. column in a CSV document) as originally found. If absent The name of the TrajectoryStationPropertyType is intended to be used.",
                       "example": "AzimuthTN"
                     }
                   }
@@ -335,7 +335,8 @@
               "TopDepthMeasuredDepth",
               "BaseDepthMeasuredDepth",
               "VerticalMeasurement"
-            ]
+            ],
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -343,7 +344,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

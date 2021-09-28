@@ -126,7 +126,8 @@
                 "description": "The SEG-Y standard revision the SEG-Y file set is conforming to.",
                 "example": "rev 0"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -134,7 +135,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

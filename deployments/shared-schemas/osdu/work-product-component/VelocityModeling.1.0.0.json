@@ -349,7 +349,7 @@
               "ReplacementVelocity": {
                 "type": "number",
                 "description": "Value used to produce vertical static shifts in data",
-                "x-osdu-frame-of-reference": "UOM:velocity"
+                "x-osdu-frame-of-reference": "UOM:length per time"
               },
               "BinGridID": {
                 "type": "string",
@@ -362,7 +362,8 @@
                   }
                 ]
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -370,7 +371,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

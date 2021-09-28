@@ -32,6 +32,7 @@ import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.EntityType;
 import org.opengroup.osdu.schema.provider.aws.models.EntityTypeDoc;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -54,11 +55,14 @@ public class AwsEntityTypeStoreTest {
   @Mock
   private JaxRsDpsLog logger;
 
+  private static final String COMMON_TENANT_ID = "common";
+
   @Before
   public void setUp() throws Exception {
 
     Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
 		.thenReturn(queryHelper);
+    ReflectionTestUtils.setField(entityTypeStore, "sharedTenant", COMMON_TENANT_ID);
     
   }
 
@@ -80,6 +84,19 @@ public class AwsEntityTypeStoreTest {
   }
 
   @Test
+  public void get_SystemSchemas() throws NotFoundException, ApplicationException {
+    String entityTypeId = "id";
+    EntityType expected = new EntityType();
+    EntityTypeDoc entityTypeDoc = new EntityTypeDoc("id", COMMON_TENANT_ID, expected);
+
+    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(entityTypeDoc);
+    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+
+    EntityType actual = entityTypeStore.get(entityTypeId);
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
   public void create() throws BadRequestException, ApplicationException {
     String partitionId = "partitionId";
     EntityType expected = new EntityType();
@@ -87,6 +104,17 @@ public class AwsEntityTypeStoreTest {
     Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
     Mockito.doNothing().when(queryHelper).save(Mockito.any());
     Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
+    EntityType actual = entityTypeStore.create(expected);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void create_SystemSchemas() throws BadRequestException, ApplicationException {
+    EntityType expected = new EntityType();
+
+    Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
+    Mockito.doNothing().when(queryHelper).save(Mockito.any());
+    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
     EntityType actual = entityTypeStore.create(expected);
     assertEquals(expected, actual);
   }

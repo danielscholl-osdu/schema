@@ -80,6 +80,18 @@ public class GoogleSchemaStore implements ISchemaStore {
     }
 
     /**
+     * Method to get System schema from google Storage
+     * @param filePath
+     * @return Schema object
+     * @throws NotFoundException
+     * @throws ApplicationException
+     */
+    @Override
+    public String getSystemSchema(String filePath) throws NotFoundException, ApplicationException {
+        return this.getSchema(sharedTenant, filePath);
+    }
+
+    /**
      * Method to write schema to google Storage given Tenant ProjectInfo
      *
      * @param filePath
@@ -105,6 +117,20 @@ public class GoogleSchemaStore implements ISchemaStore {
         }
     }
 
+    /**
+     * Method to write System schema to google Storage
+     * @param filePath
+     * @param content
+     * @return schema object
+     * @throws ApplicationException
+     */
+    @Override
+    public String createSystemSchema(String filePath, String content) throws ApplicationException {
+        this.updateDataPartitionId();
+        return this.createSchema(filePath, content);
+
+    }
+
     @Override
     public boolean cleanSchemaProject(String schemaId) throws ApplicationException {
         String dataPartitionId = headers.getPartitionId();
@@ -114,8 +140,24 @@ public class GoogleSchemaStore implements ISchemaStore {
         return storageFactory.get(tenantFactory.getTenantInfo(dataPartitionId)).delete(blobId);
     }
 
+    /**
+     * Method to clean System schema from google Storage
+     * @param schemaId
+     * @return
+     * @throws ApplicationException
+     */
+    @Override
+    public boolean cleanSystemSchemaProject(String schemaId) throws ApplicationException {
+        this.updateDataPartitionId();
+        return this.cleanSchemaProject(schemaId);
+    }
+
     private String getSchemaBucketName(String dataPartitionId) {
         return tenantFactory.getTenantInfo(dataPartitionId).getProjectId() + SchemaConstants.SCHEMA_BUCKET_EXTENSION;
+    }
+
+    private void updateDataPartitionId() {
+        headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
     }
 
 }

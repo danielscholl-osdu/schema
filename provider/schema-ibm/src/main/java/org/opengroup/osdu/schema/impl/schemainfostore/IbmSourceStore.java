@@ -28,7 +28,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @Repository
 @RequestScope
 public class IbmSourceStore extends IbmDocumentStore implements ISourceStore {
-    
+
     @PostConstruct
 	public void init() throws MalformedURLException {
 		initFactory(SchemaConstants.SOURCE_KIND);
@@ -42,6 +42,12 @@ public class IbmSourceStore extends IbmDocumentStore implements ISourceStore {
 		} else {
 			throw new NotFoundException(SchemaConstants.INVALID_INPUT);
 		}
+	}
+
+	@Override
+	public Source getSystemSource(String sourceId) throws NotFoundException, ApplicationException {
+		updateDataPartitionId();
+    	return this.get(sourceId);
 	}
 
 	@Override
@@ -63,6 +69,10 @@ public class IbmSourceStore extends IbmDocumentStore implements ISourceStore {
 		logger.info(SchemaConstants.SOURCE_CREATED);
 		return sd.getSource();
 	}
- 
 
+	@Override
+	public Source createSystemSource(Source source) throws BadRequestException, ApplicationException {
+		updateDataPartitionId();
+    	return this.create(source);
+	}
 }

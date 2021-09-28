@@ -141,6 +141,7 @@
                   "allOf": [
                     {
                       "type": "object",
+                      "title": "Vertical Measurement ID",
                       "properties": {
                         "VerticalMeasurementID": {
                           "description": "The ID for a distinct vertical measurement within the Wellbore VerticalMeasurements array so that it may be referenced by other vertical measurements if necessary.",
@@ -228,7 +229,8 @@
                 "description": "The bottom hole location of the wellbore denoted by a specified geographic horizontal coordinate reference system (Horizontal CRS), such as WGS84, NAD27, or ED50. If both GeographicBottomHoleLocation and ProjectedBottomHoleLocation properties are populated on this wellbore, they must identify the same point, just in different CRSs.",
                 "$ref": "{{schema-authority}}:wks:AbstractSpatialLocation:1.0.0"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -236,7 +238,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }
