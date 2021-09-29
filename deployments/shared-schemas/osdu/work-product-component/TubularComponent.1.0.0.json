@@ -325,7 +325,8 @@
                 "type": "number",
                 "x-osdu-frame-of-reference": "UOM:length"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -333,7 +334,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

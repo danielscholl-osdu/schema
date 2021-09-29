@@ -96,3 +96,14 @@ Feature: To verify functionality of GET schema Service
       | "SchemaSanityTest" | "latestVersion"    | "NA"               | "latestVersion"    | "False"    | "200"             | "/output_payloads/GetSchema_incorrectPatchFilter_MinorWithoutMajor.json" |
       | "SchemaSanityTest" | "latestVersion"    | "latestVersion"    | "NA"               | "True"     | "200"             | "/output_payloads/GetSchema_incorrectPatchFilter_MinorWithoutMajor.json" |
       | "SchemaSanityTest" | "latestVersion"    | "latestVersion"    | "latestVersion"    | "True"     | "200"             | "/output_payloads/GetSchema_incorrectPatchFilter_MinorWithoutMajor.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's GET list API handles offset filter combinations elegantly with correct success messages
+    Given I hit schema GET List API with <parameter> and <schemaOffset1>
+    Then service should respond back with status code <ReponseStatusCode> and note down id of <schemaOffset2>
+    When I hit schema service GET List API with <parameter> and <schemaOffset2>
+    Then service should respond back with status code <ReponseStatusCode> and note down id of <schemaOffset1> and compare with earlier id
+
+    Examples: 
+      | parameter | schemaOffset1 | schemaOffset2 | ReponseStatusCode |
+      | "offset"  | "0"           | "4"           | "200"             |

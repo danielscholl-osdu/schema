@@ -152,7 +152,8 @@
                 "type": "string",
                 "example": "{\"ancestry\":\"K.thermodynamic temperature\",\"type\":\"UM\"}"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -160,7 +161,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

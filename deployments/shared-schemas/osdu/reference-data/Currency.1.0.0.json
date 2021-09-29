@@ -122,7 +122,8 @@
                 "description": "Standard numeric number assigned to a currency",
                 "type": "integer"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -130,7 +131,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

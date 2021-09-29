@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -29,6 +30,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.cloudant.client.api.Database;
 import com.cloudant.client.org.lightcouch.DocumentConflictException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class IbmSourceStoreTest {
@@ -56,6 +58,12 @@ public class IbmSourceStoreTest {
 	protected JaxRsDpsLog logger;
 
 	private static final String dataPartitionId = "testPartitionId";
+    private static final String COMMON_TENANT_ID = "common";
+
+    @Before
+    public void setUp() {
+        ReflectionTestUtils.setField(sourceStore, "sharedTenant", COMMON_TENANT_ID);
+    }
 	
     @Test
     public void testGet() throws NotFoundException, ApplicationException, MalformedURLException {
@@ -66,6 +74,17 @@ public class IbmSourceStoreTest {
         Mockito.when(db.find(SourceDoc.class, sourceId)).thenReturn(mockSourceDoc);
         Mockito.when(mockSourceDoc.getSource()).thenReturn(mockSource);
         assertNotNull(sourceStore.get(sourceId));
+    }
+
+    @Test
+    public void testGet_SystemSchemas() throws NotFoundException, ApplicationException, MalformedURLException {
+        String sourceId = "testSourceId";
+        Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(cloudantFactory.getDatabase(anyString(),anyString())).thenReturn(db);
+        Mockito.when(db.contains(sourceId)).thenReturn(true);
+        Mockito.when(db.find(SourceDoc.class, sourceId)).thenReturn(mockSourceDoc);
+        Mockito.when(mockSourceDoc.getSource()).thenReturn(mockSource);
+        assertNotNull(sourceStore.getSystemSource(sourceId));
     }
 
     @Test
@@ -86,12 +105,38 @@ public class IbmSourceStoreTest {
     }
 
     @Test
+    public void testGet_NotFoundException_SystemSchemas() {
+        String sourceId = "testSourceId";
+        try {
+            Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+            Mockito.when(cloudantFactory.getDatabase(anyString(),anyString())).thenReturn(db);
+            Mockito.when(db.contains(sourceId)).thenReturn(false);
+            sourceStore.getSystemSource(sourceId);
+            fail("Should not succeed");
+        } catch (NotFoundException e) {
+            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
     public void testCreateSource() throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
     	Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
     	Mockito.when(cloudantFactory.getDatabase(anyString(),anyString())).thenReturn(db);
      	Mockito.when(db.contains(anyString())).thenReturn(false);
      	Mockito.when(mockSourceDoc.getSource()).thenReturn(mockSource);
         assertNotNull(sourceStore.create(mockSource));
+    }
+
+    @Test
+    public void testCreateSource_SystemSchemas() throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+        Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+        Mockito.when(cloudantFactory.getDatabase(anyString(),anyString())).thenReturn(db);
+        Mockito.when(db.contains(anyString())).thenReturn(false);
+        Mockito.when(mockSourceDoc.getSource()).thenReturn(mockSource);
+        assertNotNull(sourceStore.createSystemSource(mockSource));
     }
 
     @Test
@@ -106,6 +151,25 @@ public class IbmSourceStoreTest {
         try {
         	sourceStore.create(mockSource);
 		        fail("Should not succeed");
+        } catch (BadRequestException e) {
+            assertEquals("Source already registered with Id: "+sourceId, e.getMessage());
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
+
+    @Test
+    public void testCreate_BadRequestException_SystemSchemas() throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+        String sourceId = "testSourceId";
+        Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+        sourceStore = Mockito.spy(sourceStore);
+        Mockito.when(cloudantFactory.getDatabase(anyString(),anyString())).thenReturn(db);
+        Mockito.when(db.contains(anyString())).thenReturn(true);
+        Mockito.when(mockSource.getSourceId()).thenReturn(sourceId);
+
+        try {
+            sourceStore.createSystemSource(mockSource);
+            fail("Should not succeed");
         } catch (BadRequestException e) {
             assertEquals("Source already registered with Id: "+sourceId, e.getMessage());
         } catch (Exception e) {
@@ -134,4 +198,24 @@ public class IbmSourceStoreTest {
         }
     }
 
+    @Test
+    public void testCreate_ApplicationException_SystemSchemas() throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+        String sourceId = "testSourceId";
+        Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+        sourceStore = Mockito.spy(sourceStore);
+        Mockito.when(cloudantFactory.getDatabase(anyString(),anyString())).thenReturn(db);
+        Mockito.when(db.contains(anyString())).thenReturn(false);
+        Mockito.when(db.save(any(SourceDoc.class))).thenThrow(DocumentConflictException.class);
+        Mockito.when(mockSource.getSourceId()).thenReturn(sourceId);
+
+        try {
+            sourceStore.createSystemSource(mockSource);
+            fail("Should not succeed");
+        } catch (ApplicationException e) {
+            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+    }
 }

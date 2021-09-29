@@ -171,7 +171,8 @@
                 "type": "string",
                 "example": "{\"abcd\":{\"a\":2298.35,\"b\":5.0,\"c\":9.0,\"d\":0.0},\"symbol\":\"degF\",\"baseMeasurement\":{\"ancestry\":\"K\",\"type\":\"UM\"},\"type\":\"UAD\"}"
               }
-            }
+            },
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -179,7 +180,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }

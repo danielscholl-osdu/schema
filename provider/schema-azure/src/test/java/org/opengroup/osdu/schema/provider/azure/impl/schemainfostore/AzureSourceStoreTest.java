@@ -108,9 +108,14 @@ public class AzureSourceStoreTest {
                 .findItem(
                         eq(systemCosmosDBName),
                         any(),
-                        eq(sharedTenantId + ":" + sourceId),
+                        eq(sourceId),
                         eq(partitionKey),
                         any());
+
+        assertNotNull(store.getSystemSource(sourceId));
+        assertEquals(sourceId, store.getSystemSource(sourceId).getSourceId());
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         assertNotNull(store.get(sourceId));
         assertEquals(sourceId, store.get(sourceId).getSourceId());
     }
@@ -149,9 +154,21 @@ public class AzureSourceStoreTest {
                 .findItem(
                         eq(systemCosmosDBName),
                         any(),
-                        eq(sharedTenantId + ":" + ""),
+                        eq(""),
                         eq(sourceId),
                         any());
+
+        try {
+            store.getSystemSource(sourceId);
+            fail("Should not succeed");
+        } catch (NotFoundException e) {
+            assertEquals("bad input parameter", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         try {
             store.get(sourceId);
             fail("Should not succeed");
@@ -173,7 +190,11 @@ public class AzureSourceStoreTest {
     @Test
     public void testCreateSource_PublicSchemas() throws  ApplicationException, BadRequestException {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
-        doNothing().when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testSourceId"), any());
+        doNothing().when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq(sourceId), any());
+
+        assertNotNull(store.createSystemSource(mockSource));
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         assertNotNull(store.create(mockSource));
     }
 
@@ -198,7 +219,19 @@ public class AzureSourceStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         AppException exception = getMockAppException(409);
-        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testSourceId"), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq(sourceId), any());
+
+        try {
+            store.createSystemSource(mockSource);
+            fail("Should not succeed");
+        } catch (BadRequestException e) {
+            assertEquals("Source already registered with Id: testSourceId", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         try {
             store.create(mockSource);
             fail("Should not succeed");
@@ -231,8 +264,18 @@ public class AzureSourceStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException, CosmosException {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         AppException exception = getMockAppException(500);
-        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testSourceId"), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("testSourceId"), any());
 
+        try {
+            store.createSystemSource(mockSource);
+            fail("Should not succeed");
+        } catch (ApplicationException e) {
+            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         try {
             store.create(mockSource);
             fail("Should not succeed");

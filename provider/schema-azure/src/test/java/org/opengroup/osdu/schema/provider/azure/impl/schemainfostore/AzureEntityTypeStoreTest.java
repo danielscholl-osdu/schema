@@ -109,10 +109,14 @@ public class AzureEntityTypeStoreTest {
                 .findItem(
                         eq(systemCosmosDBName),
                         any(),
-                        eq(sharedTenantId + ":" + entityTypeId),
+                        eq(entityTypeId),
                         eq(partitionKey),
                         any());
 
+        assertNotNull(store.getSystemEntity(entityTypeId));
+        assertEquals(entityTypeId, store.getSystemEntity(entityTypeId).getEntityTypeId());
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         assertNotNull(store.get(entityTypeId));
         assertEquals(entityTypeId, store.get(entityTypeId).getEntityTypeId());
     }
@@ -150,10 +154,21 @@ public class AzureEntityTypeStoreTest {
                 .findItem(
                         eq(systemCosmosDBName),
                         any(),
-                        eq(sharedTenantId + ":" + ""),
+                        eq(""),
                         eq(partitionKey),
                         any());
 
+        try {
+            store.getSystemEntity("");
+            fail("Should not succeed");
+        } catch (NotFoundException e) {
+            assertEquals("bad input parameter", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         try {
             store.get("");
             fail("Should not succeed");
@@ -177,6 +192,10 @@ public class AzureEntityTypeStoreTest {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         Mockito.when(mockEntityType.getEntityTypeId()).thenReturn(entityTypeId);
         doNothing().when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq(partitionKey), any());
+
+        assertNotNull(store.createSystemEntity(mockEntityType));
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         assertNotNull(store.create(mockEntityType));
     }
 
@@ -202,8 +221,19 @@ public class AzureEntityTypeStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException, IOException {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         AppException exception = getMockAppException(409);
-        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testEntityId"), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("testEntityId"), any());
 
+        try {
+            store.createSystemEntity(mockEntityType);
+            fail("Should not succeed");
+        } catch (BadRequestException e) {
+            assertEquals("EntityType already registered with Id: testEntityId", e.getMessage());
+
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         try {
             store.create(mockEntityType);
             fail("Should not succeed");
@@ -236,8 +266,18 @@ public class AzureEntityTypeStoreTest {
             throws NotFoundException, ApplicationException, BadRequestException, CosmosException {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         AppException exception = getMockAppException(500);
-        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("common:testEntityId"), any());
+        doThrow(exception).when(cosmosStore).createItem(eq(systemCosmosDBName), any(), eq("testEntityId"), any());
 
+        try {
+            store.createSystemEntity(mockEntityType);
+            fail("Should not succeed");
+        } catch (ApplicationException e) {
+            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
+        } catch (Exception e) {
+            fail("Should not get different exception");
+        }
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         try {
             store.create(mockEntityType);
             fail("Should not succeed");

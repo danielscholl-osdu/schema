@@ -45,6 +45,9 @@ public class AwsEntityTypeStore implements IEntityTypeStore {
   @Value("${aws.dynamodb.entityTypeTable.ssm.relativePath}")
   String entityTypeTableParameterRelativePath;
 
+  @Value("${shared.tenant.name:common}")
+  private String sharedTenant;
+
   private DynamoDBQueryHelperV2 getEntityTypeTableQueryHelper() {
     return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, entityTypeTableParameterRelativePath);
   }
@@ -60,6 +63,12 @@ public class AwsEntityTypeStore implements IEntityTypeStore {
       throw new NotFoundException(SchemaConstants.INVALID_INPUT);
     }
     return result.getEntityType();
+  }
+
+  @Override
+  public EntityType getSystemEntity(String entityTypeId) throws NotFoundException, ApplicationException {
+    updateDataPartitionId();
+    return this.get(entityTypeId);
   }
 
   @Override
@@ -86,5 +95,15 @@ public class AwsEntityTypeStore implements IEntityTypeStore {
     }
     log.info(SchemaConstants.ENTITY_TYPE_CREATED);
     return entityType;
+  }
+
+  @Override
+  public EntityType createSystemEntity(EntityType entityType) throws BadRequestException, ApplicationException {
+    this.updateDataPartitionId();
+    return this.create(entityType);
+  }
+
+  private void updateDataPartitionId() {
+    headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
   }
 }

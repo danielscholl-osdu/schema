@@ -804,6 +804,51 @@ public class SchemaServiceTest {
 
 		Assert.assertEquals(1, (schemaService.getSchemaInfoList(queryParams).getSchemaInfos().size()));
 	}
+	
+	@Test
+	public void testGetSchemaInfoList_TestOffsetParameter_LatestVersion()
+			throws ApplicationException, NotFoundException, BadRequestException {
+		List<SchemaInfo> schemaInt = new LinkedList<SchemaInfo>();
+		List<SchemaInfo> schemaPub = new LinkedList<SchemaInfo>();
+		List<SchemaInfo> schemaComb = new LinkedList<SchemaInfo>();
+
+		schemaInt.add(getMockSchemaInfo_Published_InternalScope());
+		schemaPub.add(getMockSchemaInfo());
+		schemaComb.addAll(schemaPub);
+		schemaComb.addAll(schemaInt);
+
+		QueryParams queryParams = QueryParams.builder().authority("os").latestVersion(true).limit(10).offset(1).build();
+
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		Mockito.when(schemaInfoStore.getSchemaInfoList(queryParams, "common")).thenReturn(schemaPub);
+		Mockito.when(schemaInfoStore.getSchemaInfoList(queryParams, "tenant")).thenReturn(schemaInt);
+
+		Assert.assertEquals(0, (schemaService.getSchemaInfoList(queryParams).getSchemaInfos().size()));
+	}
+	
+	@Test
+	public void testGetSchemaInfoList_TestOffsetParameter()
+			throws ApplicationException, NotFoundException, BadRequestException {
+		List<SchemaInfo> schemaInt = new LinkedList<SchemaInfo>();
+		List<SchemaInfo> schemaPub = new LinkedList<SchemaInfo>();
+		List<SchemaInfo> schemaComb = new LinkedList<SchemaInfo>();
+
+		schemaInt.add(getMockSchemaInfo_INTERNAL_EntityWellBore());
+		schemaPub.add(getMockSchemaInfo());
+		schemaComb.addAll(schemaPub);
+		schemaComb.addAll(schemaInt);
+
+		QueryParams queryParams = QueryParams.builder().authority("os").limit(10).offset(1).build();
+
+		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
+		Mockito.when(schemaInfoStore.getSchemaInfoList(queryParams, "common")).thenReturn(schemaPub);
+		Mockito.when(schemaInfoStore.getSchemaInfoList(queryParams, "tenant")).thenReturn(schemaInt);
+		
+		List<SchemaInfo> result = schemaService.getSchemaInfoList(queryParams).getSchemaInfos();
+		
+		Assert.assertEquals(1, (result.size()));
+		Assert.assertEquals("os:abc:well:1.1.1", (result.get(0).getSchemaIdentity().getId()));
+	}
 
 	@Test
 	public void testGetSchemaInfoList_LatestVersion_WithScopeInternal_WithoutAuthority()
@@ -1198,7 +1243,7 @@ public class SchemaServiceTest {
 		return SchemaInfo.builder()
 				.schemaIdentity(
 						SchemaIdentity.builder().authority("os").source("abc").entityType("wellbore").schemaVersionMajor(1L)
-						.schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:wks:well:1.1.1").build())
+						.schemaVersionMinor(1L).schemaVersionPatch(1L).id("os:abc:well:1.1.1").build())
 				.dateCreated(currDate).scope(SchemaScope.INTERNAL).status(SchemaStatus.PUBLISHED).build();
 
 	}

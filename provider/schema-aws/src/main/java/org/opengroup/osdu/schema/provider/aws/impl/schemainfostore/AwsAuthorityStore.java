@@ -45,6 +45,9 @@ public class AwsAuthorityStore implements IAuthorityStore {
   @Value("${aws.dynamodb.authorityTable.ssm.relativePath}")
   String authorityTableParameterRelativePath;
 
+  @Value("${shared.tenant.name:common}")
+  private String sharedTenant;
+
   private DynamoDBQueryHelperV2 getAuthorityTableQueryHelper() {
     return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, authorityTableParameterRelativePath);
   }
@@ -61,6 +64,12 @@ public class AwsAuthorityStore implements IAuthorityStore {
       throw new NotFoundException(SchemaConstants.INVALID_INPUT);
     }
     return result.getAuthority();
+  }
+
+  @Override
+  public Authority getSystemAuthority(String authorityId) throws NotFoundException, ApplicationException {
+    this.updateDataPartitionId();
+    return this.get(authorityId);
   }
 
   @Override
@@ -93,5 +102,15 @@ public class AwsAuthorityStore implements IAuthorityStore {
 
     logger.info(SchemaConstants.AUTHORITY_CREATED);
     return authority;
+  }
+
+  @Override
+  public Authority createSystemAuthority(Authority authority) throws ApplicationException, BadRequestException {
+    updateDataPartitionId();
+    return this.create(authority);
+  }
+
+  private void updateDataPartitionId() {
+    headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
   }
 }

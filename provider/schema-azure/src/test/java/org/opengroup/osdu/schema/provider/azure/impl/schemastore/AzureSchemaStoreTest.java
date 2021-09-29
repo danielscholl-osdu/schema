@@ -67,7 +67,7 @@ public class AzureSchemaStoreTest {
     private static final String containerName = "opendes";
     private static final String systemContainerName = "systemContainer";
     private static final String filePath = dataPartitionId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
-    private static final String filePathPublic = sharedTenantId + ":" + FILE_PATH + SchemaConstants.JSON_EXTENSION;
+    private static final String filePathPublic = FILE_PATH + SchemaConstants.JSON_EXTENSION;
 
     @Before
     public void init(){
@@ -88,6 +88,10 @@ public class AzureSchemaStoreTest {
     public void testGetSchema_PublicSchemas() throws ApplicationException, NotFoundException {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         doReturn(CONTENT).when(blobStore).readFromStorageContainer(filePathPublic, systemContainerName);
+
+        Assert.assertEquals(CONTENT, schemaStore.getSystemSchema(FILE_PATH));
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         Assert.assertEquals(CONTENT, schemaStore.getSchema(sharedTenantId, FILE_PATH));
     }
 
@@ -105,6 +109,10 @@ public class AzureSchemaStoreTest {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
         doReturn(null).when(blobStore).readFromStorageContainer(filePathPublic, systemContainerName);
+
+        schemaStore.getSystemSchema(FILE_PATH);
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         schemaStore.getSchema(sharedTenantId, FILE_PATH);
     }
 
@@ -124,6 +132,10 @@ public class AzureSchemaStoreTest {
         expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
 
         doThrow(AppException.class).when(blobStore).readFromStorageContainer(filePathPublic, systemContainerName);
+
+        schemaStore.getSystemSchema(FILE_PATH);
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         schemaStore.getSchema(sharedTenantId, FILE_PATH);
     }
 
@@ -140,6 +152,9 @@ public class AzureSchemaStoreTest {
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         doReturn(true).when(blobStore).deleteFromStorageContainer(filePathPublic, systemContainerName);
 
+        Assert.assertEquals(true, schemaStore.cleanSystemSchemaProject(FILE_PATH));
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         Boolean result = schemaStore.cleanSchemaProject(FILE_PATH);
         Assert.assertEquals(true, result);
     }
@@ -160,6 +175,10 @@ public class AzureSchemaStoreTest {
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
         doThrow(AppException.class).when(blobStore).deleteFromStorageContainer(filePathPublic, systemContainerName);
+
+        schemaStore.cleanSystemSchemaProject(FILE_PATH);
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         schemaStore.cleanSchemaProject(FILE_PATH);
     }
 
@@ -175,6 +194,10 @@ public class AzureSchemaStoreTest {
 
         Mockito.when(headers.getPartitionId()).thenReturn(sharedTenantId);
         doNothing().when(blobStore).writeToStorageContainer(filePathPublic, CONTENT, systemContainerName);
+
+        Assert.assertEquals(filePathPublic, schemaStore.createSystemSchema(FILE_PATH, CONTENT));
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         Assert.assertEquals(filePathPublic, schemaStore.createSchema(FILE_PATH, CONTENT));
     }
 
@@ -194,6 +217,10 @@ public class AzureSchemaStoreTest {
         expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
 
         doThrow(AppException.class).when(blobStore).writeToStorageContainer(filePathPublic, CONTENT, systemContainerName);
+
+        schemaStore.createSystemSchema(FILE_PATH, CONTENT);
+
+        // This is temporary and will be removed once schema-core starts consuming *system* methods
         schemaStore.createSchema(FILE_PATH, CONTENT);
     }
 }

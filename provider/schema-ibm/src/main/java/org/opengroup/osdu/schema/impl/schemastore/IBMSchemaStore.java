@@ -17,6 +17,7 @@ import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.annotation.RequestScope;
@@ -48,6 +49,9 @@ public class IBMSchemaStore implements ISchemaStore {
 	
 	@Inject
 	private TenantInfo tenant;
+
+	@Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 
 	AmazonS3 s3Client;
 
@@ -94,6 +98,18 @@ public class IBMSchemaStore implements ISchemaStore {
 	}
 
 	/**
+	 * Method to get a System schema from IBM storage.
+	 * @param filePath
+	 * @return
+	 * @throws NotFoundException
+	 * @throws ApplicationException
+	 */
+	@Override
+	public String getSystemSchema(String filePath) throws NotFoundException, ApplicationException {
+		return this.getSchema(sharedTenant, filePath);
+	}
+
+	/**
 	 * Method to write schema to IBM Storage given Tenant ProjectInfo
 	 *
 	 * @param schemaId
@@ -124,6 +140,19 @@ public class IBMSchemaStore implements ISchemaStore {
 		}
 		
 		return s3Client.getUrl(bucket, schemaId).toString();
+	}
+
+	/**
+	 * Method to create a System schema into IBM storage.
+	 * @param filePath
+	 * @param content
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@Override
+	public String createSystemSchema(String filePath, String content) throws ApplicationException {
+		updateDataPartitionId();
+		return this.createSchema(filePath, content);
 	}
 
 	private String getObjectAsString(String objectName) throws Exception {
@@ -158,6 +187,22 @@ public class IBMSchemaStore implements ISchemaStore {
 		    logger.error("Failed to delete schema " +schemaId);
 		    return false;
 		}
+	}
+
+	/**
+	 * Method to clean System schema from IBM storage for a given schema ID
+	 * @param schemaId
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@Override
+	public boolean cleanSystemSchemaProject(String schemaId) throws ApplicationException {
+		updateDataPartitionId();
+		return this.cleanSchemaProject(schemaId);
+	}
+
+	private void updateDataPartitionId() {
+		headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
 	}
 
 }

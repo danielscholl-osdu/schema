@@ -198,6 +198,7 @@
                       "type": "string",
                       "title": "Unit Quantity ID",
                       "description": "The expected UnitQuantity for the parameter value. A more precise context can be  provided by PropertyType. If UnitQuantityID is provided, PropertyType is expected to be omitted.",
+                      "example": "namespace:reference-data--UnitQuantity:plane%20angle:",
                       "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitQuantity:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
@@ -219,7 +220,8 @@
             },
             "required": [
               "Parameters"
-            ]
+            ],
+            "title": "IndividualProperties"
           },
           {
             "type": "object",
@@ -227,7 +229,8 @@
               "ExtensionProperties": {
                 "type": "object"
               }
-            }
+            },
+            "title": "ExtensionProperties"
           }
         ]
       }
