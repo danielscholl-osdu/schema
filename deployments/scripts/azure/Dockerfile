@@ -1,4 +1,11 @@
-FROM python:3.8
+FROM mcr.microsoft.com/azure-cli
+
+RUN apk add ca-certificates bash curl wget gettext jq bind-tools \
+    && wget -q https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl \
+    && chmod +x /usr/local/bin/kubectl \
+    && chmod g+rwx /root \
+    && mkdir /config \
+    && chmod g+rwx /config
 
 ENV DATA_PARTITION="opendes" \
   AZURE_BUILD_SUBDIR="provider/schema-azure" \
