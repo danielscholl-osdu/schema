@@ -47,8 +47,14 @@ spec:
             - containerPort: 80
           readinessProbe:
             httpGet:
-              path: /api/schema-service/v1/swagger-ui.html
-              port: 80
+              path: /actuator/health
+              port: 8081
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 250
+            periodSeconds: 10
           volumeMounts:
             - name: azure-keyvault
               mountPath: "/mnt/azure-keyvault"
@@ -113,5 +119,7 @@ spec:
               value: "false"
             - name: event_grid_topic
               value: "schemachangedtopic"
+            - name: SPRING_CONFIG_NAME
+              value: "common,application"
 
 
