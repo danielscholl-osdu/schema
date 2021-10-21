@@ -7,6 +7,7 @@ class AzureToken(object):
         tenant_id = os.getenv('AZURE_TENANT_ID')
         resource_id = os.getenv('AZURE_AD_APP_RESOURCE_ID')
         client_id = os.getenv('AZURE_CLIENT_ID')
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="the variable name is getting flagged")]
         client_secret = os.getenv('AZURE_CLIENT_SECRET')
         
         if tenant_id is None:
