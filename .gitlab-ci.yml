@@ -77,7 +77,7 @@ include:
   - local: "/devops/gcp/bootstrap.yaml"
 
 osdu-gcp-test:
-  image: maven:3.6.3-jdk-8
+  image: maven:3.8.2-jdk-8
   script:
     - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TESTS_SUBDIR/pom.xml
   artifacts:
