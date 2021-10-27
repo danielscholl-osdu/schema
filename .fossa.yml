@@ -36,14 +36,6 @@ analyze:
     type: mvn
     target: provider/schema-reference/pom.xml
     path: .
-  - name: aws
-    type: pip
-    target: deployments/scripts/aws
-    path: deployments/scripts/aws
-  - name: azure
-    type: pip
-    target: deployments/scripts/azure
-    path: deployments/scripts/azure
   - name: google
     type: pip
     target: deployments/scripts/google
@@ -56,3 +48,11 @@ analyze:
     type: pip
     target: deployments/scripts
     path: deployments/scripts
+  - name: aws
+    type: pip
+    target: deployments/scripts/aws
+    path: deployments/scripts/aws
+  - name: azure
+    type: pip
+    target: deployments/scripts/azure
+    path: deployments/scripts/azure
