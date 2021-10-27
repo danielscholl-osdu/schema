@@ -13,7 +13,7 @@
 
 	<properties>
 		<springfox-version>2.7.0</springfox-version>
-		<os-core-common.version>0.11.0</os-core-common.version>
+		<os-core-common.version>0.12.0</os-core-common.version>
 	</properties>
 
 	<dependencies>
