@@ -12,6 +12,11 @@ class IBMToken(object):
         grantType = 'password'
         userName = os.getenv('IBM_AUTH_USER_ACCESS')
         password = os.getenv('IBM_AUTH_USER_ACCESS_PASSWORD')
+        verifyVal = os.getenv('IBM_KEYCLOAK_VERIFY_VALUE')
+        if verifyVal=="False":
+           verify_Val=False 
+        else:
+           verify_Val=True
         scope = 'openid'
         
         
@@ -39,7 +44,7 @@ class IBMToken(object):
         
         try:
         
-            response = requests.post(url, data={"grant_type": grantType,        
+            response = requests.post(url, verify=verify_Val, data={"grant_type": grantType,        
                  "client_id": clientId,
                  "client_secret" : clientSecret,
                  "username": userName,
@@ -56,6 +61,3 @@ class IBMToken(object):
             
 if __name__ == '__main__':
     IBMToken().get_ibm_id_token()
-
-
-
