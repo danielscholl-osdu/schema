@@ -15,21 +15,22 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+    "x-osdu-review-status": "Accepted",
     "$id": "https://schema.osdu.opengroup.org/json/abstract/AbstractFacility.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "x-osdu-schema-source": "osdu:wks:AbstractFacility:1.0.0",
     "title": "AbstractFacility",
-    "description": "",
+    "description": "The schema fragment included by facilities. A facility is a grouping of equipment that is located within a specific geographic boundary or site and that is used in the context of energy-related activities such as exploration, extraction, generation, storage, processing, disposal, supply, or transfer. Clarifications: (1) A facility may be surface or subsurface located. (2) Usually facility equipment is commonly owned or operated. (3) Industry definitions may vary and differ from this one. This schema fragment is included by Well, Wellbore, Rig, as well as Tank Batteries, Compression Stations, Storage Facilities, Wind Farms, Wind Turbines, Mining Facilities, etc., once these types are included in to the OSDU.",
     "type": "object",
     "properties": {
       "FacilityID": {
+        "type": "string",
         "title": "External Facility Identifier",
-        "description": "Native identifier from a Master Data Management System or other trusted source external to OSDU - stored here in order to allow for multi-system connection and synchronization. If used, the \"Source\" property should identify that source system.",
-        "type": "string"
+        "description": "Native identifier from a Master Data Management System or other trusted source external to OSDU - stored here in order to allow for multi-system connection and synchronization. If used, the \"Source\" property should identify that source system."
       },
       "FacilityTypeID": {
-        "description": "The definition of a kind of capability to perform a business function or a service.",
         "type": "string",
+        "description": "The definition of a kind of capability to perform a business function or a service.",
         "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-FacilityType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [
           {
@@ -39,8 +40,8 @@
         ]
       },
       "FacilityOperators": {
-        "description": "The history of operator organizations of the facility.",
         "type": "array",
+        "description": "The history of operator organizations of the facility.",
         "x-osdu-indexing": {
           "type": "nested"
         },
@@ -49,9 +50,9 @@
         }
       },
       "InitialOperatorID": {
-        "description": "A initial operator organization ID; the organization ID may also be found in the FacilityOperatorOrganisationID of the FacilityOperator array providing the actual dates.",
         "type": "string",
         "title": "Initial Operator ID",
+        "description": "A initial operator organization ID; the organization ID may also be found in the FacilityOperatorOrganisationID of the FacilityOperator array providing the actual dates.",
         "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [
           {
@@ -61,9 +62,9 @@
         ]
       },
       "CurrentOperatorID": {
-        "description": "The current operator organization ID; the organization ID may also be found in the FacilityOperatorOrganisationID of the FacilityOperator array providing the actual dates.",
         "type": "string",
         "title": "Current Operator ID",
+        "description": "The current operator organization ID; the organization ID may also be found in the FacilityOperatorOrganisationID of the FacilityOperator array providing the actual dates.",
         "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [
           {
@@ -73,8 +74,8 @@
         ]
       },
       "DataSourceOrganisationID": {
-        "description": "The main source of the header information.",
         "type": "string",
+        "description": "The main source of the header information.",
         "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Organisation:[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [
           {
@@ -84,8 +85,8 @@
         ]
       },
       "OperatingEnvironmentID": {
-        "description": "Identifies the Facility's general location as being onshore vs. offshore.",
         "type": "string",
+        "description": "Identifies the Facility's general location as being onshore vs. offshore.",
         "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OperatingEnvironment:[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [
           {
@@ -95,19 +96,19 @@
         ]
       },
       "FacilityName": {
-        "description": "Name of the Facility.",
-        "type": "string"
+        "type": "string",
+        "description": "Name of the Facility."
       },
       "FacilityNameAliases": {
-        "description": "DEPRECATED: please use data.NameAliases. Alternative names, including historical, by which this facility is/has been known.",
         "type": "array",
+        "description": "DEPRECATED: please use data.NameAliases. Alternative names, including historical, by which this facility is/has been known.",
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0"
         }
       },
       "FacilityStates": {
-        "description": "The history of life cycle states the facility has been through.",
         "type": "array",
+        "description": "The history of life cycle states the facility has been through.",
         "x-osdu-indexing": {
           "type": "flattened"
         },
@@ -116,8 +117,8 @@
         }
       },
       "FacilityEvents": {
-        "description": "A list of key facility events.",
         "type": "array",
+        "description": "A list of key facility events.",
         "x-osdu-indexing": {
           "type": "flattened"
         },
@@ -126,8 +127,8 @@
         }
       },
       "FacilitySpecifications": {
-        "description": "facilitySpecification maintains the specification like slot name, wellbore drilling permit number, rig name etc.",
         "type": "array",
+        "description": "facilitySpecification maintains the specification like slot name, wellbore drilling permit number, rig name etc.",
         "x-osdu-indexing": {
           "type": "flattened"
         },
