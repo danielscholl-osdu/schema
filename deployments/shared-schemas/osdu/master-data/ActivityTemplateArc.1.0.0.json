@@ -119,6 +119,11 @@
                 "title": "Name",
                 "description": "The name of this input/output parameter definition set."
               },
+              "Description": {
+                "type": "string",
+                "title": "Description",
+                "description": "A detailed textual description of the activity template arc connecting inputs and outputs of workflows (ActivityTemplate)."
+              },
               "OutputInputArcs": {
                 "type": "array",
                 "title": "Output Input Arcs",

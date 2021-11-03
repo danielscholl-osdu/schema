@@ -278,17 +278,17 @@
                     },
                     "TopDepth": {
                       "type": "number",
-                      "description": "DEPRECATED: populate data.SamplingStart or data.SamplingStop instead, for informational purposes data.TopMeasuredDepth. SamplingStart and SamplingStop support other domains than depth.",
+                      "description": "The curve's minimum 'depth', i.e., the reference value at which the curve has its first non-absent value. The curve may contain further absent values in between TopDepth and BaseDepth. Note that the SamplingDomainType may not be a depth as the property name indicates.",
                       "x-osdu-frame-of-reference": "UOM_via_property:DepthUnit"
                     },
                     "BaseDepth": {
                       "type": "number",
-                      "description": "DEPRECATED: populate data.SamplingStart or data.SamplingStop instead, for informational purposes data.BottomMeasuredDepth. SamplingStart and SamplingStop support other domains than depth.",
+                      "description": "The curve's maximum 'depth' i.e., the reference value at which the curve has its last non-absent value. The curve may contain further absent values in between TopDepth and BaseDepth. Note that the SamplingDomainType may not be a depth as the property name indicates.",
                       "x-osdu-frame-of-reference": "UOM_via_property:DepthUnit"
                     },
                     "DepthUnit": {
                       "type": "string",
-                      "description": "DEPRECATED: use the meta[] to specify the sampling UnitOfMeasure (AbstractMetaItem of kind \"Unit\"; propertyNames[\"TopMeasuredDepth\", \"BottomMeasuredDepth\"]). Originally: Unit of Measure for Top and Base depth.",
+                      "description": "Unit of Measure for TopDepth and BaseDepth.",
                       "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitOfMeasure:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {

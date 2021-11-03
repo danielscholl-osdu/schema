@@ -130,9 +130,9 @@
     ],
     "additionalProperties": false,
     "x-osdu-governance-authorities": [
-      "None"
+      "OSDU"
     ],
-    "x-osdu-governance-model": "LOCAL",
+    "x-osdu-governance-model": "OPEN",
     "x-osdu-inheriting-from-kind": [
       {
         "name": "ReferenceType",

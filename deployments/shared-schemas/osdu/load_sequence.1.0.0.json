@@ -856,12 +856,12 @@
     "relativePath": "shared-schemas/osdu/master-data/Wellbore.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:work-product-component--WellboreMarkerSet:1.0.0",
-    "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.0.0.json"
-  },
-  {
     "kind": "{{schema-authority}}:wks:work-product-component--WellboreMarkerSet:1.1.0",
     "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--WellboreMarkerSet:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/WellboreMarkerSet.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.1.0",
