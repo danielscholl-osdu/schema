@@ -85,7 +85,11 @@ public class SchemaStore implements ISchemaStore {
         } catch (InvalidKeyException e) {
             throw new ApplicationException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (ErrorResponseException e) {
-            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, e.errorResponse().message());
+            if (e.response().code() == HttpStatus.NOT_FOUND.value()) {
+                throw new NotFoundException(HttpStatus.NOT_FOUND, e.errorResponse().message());
+            } else {
+                throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, e.errorResponse().message());
+            }
         } catch (Exception e) {
             throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
         }
