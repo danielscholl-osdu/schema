@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "dataset--File.CompressedVectorHeaders",
+      "entityType": "reference-data--LogCurveFamily",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
+      "schemaVersionMinor": 1,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:dataset--File.CompressedVectorHeaders:1.0.0"
+      "id": "{{schema-authority}}:wks:reference-data--LogCurveFamily:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/dataset/File.CompressedVectorHeaders.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/reference-data/LogCurveFamily.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:dataset--File.CompressedVectorHeaders:1.0.0",
-    "title": "File.CompressedVectorHeaders",
-    "description": "A File type carrying compression and vector header mapping information.",
+    "x-osdu-schema-source": "osdu:wks:reference-data--LogCurveFamily:1.1.0",
+    "title": "LogCurveFamily",
+    "description": "LogCurveFamily is the detailed Geological Physical Quantity Measured - such as neutron porosity.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:dataset\\-\\-File.CompressedVectorHeaders:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:dataset--File.CompressedVectorHeaders:01901c5f-d46b-5300-9d7e-d22ef738b7a0"
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-LogCurveFamily:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:reference-data--LogCurveFamily:0f94e328-e185-52ab-befe-1f189496d9af"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:dataset--File.CompressedVectorHeaders:1.0.0"
+        "example": "osdu:wks:reference-data--LogCurveFamily:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -109,20 +109,35 @@
             "$ref": "{{schema-authority}}:wks:AbstractCommonResources:1.0.0"
           },
           {
-            "$ref": "{{schema-authority}}:wks:AbstractDataset:1.0.0"
-          },
-          {
-            "$ref": "{{schema-authority}}:wks:AbstractFile:1.0.0"
-          },
-          {
-            "$ref": "{{schema-authority}}:wks:AbstractCompressionInfo:1.0.0"
-          },
-          {
-            "$ref": "{{schema-authority}}:wks:AbstractVectorHeaderMapping:1.0.0"
+            "$ref": "{{schema-authority}}:wks:AbstractReferenceType:1.0.0"
           },
           {
             "type": "object",
-            "properties": {},
+            "properties": {
+              "PropertyType": {
+                "$ref": "{{schema-authority}}:wks:AbstractPropertyType:1.0.0",
+                "title": "Property Type",
+                "description": "It holds the PropertyType associated with this reference property type, further defining the semantics of the value. It contains a relationship to PropertyType record and its (de-normalized) name. String or number values can represent e.g. A date or a time by referring to the respective PropertyType record id.",
+                "example": {
+                  "PropertyTypeID": "namespace:reference-data--PropertyType:ace68d4c-7400-431d-9a33-0541b8bfc4b4:",
+                  "Name": "dip azimuth"
+                }
+              },
+              "UnitQuantityID": {
+                "type": "string",
+                "title": "Unit Quantity ID",
+                "description": "Only populated of the ValueType is \"number\". It holds the UnitQuantity associated with this reference property type. It is a relationship to UnitQuantity record.  Denormalized value: the UnitQuantityID is derived from the PropertyType's UnitQuantity.",
+                "example": "namespace:reference-data--UnitQuantity:plane%20angle:",
+                "x-osdu-existing-standard": "Energistics Unit of Measure V1.0",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-UnitQuantity:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "reference-data",
+                    "EntityType": "UnitQuantity"
+                  }
+                ]
+              }
+            },
             "title": "IndividualProperties"
           },
           {
@@ -144,6 +159,10 @@
     ],
     "additionalProperties": false,
     "x-osdu-review-status": "Accepted",
+    "x-osdu-governance-model": "LOCAL",
+    "x-osdu-governance-authorities": [
+      "OSDU"
+    ],
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
         "type": "string",
@@ -156,12 +175,8 @@
     },
     "x-osdu-inheriting-from-kind": [
       {
-        "name": "Dataset",
-        "kind": "osdu:wks:AbstractDataset:1.0.0"
-      },
-      {
-        "name": "File",
-        "kind": "osdu:wks:AbstractFile:1.0.0"
+        "name": "ReferenceType",
+        "kind": "osdu:wks:AbstractReferenceType:1.0.0"
       }
     ]
   }

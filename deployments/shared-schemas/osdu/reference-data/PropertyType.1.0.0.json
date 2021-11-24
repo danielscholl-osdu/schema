@@ -192,6 +192,16 @@
     "x-osdu-governance-authorities": [
       "Energistics"
     ],
+    "x-osdu-virtual-properties": {
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.Name"
+          }
+        ]
+      }
+    },
     "x-osdu-inheriting-from-kind": [
       {
         "name": "ReferenceType",
