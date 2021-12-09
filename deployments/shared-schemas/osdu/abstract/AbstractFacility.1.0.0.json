@@ -110,7 +110,7 @@
         "type": "array",
         "description": "The history of life cycle states the facility has been through.",
         "x-osdu-indexing": {
-          "type": "flattened"
+          "type": "nested"
         },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractFacilityState:1.0.0"
@@ -120,7 +120,7 @@
         "type": "array",
         "description": "A list of key facility events.",
         "x-osdu-indexing": {
-          "type": "flattened"
+          "type": "nested"
         },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractFacilityEvent:1.0.0"

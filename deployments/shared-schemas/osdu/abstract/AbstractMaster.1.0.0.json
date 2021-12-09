@@ -27,7 +27,7 @@
         "type": "array",
         "description": "Alternative names, including historical, by which this master data is/has been known (it should include all the identifiers).",
         "x-osdu-indexing": {
-          "type": "flattened"
+          "type": "nested"
         },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractAliasNames:1.0.0"
@@ -37,7 +37,7 @@
         "type": "array",
         "description": "List of geographic entities which provide context to the master data. This may include multiple types or multiple values of the same type.",
         "x-osdu-indexing": {
-          "type": "flattened"
+          "type": "nested"
         },
         "items": {
           "$ref": "{{schema-authority}}:wks:AbstractGeoContext:1.0.0"
