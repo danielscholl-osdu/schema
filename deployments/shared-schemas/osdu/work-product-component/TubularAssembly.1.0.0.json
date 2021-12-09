@@ -322,6 +322,27 @@
     "x-osdu-supported-file-formats": [
       "WITSML"
     ],
+    "x-osdu-virtual-properties": {
+      "data.VirtualProperties.DefaultLocation": {
+        "type": "object",
+        "priority": [
+          {
+            "path": "data.SpatialArea"
+          },
+          {
+            "path": "data.SpatialPoint"
+          }
+        ]
+      },
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.Name"
+          }
+        ]
+      }
+    },
     "x-osdu-inheriting-from-kind": [
       {
         "name": "WorkProductComponent",

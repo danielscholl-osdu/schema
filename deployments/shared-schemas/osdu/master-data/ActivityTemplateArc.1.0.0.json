@@ -238,6 +238,24 @@
     ],
     "additionalProperties": false,
     "x-osdu-review-status": "Accepted",
+    "x-osdu-virtual-properties": {
+      "data.VirtualProperties.DefaultLocation": {
+        "type": "object",
+        "priority": [
+          {
+            "path": "data.SpatialLocation"
+          }
+        ]
+      },
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.Name"
+          }
+        ]
+      }
+    },
     "x-osdu-inheriting-from-kind": []
   }
 }

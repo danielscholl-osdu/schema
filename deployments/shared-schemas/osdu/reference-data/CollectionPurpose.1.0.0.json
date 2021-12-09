@@ -134,11 +134,21 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-governance-model": "OPEN",
     "x-osdu-governance-authorities": [
       "OSDU"
     ],
+    "x-osdu-virtual-properties": {
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.Name"
+          }
+        ]
+      }
+    },
     "x-osdu-inheriting-from-kind": [
       {
         "name": "ReferenceType",

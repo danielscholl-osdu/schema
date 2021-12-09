@@ -165,6 +165,24 @@
       "legal"
     ],
     "additionalProperties": false,
+    "x-osdu-virtual-properties": {
+      "data.VirtualProperties.DefaultLocation": {
+        "type": "object",
+        "priority": [
+          {
+            "path": "data.SpatialLocation"
+          }
+        ]
+      },
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.FieldName"
+          }
+        ]
+      }
+    },
     "x-osdu-inheriting-from-kind": []
   }
 }
