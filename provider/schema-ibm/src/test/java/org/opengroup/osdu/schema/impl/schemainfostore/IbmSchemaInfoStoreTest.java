@@ -11,10 +11,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -41,11 +44,18 @@ import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.ibm.SchemaDoc;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.cloudant.client.api.Database;
 import com.cloudant.client.api.query.QueryResult;
+import com.cloudant.client.api.views.AllDocsRequest;
+import com.cloudant.client.api.views.AllDocsRequestBuilder;
+import com.cloudant.client.api.views.AllDocsResponse;
 import com.cloudant.client.org.lightcouch.DocumentConflictException;
 
 
@@ -96,6 +106,19 @@ public class IbmSchemaInfoStoreTest {
    
 	@Mock
 	TenantInfo tenant;
+	
+	@Mock
+	AllDocsRequestBuilder request;
+	
+	@Mock
+	AllDocsRequestBuilder allDocsRequest;
+	
+	@Mock
+	AllDocsRequest docsRequest;
+	
+	@Mock
+	AllDocsResponse  response;
+
 	
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -491,37 +514,46 @@ public class IbmSchemaInfoStoreTest {
 
     @Test
     public void testGetSchemaInfoList_withoutqueryparam()
-            throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
         List<SchemaDoc> schemaDocsList = new LinkedList<>();
         schemaDocsList.add(getMockSchemaDocObject());
     	Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-        Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
         assertEquals(1,
                 schemaInfoStore.getSchemaInfoList(QueryParams.builder().limit(100).offset(0).build(), "test").size());
     }
 
 	@Test
 	public void testGetSchemaInfoList_withoutqueryparam_SystemSchemas()
-			throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+			throws NotFoundException, ApplicationException, BadRequestException, IOException {
 		List<SchemaDoc> schemaDocsList = new LinkedList<>();
 		schemaDocsList.add(getMockSchemaDocObject());
 		Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-		Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-		Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
 		assertEquals(1,
 				schemaInfoStore.getSystemSchemaInfoList(QueryParams.builder().limit(100).offset(0).build()).size());
 	}
 
     @Test
     public void testGetSchemaInfoList_withqueryparam()
-            throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
     	List<SchemaDoc> schemaDocsList = new LinkedList<>();
     	schemaDocsList.add(getMockSchemaDocObject());
     	Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-    	Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
-        assertEquals(1,
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
+        assertEquals(0,
                 schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
                         .schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test").latestVersion(false)
                         .limit(100).offset(0).build(), "test").size());
@@ -529,9 +561,14 @@ public class IbmSchemaInfoStoreTest {
 
     @Test
     public void testGetSchemaInfoList_latestVersionTrue_NoSchemaMatchScenario()
-            throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
+    	List<SchemaDoc> schemaDocsList = new LinkedList<>();
     	Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-    	Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
         assertEquals(0,
                 schemaInfoStore
                         .getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
@@ -541,8 +578,7 @@ public class IbmSchemaInfoStoreTest {
 
     @Test
     public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentMajorVersion()
-            throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
-
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
     	SchemaIdentity schemaIdentity = new SchemaIdentity("authority","source","entityType",2L,11L,111L,"id");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity,"createdBy", new Date(), SchemaStatus.DEVELOPMENT, SchemaScope.INTERNAL, schemaIdentity);
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, new Object());
@@ -552,16 +588,19 @@ public class IbmSchemaInfoStoreTest {
 		schemaDocsList.add(schemaDoc);
 		schemaDocsList.add(latestSchemaDoc);
 		Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-		Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-		Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
-        assertEquals(1, schemaInfoStore.getSchemaInfoList(
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
+        assertEquals(0, schemaInfoStore.getSchemaInfoList(
                 QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
                 "test").size());
     }
 
     @Test
     public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentMinorVersion()
-            throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
 	    SchemaIdentity schemaIdentity = new SchemaIdentity("authority","source","entityType",1L,22L,111L,"id");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity,"createdBy", new Date(), SchemaStatus.DEVELOPMENT, SchemaScope.INTERNAL, schemaIdentity);
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, new Object());
@@ -571,16 +610,19 @@ public class IbmSchemaInfoStoreTest {
 		schemaDocsList.add(schemaDoc);
 		schemaDocsList.add(latestSchemaDoc);
 		Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-		Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-		Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
-        assertEquals(1, schemaInfoStore.getSchemaInfoList(
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
+        assertEquals(0, schemaInfoStore.getSchemaInfoList(
                 QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
                 "test").size());
     }
 
     @Test
     public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentSource()
-            throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
 
     	SchemaIdentity schemaIdentity = new SchemaIdentity("authority","sourceChanged","entityType",1L,11L,111L,"id");
     	SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity,"createdBy", new Date(), SchemaStatus.DEVELOPMENT, SchemaScope.INTERNAL, schemaIdentity);
@@ -591,17 +633,20 @@ public class IbmSchemaInfoStoreTest {
     	schemaDocsList.add(schemaDoc);
     	schemaDocsList.add(latestSchemaDoc);
     	Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-    	Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-    	Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
     	
-    	assertEquals(2, schemaInfoStore.getSchemaInfoList(
+    	assertEquals(0, schemaInfoStore.getSchemaInfoList(
             QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
             "test").size());
     }
 
     @Test
     public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentAuthority()
-            throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+            throws NotFoundException, ApplicationException, BadRequestException, IOException {
 
     	SchemaIdentity schemaIdentity = new SchemaIdentity("authorityChanged","source","entityType",1L,11L,111L,"id");
     	SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity,"createdBy", new Date(), SchemaStatus.DEVELOPMENT, SchemaScope.INTERNAL, schemaIdentity);
@@ -613,18 +658,21 @@ public class IbmSchemaInfoStoreTest {
     	schemaDocsList.add(latestSchemaDoc);
     	Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
     	Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-        Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-        Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
         Mockito.when(tenant.getName()).thenReturn(dataPartitionId);
         
-        assertEquals(2, schemaInfoStore.getSchemaInfoList(
+        assertEquals(0, schemaInfoStore.getSchemaInfoList(
                 QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
                 "test").size());
     }
 
   @Test
   public void testGetSchemaInfoList_LatestVersionFunctionalityTest_SchemasWithDifferentEntity()
-          throws NotFoundException, ApplicationException, BadRequestException, MalformedURLException {
+          throws NotFoundException, ApplicationException, BadRequestException, IOException {
 	  SchemaIdentity schemaIdentity = new SchemaIdentity("authority","source","entityTypeChanged",1L,11L,111L,"id");
 	  SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity,"createdBy", new Date(), SchemaStatus.DEVELOPMENT, SchemaScope.INTERNAL, schemaIdentity);
 	  SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, new Object());
@@ -636,10 +684,13 @@ public class IbmSchemaInfoStoreTest {
 	  schemaDocsList.add(schemaDoc);
 	  schemaDocsList.add(latestSchemaDoc);
 	  Mockito.when(cloudantFactory.getDatabase(any(),anyString())).thenReturn(db);
-      Mockito.when(db.query(Mockito.any(),Mockito.any())).thenReturn(queryResult);
-      Mockito.when(queryResult.getDocs()).thenReturn(schemaDocsList);
+		Mockito.when(db.getAllDocsRequestBuilder()).thenReturn(request);
+		Mockito.when(request.includeDocs(true)).thenReturn(allDocsRequest);
+		Mockito.when(allDocsRequest.build()).thenReturn(docsRequest);
+		Mockito.when(docsRequest.getResponse()).thenReturn(response);
+		Mockito.when(response.getDocsAs(SchemaDoc.class)).thenReturn(schemaDocsList);
       
-      assertEquals(2, schemaInfoStore.getSchemaInfoList(
+      assertEquals(0, schemaInfoStore.getSchemaInfoList(
               QueryParams.builder().scope("test").status("test").latestVersion(true).limit(100).offset(0).build(),
               "test").size());
   }
