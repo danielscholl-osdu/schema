@@ -32,9 +32,9 @@
           "drillplan:uwi"
         ]
       },
-      "allOf": {
+      "allOf": [{
         "$ref": "https://abc.com/"
-      },
+      }],
       "wellboreName": {
         "description": "The wellbore name",
         "title": "Wellbore Name",

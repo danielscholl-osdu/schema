@@ -3,7 +3,7 @@ package org.opengroup.osdu.schema.model;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.opengroup.osdu.schema.validation.SchemaRequestConstraint;
+import org.opengroup.osdu.schema.validation.request.SchemaRequestConstraint;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

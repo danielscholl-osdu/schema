@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -32,16 +32,14 @@ public class JSONUtilTest {
 
 	@Test
 	public void testGetCleanJSON() throws IOException {
-		String testJSON = new FileUtils().read("/schema_compare/patch_level_changes/schema-with-all-permissible-changes.json");
-		String cleanJSON = jsonUtil.getCleanJSON(testJSON);
+		String testJSON = new FileUtils().read("/schema_compare/schema-with-all-permissible-changes.json");
+		JsonNode cleanJSON = jsonUtil.getCleanJSON(testJSON);
 		assertTrue(verifyCleanJSON(cleanJSON));
 	}
 	
-	public boolean verifyCleanJSON(String inputJSON) throws JsonMappingException, JsonProcessingException {
+	public boolean verifyCleanJSON(JsonNode inputJSON) throws JsonMappingException, JsonProcessingException {
 		EnumSet<SkipTags> skipTags = EnumSet.allOf(SkipTags.class);
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(inputJSON);
-		Map<String, JsonNode> flattenedJSON = new JSONFlattener(root).flatten();
+		Map<String, JsonNode> flattenedJSON = new JSONFlattener(inputJSON).flatten();
 		
 		for(String key : flattenedJSON.keySet()) {
 			System.out.println("key "+key);
@@ -102,12 +100,4 @@ public class JSONUtilTest {
 		
 	}
 
-	public static void main(String[] args) {
-		String key = "/A/B/oneOf/0/title";
-		boolean isTitleTag =StringUtils.substringAfterLast(key, "/").equals("title");
-		if(isTitleTag) {
-			String[] tags = key.split("/");
-			System.out.println(tags[tags.length-3]);
-		}
-	}
 }

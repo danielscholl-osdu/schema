@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -39,8 +40,8 @@ import org.opengroup.osdu.schema.service.ISourceService;
 import org.opengroup.osdu.schema.util.SchemaComparatorByVersion;
 import org.opengroup.osdu.schema.util.SchemaResolver;
 import org.opengroup.osdu.schema.util.SchemaUtil;
-import org.opengroup.osdu.schema.validation.SchemaVersionValidatorFactory;
-import org.opengroup.osdu.schema.validation.SchemaVersionValidatorType;
+import org.opengroup.osdu.schema.validation.version.SchemaValidationType;
+import org.opengroup.osdu.schema.validation.version.SchemaVersionValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.gson.Gson;
+
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -399,11 +401,11 @@ public class SchemaService implements ISchemaService {
 						continue;
 						//Compare Minor version is greater or smaller
 					}else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) < 0){
-						versionValidatorFactory.getSchemaVersionValidator(SchemaVersionValidatorType.MINOR).validate(resolvedInputSchema, existingSchemaInStore);
+						versionValidatorFactory.getVersionValidator(SchemaValidationType.MINOR).validateVersionChange(resolvedInputSchema, existingSchemaInStore);
 					}else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) > 0) {
-						versionValidatorFactory.getSchemaVersionValidator(SchemaVersionValidatorType.MINOR).validate(existingSchemaInStore, resolvedInputSchema);
+						versionValidatorFactory.getVersionValidator(SchemaValidationType.MINOR).validateVersionChange(existingSchemaInStore, resolvedInputSchema);
 					}else {
-						versionValidatorFactory.getSchemaVersionValidator(SchemaVersionValidatorType.PATCH).validate(existingSchemaInStore, resolvedInputSchema);
+						versionValidatorFactory.getVersionValidator(SchemaValidationType.PATCH).validateVersionChange(existingSchemaInStore, resolvedInputSchema);
 					}
 				}catch (SchemaVersionException exc) {
 					log.error("Failed to resolve the schema and find breaking changes. Reason :" + exc.getMessage());
