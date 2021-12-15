@@ -72,51 +72,51 @@
 					}
 				]
 			}
-		}
-	},
-	"properties": {
-		"AddressLine1": {
-			"type": "string"
 		},
-		"AddressLine2": {
-			"type": "string"
-		},
-		"City": {
-			"type": "string"
-		}
-	},
-	"required": [
-		"AddressLine1",
-		"AddressLine2"
-	],
-	"oneOf": [
-		{
-			"type": "object",
-			"properties": {
-				"State": {
-					"type": "string"
-				},
-				"ZipCode": {
-					"type": "string"
-				}
+		"properties": {
+			"AddressLine1": {
+				"type": "string"
 			},
-			"required": [
-				"ZipCode"
-			]
-		},
-		{
-			"type": "object",
-			"properties": {
-				"County": {
-					"type": "string"
-				},
-				"PostCode": {
-					"type": "string"
-				}
+			"AddressLine2": {
+				"type": "string"
 			},
-			"required": [
-				"PostCode"
-			]
-		}
-	]
+			"City": {
+				"type": "string"
+			}
+		},
+		"required": [
+			"AddressLine1",
+			"AddressLine2"
+		],
+		"oneOf": [
+			{
+				"type": "object",
+				"properties": {
+					"State": {
+						"type": "string"
+					},
+					"ZipCode": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"ZipCode"
+				]
+			},
+			{
+				"type": "object",
+				"properties": {
+					"County": {
+						"type": "string"
+					},
+					"PostCode": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"PostCode"
+				]
+			}
+		]
+	}
 }

@@ -179,15 +179,6 @@ Feature: To verify functionality of nested POST schema Service
       | "/input_payloads/Nested_Base_Schema_NestedoneOf.json" | "/input_payloads/Nested_Base_Schema_JumbledOneOfWithFalseAP.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
 
   @SchemaService
-  Scenario Outline: Verify that nested Schema Service's POST API responds successfully when only minor version is increased and added one element in oneOf elements
-    Given I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
-    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
-
-    Examples: 
-      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage                                                    |
-      | "/input_payloads/Nested_Base_Schema_NestedoneOf_AddedExtraElement.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
-
-  @SchemaService
   Scenario Outline: Verify that nested Schema Service's POST API responds successfully when only minor version is increased with jumbled ref elements in oneOf
     Given I hit schema service POST API with <BaseInputPayload> and data-partition-id as <tenant> and update versions
     Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
@@ -197,3 +188,13 @@ Feature: To verify functionality of nested POST schema Service
     Examples: 
       | BaseInputPayload                                                    | InputPayloadWithChanges                                           | tenant    |  | ResponseMessage1                                                   | ReponseStatusCode1 |
       | "/input_payloads/Nested_Base_Schema_NestedoneOf_RemoveElement.json" | "/input_payloads/Nested_Base_Schema_NestedoneOf_JumbeledRef.json" | "TENANT1" |  | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              |
+
+  @SchemaService
+  Scenario Outline: Verify that nested Schema Service's POST API responds successfully when only minor version is increased and added one element in oneOf elements
+    Given I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage                                                    |
+      | "/input_payloads/Nested_Base_Schema_NestedoneOf_AddedExtraElement.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
+      
