@@ -6,6 +6,7 @@ package org.opengroup.osdu.schema.impl.schemainfostore;
 import static com.cloudant.client.api.query.Expression.eq;
 import static com.cloudant.client.api.query.Operation.and;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,10 +19,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.ibm.multitenancy.TenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -42,6 +46,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.cloudant.client.api.Database;
 import com.cloudant.client.api.query.Expression;
@@ -336,40 +343,31 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 		} catch (Exception e) {
 			throw new UnauthorizedException("Unauthorized");
 		}
-
-		long numRecords = LIMIT_SIZE;
-		if (Long.valueOf(queryParams.getLimit()) != null && Long.valueOf(queryParams.getLimit()) != 0) {
-			numRecords = Long.valueOf(queryParams.getLimit());
-		}
-		
-		String selectorWithoutFilter = "{ \"selector\": {} , \"limit\": "+numRecords+" }";
-		String finalQuery = null;
-		Selector selector = getSelector(queryParams);
-		
-		if(selector == null)
-			finalQuery = selectorWithoutFilter;
-		else 
-			finalQuery = new QueryBuilder(getSelector(queryParams)).limit(numRecords).build();
+		List<SchemaDoc> listSchemaDocs=new ArrayList<>();
+		List<SchemaDoc> filterSchemaDocs=new ArrayList<>();
 		Database dbWithTenant = null;
+		
 		try {
 			dbWithTenant = getDatabaseForTenant(tenantId, SCHEMA_DATABASE);
 		} catch (MalformedURLException e) {
 			throw new ApplicationException("Unable to find database for tenant " + tenantId);
 		}
-		
-		QueryResult<SchemaDoc> results = dbWithTenant.query(finalQuery,	SchemaDoc.class);
+		try {
+			 listSchemaDocs=dbWithTenant.getAllDocsRequestBuilder().includeDocs(true).build().getResponse().getDocsAs(SchemaDoc.class);
+			 filterSchemaDocs=getSchemaRecordsBasedOnFilterCheck(listSchemaDocs,queryParams);
+		} catch (IOException e) {
+			throw new ApplicationException("Unable to find schema records for tenant " + tenantId);
+		}
 		List<SchemaInfo> schemaList = new LinkedList<>();
-
-		for (SchemaDoc doc : results.getDocs()) {
+		for (SchemaDoc doc : filterSchemaDocs) {
 			schemaList.add(doc.getSchemaInfo());
 		}
-
         if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
             return getLatestVersionSchemaList(schemaList);
         }
-
+        logger.info("list of filter Schema records:"+filterSchemaDocs.size());
 		return schemaList;
-	}
+		}
 
 	/**
 	 * Method to fetch system schema info list
@@ -479,5 +477,39 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
     private boolean checkAuthorityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
         return schemaInfoObject.getSchemaIdentity().getAuthority()
                 .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
+    }
+    
+    public List<SchemaDoc>  getSchemaRecordsBasedOnFilterCheck(List<SchemaDoc> listSchemaDocs,QueryParams queryParams)
+    {
+    	 Stream<SchemaDoc> schemaDoc=listSchemaDocs.stream();
+    	     if(StringUtils.isNotEmpty(queryParams.getAuthority()))
+    	     schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getSchemaIdentity().getAuthority().equals(queryParams.getAuthority()));
+    	    
+    		 if(StringUtils.isNotEmpty(queryParams.getEntityType()))
+    		 schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getSchemaIdentity().getEntityType().equals(queryParams.getEntityType()));
+    		 
+    	     if(StringUtils.isNotEmpty(queryParams.getSource()))
+    	     schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getSchemaIdentity().getSource().equals(queryParams.getSource()));
+    	    
+    		 if(StringUtils.isNotEmpty(queryParams.getStatus()))
+    		 schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getStatus().name().equals(queryParams.getStatus()));
+    		 
+    		 if(StringUtils.isNotEmpty(queryParams.getScope()))
+    		 schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getScope().name().equals(queryParams.getScope()));
+    		 
+    		 if(queryParams.getSchemaVersionMajor()!=null)
+    		 schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getSchemaIdentity().getSchemaVersionMajor().equals(queryParams.getSchemaVersionMajor()));
+    		 
+    		 if(queryParams.getSchemaVersionMinor()!=null)
+    		 schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor().equals(queryParams.getSchemaVersionMinor()));
+    		 
+    		 if(queryParams.getSchemaVersionPatch()!=null)
+    		 schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getSchemaIdentity().getSchemaVersionPatch().equals(queryParams.getSchemaVersionPatch()));
+    	 
+    		 if(queryParams.getOffset()>=0)
+    		 schemaDoc=schemaDoc.skip(queryParams.getOffset());
+    		 
+    	return schemaDoc.collect(Collectors.toList());
+    	
     }
 }

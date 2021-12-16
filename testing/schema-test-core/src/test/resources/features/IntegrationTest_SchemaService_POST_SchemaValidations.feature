@@ -1,4 +1,4 @@
-Feature: To verify functionality of POST schema Service
+Feature: To verify schema validation functionality of POST schema Service
 
   ### Common test steps are accomplished here
   Background: Common steps for all tests are executed
@@ -148,6 +148,19 @@ Feature: To verify functionality of POST schema Service
       | "/input_payloads/Base_Schema_New.json" | "/input_payloads/Base_Schema_AddedAttribute.json" | "/input_payloads/Base_Schema_ReplacedAttribute.json" | "TENANT1" | "400"             | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
 
   @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request for adding/replacing any attribute which is not present in the immediate next schema record
+    Given I hit schema service POST API with <BaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    Given I hit schema service POST API with <InputPayloadWithAddedChanges> and data-partition-id as <tenant> with increased minor version with 1 count
+    Then user gets response as <ReponseStatusCode1> and <ResponseMessage1>
+    Given I hit schema service POST API with <InputPayloadWithPatchChanges> and data-partition-id as <tenant> with less minor version by 1 count than earlier and increase patch by 1
+    Then user gets response as <ReponseStatusCode1> and <ResponseMessage1>
+
+    Examples: 
+      | BaseInputPayload                             | InputPayloadWithAddedChanges                             | InputPayloadWithPatchChanges                    | tenant    | ReponseStatusCode1 | ResponseMessage1                                                   |
+      | "/input_payloads/Base_Schema_WithoutAP.json" | "/input_payloads/Base_Schema_MinorLevelChangeApIsT.json" | "/input_payloads/Base_Schema_PatchChanges.json" | "TENANT1" | "201"              | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
+
+  @SchemaService
   Scenario Outline: Verify that Schema Service's POST API responds as bad request for removing/replacing any attribute from previous schema record
     Given I hit schema service POST API with <BaseInputPayload> and data-partition-id as <tenant> and update versions
     Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
@@ -209,4 +222,343 @@ Feature: To verify functionality of POST schema Service
       | BaseInputPayload                   | InputPayloadWithChanges                        | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
       | "/input_payloads/Base_Schema.json" | "/input_payloads/Base_Schema_TypeChanged.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
 
-      
+  #------------------------------------------------------Ref scenarios
+  ##Positive scenarios
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is changed at minor level and main schema is compared for minor change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    Given I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                          | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_MinorChangeToInternalSchema.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is changed at patch level and main schema is compared for minor change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    Given I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                          | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_PatchChangeToInternalSchema.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is changed at patch level and main schema is compared for patch change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                          | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_PatchChangeToInternalSchema.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is changed at patch, minor level and main schema is compared for patch and minor change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithMinorPatchChanges> and data-partition-id as <tenant> with increased minor version and patch version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+    Given I hit schema service POST API with <InputPayloadWithMinorChanges> and data-partition-id as <tenant> with less minor version by 1 count than earlier
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithMinorPatchChanges                                      | InputPayloadWithMinorChanges                           | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_MinorPatchChangesToInternalSchema.json" | "/input_payloads/RefBaseSchema_MinorLevelChanges.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  #-------------------------- When internal schema has name as string
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is string and changed at minor level and main schema is compared for minor change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    Given I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                         | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema_String.json" | "/input_payloads/RefBaseSchema_MinorChangeToInternalSchema_String.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is string and changed at patch level and main schema is compared for minor change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    Given I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                         | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema_String.json" | "/input_payloads/RefBaseSchema_PatchChangeToInternalSchema_String.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is string and changed at patch level and main schema is compared for patch change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                         | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema_String.json" | "/input_payloads/RefBaseSchema_PatchChangeToInternalSchema_String.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when schema of $ref value is having format other than kind format and is considered as string
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                                    | InputPayloadWithChanges                                           | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema_StringHavingColon.json" | "/input_payloads/RefBaseSchema_StringHavingColon_MinorLevel.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when schema of $ref value is having string or kind format and is changed to kind or string respectively
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                                    | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema_StringHavingColon.json" | "/input_payloads/RefBaseSchema_StringHavingColon_PatchIncremented.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+      | "/input_payloads/RefBaseSchema_StringHavingColon.json" | "/input_payloads/RefBaseSchema_StringHavingColon_RefAsKind.json"        | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+      | "/input_payloads/RefBaseSchema_String.json"            | "/input_payloads/RefBaseSchema_StringHavingColon_NoChange.json"         | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+      | "/input_payloads/RefBaseSchema_String.json"            | "/input_payloads/RefBaseSchema_StringHavingColon_Patch.json"            | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  #------------------------------Negative scenarios
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when schema of $ref value is changed at major level and main schema is compared for minor change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    Given I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                           | InputPayloadWithChanges                                          | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema_Negative.json" | "/input_payloads/RefBaseSchema_MajorChangeToInternalSchema.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when schema of $ref value is changed at major level and main schema is compared for patch change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                           | InputPayloadWithChanges                                          | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema_Negative.json" | "/input_payloads/RefBaseSchema_MajorChangeToInternalSchema.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when schema of $ref value is changed at minor level and main schema is compared for patch change
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                          | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_MinorChangeToInternalSchema.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when Authority is changed in ref schema value and minor level incremented
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                               | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_AuthorityChange_RefChangeAtMinor.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when Source is changed in ref schema value and minor level incremented
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                            | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_SourceChange_RefChangeAtMinor.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when entityType is changed in ref schema value and minor level incremented
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                                | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_EntityTypeChange_RefChangeAtMinor.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when Authority is changed in ref schema value and patch level incremented
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                               | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_AuthorityChange_RefChangeAtPatch.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when Source is changed in ref schema value and patch level incremented
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                            | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_SourceChange_RefChangeAtPatch.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when entityType is changed in ref schema value and patch level incremented
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                  | InputPayloadWithChanges                                                | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema.json" | "/input_payloads/RefBaseSchema_EntityTypeChange_RefChangeAtPatch.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  #-------------------------- Schemas should be posted in increment order for patch versions
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when main schema is incremented at patch level and $ref version is incremented at patch version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_PatchVersionIncremented_PatchLevel.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at patch level and $ref version is incremented at minor version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_MinorVersionIncremented_PatchLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at patch level and $ref version is decremented at minor version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_MinorVersionDecremented_PatchLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at patch level and $ref version is also decremented at patch version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_PatchVersionDecremented_PatchLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at patch level and $ref version is incremented at major version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_MajorVersionIncremented_PatchLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at patch level and entity name is changed in $ref
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased patch version only
+    Then user gets patch version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                           | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                              |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_EntityNameChanged_PatchLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_Patch_BreakingChangeError.json" |
+
+  #-------------------------- Schemas should be posted in increment order for minor versions
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds successfully when main schema is incremented at minor level and $ref version is incremented at patch version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_PatchVersionIncremented_MinorLevel.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at minor level and $ref version is incremented at minor version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                       |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_MinorVersionIncremented_MinorLevel.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_SuccessfulCreation.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at minor level and $ref version is decremented at minor version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_MinorVersionDecremented_MinorLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at minor level and $ref version is also decremented at patch version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_PatchVersionDecremented_MinorLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at minor level and $ref version is incremented at major version level
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                                 | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_MajorVersionIncremented_MinorLevel.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request when main schema is incremented at minor level and entity name is changed in $ref
+    Given I hit schema service POST API with <RefBaseInputPayload> and data-partition-id as <tenant> and update versions
+    Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>
+    When I hit schema service POST API with <InputPayloadWithChanges> and data-partition-id as <tenant> with increased minor version
+    Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | RefBaseInputPayload                      | InputPayloadWithChanges                                             | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
+      | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_EntityNameChanged_MinorVersion.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |

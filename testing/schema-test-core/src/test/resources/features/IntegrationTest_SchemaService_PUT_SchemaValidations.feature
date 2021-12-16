@@ -207,7 +207,7 @@ Feature: To verify functionality of PUT schema Service
       | InputPayloadWithChanges                                      | tenant    | ReponseStatusCode | ResponseMessage                                                    |
       | "/input_payloads/Base_Schema_NestedoneOf_RemoveElement.json" | "TENANT1" | "200"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
 
-  @Failed
+  @SchemaService
   Scenario Outline: Verify that Schema Service's POST API responds as bad request when type of any element is changed
     Given I hit schema service POST API with <BaseInputPayload> and data-partition-id as <tenant> and update versions
     Then service should respond back with <ReponseStatusCode1> and <ResponseMessage1>

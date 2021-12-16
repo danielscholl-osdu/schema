@@ -18,7 +18,7 @@
     <parent>
         <artifactId>os-schema</artifactId>
         <groupId>org.opengroup.osdu</groupId>
-        <version>0.12.0-SNAPSHOT</version>
+        <version>0.13.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -30,12 +30,23 @@
         <aws.version>1.11.1018</aws.version>
     </properties>
 
-    <dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.opengroup.osdu</groupId>
+				<artifactId>os-core-common</artifactId>
+				<version>${os-core-common.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
+    <dependencies>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>os-schema-core</artifactId>
-            <version>0.12.0-SNAPSHOT</version>
+            <version>0.13.0-SNAPSHOT</version>
         </dependency>
         <!-- AWS managed packages -->
         <dependency>
@@ -67,7 +78,7 @@
         <dependency>
             <groupId>org.opengroup.osdu.core.aws</groupId>
             <artifactId>os-core-lib-aws</artifactId>
-            <version>0.12.0</version>
+            <version>0.12.2</version>
         </dependency>
 
         <dependency>

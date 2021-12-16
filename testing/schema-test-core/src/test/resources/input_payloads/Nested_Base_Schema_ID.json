@@ -66,9 +66,8 @@
 					}
 				]
 			}
-		}
-	},
-	"properties": {
+		},
+		"properties": {
 		"AddressLine1": {
 			"type": "string"
 		},
@@ -79,11 +78,11 @@
 			"type": "string"
 		}
 	},
-	"required": [
+		"required": [
 		"AddressLine1",
 		"AddressLine2"
 	],
-	"oneOf": [
+		"oneOf": [
 		{
 			"type": "object",
 			"properties": {
@@ -113,4 +112,5 @@
 			]
 		}
 	]
+	}
 }

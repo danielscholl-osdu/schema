@@ -19,7 +19,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "x-osdu-schema-source": "osdu:wks:master-data--ActivityTemplate:1.0.0",
     "title": "ActivityTemplate",
-    "description": "Description of one type of activity.",
+    "description": "Description of one type of activity, e.g., a work-step in a workflow.",
     "type": "object",
     "properties": {
       "id": {
@@ -114,17 +114,27 @@
           {
             "type": "object",
             "properties": {
+              "Name": {
+                "type": "string",
+                "title": "Name",
+                "description": "The descriptive name of this activity template or work-step in a workflow."
+              },
+              "Description": {
+                "type": "string",
+                "title": "Description",
+                "description": "A detailed textual description of this activity template or workflow."
+              },
               "Parameters": {
                 "type": "array",
                 "title": "Parameters",
-                "description": "Description of one parameter that participate in one type of activity.",
+                "description": "The parameters that participate in this type of activity.",
                 "x-osdu-indexing": {
                   "type": "nested"
                 },
                 "items": {
                   "type": "object",
                   "title": "Parameter Template",
-                  "description": "Description of one parameter that participates in one type of activity.\n[Without inheritance, combined specializations.]",
+                  "description": "Description of one parameter that participates in one type of activity. [Without inheritance, combined specializations.]",
                   "properties": {
                     "AllowedParameterKind": {
                       "type": "string",
@@ -242,6 +252,24 @@
     ],
     "additionalProperties": false,
     "x-osdu-review-status": "Accepted",
+    "x-osdu-virtual-properties": {
+      "data.VirtualProperties.DefaultLocation": {
+        "type": "object",
+        "priority": [
+          {
+            "path": "data.SpatialLocation"
+          }
+        ]
+      },
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.Name"
+          }
+        ]
+      }
+    },
     "x-osdu-inheriting-from-kind": []
   }
 }

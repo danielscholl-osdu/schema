@@ -34,6 +34,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -64,19 +65,30 @@ public class SchemaInfoStore implements ISchemaInfoStore {
     @Override
     public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         MongoCollection<Document> collection = mongoClientFactory.getMongoClient().getDatabase(SCHEMA_DATABASE).getCollection(SCHEMA_COLLECTION);
+        SchemaInfo newSchemaInfo = schema.getSchemaInfo();
+        newSchemaInfo.setDateCreated(new Date());
         UpdateResult updateResult =
-            collection.replaceOne(eq(schema.getSchemaInfo().getSchemaIdentity().getId()), Document.parse(new Gson().toJson(schema.getSchemaInfo())));
+            collection.replaceOne(eq(newSchemaInfo.getSchemaIdentity().getId()),
+                Document.parse(new Gson().toJson(newSchemaInfo)));
         if (!updateResult.wasAcknowledged()) {
             log.error(SchemaConstants.OBJECT_INVALID);
-            throw new ApplicationException("Invalid object, updation failed");
+            throw new ApplicationException("Invalid object, updating failed");
         }
-        return schema.getSchemaInfo();
+        return newSchemaInfo;
     }
 
     @Override
     public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
         MongoCollection<Document> collection = mongoClientFactory.getMongoClient().getDatabase(SCHEMA_DATABASE).getCollection(SCHEMA_COLLECTION);
-        SchemaIdentity supersededBy = schema.getSchemaInfo().getSupersededBy();
+        SchemaInfo schemaInfo = schema.getSchemaInfo();
+        checkIfSupersededSchemaExists(schemaInfo);
+        schemaInfo.setDateCreated(new Date());
+        collection.insertOne(Document.parse(new Gson().toJson(schemaInfo)).append("_id", schemaInfo.getSchemaIdentity().getId()));
+        return schemaInfo;
+    }
+
+    private void checkIfSupersededSchemaExists(SchemaInfo schemaInfo) throws ApplicationException, BadRequestException {
+        SchemaIdentity supersededBy = schemaInfo.getSupersededBy();
         if (Objects.nonNull(supersededBy)) {
             try {
                 getSchemaInfo(supersededBy.getId());
@@ -85,8 +97,6 @@ public class SchemaInfoStore implements ISchemaInfoStore {
                 throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
             }
         }
-        collection.insertOne(Document.parse(new Gson().toJson(schema.getSchemaInfo())).append("_id", schema.getSchemaInfo().getSchemaIdentity().getId()));
-        return schema.getSchemaInfo();
     }
 
     @Override
@@ -157,6 +167,6 @@ public class SchemaInfoStore implements ISchemaInfoStore {
         if (Objects.nonNull(queryParams.getStatus())) {
             filters.add(eq(SCHEMA_IDENTITY + SchemaConstants.STATUS, queryParams.getStatus().toUpperCase()));
         }
-        return and(filters);
+        return filters.isEmpty() ? new Document() : and(filters);
     }
 }

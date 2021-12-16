@@ -20,6 +20,7 @@ public class SchemaConstants {
   //Delimeters
     public static final String SCHEMA_KIND_DELIMITER = ":";
     public static final String SCHEMA_Version_DELIMITER = ".";
+    public static final String SCHEMA_KIND_REGEX="^([^.:\\r\\n\\s]+):([^.:\\r\\n\\s]+):([^.:\\r\\n\\s]+):(([\\d]+)[.]([\\d]+)[.]([\\d]+))$";
 
     // schema
     public static final String SCHEMA_KIND = "schema";
@@ -35,7 +36,7 @@ public class SchemaConstants {
     public static final String SCHEMA = "schema";
     public static final String SCOPE = "scope";
     public static final String STATUS = "status";
-    public static final String XOSDU_TAG = "x-osdu";
+    public static final String TRANSFORMATION_TAG = "x-";
     public static final String TITLE_TAG = "title";
 
     // general
@@ -144,6 +145,12 @@ public class SchemaConstants {
             return this.value;
         }
     }
+    
+    
+    //schema-patch operation
+    public final static String OP_ADD = "add";
+    public final static String OP_REMOVE = "remove";
+    public final static String OP_REPLACE = "replace";
     
     //Schema Composition Tags
     public static enum CompositionTags
