@@ -7,4 +7,4 @@ ENV PROVIDER_NAME $PROVIDER_NAME
 # Copy the jar to the production image from the builder stage.
 COPY provider/schema-${PROVIDER_NAME}/target/os-schema-${PROVIDER_NAME}-*-spring-boot.jar schema.jar
 # Run the web service on container startup.
-CMD java -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT} -jar /app/schema.jar
+CMD java -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT} -Dlog4j.formatMsgNoLookups=true -jar /app/schema.jar
