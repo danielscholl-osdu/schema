@@ -505,9 +505,6 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
     		 
     		 if(queryParams.getSchemaVersionPatch()!=null)
     		 schemaDoc=schemaDoc.filter(p->p.getSchemaInfo().getSchemaIdentity().getSchemaVersionPatch().equals(queryParams.getSchemaVersionPatch()));
-    	 
-    		 if(queryParams.getOffset()>=0)
-    		 schemaDoc=schemaDoc.skip(queryParams.getOffset());
     		 
     	return schemaDoc.collect(Collectors.toList());
     	
