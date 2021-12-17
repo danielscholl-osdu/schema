@@ -41,14 +41,6 @@ public class SchemaUtilTest {
 	@Spy
 	JSONUtil jsonUtil;
 
-	@Value("${shared.tenant.name:common}")
-	private String sharedTenant;
-
-	@Before
-	public void setUp() {
-		ReflectionTestUtils.setField(schemaUtil, "sharedTenant", "common");
-	}
-
 	/***
 	 * Mock SchemaInfoList with versions: [1.1.0], [1.4.7],[1.6.6],[1.27.5]
 	 */
