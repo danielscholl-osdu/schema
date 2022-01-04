@@ -48,27 +48,35 @@ variables:
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "standard-setup.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "build/maven.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "scanners/fossa-maven.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "cloud-providers/aws.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "cloud-providers/ibm-java-git.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "scanners/gitlab-ultimate.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "cloud-providers/azure.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    ref: "ingestion-code-coverage"
     file: "cloud-providers/osdu-gcp-gke.yml"
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
