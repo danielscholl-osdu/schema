@@ -1,3 +1,7 @@
+## Schema Service
+
+[![coverage report](https://community.opengroup.org/osdu/platform/system/schema-service/badges/master/coverage.svg)](https://community.opengroup.org/osdu/platform/system/schema-service/-/commits/master)
+
 ## Running Locally
 
 ### Requirements
