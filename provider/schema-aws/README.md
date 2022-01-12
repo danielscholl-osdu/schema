@@ -30,7 +30,7 @@ In order to run the service locally or remotely, you will need to have the follo
 | `SSM_ENABLED` | `true` | yes | Set to 'true' to use SSM to resolve config properties, otherwise use env vars | no |
 | `SSL_ENABLED` | `false` | no | Set to 'false' to disable SSL for local development | no |
 | `ENTITLEMENTS_BASE_URL` | `http://localhost:8081` or `https://some-hosted-url` | yes | Specify the base url for an entitlements service instance. Can be run locally or remote | no |
-
+| `PARTITION_BASE_URL` | `http://localhost:8081` or `https://some-hosted-url` | yes | Specify the base url for a partitions service instance. Can be run locally or remote | no |
 
 
 
@@ -133,8 +133,6 @@ Set required env vars and execute the following:
 mvn clean package -f testing/pom.xml -pl schema-test-core -DskipTests
 mvn verify -f testing/schema-test-core/pom.xml -Dcucumber.options="--plugin junit:target/junit-report.xml --tags @SchemaService"
 ```
-
-
 
 ## License
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
