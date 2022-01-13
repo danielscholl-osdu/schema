@@ -14,7 +14,7 @@
     "status": "DEVELOPMENT"
   },
   "schema": {
-    "x-osdu-license": "Copyright 2021, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+    "x-osdu-license": "Copyright 2022, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
     "x-osdu-review-status": "Accepted",
     "$id": "https://schema.osdu.opengroup.org/json/abstract/AbstractReferenceType.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -68,6 +68,13 @@
       "AttributionRevision": {
         "type": "string",
         "description": "The distinct instance of the attribution publication, by version number, sequence number, date of publication, etc., that was used for the entity value."
+      },
+      "CommitDate": {
+        "type": "string",
+        "title": "Commit Date",
+        "description": "For reference values published and governed by OSDU: The date and time the record was committed into the OSDU member GitLab reference-values repository. The sole purpose of this date is to optimise the OSDU milestone upgrades. It allows the upgrade code to figure out whether or not the record must be PUT into reference value storage.",
+        "format": "date-time",
+        "example": "2021-02-08T21:36:40-05:00"
       }
     },
     "x-osdu-inheriting-from-kind": []
