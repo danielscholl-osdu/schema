@@ -20,9 +20,6 @@ osdu_gcp_bootstrap:
 
 osdu-gcp-test:
   needs: ["osdu_gcp_bootstrap"]
-  only:
-    variables:
-      - $OSDU_GCP == 'true'
 
 containerize_osdu_gcp_schema_bootstrap:
   stage: containerize
