@@ -1,4 +1,4 @@
-osdu_gcp_bootstrap:
+osdu-gcp-bootstrap:
   stage: bootstrap
   image: python:3.8
   needs: ["osdu-gcp-deploy-deployment"]
@@ -13,13 +13,33 @@ osdu_gcp_bootstrap:
     - pip install -r $OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR/gcp-deployment-requirements.txt
     - export BEARER_TOKEN=$(python $OSDU_GCP_DEPLOYMENTS_SUBDIR/Token.py)
     - python $OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR/DeploySharedSchemas.py -u $OSDU_GCP_SCHEMA_URL/schema
+  rules:
+    - if: '$OSDU_GCP == "true"'
+      when: always
 
-  only:
-    variables:
-      - $OSDU_GCP == 'true'
+osdu-gcp-bootstrap-dev2:
+  stage: bootstrap
+  image: python:3.8
+  needs: ["osdu-gcp-dev2-deploy-deployment"]
+  extends: .osdu-gcp-dev2-variables
+  variables:
+    JSON_KEY: $OSDU_GCP_INTEGRATION_TESTER
+    AUDIENCE: $GOOGLE_AUDIENCE
+    DATA_PARTITION: $OSDU_GCP_TENANT
+  script:
+    - pip install -r $OSDU_GCP_DEPLOYMENTS_SUBDIR/requirements.txt
+    - pip install -r $OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR/gcp-deployment-requirements.txt
+    - export BEARER_TOKEN=$(python $OSDU_GCP_DEPLOYMENTS_SUBDIR/Token.py)
+    - python $OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR/DeploySharedSchemas.py -u $OSDU_GCP_SCHEMA_URL/schema
+  rules:
+    - if: '$OSDU_GCP == "true"'
+      when: always
 
 osdu-gcp-test:
-  needs: ["osdu_gcp_bootstrap"]
+  needs: ["osdu-gcp-bootstrap"]
+
+osdu-gcp-dev2-test:
+  needs: ["osdu-gcp-bootstrap-dev2"]
 
 containerize_osdu_gcp_schema_bootstrap:
   stage: containerize
