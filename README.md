@@ -31,6 +31,10 @@ Below command can be run through azure-pipeline.yml after setting environment va
 Schema service as part of deployment deploys pre-defined OSDU schemas so end users can get community accepted schemas to refer. Such schemas are present in [folder](./deployments/shared-schemas/osdu) and script to deploy the schema are present [here](deployments/scripts). 
 
 Details to deploy shared schemas can be found under [README.md](./deployments/shared-schemas/README.md)
+  
+##AWS
+
+Instructions for running and testing this service can be found [here](./provider/schema-aws/README.md)  
     
 ## License
 
