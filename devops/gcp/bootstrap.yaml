@@ -47,6 +47,16 @@ osdu-gcp-test:
 
 osdu-gcp-dev2-test:
   needs: ["osdu-gcp-bootstrap-dev2"]
+  rules:
+    - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /^release$/'
+      when: always
+    - if: '$OSDU_GCP == "true" && $CI_COMMIT_TAG'
+      when: always
+    # The variable DEV2="true" should be specified manually in GitLab before running a pipeline to test this job against a protected branch
+    # - if: '$OSDU_GCP == "true" && $DEV2 == "true"'
+    #   when: always
+    - if: '$OSDU_GCP == "true"'
+      when: always
 
 containerize_osdu_gcp_schema_bootstrap:
   stage: containerize
