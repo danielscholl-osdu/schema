@@ -30,7 +30,7 @@
 
 	<properties>
 		<azure.version>2.1.7</azure.version>
-		<osdu.corelibazure.version>0.13.0-rc9</osdu.corelibazure.version>
+		<osdu.corelibazure.version>0.13.0-rc10</osdu.corelibazure.version>
 		<osdu.oscorecommon.version>0.13.0-rc7</osdu.oscorecommon.version>
 		<osdu.os-schema-core.version>0.13.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
