@@ -19,7 +19,6 @@
     <module>schema-test-core</module>
     <module>schema-test-gcp</module>
     <module>schema-test-azure</module>
-    <module>schema-test-aws</module>
   </modules>
 
   <repositories>
