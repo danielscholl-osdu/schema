@@ -16,8 +16,9 @@
   </licenses>
 
   <modules>
-    <module>schema-test-core</module>    
+    <module>schema-test-core</module>
     <module>schema-test-gcp</module>
+    <module>schema-test-azure</module>
   </modules>
 
   <repositories>

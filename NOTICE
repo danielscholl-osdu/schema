@@ -426,7 +426,7 @@ The following software have components provided under the terms of this license:
 - Spring Beans (from http://www.springframework.org, https://github.com/SpringSource/spring-framework, https://github.com/spring-projects/spring-framework, https://repo1.maven.org/maven2/org/springframework/spring-beans)
 - Spring Boot (from http://projects.spring.io/spring-boot/, https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot, https://spring.io/projects/spring-boot)
 - Spring Boot AOP Starter (from http://projects.spring.io/spring-boot/, https://spring.io/projects/spring-boot)
-- Spring Boot Actuator (from http://projects.spring.io/spring-boot/, https://spring.io/projects/spring-boot)
+- Spring Boot Actuator (from http://projects.spring.io/spring-boot/, https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-actuator, https://spring.io/projects/spring-boot)
 - Spring Boot Actuator AutoConfigure (from https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-actuator-autoconfigure, https://spring.io/projects/spring-boot)
 - Spring Boot Actuator Starter (from http://projects.spring.io/spring-boot/, https://spring.io/projects/spring-boot)
 - Spring Boot AutoConfigure (from http://projects.spring.io/spring-boot/, https://projects.spring.io/spring-boot/#/spring-boot-parent/spring-boot-autoconfigure, https://spring.io/projects/spring-boot)
