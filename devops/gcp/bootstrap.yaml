@@ -32,7 +32,7 @@ osdu-gcp-bootstrap-dev2:
     - export BEARER_TOKEN=$(python $OSDU_GCP_DEPLOYMENTS_SUBDIR/Token.py)
     - python $OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR/DeploySharedSchemas.py -u $OSDU_GCP_SCHEMA_URL/schema
   rules:
-    - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /^release$/'
+    - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /^release/'
       when: always
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_TAG'
       when: always
@@ -46,7 +46,7 @@ osdu-gcp-test:
 osdu-gcp-dev2-test:
   needs: ["osdu-gcp-bootstrap-dev2"]
   rules:
-    - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /^release$/'
+    - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /^release/'
       when: always
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_TAG'
       when: always
