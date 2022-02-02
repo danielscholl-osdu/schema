@@ -9,6 +9,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<os-core-common.version>0.12.3</os-core-common.version>
 		<springfox.version>3.0.0</springfox.version>
+		<json-smart.version>2.4.7</json-smart.version>
 	</properties>
 
 	<licenses>
@@ -27,6 +28,11 @@
 				<version>2.3.10.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.minidev</groupId>
+				<artifactId>json-smart</artifactId>
+				<version>${json-smart.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
