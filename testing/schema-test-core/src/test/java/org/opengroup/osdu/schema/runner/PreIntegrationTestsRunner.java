@@ -6,8 +6,7 @@ import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "classpath:features", glue = { "classpath:org.opengroup.osdu.schema.stepdefs" }, tags = {
-        "@Startup" }, plugin = { "pretty", "junit:target/cucumber-reports/schema-service-test-report.xml" })
+@CucumberOptions(features = "classpath:features", glue = { "classpath:org.opengroup.osdu.schema.stepdefs" }, tags = "@Startup", plugin = { "pretty", "junit:target/cucumber-reports/schema-service-test-report.xml" })
 public class PreIntegrationTestsRunner {
 
 }
