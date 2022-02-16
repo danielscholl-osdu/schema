@@ -17,14 +17,6 @@
 
 package org.opengroup.osdu.schema.impl.messagebus;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import com.google.cloud.pubsub.v1.Publisher;
-import com.google.pubsub.v1.PubsubMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -33,8 +25,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.gcp.oqm.driver.OqmDriver;
+import org.opengroup.osdu.core.gcp.oqm.model.OqmMessage;
+import org.opengroup.osdu.core.gcp.oqm.model.OqmTopic;
 import org.opengroup.osdu.schema.configuration.EventMessagingPropertiesConfig;
+import org.opengroup.osdu.schema.destination.provider.impl.OqmDestinationProvider;
 import org.opengroup.osdu.schema.logging.AuditLogger;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageBusImplTest {
@@ -46,13 +45,19 @@ public class MessageBusImplTest {
   private static final String CORRELATION_ID = "correlationId";
 
   @Mock
-  private Publisher publisher;
+  private OqmTopic oqmTopic;
+
+  @Mock
+  private OqmDriver driver;
 
   @Mock
   private TenantInfo tenantInfo;
 
   @Mock
   private DpsHeaders headers;
+
+  @Mock
+  private OqmDestinationProvider destinationProvider;
 
   @Mock
   private EventMessagingPropertiesConfig eventMessagingPropertiesConfig;
@@ -64,13 +69,15 @@ public class MessageBusImplTest {
   private AuditLogger auditLogger;
 
   @InjectMocks
-  private MessageBusImpl messageBusImpl;
+  private MessageBusImpl sut;
 
   @Test
   public void shouldNot_publishEventMessage_WhenFlagIsFalse() {
     when(this.eventMessagingPropertiesConfig.isMessagingEnabled()).thenReturn(false);
-    this.messageBusImpl.publishMessage(SCHEMA_ID, EVENT_TYPE);
-    verify(this.publisher, times(0)).publish(any());
+
+    this.sut.publishMessage(SCHEMA_ID, EVENT_TYPE);
+
+    verify(this.driver, never()).publish(any(OqmMessage.class), any(), any());
   }
 
   @Test
@@ -81,8 +88,8 @@ public class MessageBusImplTest {
     doNothing().when(this.headers).addCorrelationIdIfMissing();
     when(this.headers.getCorrelationId()).thenReturn(CORRELATION_ID);
 
-    this.messageBusImpl.publishMessage(SCHEMA_ID, EVENT_TYPE);
+    this.sut.publishMessage(SCHEMA_ID, EVENT_TYPE);
 
-    verify(this.publisher, times(1)).publish(any(PubsubMessage.class));
+    verify(this.driver, times(1)).publish(any(OqmMessage.class), any(), any());
   }
 }

@@ -1,90 +1,80 @@
 /*
-  Copyright 2021 Google LLC
-  Copyright 2021 EPAM Systems, Inc
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+ * Copyright 2020-2022 Google LLC
+ * Copyright 2020-2022 EPAM Systems, Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.opengroup.osdu.schema.impl.messagebus;
 
-import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.pubsub.v1.Publisher;
 import com.google.gson.Gson;
-import com.google.protobuf.ByteString;
-import com.google.pubsub.v1.ProjectTopicName;
-import com.google.pubsub.v1.PubsubMessage;
-import com.google.pubsub.v1.PubsubMessage.Builder;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.gcp.oqm.driver.OqmDriver;
+import org.opengroup.osdu.core.gcp.oqm.driver.OqmDriverRuntimeException;
+import org.opengroup.osdu.core.gcp.oqm.model.OqmDestination;
+import org.opengroup.osdu.core.gcp.oqm.model.OqmMessage;
+import org.opengroup.osdu.core.gcp.oqm.model.OqmTopic;
 import org.opengroup.osdu.schema.configuration.EventMessagingPropertiesConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
+import org.opengroup.osdu.schema.destination.provider.DestinationProvider;
 import org.opengroup.osdu.schema.impl.messagebus.model.SchemaPubSubInfo;
 import org.opengroup.osdu.schema.logging.AuditLogger;
 import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.threeten.bp.Duration;
+
+import javax.annotation.PostConstruct;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor
 public class MessageBusImpl implements IMessageBus {
 
-  private static final RetrySettings RETRY_SETTINGS = RetrySettings.newBuilder()
-      .setTotalTimeout(Duration.ofSeconds(10))
-      .setInitialRetryDelay(Duration.ofMillis(5))
-      .setRetryDelayMultiplier(2)
-      .setMaxRetryDelay(Duration.ofSeconds(3))
-      .setInitialRpcTimeout(Duration.ofSeconds(10))
-      .setRpcTimeoutMultiplier(2)
-      .setMaxRpcTimeout(Duration.ofSeconds(10))
-      .build();
+  private final OqmDriver driver;
+  private final DestinationProvider<OqmDestination> destinationProvider;
+  private final TenantInfo tenantInfo;
 
+  private final DpsHeaders headers;
+  private final EventMessagingPropertiesConfig eventMessagingPropertiesConfig;
+  private final JaxRsDpsLog logger;
+  private final AuditLogger auditLogger;
 
-  private Publisher publisher;
+  private OqmTopic oqmTopic = null;
 
-  @Autowired
-  private TenantInfo tenantInfo;
-
-  @Autowired
-  private DpsHeaders headers;
-
-  @Autowired
-  private EventMessagingPropertiesConfig eventMessagingPropertiesConfig;
-
-  @Autowired
-  private JaxRsDpsLog logger;
-
-  @Autowired
-  private AuditLogger auditLogger;
+  @PostConstruct
+  void postConstruct(){
+    oqmTopic = OqmTopic.builder().name(eventMessagingPropertiesConfig.getTopicName()).build();
+  }
 
   @Override
   public void publishMessage(String schemaId, String eventType) {
     if (this.eventMessagingPropertiesConfig.isMessagingEnabled()) {
       this.logger.info(String.format("Generating event of type %s", eventType));
 
-      if (Objects.isNull(this.publisher)) {
+      OqmDestination destination = destinationProvider.getDestination(headers.getPartitionId());
+
+      if (Objects.isNull(this.oqmTopic)) {
         try {
-          this.publisher = Publisher.newBuilder(
-              ProjectTopicName.newBuilder()
-                  .setProject(this.tenantInfo.getProjectId())
-                  .setTopic(this.eventMessagingPropertiesConfig.getTopicName()).build())
-              .setRetrySettings(RETRY_SETTINGS).build();
-        } catch (IOException e) {
+          this.oqmTopic = OqmTopic.builder().name(eventMessagingPropertiesConfig.getTopicName()).build();
+        } catch (OqmDriverRuntimeException e) {
           this.logger.info(SchemaConstants.SCHEMA_NOTIFICATION_FAILED);
           this.auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
           throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal error",
@@ -92,29 +82,30 @@ public class MessageBusImpl implements IMessageBus {
         }
       }
 
-      PubsubMessage message = createMessage(schemaId, eventType);
-      this.publisher.publish(message);
+      OqmMessage message = createMessage(schemaId, eventType);
+      this.driver.publish(message, oqmTopic, destination);
       this.auditLogger.schemaNotificationSuccess(Collections.singletonList(schemaId));
     } else {
       this.logger.info(SchemaConstants.SCHEMA_NOTIFICATION_IS_DISABLED);
     }
   }
 
-  private PubsubMessage createMessage(String schemaId, String eventType) {
+  private OqmMessage createMessage(String schemaId, String eventType) {
     SchemaPubSubInfo schemaPubSubMsg = new SchemaPubSubInfo(schemaId, eventType);
 
-    String json = new Gson().toJson(schemaPubSubMsg);
-    ByteString data = ByteString.copyFromUtf8(json);
+    String data = new Gson().toJson(schemaPubSubMsg);
 
-    Builder messageBuilder = PubsubMessage.newBuilder();
-    messageBuilder.putAttributes(DpsHeaders.ACCOUNT_ID, this.tenantInfo.getName());
-    messageBuilder.putAttributes(DpsHeaders.DATA_PARTITION_ID,
-        this.headers.getPartitionIdWithFallbackToAccountId());
+    Map<String, String> attributes = new HashMap<>();
+
+    attributes.put(DpsHeaders.ACCOUNT_ID, this.tenantInfo.getName());
+    attributes.put(DpsHeaders.DATA_PARTITION_ID, this.headers.getPartitionIdWithFallbackToAccountId());
     this.headers.addCorrelationIdIfMissing();
-    messageBuilder.putAttributes(DpsHeaders.CORRELATION_ID, this.headers.getCorrelationId());
-    messageBuilder.setData(data);
+    attributes.put(DpsHeaders.CORRELATION_ID, this.headers.getCorrelationId());
 
-    return messageBuilder.build();
+    return OqmMessage.builder()
+            .data(data)
+            .attributes(attributes)
+            .build();
   }
 
 }
