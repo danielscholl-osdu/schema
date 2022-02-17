@@ -12,37 +12,13 @@ Pre-requisites
 * Lombok 1.16 or later
 * Maven
 
-Schema service as per design uses two module from GCP. GCS or Google cloud storage to store actual schemas and Google cloud datastore to store schema metadata. It follows the multi tenancy 
-concept of DE, which means service is deployed in one GCP project and data is stored in client specific project. And permission to speccfic tenant project is decided based on data-partition-id user passes
-as part of request header. So, to make it work from local we must have following setup done as prerequisite,
-
-1. GCP project setup is done and local gcloud sdk configured by activating the account/user and pointing to correct GCP project. You can follow the steps from [here](https://cloud.google.com/deployment-manager/docs/step-by-step-guide/installation-and-setup)
-
-2. Bucket with name <project-id>-schema (e.g opendes-schema) is created in tenant GCS and tenant datafier service account has read/write access to that bucket. Steps to create bucket and grant access can be followed from [here](https://cloud.google.com/storage/docs/creating-buckets)
-
-3. Tenant datafier service account has read/write access to Google cloud datastore in tenant project. You can follow access control on datastore from [here](https://cloud.google.com/datastore/docs/access/iam). Permission required is ```roles/datastore.user```
-
-4. Service-account/user activated as part of step 1 has service token creator role on datafier service-account of the data partition used. Details on service account creator role can be accessed from [here](https://cloud.google.com/iam/docs/service-accounts#the_service_account_token_creator_role)
-
-5. TenantInfo table should be present in service GCP datastore under namespace ```datascosystem``` and kind ```tenantInfo``` and has entry corresponding to data-partition-id passed. 
-
-6. User/service-account that will be used to run the service has access to ```service.schema-service.editors``` group in the specified data-partition.
-
 ### Installation
-In order to run the service locally or remotely, you will need to have the following environment variables defined.
 
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `LOG_PREFIX` | `schema` | Logging prefix | no | - |
-| `SERVER_SERVLET_CONTEXPATH` | `/api/schema-service/v1` | Servlet context path | no | - |
-| `AUTHORIZE_API` | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint | no | output of infrastructure deployment |
-| `ACCOUNT_ID_COMMON_PROJECT` | ex `common` | Shared account id | no | - |
-| `SERVICE_PARTITION_ENABLED` | `true` OR `false` | Allow to configure TenantInfo provision by Partition service | no | - |
-| `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
-| `PARTITION_API` | ex `http://localhost:8081/api/partition/v1` | Partition service endpoint | no | - |
-| `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
-| `GCLOUD_PROJECT` | `******` | Cloud project id, you only need this if running locally | no | https://console.cloud.google.com |
-| `gcp.schema-changed.messagingEnabled` | `true` OR `false` | Allows to configure message publishing about schemas changes to Pub/Sub | no | - |
+### Service Configuration
+#### Anthos:
+[Anthos service configuration ](docs/anthos/README.md)
+#### GCP:
+[Gcp service configuration ](docs/gcp/README.md)
 
 ### Run Locally
 Check that maven is installed:

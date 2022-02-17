@@ -7,9 +7,8 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   LOG_LEVEL: "{{ .Values.data.log_level }}"
-  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: "{{ .Values.data.log_level }}"
   PARTITION_API: "{{ .Values.data.partition_api }}"
   GOOGLE_AUDIENCES: "{{ .Values.data.google_audiences }}"
   AUTHORIZE_API: "{{ .Values.data.authorize_api }}"
-  AUTHORIZE_API_KEY: "{{ .Values.data.authorize_api_key }}"
   SHARED_TENANT_NAME: "{{ .Values.data.shared_tenant_name }}"
+  SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
