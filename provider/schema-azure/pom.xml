@@ -30,7 +30,7 @@
 
 	<properties>
 		<azure.version>2.1.7</azure.version>
-		<osdu.corelibazure.version>0.13.0-rc6</osdu.corelibazure.version>
+		<osdu.corelibazure.version>0.14.0-rc2</osdu.corelibazure.version>
 		<osdu.oscorecommon.version>0.13.0</osdu.oscorecommon.version>
 		<osdu.os-schema-core.version>0.14.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
@@ -210,7 +210,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>5.3.7</version>
+			<version>5.3.12</version>
 		</dependency>
 	</dependencies>
 
