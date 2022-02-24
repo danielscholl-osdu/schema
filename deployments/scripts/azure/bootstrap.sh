@@ -1,4 +1,18 @@
-export AZURE_SCHEMA_URL=https://${AZURE_DNS_NAME}/api/schema-service/v1/schema
+# Cleanup function
+cleanup() {
+  echo "Terminating istio sidecar"
+  curl -X POST "http://localhost:15020/quitquitquit"
+  exit
+}
+
+trap cleanup EXIT
+
+if [[ -z "${NAMESPACE}" ]]; then
+  NAMESPACE="osdu-azure"
+fi
+
+export AZURE_SCHEMA_URL="http://schema.${NAMESPACE}.svc.cluster.local/api/schema-service/v1/schema/"
+
 currentStatus="success"
 currentMessage="All schemas uploaded successfully"
 BEARER_TOKEN=`python $AZURE_DEPLOYMENTS_SUBDIR/Token.py`
