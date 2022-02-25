@@ -25,6 +25,7 @@ variables:
   DATA_PARTITION: opendes
   AZURE_AD_APP_RESOURCE_ID: $AZURE_APP_ID
   AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
+  AZURE_COVERAGE_THRESHOLD: 70
 
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   AWS_TEST_SUBDIR: testing/schema-test-core
