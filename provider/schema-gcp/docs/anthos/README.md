@@ -9,6 +9,10 @@ Must have:
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
 | `SPRING_PROFILES_ACTIVE` | ex `anthos` | Spring profile that activate default configuration for GCP environment | false | - |
+| `<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | Potgres user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service)  | yes | - |
+| `<MINIO_SECRETKEY_ENV_VARIABLE_NAME>` | ex `password` | Minio password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
+| `<AMQP_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
+| `<AMQP_ADMIN_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ Admin password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
 
 Defined in default application property file but possible to override:
 
@@ -33,6 +37,23 @@ and usage in mixed mode was not tested. Usage of spring profiles is preferred.
 | `OSMDRIVER` | `datastore` or `postgres` | Osm driver mode that defines which KV storage will be used | no | - |
 | `OBMDRIVER` | `gcs` or `minio` | Obm driver mode that defines which object storage will be used | no | - |
 | `SERVICE_TOKEN_PROVIDER` | `GCP` or `OPENID` |Service account token provider, `GCP` means use Google service account `OPEIND` means use OpenId provider like `Keycloak` | no | - |
+
+### Properties set in Partition service:
+
+Note that properties can be set in Partition as `sensitive` in that case in property `value` should be present not value itself, but ENV variable name.
+This variable should be present in environment of service that need that variable.
+
+Example:
+```
+    "elasticsearch.port": {
+      "sensitive": false, <- value not sensitive 
+      "value": "9243"  <- will be used as is.
+    },
+      "elasticsearch.password": {
+      "sensitive": true, <- value is sensitive 
+      "value": "ELASTIC_SEARCH_PASSWORD_OSDU" <- service consumer should have env variable ELASTIC_SEARCH_PASSWORD_OSDU with elastic search password
+    }
+```
 
 ## Postgres configuration:
 
@@ -69,7 +90,7 @@ curl -L -X PATCH 'http://partition.com/api/partition/v1/partitions/opendes' -H '
     },
     "osm.postgres.datasource.password": {
       "sensitive": true,
-      "value": "postgres"
+     "value": "<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>" <- (Not actual value, just name of env variable)
     }
   }
 }'
@@ -211,7 +232,7 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
     },
     "oqm.rabbitmq.amqp.password": {
       "sensitive": true,
-      "value": "guest"
+      "value": "<AMQP_PASSWORD_ENV_VARIABLE_NAME>" <- (Not actual value, just name of env variable)
     },
 
      "oqm.rabbitmq.admin.schema": {
@@ -236,7 +257,7 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
     },
     "oqm.rabbitmq.admin.password": {
       "sensitive": true,
-      "value": "guest"
+      "value": "<AMQP_ADMIN_PASSWORD_ENV_VARIABLE_NAME>" <- (Not actual value, just name of env variable)
     }
   }
 }'
@@ -293,7 +314,7 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
     },
     "obm.minio.credentials.secret.key": {
       "sensitive": false,
-      "value": "secret"
+      "value": "<MINIO_SECRETKEY_ENV_VARIABLE_NAME>" <- (Not actual value, just name of env variable)
     }
   }
 }'
