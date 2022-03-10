@@ -19,7 +19,7 @@ osdu-gcp-bootstrap:
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_TAG'
       when: never
     - if: '$OSDU_GCP == "true"'
-      when: always
+      when: on_success
 
 osdu-gcp-bootstrap-dev2:
   stage: bootstrap
@@ -37,12 +37,9 @@ osdu-gcp-bootstrap-dev2:
     - python $OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR/DeploySharedSchemas.py -u $OSDU_GCP_SCHEMA_URL/schema
   rules:
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /^release/'
-      when: always
+      when: on_success
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_TAG'
-      when: always
-    # The variable DEV2="true" should be specified manually in GitLab before running a pipeline to test this job against a protected branch
-    - if: '$OSDU_GCP == "true" && $DEV2 == "true"'
-      when: always
+      when: on_success
 
 osdu-gcp-test:
   needs: ["osdu-gcp-bootstrap"]
@@ -53,7 +50,7 @@ osdu-gcp-test:
     - if: '$OSDU_GCP == "true" && $OSDU_GCP_INT_TEST_TYPE != "python" && $CI_COMMIT_TAG'
       when: never
     - if: '$OSDU_GCP == "true" && $OSDU_GCP_INT_TEST_TYPE != "python"'
-      when: always
+      when: on_success
 
 osdu-gcp-dev2-test:
   needs: ["osdu-gcp-bootstrap-dev2"]
@@ -71,5 +68,8 @@ osdu-gcp-containerize-bootstrap-gitlab:
     - docker push $CI_REGISTRY_IMAGE/osdu-gcp-bootstrap
   rules:
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /^master$/'
+      when: on_success
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_BRANCH =~ /.*bootstrap.*/'
+      when: on_success
     - if: '$OSDU_GCP == "true" && $CI_COMMIT_TAG'
+      when: on_success
