@@ -57,13 +57,25 @@ It can be overridden by:
 - through the Spring Boot property `gcp.schema-changed.topic-name`
 - environment variable `GCP_SCHEMA_CHANGED_TOPIC_NAME`
 
-## GCS configuration:
+## GCS configuration <a name="ObjectStoreConfig"></a>
 
-At Google cloud storage should be created bucket:
+### Per-tenant buckets configuration
+These buckets must be defined in tenants’ “data” GCP projects that names are pointed in tenants’ PartitionInfo registration objects’ “projectId” property at the Partition service.
 
-**name:** `<project name from tenant info>-schema`
-
-This bucket used to store full schemas in `.json` files.
+<table>
+  <tr>
+   <td>Bucket Naming template 
+   </td>
+   <td>Permissions required
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;PartitionInfo.projectId><strong>-schema</strong>
+   </td>
+   <td>ListObjects, CRUDObject
+   </td>
+  </tr>
+</table>
 
 ## Google cloud service account configuration :
 

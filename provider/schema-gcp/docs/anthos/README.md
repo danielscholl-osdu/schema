@@ -323,10 +323,25 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
 
 </details>
 
-### Bucket configuration:
+### Object store configuration <a name="ObjectStoreConfig"></a>
 
-At Minio should be created bucket:
+#### Used Technology
+MinIO (or any other supported by OBM)
 
-**name:** `<project name from tenant info>-schema`
+#### Per-tenant buckets configuration
+These buckets must be defined in tenants’ dedicated object store servers. OBM connection properties of these servers (url, etc.) are defined as specific properties in tenants’ PartitionInfo registration objects at the Partition service as described in accordant sections of this document.
 
-This bucket used to store full schemas in `.json` files.
+<table>
+  <tr>
+   <td>Bucket Naming template 
+   </td>
+   <td>Permissions required
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;PartitionInfo.projectId>-<strong>schema</strong>
+   </td>
+   <td>ListObjects, CRUDObject
+   </td>
+  </tr>
+</table>
