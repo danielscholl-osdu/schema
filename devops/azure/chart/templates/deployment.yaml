@@ -115,10 +115,21 @@ spec:
               value: {{ .Values.default_tenant}}
             - name: azure_istioauth_enabled
               value: "true"
-            - name: event_grid_enabled
-              value: "false"
             - name: event_grid_topic
               value: "schemachangedtopic"
+            - name: servicebus_topic_name
+              value: "schemachangedtopic"
+            {{- if has .Values.env .Values.featureFlag.notificationv2.enabledEnvs }}
+            - name: event_grid_enabled
+              value: "false"
+            - name: service_bus_enabled
+              value: "true"
+            {{- else }}
+            - name: event_grid_enabled
+              value: "true"
+            - name: service_bus_enabled
+              value: "false"
+            {{- end }}
             - name: SPRING_CONFIG_NAME
               value: "common,application"
 

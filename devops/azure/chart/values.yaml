@@ -23,3 +23,8 @@ image:
   tag: latest
 
 default_tenant: opendes
+
+featureFlag:
+  notificationv2:
+    enabledEnvs:
+    - demo
