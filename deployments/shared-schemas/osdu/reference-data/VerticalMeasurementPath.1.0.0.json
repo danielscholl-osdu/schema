@@ -19,7 +19,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "x-osdu-schema-source": "osdu:wks:reference-data--VerticalMeasurementPath:1.0.0",
     "title": "VerticalMeasurementPath",
-    "description": "Used to describe the vertical measurement paths.",
+    "description": "The type of vertical distance of a point in a well relative to a defined reference point.",
     "type": "object",
     "properties": {
       "id": {
@@ -130,7 +130,7 @@
     ],
     "additionalProperties": false,
     "x-osdu-governance-authorities": [
-      "OSDU"
+      "PPDM"
     ],
     "x-osdu-governance-model": "OPEN",
     "x-osdu-virtual-properties": {

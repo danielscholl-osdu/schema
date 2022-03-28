@@ -34,7 +34,7 @@
         "type": "string",
         "title": "Vertical Coordinate Reference System ID",
         "description": "The relationship to the vertical CRS defining the absolute reference surface.",
-        "example": "namespace:reference-data--CoordinateReferenceSystem:VerticalCRS.EPSG.5714:",
+        "example": "namespace:reference-data--CoordinateReferenceSystem:Vertical:EPSG::5714:",
         "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [
           {

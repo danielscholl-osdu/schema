@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "reference-data--CalculationMethodType",
+      "entityType": "reference-data--ExternalCatalogNamespace",
       "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:reference-data--CalculationMethodType:1.0.0"
+      "id": "{{schema-authority}}:wks:reference-data--ExternalCatalogNamespace:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2022, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/reference-data/CalculationMethodType.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/reference-data/ExternalCatalogNamespace.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:reference-data--CalculationMethodType:1.0.0",
-    "title": "CalculationMethodType",
-    "description": "The method to calculate a wellbore path from the discrete station measurements of a wellbore directional survey.",
+    "x-osdu-schema-source": "osdu:wks:reference-data--ExternalCatalogNamespace:1.0.0",
+    "title": "ExternalCatalogNamespace",
+    "description": "A namespace for a group of catalog records. This is used in conjunction with external catalogs to group records of a particular kind belonging together to achieve unique code and name look-ups.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CalculationMethodType:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:reference-data--CalculationMethodType:67539ea5-0b7b-545b-8dd6-d25bac88a1d4"
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ExternalCatalogNamespace:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:reference-data--ExternalCatalogNamespace:9c8d9cf5-1d57-5f27-be20-4673e1f35fe9"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:reference-data--CalculationMethodType:1.0.0"
+        "example": "osdu:wks:reference-data--ExternalCatalogNamespace:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -113,6 +113,11 @@
           },
           {
             "type": "object",
+            "properties": {},
+            "title": "IndividualProperties"
+          },
+          {
+            "type": "object",
             "properties": {
               "ExtensionProperties": {
                 "type": "object"
@@ -129,10 +134,8 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-governance-authorities": [
-      "PPDM"
-    ],
-    "x-osdu-governance-model": "OPEN",
+    "x-osdu-review-status": "Accepted",
+    "x-osdu-governance-model": "LOCAL",
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
         "type": "string",

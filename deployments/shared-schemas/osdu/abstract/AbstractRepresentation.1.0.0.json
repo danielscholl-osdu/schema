@@ -28,7 +28,7 @@
         "title": "ID of the interpretation",
         "description": "Allow to link an interpretation with this representation",
         "format": "uri-reference",
-        "pattern": "^[\\w\\-\\.]+:(work-product-component\\-\\-EarthModelInterpretation|work-product-component\\-\\-GeobodyBoundaryInterpretation|work-product-component\\-\\-GeobodyInterpretation|work-product-component\\-\\-HorizonInterpretation|work-product-component\\-\\-RockFluidOrganizationInterpretation|work-product-component\\-\\-RockFluidUnitInterpretation|work-product-component\\-\\-StratigraphicUnitInterpretation|work-product-component\\-\\-StructuralOrganizationInterpretation|work-product-component\\-\\-FaultInterpretation):[\\w\\-\\.\\:\\%]+:[0-9]*$",
+        "pattern": "^[\\w\\-\\.]+:(work-product-component\\-\\-EarthModelInterpretation|work-product-component\\-\\-GeobodyBoundaryInterpretation|work-product-component\\-\\-GeobodyInterpretation|work-product-component\\-\\-HorizonInterpretation|work-product-component\\-\\-RockFluidOrganizationInterpretation|work-product-component\\-\\-RockFluidUnitInterpretation|work-product-component\\-\\-StratigraphicUnitInterpretation|work-product-component\\-\\-StructuralOrganizationInterpretation|work-product-component\\-\\-FaultInterpretation|work-product-component\\-\\-AquiferInterpretation):[\\w\\-\\.\\:\\%]+:[0-9]*$",
         "x-osdu-relationship": [
           {
             "GroupType": "work-product-component",
@@ -65,6 +65,10 @@
           {
             "GroupType": "work-product-component",
             "EntityType": "FaultInterpretation"
+          },
+          {
+            "GroupType": "work-product-component",
+            "EntityType": "AquiferInterpretation"
           }
         ]
       },
