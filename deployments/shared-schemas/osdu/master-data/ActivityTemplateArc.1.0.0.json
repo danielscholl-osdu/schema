@@ -19,7 +19,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "x-osdu-schema-source": "osdu:wks:master-data--ActivityTemplateArc:1.0.0",
     "title": "ActivityTemplateArc",
-    "description": "An 'arc' establishing a link between ActivityTemplate input and output parameters.",
+    "description": "An 'arc' establishing a link between ActivityTemplate output and input parameters.",
     "type": "object",
     "properties": {
       "id": {

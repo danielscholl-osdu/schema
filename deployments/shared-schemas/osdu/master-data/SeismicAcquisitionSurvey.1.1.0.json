@@ -433,7 +433,7 @@
         "type": "string",
         "priority": [
           {
-            "path": "data.Name"
+            "path": "data.ProjectName"
           }
         ]
       }

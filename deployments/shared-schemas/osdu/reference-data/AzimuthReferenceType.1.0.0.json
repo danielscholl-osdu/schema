@@ -19,7 +19,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "x-osdu-schema-source": "osdu:wks:reference-data--AzimuthReferenceType:1.0.0",
     "title": "AzimuthReferenceType",
-    "description": "Used to describe the type of azimuth reference, e.g. 'True North', 'Grid North', 'Magnetic North'.",
+    "description": "The definition of north in a spatial reference survey. A reference table identifying valid north references used in surveying to define angular measurements",
     "type": "object",
     "properties": {
       "id": {

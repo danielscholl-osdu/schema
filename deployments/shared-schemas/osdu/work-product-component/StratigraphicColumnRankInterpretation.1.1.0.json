@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "work-product-component--ColumnBasedTable",
+      "entityType": "work-product-component--StratigraphicColumnRankInterpretation",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
+      "schemaVersionMinor": 1,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:work-product-component--ColumnBasedTable:1.0.0"
+      "id": "{{schema-authority}}:wks:work-product-component--StratigraphicColumnRankInterpretation:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2022, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/work-product-component/ColumnBasedTable.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/work-product-component/StratigraphicColumnRankInterpretation.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:work-product-component--ColumnBasedTable:1.0.0",
-    "title": "ColumnBasedTable",
-    "description": "A ColumnBasedTable is a set of columns, which have equal length (data.ColumnSize). Columns have a Property Kind, UnitOfMeasure and Facet. There are KeyColumns (index columns) and Columns (for look-up values). Examples are KrPc, PVT and Facies tables.",
+    "x-osdu-schema-source": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.1.0",
+    "title": "StratigraphicColumnRankInterpretation",
+    "description": "A global hierarchy containing an ordered list of stratigraphic unit interpretations",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-ColumnBasedTable:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:work-product-component--ColumnBasedTable:f73b9615-658b-5c25-a84e-5ad9db7fd4d7"
+        "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-StratigraphicColumnRankInterpretation:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:work-product-component--StratigraphicColumnRankInterpretation:a86f0c8d-45e9-5128-a383-c1a002ee22be"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:work-product-component--ColumnBasedTable:1.0.0"
+        "example": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -115,129 +115,89 @@
             "$ref": "{{schema-authority}}:wks:AbstractWorkProductComponent:1.0.0"
           },
           {
+            "$ref": "{{schema-authority}}:wks:AbstractInterpretation:1.0.0"
+          },
+          {
             "type": "object",
             "properties": {
-              "KeyColumns": {
-                "type": "array",
-                "title": "Key columns",
-                "description": "A column whose values are considered as keys/indices. Do not use this attribute if you want to follow a given ColumnBasedTableType.",
-                "items": {
-                  "$ref": "{{schema-authority}}:wks:AbstractReferencePropertyType:1.1.0"
-                }
-              },
-              "Columns": {
-                "type": "array",
-                "title": "Common columns",
-                "description": "A common column storing values of a particular property kind. Do not use this attribute if you want to follow a given ColumnBasedTableType.",
-                "items": {
-                  "$ref": "{{schema-authority}}:wks:AbstractReferencePropertyType:1.1.0"
-                }
-              },
-              "ColumnSize": {
-                "type": "integer",
-                "title": "Size of columns",
-                "description": "The count of elements in each column",
-                "example": 5
-              },
-              "ColumnValues": {
-                "type": "array",
-                "title": "The values of each column",
-                "description": "First column values are related to first key column, second column values are related to the second key column, etc\u2026\nColumn values at index KeyColumns count are related to first (non key) column, Column values at index KeyColumns count + 1 are related to second (non key) column, etc...",
-                "items": {
-                  "type": "object",
-                  "title": "Column values",
-                  "description": "Value of the column. Generally only one of the attribute should be instantiated.",
-                  "properties": {
-                    "BooleanColumn": {
-                      "type": "array",
-                      "title": "Boolean Column",
-                      "description": "A column of only boolean values",
-                      "example": [
-                        true,
-                        false,
-                        true,
-                        true,
-                        false
-                      ],
-                      "items": {
-                        "type": "boolean"
-                      }
-                    },
-                    "IntegerColumn": {
-                      "type": "array",
-                      "title": "Integer Column",
-                      "description": "A column of only integer values",
-                      "format": "integer",
-                      "pattern": "^[0-9]+$",
-                      "example": [
-                        0,
-                        1,
-                        2,
-                        3,
-                        4
-                      ],
-                      "items": {
-                        "type": "integer"
-                      }
-                    },
-                    "NumberColumn": {
-                      "type": "array",
-                      "title": "Number Column",
-                      "description": "A column of only number values",
-                      "example": [
-                        0.1,
-                        2.3,
-                        4.5,
-                        6.7,
-                        8.9
-                      ],
-                      "items": {
-                        "type": "number"
-                      }
-                    },
-                    "StringColumn": {
-                      "type": "array",
-                      "title": "String Column",
-                      "description": "A column of only string values",
-                      "example": [
-                        "foo",
-                        "bar",
-                        "foo again",
-                        "bar again",
-                        "foo bar"
-                      ],
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "UndefinedValueRows": {
-                      "type": "array",
-                      "title": "Undefined value rows",
-                      "description": "The row indexes for which the values are flagged as undefined.",
-                      "format": "integer",
-                      "pattern": "^[0-9]+$",
-                      "example": [
-                        3,
-                        4
-                      ],
-                      "items": {
-                        "type": "integer"
-                      }
-                    }
-                  }
-                }
-              },
-              "ColumnBasedTableType": {
+              "StratigraphicRoleType": {
                 "type": "string",
-                "title": "The type of the column based table",
-                "description": "Quickly indicate the type of the column based table (KrPc, PVT, Facies, ...) and its standard columns definition. It is supposed to be used when you don't use KeyColumns neither Columns as attributes of this WPC.",
+                "title": "StratigraphicRoleType",
+                "description": "Geological concept used to produce the type, i.e. lithostratigraphy",
                 "format": "uri-reference",
-                "example": "namespace:reference-data--ColumnBasedTableType:Facies:",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ColumnBasedTableType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "example": "namespace:reference-data--StratigraphicRoleType:Lithostratigraphy:",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-StratigraphicRoleType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                 "x-osdu-relationship": [
                   {
                     "GroupType": "reference-data",
-                    "EntityType": "ColumnBasedTableType"
+                    "EntityType": "StratigraphicRoleType"
+                  }
+                ]
+              },
+              "StratigraphicColumnRankUnitType": {
+                "type": "string",
+                "title": "StratigraphicColumnRankUnitType",
+                "description": "Type of all stratigraphic units in this rank, i.e. Erathem",
+                "format": "uri-reference",
+                "example": "namespace:reference-data--StratigraphicColumnRankUnitType:Erathem:",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-StratigraphicColumnRankUnitType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "reference-data",
+                    "EntityType": "StratigraphicColumnRankUnitType"
+                  }
+                ]
+              },
+              "StratigraphicUnitInterpretationSet": {
+                "type": "array",
+                "title": "Stratigraphic Unit Interpretation Set",
+                "description": "Array of Stratigraphic Unit Interpretations the StratigraphicColumnRank is composed of. Units are ordered by ascending age or apparent depth.  Only one of ChronoStratigraphySet or StratigraphicUnitInterpretationSet must be populated, never both.",
+                "example": [
+                  "namespace:work-product-component--StratigraphicUnitInterpretation:90008741-3433-406B-9189-22B298C3E2D2:",
+                  "namespace:work-product-component--StratigraphicUnitInterpretation:11008888-3433-406B-9189-33B298F3E2D4:"
+                ],
+                "items": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-StratigraphicUnitInterpretation:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "work-product-component",
+                      "EntityType": "StratigraphicUnitInterpretation"
+                    }
+                  ]
+                }
+              },
+              "ChronoStratigraphySet": {
+                "type": "array",
+                "title": "Chrono-Stratigraphy Set",
+                "description": "A set of references to ChronoStratigraphy reference data, which belong to the same StratigraphicColumnRankUnitType, e.g. \"namespace:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.System:\" Only one of ChronoStratigraphySet or StratigraphicUnitInterpretationSet must be populated, never both.",
+                "example": [
+                  "namespace:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.UpperCretaceous:",
+                  "namespace:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.LowerCretaceous:",
+                  "namespace:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Jurassic.UpperJurassic:"
+                ],
+                "items": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-ChronoStratigraphy:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "reference-data",
+                      "EntityType": "ChronoStratigraphy"
+                    }
+                  ]
+                }
+              },
+              "SequenceStratigraphicSchemaType": {
+                "type": "string",
+                "title": "SequenceStratigraphicSchemaType",
+                "description": "Valid if Stratigraphic role type is set to Chronostratigraphic ex.: GeneticSequence",
+                "format": "uri-reference",
+                "example": "namespace:reference-data--SequenceStratigraphicSchemaType:DepositionalSequence2:",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-SequenceStratigraphicSchemaType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "reference-data",
+                    "EntityType": "SequenceStratigraphicSchemaType"
                   }
                 ]
               }
@@ -263,6 +223,12 @@
     ],
     "additionalProperties": false,
     "x-osdu-review-status": "Accepted",
+    "x-osdu-supported-file-formats": [
+      "RESQML"
+    ],
+    "x-osdu-governance-authorities": [
+      "OSDU"
+    ],
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultLocation": {
         "type": "object",
