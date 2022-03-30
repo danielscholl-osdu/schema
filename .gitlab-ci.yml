@@ -93,3 +93,30 @@ osdu-gcp-test:
     reports:
       junit:
         - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
+
+osdu-gcp-helm-charts-master:
+  variables:
+    OSDU_GCP_HELM_BOOTSTRAP_DIR: "devops/gcp/bootstrap"
+  script:
+    - helm cm-push $OSDU_GCP_HELM_CONFIG_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --username gitlab-ci-token --password $CI_JOB_TOKEN
+    - helm cm-push $OSDU_GCP_HELM_DEPLOYMENT_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --username gitlab-ci-token --password $CI_JOB_TOKEN
+    - helm cm-push $OSDU_GCP_HELM_BOOTSTRAP_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --username gitlab-ci-token --password $CI_JOB_TOKEN
+
+osdu-gcp-helm-charts-release:
+  variables:
+    OSDU_GCP_HELM_BOOTSTRAP_DIR: "devops/gcp/bootstrap"
+  script:
+    - >
+      if [[ -z $CI_COMMIT_TAG ]] && [[ $CI_COMMIT_BRANCH =~ ^release\/[0-9]{1,2}.[0-9]{1,2}$ ]];
+      then
+          RELEASE_VER=$(echo $CI_COMMIT_BRANCH | sed "s?^release/??");
+          VER="$RELEASE_VER.0-release"
+      elif [[ $CI_COMMIT_TAG =~ ^v[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$ ]];
+      then
+          VER=$(echo $CI_COMMIT_TAG | sed "s/^v//");
+      else
+          VER="0.0.0-invalid";
+      fi;
+    - helm cm-push $OSDU_GCP_HELM_CONFIG_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --version $VER --username gitlab-ci-token --password $CI_JOB_TOKEN
+    - helm cm-push $OSDU_GCP_HELM_DEPLOYMENT_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --version $VER --username gitlab-ci-token --password $CI_JOB_TOKEN
+    - helm cm-push $OSDU_GCP_HELM_BOOTSTRAP_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --version $VER --username gitlab-ci-token --password $CI_JOB_TOKEN
