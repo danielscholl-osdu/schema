@@ -79,6 +79,30 @@ public class SchemaControllerTest {
         schemaController.upsertSchema(schemaRequest);
     }
 
+    @Test(expected = BadRequestException.class)
+    public void testCreateEmptyAuthoritySchema_Failed() throws ApplicationException, BadRequestException {
+        schemaRequest = getSchemaRequestEmptyAuthority();
+
+        when(schemaService.createSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        assertNotNull(schemaController.createSchema(schemaRequest));
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreateEmptyEntitySchema_Failed() throws ApplicationException, BadRequestException {
+        schemaRequest = getSchemaRequestEmptySource();
+
+        when(schemaService.createSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        assertNotNull(schemaController.createSchema(schemaRequest));
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreateEmptySourceSchema_Failed() throws ApplicationException, BadRequestException {
+        schemaRequest = getSchemaRequestEmptyEntity();
+
+        when(schemaService.createSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        assertNotNull(schemaController.createSchema(schemaRequest));
+    }
+
     @Test
     public void testGetSchemaInfoList() throws ApplicationException, NotFoundException, BadRequestException {
         schemaRequest = getSchemaRequestObject();
@@ -120,5 +144,38 @@ public class SchemaControllerTest {
                 .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os..wks.well.1.4")
                         .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
                 .build();
+    }
+
+    private SchemaRequest getSchemaRequestEmptyAuthority() {
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("").entityType("well").id("..wks.well.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("").entityType("well").id("..wks.well.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("wks").build())
+                .build()).build();
+    }
+
+    private SchemaRequest getSchemaRequestEmptyEntity() {
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("").id("os..well.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("well").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("os").entityType("").id("os..well.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("well").build())
+                .build()).build();
+    }
+
+    private SchemaRequest getSchemaRequestEmptySource() {
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("well").id("os.well.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os.well.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("").build())
+                .build()).build();
     }
 }

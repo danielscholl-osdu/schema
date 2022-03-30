@@ -21,6 +21,7 @@ public class SchemaConstants {
     public static final String SCHEMA_KIND_DELIMITER = ":";
     public static final String SCHEMA_Version_DELIMITER = ".";
     public static final String SCHEMA_KIND_REGEX="^([^.:\\r\\n\\s]+):([^.:\\r\\n\\s]+):([^.:\\r\\n\\s]+):(([\\d]+)[.]([\\d]+)[.]([\\d]+))$";
+    public static final String SCHEMA_EMPTY_REGEX = "^(?!\\s*$).+";
 
     // schema
     public static final String SCHEMA_KIND = "schema";
