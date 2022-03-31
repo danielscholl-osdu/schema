@@ -6,7 +6,7 @@
       {
         "domain": "global",
         "reason": "badRequest",
-        "message": "source must not be empty"
+        "message": "source must not contain whitespaces and special characters except - and ."
       }
     ]
   }
