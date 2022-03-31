@@ -39,3 +39,9 @@ if [ ! -z "$CONFIG_MAP_NAME" -a "$CONFIG_MAP_NAME" != " " ]; then
 	--from-literal=message="$Message" \
 	-o yaml --dry-run=client | kubectl replace -f -
 fi
+
+if [[ ${currentStatus} == "success" ]]; then
+  exit 0
+else
+  exit 1
+fi
