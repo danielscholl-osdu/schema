@@ -146,12 +146,12 @@
                 "items": {
                   "type": "object",
                   "title": "Column values",
-                  "description": "Values of column. Generally only of the attribute should be instantiated.",
+                  "description": "Value of the column. Generally only one of the attribute should be instantiated.",
                   "properties": {
                     "BooleanColumn": {
                       "type": "array",
                       "title": "Boolean Column",
-                      "description": "A columns of only boolean values",
+                      "description": "A column of only boolean values",
                       "example": [
                         true,
                         false,
@@ -166,7 +166,7 @@
                     "IntegerColumn": {
                       "type": "array",
                       "title": "Integer Column",
-                      "description": "A columns of only integer values",
+                      "description": "A column of only integer values",
                       "format": "integer",
                       "pattern": "^[0-9]+$",
                       "example": [
@@ -183,7 +183,7 @@
                     "NumberColumn": {
                       "type": "array",
                       "title": "Number Column",
-                      "description": "A columns of only number values",
+                      "description": "A column of only number values",
                       "example": [
                         0.1,
                         2.3,
@@ -198,7 +198,7 @@
                     "StringColumn": {
                       "type": "array",
                       "title": "String Column",
-                      "description": "A columns of only string values",
+                      "description": "A column of only string values",
                       "example": [
                         "foo",
                         "bar",

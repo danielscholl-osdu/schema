@@ -162,7 +162,7 @@
                 "properties": {
                   "AuthorityCode": {
                     "title": "Horizontal CRS Authority Code",
-                    "description": "The HorizontalCrs authority code, corresponding to the ISO19111 ID and 'projjson' id.",
+                    "description": "The HorizontalCRS authority code, corresponding to the ISO19111 ID and 'projjson' id.",
                     "type": "object",
                     "properties": {
                       "Authority": {
@@ -191,7 +191,7 @@
                     "type": "string",
                     "description": "The relationship to the HorizontalCrs.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateReferenceSystem:ProjectedCRS.EPSG.32615:",
+                    "example": "namespace:reference-data--CoordinateReferenceSystem:Projected:EPSG::32615:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -208,7 +208,7 @@
                 "properties": {
                   "AuthorityCode": {
                     "title": "Vertical CRS Authority Code",
-                    "description": "The VerticalCrs authority code, corresponding to the ISO19111 ID and 'projjson' id.",
+                    "description": "The VerticalCRS authority code, corresponding to the ISO19111 ID and 'projjson' id.",
                     "type": "object",
                     "properties": {
                       "Authority": {
@@ -237,7 +237,7 @@
                     "type": "string",
                     "description": "The relationship to the VerticalCrs.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateReferenceSystem:VerticalCRS.EPSG.5714:",
+                    "example": "namespace:reference-data--CoordinateReferenceSystem:Vertical:EPSG::5714:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -283,7 +283,7 @@
                     "type": "string",
                     "description": "The relationship to the bound transformation.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateTransformation:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateTransformation:Transformation.EPSG.1613:",
+                    "example": "namespace:reference-data--CoordinateTransformation:EPSG::1613:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -365,7 +365,7 @@
                 "properties": {
                   "AuthorityCode": {
                     "title": "Projection Operation Authority Code",
-                    "description": "The DatumEnsemble authority code, corresponding to the ISO19111 ID and 'projjson' id.",
+                    "description": "The Projection Operation authority code, corresponding to the ISO19111 ID and 'projjson' id.",
                     "type": "object",
                     "properties": {
                       "Authority": {
@@ -427,7 +427,7 @@
                     "type": "string",
                     "description": "The relationship to the BaseCRS.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateReferenceSystem:GeodeticCRS.EPSG.4230:",
+                    "example": "namespace:reference-data--CoordinateReferenceSystem:Geographic2D:EPSG:4230:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -473,7 +473,7 @@
                     "type": "string",
                     "description": "The relationship to the source CoordinateRefSystem.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateReferenceSystem:ProjectedCRS.EPSG.23031:",
+                    "example": "namespace:reference-data--CoordinateReferenceSystem:Projected:EPSG::23031:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -519,7 +519,7 @@
                     "type": "string",
                     "description": "The relationship to the TargetCRS.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateReferenceSystem:GeodeticCRS.EPSG.4326:",
+                    "example": "namespace:reference-data--CoordinateReferenceSystem:Geographic2D:EPSG::4326:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -603,13 +603,13 @@
                         },
                         "BoundingBoxWestBoundLongitude": {
                           "title": "West Longitude",
-                          "description": "Western latitude limit of the bounding box in degrees based on WGS 84",
+                          "description": "Western longitude limit of the bounding box in degrees based on WGS 84",
                           "type": "number",
                           "example": 0.0
                         },
                         "BoundingBoxEastBoundLongitude": {
                           "title": "East Longitude",
-                          "description": "Eastern latitude limit of the bounding box in degrees based on WGS 84",
+                          "description": "Eastern longitude limit of the bounding box in degrees based on WGS 84",
                           "type": "number",
                           "example": 6.01
                         },
@@ -664,7 +664,7 @@
                 "properties": {
                   "AuthorityCode": {
                     "title": "CoordinateSystem Authority Code",
-                    "description": "The CoordSys authority code, corresponding to the ISO19111 ID and 'projjson' id.",
+                    "description": "The CoordinateSystem authority code, corresponding to the ISO19111 ID and 'projjson' id.",
                     "type": "object",
                     "properties": {
                       "Authority": {
@@ -721,7 +721,7 @@
                 "properties": {
                   "AuthorityCode": {
                     "title": "Preferred Usage Authority Code",
-                    "description": "The Usage authority code, corresponding to the ISO19111 ID and 'projjson' id.",
+                    "description": "The PreferredUsage authority code, corresponding to the ISO19111 ID and 'projjson' id.",
                     "type": "object",
                     "properties": {
                       "Authority": {
@@ -752,7 +752,7 @@
                     "properties": {
                       "AuthorityCode": {
                         "title": "Preferred Extent Authority Code",
-                        "description": "The Extent authority code, corresponding to the ISO19111 ID and 'projjson' id.",
+                        "description": "The Preferred Extent authority code, corresponding to the ISO19111 ID and 'projjson' id.",
                         "type": "object",
                         "properties": {
                           "Authority": {
@@ -784,13 +784,13 @@
                       },
                       "BoundingBoxWestBoundLongitude": {
                         "title": "Preferred West Longitude",
-                        "description": "Western latitude limit of the bounding box in degrees based on WGS 84",
+                        "description": "Western longitude limit of the bounding box in degrees based on WGS 84",
                         "type": "number",
                         "example": 0.0
                       },
                       "BoundingBoxEastBoundLongitude": {
                         "title": "Preferred East Longitude",
-                        "description": "Eastern latitude limit of the bounding box in degrees based on WGS 84",
+                        "description": "Eastern longitude limit of the bounding box in degrees based on WGS 84",
                         "type": "number",
                         "example": 6.01
                       },
@@ -809,7 +809,7 @@
                     "properties": {
                       "AuthorityCode": {
                         "title": "Preferred Scope Authority Code",
-                        "description": "The Scope authority code, corresponding to the ISO19111 ID and 'projjson' id.",
+                        "description": "The Preferred Scope authority code, corresponding to the ISO19111 ID and 'projjson' id.",
                         "type": "object",
                         "properties": {
                           "Authority": {

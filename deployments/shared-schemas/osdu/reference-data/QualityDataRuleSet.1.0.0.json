@@ -122,6 +122,9 @@
               "DataRules": {
                 "description": "The list of QualityDataRule items that this QualityDataRuleSet consists of.",
                 "type": "array",
+                "x-osdu-indexing": {
+                  "type": "flattened"
+                },
                 "items": {
                   "type": "object",
                   "properties": {
