@@ -103,6 +103,38 @@ public class SchemaControllerTest {
         assertNotNull(schemaController.createSchema(schemaRequest));
     }
 
+    @Test(expected = BadRequestException.class)
+    public void testCreateAuthoritySchemaSpecialCharacters_Failed() throws ApplicationException, BadRequestException {
+        schemaRequest = getSchemaRequestSpecialCharactersAuthority();
+
+        when(schemaService.createSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        assertNotNull(schemaController.createSchema(schemaRequest));
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreateSourceSchemaSpecialCharacters_Failed() throws ApplicationException, BadRequestException {
+        schemaRequest = getSchemaRequestSpecialCharactersSource();
+
+        when(schemaService.createSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        assertNotNull(schemaController.createSchema(schemaRequest));
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreateEntitySchemaSpecialCharacters_Failed() throws ApplicationException, BadRequestException {
+        schemaRequest = getSchemaRequestSpecialCharactersEntity();
+
+        when(schemaService.createSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        assertNotNull(schemaController.createSchema(schemaRequest));
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testCreateAuthorityMultipleSpaces_Failed() throws ApplicationException, BadRequestException {
+        schemaRequest = getSchemaRequestMultipleSpacesAuthority();
+
+        when(schemaService.createSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        assertNotNull(schemaController.createSchema(schemaRequest));
+    }
+
     @Test
     public void testGetSchemaInfoList() throws ApplicationException, NotFoundException, BadRequestException {
         schemaRequest = getSchemaRequestObject();
@@ -176,6 +208,50 @@ public class SchemaControllerTest {
                 .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
                 .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os.well.1.4")
                         .schemaVersionMajor(1L).schemaVersionMinor(1L).source("").build())
+                .build()).build();
+    }
+
+    private SchemaRequest getSchemaRequestSpecialCharactersAuthority() {
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("  :").entityType("well").id("  :.well.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("   :").entityType("well").id("  :.well.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("").build())
+                .build()).build();
+    }
+
+    private SchemaRequest getSchemaRequestSpecialCharactersSource() {
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("well").id("os.  :.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("  :").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("os").entityType("well").id("os.  :.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("  :").build())
+                .build()).build();
+    }
+
+    private SchemaRequest getSchemaRequestSpecialCharactersEntity() {
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("os").entityType("  :").id("os.source.  :.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("source").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("os").entityType("  :").id("os.source.  :.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("source").build())
+                .build()).build();
+    }
+
+    private SchemaRequest getSchemaRequestMultipleSpacesAuthority() {
+        return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
+                .dateCreated(new Date(System.currentTimeMillis()))
+                .schemaIdentity(SchemaIdentity.builder().authority("     ").entityType("well").id("   .source.well.1.1")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("source").build())
+                .scope(SchemaScope.INTERNAL).status(SchemaStatus.DEVELOPMENT)
+                .supersededBy(SchemaIdentity.builder().authority("     ").entityType("well").id("   .source.well.1.4")
+                        .schemaVersionMajor(1L).schemaVersionMinor(1L).source("source").build())
                 .build()).build();
     }
 }

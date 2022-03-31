@@ -16,15 +16,15 @@ import org.opengroup.osdu.schema.constants.SchemaConstants;
 public class SchemaIdentity {
 
     @NotNull(message = "authority must not be null")
-    @Pattern(regexp = SchemaConstants.SCHEMA_EMPTY_REGEX, message = "authority must not be empty")
+    @Pattern(regexp = SchemaConstants.SCHEMA_EMPTY_REGEX, message = "authority must not contain whitespaces and special characters except - and .")
     private String authority;
 
     @NotNull(message = "source must not be null")
-    @Pattern(regexp = SchemaConstants.SCHEMA_EMPTY_REGEX, message = "source must not be empty")
+    @Pattern(regexp = SchemaConstants.SCHEMA_EMPTY_REGEX, message = "source must not contain whitespaces and special characters except - and .")
     private String source;
 
     @NotNull(message = "entityType must not be null")
-    @Pattern(regexp = SchemaConstants.SCHEMA_EMPTY_REGEX, message = "entityType must not be empty")
+    @Pattern(regexp = SchemaConstants.SCHEMA_EMPTY_REGEX, message = "entityType must not contain whitespaces and special characters except - and .")
     private String entityType;
 
     @NotNull(message = "schemaVersionMajor must not be null")
