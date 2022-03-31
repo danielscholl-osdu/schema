@@ -6,7 +6,7 @@
       {
         "domain": "global",
         "reason": "badRequest",
-        "message": "entityType must not be empty"
+        "message": "entityType must not contain whitespaces and special characters except - and ."
       }
     ]
   }
