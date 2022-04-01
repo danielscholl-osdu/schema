@@ -1,9 +1,10 @@
 data:
   data_partition_id: ""
-  onprem_enabled: "true"
   shema_host: "http://schema"
-  keycloak_secret_name: ""
+  image: ""
+  serviceAccountName: "schema-bootstrap"
 conf:
   app_name: "schema"
-  image: ""
+  keykloack-secret-name: "schema-keycloak-secret"
+  onprem_enabled: "true"
   imagePullSecrets: []

@@ -20,11 +20,12 @@ spec:
       {{- end }}
       containers:
         - name: "{{ .Values.conf.app_name }}-bootstrap-job"
-          image: "{{ .Values.conf.image }}"
+          image: "{{ .Values.data.image }}"
           envFrom:
           - configMapRef:
               name: "{{ .Values.conf.app_name }}-bootstrap-job-configmap"
           - secretRef:
               name: "{{ .Values.conf.app_name }}-bootstrap-job-secret"
       restartPolicy: Never
+      serviceAccountName: "{{ .Values.data.serviceAccountName }}"
   backoffLimit: 3
