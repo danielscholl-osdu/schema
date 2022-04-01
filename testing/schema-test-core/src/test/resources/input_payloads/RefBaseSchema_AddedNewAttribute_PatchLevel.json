@@ -5,7 +5,7 @@
 			"source": "testSource",
 			"entityType": "testEntity",
 			"schemaVersionMajor": 1,
-			"schemaVersionMinor": 1,
+			"schemaVersionMinor": 0,
 			"schemaVersionPatch": 0,
 			"id": "SchemaSanityTest:testSource:testEntity:1.1.0"
 		},
@@ -20,10 +20,12 @@
 		"definitions": {
 			"anyCrsFeatureCollection.1.0": {
 				"$schema": "http://json-schema.org/draft-07/schema#",
+				"title": "anyCrsFeatureCollection",
 				"type": "object"
 			},
-			"osdu:wks:well:1.0.0": {
+			"osdu:wks:well:2.1.1": {
 				"$schema": "http://json-schema.org/draft-07/schema#",
+				"title": "osdu.wks.well",
 				"type": "object"
 			}
 		},
@@ -33,11 +35,16 @@
 				"title": "OriginalCRSLocation",
 				"$ref": "#/definition/anyCrsFeatureCollection.1.0"
 			},
+			"locationOriginalABC": {
+				"description": "Thewell'soriginallocationasAnyCrsFeatureCollection-astructuresimilartobutdistinctfromGeoJSON.",
+				"title": "OriginalCRSLocation",
+				"type": "object"
+			},
 			"allOf": [{
-				"$ref": "#/definition/osdu:wks:well:1.0.0"
+				"$ref": "#/definition/osdu:wks:well:2.1.1"
 			}],
 			"locationWGS84": {
-				"description": "Thewell'slocationasGeoJSONFeatureCollection - Changed",
+				"description": "Thewell'slocationasGeoJSONFeatureCollection.",
 				"title": "WGS84Location",
 				"$ref": "https://geojson.org/schema/FeatureCollection.json",
 				"example": {
