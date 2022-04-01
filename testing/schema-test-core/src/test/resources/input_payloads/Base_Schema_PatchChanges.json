@@ -22,12 +22,9 @@
       "AddressLine1":{
          "type":"string",
          "$comment":"This is a mandatory attribute",
-         "description":"This should be the apartment number and building name"
+         "description":"This should be the apartment number and building name - Changed"
       },
       "AddressLine2":{
-         "type":"string"
-      },
-      "AddressLine3":{
          "type":"string"
       },
       "City":{
