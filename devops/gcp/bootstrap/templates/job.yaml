@@ -25,7 +25,7 @@ spec:
           - configMapRef:
               name: "{{ .Values.conf.app_name }}-bootstrap-job-configmap"
           - secretRef:
-              name: "{{ .Values.conf.app_name }}-bootstrap-job-secret"
+              name: "{{ .Values.conf.keycloak_secret_name }}"
       restartPolicy: Never
       serviceAccountName: "{{ .Values.data.serviceAccountName }}"
   backoffLimit: 3

@@ -5,6 +5,6 @@ data:
   serviceAccountName: "schema-bootstrap"
 conf:
   app_name: "schema"
-  keykloack-secret-name: "schema-keycloak-secret"
+  keycloak_secret_name: "schema-keycloak-secret"
   onprem_enabled: "true"
   imagePullSecrets: []
