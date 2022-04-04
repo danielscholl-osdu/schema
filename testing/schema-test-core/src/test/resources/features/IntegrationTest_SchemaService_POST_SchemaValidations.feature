@@ -584,3 +584,15 @@ Feature: To verify schema validation functionality of POST schema Service
     Examples: 
       | RefBaseInputPayload                      | InputPayloadWithChanges                                             | tenant    | ReponseStatusCode | ResponseMessage1                                                   | ReponseStatusCode1 | ResponseMessage                                             |
       | "/input_payloads/RefBaseSchema_New.json" | "/input_payloads/RefBaseSchema_EntityNameChanged_MinorVersion.json" | "TENANT1" | "400"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "201"              | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API responds as bad request for empty value of authority, source and entity
+    When I hit schema service POST API with <InputPayload> and data-partition-id as <tenant>
+    Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
+
+    Examples:
+      | InputPayload                                          | ReponseStatusCode | ResponseMessage                               | tenant    |
+      | "/input_payloads/inputPayloadWithEmptyAuthority.json" | "400"             | "/output_payloads/EmptyAuthorityPayload.json" | "TENANT1" |
+      | "/input_payloads/inputPayloadWithEmptyEntity.json"    | "400"             | "/output_payloads/EmptyEntityPayload.json"    | "TENANT1" |
+      | "/input_payloads/inputPayloadWithEmptySource.json"    | "400"             | "/output_payloads/EmptySourcePayload.json"    | "TENANT1" |
+
