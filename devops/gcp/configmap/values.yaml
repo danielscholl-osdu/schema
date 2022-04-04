@@ -14,5 +14,4 @@ data:
 conf:
   configmap: "schema-config"
   app_name: "schema"
-  secret_name: "schema-secret"
   on_prem_enabled: false
