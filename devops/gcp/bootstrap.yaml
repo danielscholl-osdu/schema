@@ -1,4 +1,5 @@
 osdu-gcp-bootstrap:
+  tags: ["osdu-small"]
   stage: bootstrap
   image: python:3.8
   needs: ["osdu-gcp-deploy-deployment"]
@@ -22,6 +23,7 @@ osdu-gcp-bootstrap:
       when: on_success
 
 osdu-gcp-bootstrap-dev2:
+  tags: ["osdu-small"]
   stage: bootstrap
   image: python:3.8
   needs: ["osdu-gcp-dev2-deploy-deployment"]
@@ -58,7 +60,7 @@ osdu-gcp-dev2-test:
 osdu-gcp-containerize-bootstrap-schema:
   stage: containerize
   image: docker:19.03.15
-  tags: ["osdu-medium"]
+  tags: ["osdu-small"]
   needs: ["compile-and-unit-test"]
   services:
     - docker:20.10.7-dind
