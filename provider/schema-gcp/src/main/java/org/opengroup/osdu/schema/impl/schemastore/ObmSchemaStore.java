@@ -17,6 +17,7 @@
 
 package org.opengroup.osdu.schema.impl.schemastore;
 
+import com.google.cloud.storage.StorageException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
@@ -33,6 +34,7 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.impl.mapper.AbstractMapperRepository;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
@@ -77,8 +79,8 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
         try {
             blob = driver.getBlobContent(bucketName, filePath, getDestination());
         } catch (ObmDriverRuntimeException | NullPointerException ex){
-            if (ex instanceof NullPointerException
-                    || NO_SUCH_KEY.equals(((ObmDriverRuntimeException)ex.getCause()).getError())){
+            if (isNotFoundException(ex)){
+                log.warning(ex.getMessage());
                 throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
             }
             else {
@@ -90,6 +92,25 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
             return new String(blob, StandardCharsets.UTF_8);
         }
         throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
+    }
+
+    private boolean isNotFoundException(RuntimeException ex) {
+        if (ex instanceof NullPointerException){
+            return true;
+        }
+
+        ObmDriverRuntimeException obmException = (ObmDriverRuntimeException) ex;
+
+        if (obmException.getCause() instanceof ObmDriverRuntimeException){
+            ObmDriverRuntimeException cause = (ObmDriverRuntimeException) obmException.getCause();
+            return NO_SUCH_KEY.equals(cause.getError());
+        }
+
+        if (obmException.getCause() instanceof StorageException){
+            return HttpStatus.NOT_FOUND.value() == (((StorageException) obmException.getCause()).getCode());
+        }
+
+        return false;
     }
 
     /**

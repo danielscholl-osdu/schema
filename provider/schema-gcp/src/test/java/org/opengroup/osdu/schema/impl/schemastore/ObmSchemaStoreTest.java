@@ -1,5 +1,6 @@
 package org.opengroup.osdu.schema.impl.schemastore;
 
+import com.google.cloud.storage.StorageException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -160,6 +161,20 @@ public class ObmSchemaStoreTest {
         when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(TenantInfo);
         when(TenantInfo.getProjectId()).thenReturn("test");
         when(driver.getBlobContent(BUCKET, filePath, DESTINATION)).thenReturn(null);
+        schemaStore.getSchema(dataPartitionId, FILE_PATH);
+    }
+
+    @Test
+    public void testGetSchema_NotFound_StorageException() throws ApplicationException, NotFoundException {
+
+        expectedException.expect(NotFoundException.class);
+        expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
+        String filePath = FILE_PATH + SchemaConstants.JSON_EXTENSION;
+        ObmDriverRuntimeException obmDriverRuntimeException = new ObmDriverRuntimeException(new StorageException(404, "test"));
+
+        when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(TenantInfo);
+        when(TenantInfo.getProjectId()).thenReturn("test");
+        when(driver.getBlobContent(BUCKET, filePath, DESTINATION)).thenThrow(obmDriverRuntimeException);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
 
