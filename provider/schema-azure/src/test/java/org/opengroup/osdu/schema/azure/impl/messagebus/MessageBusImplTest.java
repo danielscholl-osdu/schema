@@ -44,14 +44,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opengroup.osdu.azure.eventgrid.EventGridTopicStore;
+import org.opengroup.osdu.azure.publisherFacade.MessagePublisher;
+import org.opengroup.osdu.azure.publisherFacade.PublisherInfo;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.di.EventGridConfig;
+import org.opengroup.osdu.schema.azure.di.PubSubConfig;
 import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.azure.impl.messagebus.model.SchemaPubSubInfo;
+import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.logging.AuditLogger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.microsoft.azure.eventgrid.models.EventGridEvent;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
@@ -67,25 +72,21 @@ public class MessageBusImplTest {
     private static final String sharedTenantId = "common";
 
     @Mock
-    private EventGridTopicStore eventGridTopicStore;
-    
-    @Mock
     private EventGridConfig eventGridConfig;
-    
     @Mock
     private DpsHeaders dpsHeaders;
-    
     @Mock
     private JaxRsDpsLog logger;
-    
     @Mock
    	private AuditLogger auditLogger;
-
     @Mock
     private ITenantFactory tenantFactory;
-
     @Mock
     SystemResourceConfig systemResourceConfig;
+    @Mock
+    private MessagePublisher messagePublisher;
+    @Mock
+	private PubSubConfig pubSubConfig;
     
     @InjectMocks
     private MessageBusImpl messageBusImpl;
@@ -104,10 +105,11 @@ public class MessageBusImplTest {
     public void should_publishToEventGrid_WhenFlagIsFalse() {
     	//The schema-notification is turned off
     	when(this.eventGridConfig.isEventGridEnabled()).thenReturn(false);
+    	when(this.pubSubConfig.isServiceBusEnabled()).thenReturn(false);
         //Call publish Message
         messageBusImpl.publishMessage("dummy", "dummy");
         //Assert that eventGridTopicStore is not called even once
-        verify(this.eventGridTopicStore, times(0)).publishToEventGridTopic(any(), any(), anyList());
+        verify(this.messagePublisher, times(0)).publishMessage(any(), any());
     }
 
     @Test
@@ -115,91 +117,76 @@ public class MessageBusImplTest {
         Mockito.when(dpsHeaders.getPartitionId()).thenReturn(sharedTenantId);
         //The schema-notification is turned off
         when(this.eventGridConfig.isEventGridEnabled()).thenReturn(false);
+        when(this.pubSubConfig.isServiceBusEnabled()).thenReturn(false);
         //Call publish Message
         messageBusImpl.publishMessageForSystemSchema("dummy", "dummy");
         messageBusImpl.publishMessage("dummy", "dummy");
         //Assert that eventGridTopicStore is not called even once
-        verify(this.eventGridTopicStore, times(0)).publishToEventGridTopic(any(), any(), anyList());
+        verify(this.messagePublisher, times(0)).publishMessage(any(), any());
     }
     
     @Test
-    public void should_publishToEventGrid_WhenFlagIsTrue() {
+    public void should_publishToEventGridOnly_WhenFlagIsTrue() {
     	
     	//The schema-notification is turned on
     	when(this.eventGridConfig.isEventGridEnabled()).thenReturn(true);
+    	when(this.pubSubConfig.isServiceBusEnabled()).thenReturn(false);
     	//The schema-notification is turned off
     	when(this.eventGridConfig.getCustomTopicName()).thenReturn("dummy-topic");
-    	//The schema-notification is turned off
-    	doNothing().when(this.eventGridTopicStore).publishToEventGridTopic(anyString(), anyString(), anyList());;
-    	ArgumentCaptor<ArrayList<EventGridEvent>> captorList = ArgumentCaptor.forClass(ArrayList.class);
+    	
+    	ArgumentCaptor<PublisherInfo> captorArg = ArgumentCaptor.forClass(PublisherInfo.class);
     	
     	
     	SchemaPubSubInfo[] schemaPubSubMsgs = new SchemaPubSubInfo [1];
 		schemaPubSubMsgs[0]=new SchemaPubSubInfo("dummy","schema_create");
     	
-    	HashMap<String, Object> data = new HashMap<>();
-		data.put("data", schemaPubSubMsgs);
-		data.put(DpsHeaders.ACCOUNT_ID, DATA_PARTITION_WITH_FALLBACK_ACCOUNT_ID);
-		data.put(DpsHeaders.DATA_PARTITION_ID, PARTITION_ID);
-		data.put(DpsHeaders.CORRELATION_ID, CORRELATION_ID);
-        
+		//The schema-notification is turned off
+    	doNothing().when(this.messagePublisher).publishMessage(any(), any());
+		
 		//Call publish Message
     	messageBusImpl.publishMessage("dummy", "schema_create");
         
     	//Assert that eventGridTopicStore is called once
-        verify(this.eventGridTopicStore, times(1)).publishToEventGridTopic(anyString(), anyString(), captorList.capture());
-        ArrayList<EventGridEvent> eventGridList = captorList.getValue();
-        assertNotNull(eventGridList);
-        assertThat(eventGridList.size(), is(equalTo(1)));
+        verify(this.messagePublisher, times(1)).publishMessage(any(), captorArg.capture());
+        PublisherInfo publisherInfoCaptured = captorArg.getValue();
+        assertNotNull(publisherInfoCaptured);
         
-        HashMap<String, Object> outputData = (HashMap<String, Object>)eventGridList.get(0).data();
-        assertEquals(((SchemaPubSubInfo[])outputData.get("data"))[0].getKind(), "dummy");
-        assertEquals(((SchemaPubSubInfo[])outputData.get("data"))[0].getOp(), "schema_create");
-
+        SchemaPubSubInfo schemaPubSubInfoActual = ((SchemaPubSubInfo[])publisherInfoCaptured.getBatch())[0];
+        assertEquals("dummy", schemaPubSubInfoActual.getKind());
+        assertEquals("schema_create", schemaPubSubInfoActual.getOp());
+        
     }
-
+    
     @Test
-    public void should_publishToEventGrid_WhenFlagIsTrue_PublicSchemas() {
-
-        Mockito.when(dpsHeaders.getPartitionId()).thenReturn(sharedTenantId);
-        TenantInfo tenant1 = new TenantInfo();
-        tenant1.setName(PARTITION_ID);
-        tenant1.setDataPartitionId(PARTITION_ID);
-        TenantInfo tenant2 = new TenantInfo();
-        tenant2.setName(OTHER_TENANT);
-        tenant2.setDataPartitionId(OTHER_TENANT);
-        Collection<TenantInfo> tenants = Lists.newArrayList(tenant1, tenant2);
-        when(this.tenantFactory.listTenantInfo()).thenReturn(tenants);
-
-        //The schema-notification is turned on
-        when(this.eventGridConfig.isEventGridEnabled()).thenReturn(true);
-        when(this.eventGridConfig.getCustomTopicName()).thenReturn("dummy-topic");
-        doNothing().when(this.eventGridTopicStore).publishToEventGridTopic(anyString(), anyString(), anyList());;
-        ArgumentCaptor<ArrayList<EventGridEvent>> captorList = ArgumentCaptor.forClass(ArrayList.class);
-
-
-        SchemaPubSubInfo[] schemaPubSubMsgs = new SchemaPubSubInfo [1];
-        schemaPubSubMsgs[0]=new SchemaPubSubInfo("dummy","schema_create");
-
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("data", schemaPubSubMsgs);
-        data.put(DpsHeaders.ACCOUNT_ID, PARTITION_ID);
-        data.put(DpsHeaders.DATA_PARTITION_ID, PARTITION_ID);
-        data.put(DpsHeaders.CORRELATION_ID, CORRELATION_ID);
-
-        //Call publish Message
-        messageBusImpl.publishMessageForSystemSchema("dummy", "schema_create");
-
-        //Assert that eventGridTopicStore is called once
-        verify(this.eventGridTopicStore, times(2)).publishToEventGridTopic(anyString(), anyString(), captorList.capture());
-        ArrayList<EventGridEvent> eventGridList = captorList.getValue();
-        assertNotNull(eventGridList);
-        assertThat(eventGridList.size(), is(equalTo(1)));
-
-        HashMap<String, Object> outputData = (HashMap<String, Object>)eventGridList.get(0).data();
-        assertEquals(((SchemaPubSubInfo[])outputData.get("data"))[0].getKind(), "dummy");
-        assertEquals(((SchemaPubSubInfo[])outputData.get("data"))[0].getOp(), "schema_create");
-
+    public void should_publishToServiceBusOnly_WhenFlagIsTrue() {
+    	
+    	//The schema-notification is turned on
+    	when(this.eventGridConfig.isEventGridEnabled()).thenReturn(false);
+    	when(this.pubSubConfig.isServiceBusEnabled()).thenReturn(true);
+    	//The schema-notification is turned off
+    	when(this.eventGridConfig.getCustomTopicName()).thenReturn("dummy-topic");
+    	
+    	ArgumentCaptor<PublisherInfo> captorArg = ArgumentCaptor.forClass(PublisherInfo.class);
+    	
+    	
+    	SchemaPubSubInfo[] schemaPubSubMsgs = new SchemaPubSubInfo [1];
+		schemaPubSubMsgs[0]=new SchemaPubSubInfo("dummy","schema_create");
+    	
+		//The schema-notification is turned off
+    	doNothing().when(this.messagePublisher).publishMessage(any(), any());
+		
+		//Call publish Message
+    	messageBusImpl.publishMessage("dummy", "schema_create");
+        
+    	//Assert that eventGridTopicStore is called once
+        verify(this.messagePublisher, times(1)).publishMessage(any(), captorArg.capture());
+        PublisherInfo publisherInfoCaptured = captorArg.getValue();
+        assertNotNull(publisherInfoCaptured);
+        
+        SchemaPubSubInfo schemaPubSubInfoActual = ((SchemaPubSubInfo[])publisherInfoCaptured.getBatch())[0];
+        assertEquals("dummy", schemaPubSubInfoActual.getKind());
+        assertEquals("schema_create", schemaPubSubInfoActual.getOp());
+        
     }
 
 }

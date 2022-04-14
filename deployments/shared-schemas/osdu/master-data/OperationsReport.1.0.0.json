@@ -1557,49 +1557,6 @@
                   }
                 ]
               },
-              "TotalCost": {
-                "type": "number",
-                "title": "Total Cost",
-                "description": "Cumulative cost for the job through the end of current report",
-                "x-osdu-attribution-authority": "The Open Group",
-                "x-osdu-attribution-publication": "The OSDU Data Platform",
-                "x-osdu-attribution-revision": "1.0.0"
-              },
-              "TargetCost": {
-                "type": "number",
-                "title": "Target Cost",
-                "description": "Authorized cost for the total job",
-                "x-osdu-attribution-authority": "The Open Group",
-                "x-osdu-attribution-publication": "The OSDU Data Platform",
-                "x-osdu-attribution-revision": "1.0.0"
-              },
-              "TotalDays": {
-                "type": "number",
-                "title": "Total Days",
-                "description": "Cumulative days for the job through the end of the current report",
-                "x-osdu-frame-of-reference": "UOM:time",
-                "x-osdu-attribution-authority": "The Open Group",
-                "x-osdu-attribution-publication": "The OSDU Data Platform",
-                "x-osdu-attribution-revision": "1.0.0"
-              },
-              "TargetDays": {
-                "type": "number",
-                "title": "Target Days",
-                "description": "Planned days for the total job",
-                "x-osdu-frame-of-reference": "UOM:time",
-                "x-osdu-attribution-authority": "The Open Group",
-                "x-osdu-attribution-publication": "The OSDU Data Platform",
-                "x-osdu-attribution-revision": "1.0.0"
-              },
-              "TotalNPT": {
-                "type": "number",
-                "title": "Total Non-Productive Time",
-                "description": "Total days of non-productive time through the end of the current report",
-                "x-osdu-frame-of-reference": "UOM:time",
-                "x-osdu-attribution-authority": "The Open Group",
-                "x-osdu-attribution-publication": "The OSDU Data Platform",
-                "x-osdu-attribution-revision": "1.0.0"
-              },
               "Weather": {
                 "type": "array",
                 "title": "Weather",
@@ -3390,6 +3347,54 @@
                 "x-osdu-attribution-authority": "The Open Group",
                 "x-osdu-attribution-publication": "The OSDU Data Platform",
                 "x-osdu-attribution-revision": "1.0.0"
+              },
+              "TotalCost": {
+                "type": "number",
+                "title": "Total Cost",
+                "description": "Cumulative cost for the job through the end of current report",
+                "x-osdu-attribution-authority": "The Open Group",
+                "x-osdu-attribution-publication": "The OSDU Data Platform",
+                "x-osdu-attribution-revision": "1.0.0"
+              },
+              "TargetCost": {
+                "type": "number",
+                "title": "Target Cost",
+                "description": "Authorized cost for the total job",
+                "x-osdu-attribution-authority": "The Open Group",
+                "x-osdu-attribution-publication": "The OSDU Data Platform",
+                "x-osdu-attribution-revision": "1.0.0"
+              },
+              "TargetDays": {
+                "type": "number",
+                "title": "Target Days",
+                "description": "Planned days for the total job",
+                "x-osdu-frame-of-reference": "UOM:time",
+                "x-osdu-attribution-authority": "The Open Group",
+                "x-osdu-attribution-publication": "The OSDU Data Platform",
+                "x-osdu-attribution-revision": "1.0.0"
+              },
+              "TotalDays": {
+                "type": "number",
+                "title": "Total Days",
+                "description": "Cumulative days for the job through the end of the current report",
+                "x-osdu-frame-of-reference": "UOM:time",
+                "x-osdu-attribution-authority": "The Open Group",
+                "x-osdu-attribution-publication": "The OSDU Data Platform",
+                "x-osdu-attribution-revision": "1.0.0"
+              },
+              "TotalNPT": {
+                "type": "number",
+                "title": "Total Non-Productive Time",
+                "description": "Total days of non-productive time through the end of the current report",
+                "x-osdu-frame-of-reference": "UOM:time",
+                "x-osdu-attribution-authority": "The Open Group",
+                "x-osdu-attribution-publication": "The OSDU Data Platform",
+                "x-osdu-attribution-revision": "1.0.0"
+              },
+              "Name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Name of Operations Report"
               }
             },
             "required": [

@@ -3,13 +3,15 @@
 # Declare variables to be passed into your templates.
 
 data:
+  # common
   log_level: ""
-  authorize_api: ""
-  partition_api: ""
+  spring_profiles_active: "gcp"
+  gcp_schema_changed_topic_name: "schema_changed"
+  # gcp
   google_audiences: ""
   shared_tenant_name: ""
-  spring_profiles_active: "gcp"
 
 conf:
   configmap: "schema-config"
   app_name: "schema"
+  on_prem_enabled: false

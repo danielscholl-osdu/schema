@@ -7,10 +7,14 @@ data:
   requests_memory: "384M"
   limits_cpu: "1"
   limits_memory: "1G"
-  serviceAccountName: ""
+  serviceAccountName: "schema"
   imagePullPolicy: "IfNotPresent"
   image: ""
 
 conf:
   configmap: "schema-config"
   app_name: "schema"
+  minio_secret_name: "minio-secret"
+  postgres_secret_name: ""
+  rabbitmq_secret_name: ""
+  on_prem_enabled: false

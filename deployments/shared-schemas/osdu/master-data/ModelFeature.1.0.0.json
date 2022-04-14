@@ -113,7 +113,13 @@
           },
           {
             "type": "object",
-            "properties": {},
+            "properties": {
+              "Name": {
+                "type": "string",
+                "title": "Name",
+                "description": "The name of the model feature."
+              }
+            },
             "title": "IndividualProperties"
           },
           {

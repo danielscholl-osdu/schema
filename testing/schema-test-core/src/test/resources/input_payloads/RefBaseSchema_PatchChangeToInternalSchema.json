@@ -33,15 +33,11 @@
 				"title": "OriginalCRSLocation",
 				"$ref": "#/definition/anyCrsFeatureCollection.1.0"
 			},
-			"location": {
-				"description": "Thewell'soriginallocationasAnyCrsFeatureCollection-astructuresimilartobutdistinctfromGeoJSON.",
-				"title": "OriginalLocation"
-			},
 			"allOf": [{
 				"$ref": "#/definition/osdu:wks:well:1.0.0"
 			}],
 			"locationWGS84": {
-				"description": "Thewell'slocationasGeoJSONFeatureCollection.",
+				"description": "Thewell'slocationasGeoJSONFeatureCollection - Changed",
 				"title": "WGS84Location",
 				"$ref": "https://geojson.org/schema/FeatureCollection.json",
 				"example": {

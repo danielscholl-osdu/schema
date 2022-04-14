@@ -30,3 +30,8 @@ image:
   tag: #{Build.SourceVersion}#
 
 default_tenant: #{DEFAULT_TENANT}#
+
+featureFlag:
+  notificationv2:
+    enabledEnvs:
+    - dev
