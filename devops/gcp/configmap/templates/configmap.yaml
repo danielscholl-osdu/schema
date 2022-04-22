@@ -3,15 +3,15 @@ kind: ConfigMap
 metadata:
   labels:
     app: "{{ .Values.conf.app_name }}"
-  annotations:
-    rollme: {{ randAlphaNum 5 | quote }}
   name: "{{ .Values.conf.configmap }}"
   namespace: "{{ .Release.Namespace }}"
 data:
   LOG_LEVEL: "{{ .Values.data.log_level }}"
-  SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
+  ENTITLEMENTS_HOST: "{{ .Values.data.entitlements_host }}"
   GCP_SCHEMA_CHANGED_TOPIC_NAME: "{{ .Values.data.gcp_schema_changed_topic_name }}"
+  PARTITION_HOST: "{{ .Values.data.partition_host }}"
+  SHARED_TENANT_NAME: "{{ .Values.data.shared_tenant_name }}"
+  SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
   {{- if not .Values.conf.on_prem_enabled }}
   GOOGLE_AUDIENCES: "{{ .Values.data.google_audiences }}"
-  SHARED_TENANT_NAME: "{{ .Values.data.shared_tenant_name }}"
   {{- end }}

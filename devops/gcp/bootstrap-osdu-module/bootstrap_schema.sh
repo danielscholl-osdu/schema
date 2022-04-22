@@ -1,36 +1,35 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 source ./validate-env.sh "DATA_PARTITION"
 source ./validate-env.sh "SCHEMA_URL"
 
-sleep 10
-
 bootstrap_schema_onprem() {
 
-    export BEARER_TOKEN="$(curl --location --request POST "${OPENID_PROVIDER_URL}/protocol/openid-connect/token" \
-    --header "Content-Type: application/x-www-form-urlencoded" \
-    --data-urlencode "grant_type=client_credentials" \
-    --data-urlencode "scope=openid" \
-    --data-urlencode "client_id=${OPENID_PROVIDER_CLIENT_ID}" \
-    --data-urlencode "client_secret=${OPENID_PROVIDER_CLIENT_SECRET}" | jq -r ".id_token")"
+  export BEARER_TOKEN="$(curl --location --request POST "${OPENID_PROVIDER_URL}/protocol/openid-connect/token" \
+  --header "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "grant_type=client_credentials" \
+  --data-urlencode "scope=openid" \
+  --data-urlencode "client_id=${OPENID_PROVIDER_CLIENT_ID}" \
+  --data-urlencode "client_secret=${OPENID_PROVIDER_CLIENT_SECRET}" | jq -r ".id_token")"
 
-    echo "Bootstrap Schema Service"
-    python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schema
+  echo "Bootstrap Schema Service"
+  python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schema
 
 }
 
 bootstrap_schema_gcp() {
-    export BEARER_TOKEN=`gcloud auth print-identity-token --audiences=${AUDIENCES}`
 
-    echo "Clean-up for Datastore schemas"
-    python3 ./scripts/GcpDatastoreCleanUp.py
+  export BEARER_TOKEN=`gcloud auth print-identity-token --audiences=${AUDIENCES}`
 
-    sleep 5
+  echo "Clean-up for Datastore schemas"
+  python3 ./scripts/GcpDatastoreCleanUp.py
 
-    echo "Bootstrap Schema Service"
-    python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schema
+  sleep 5
+
+  echo "Bootstrap Schema Service"
+  python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schema
 
 }
 

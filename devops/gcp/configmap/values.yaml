@@ -1,17 +1,23 @@
-# Default values for schema-configmap.
+# Default values for schema and bootstrap configmaps.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 data:
   # common
-  log_level: ""
-  spring_profiles_active: "gcp"
+  entitlements_host: "http://entitlements"
   gcp_schema_changed_topic_name: "schema_changed"
+  log_level: "INFO"
+  partition_host: "http://partition"
+  shared_tenant_name: ""
+  spring_profiles_active: "gcp"
   # gcp
   google_audiences: ""
-  shared_tenant_name: ""
+  # bootstrap
+  data_partition_id: ""
+  schema_host: "http://schema"
 
 conf:
-  configmap: "schema-config"
   app_name: "schema"
+  bootstrap_namespace: "default"
+  configmap: "schema-config"
   on_prem_enabled: false
