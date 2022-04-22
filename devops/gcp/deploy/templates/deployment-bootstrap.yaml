@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "{{ .Values.conf.app_name }}-bootstrap"
+  name: "{{ .Values.conf.app_name }}-bootstrap"
+  # FIXME should be "{{ .Release.Namespace }}"
+  namespace: "{{ .Values.conf.bootstrap_namespace }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.conf.app_name }}-bootstrap"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.conf.app_name }}-bootstrap"
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      containers:
+        - name: "{{ .Values.conf.app_name }}-bootstrap"
+          image: "{{ .Values.data.bootstrap_image }}"
+          imagePullPolicy: "{{ .Values.data.imagePullPolicy }}"
+          envFrom:
+          - configMapRef:
+              name: "{{ .Values.conf.configmap }}-bootstrap"
+          {{- if .Values.conf.on_prem_enabled }}
+          - secretRef:
+              name: "{{ .Values.conf.bootstrap_secret_name }}"
+          {{- end }}
+          resources:
+            limits:
+              cpu: "{{ .Values.data.bootstrap_limits_cpu}}"
+              memory: "{{ .Values.data.bootstrap_limits_memory }}"
+      serviceAccountName: "{{ .Values.data.bootstrapServiceAccountName }}"

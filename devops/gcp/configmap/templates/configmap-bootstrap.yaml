@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: "{{ .Values.conf.app_name }}-bootstrap"
+  name: "{{ .Values.conf.configmap }}-bootstrap"
+  # FIXME should be "{{ .Release.Namespace }}"
+  namespace: "{{ .Values.conf.bootstrap_namespace }}"
+data:
+  DATA_PARTITION: "{{ .Values.data.data_partition_id }}"
+  ONPREM_ENABLED: "{{ .Values.conf.on_prem_enabled }}"
+  SCHEMA_URL: "{{ .Values.data.schema_host }}"
+  {{- if not .Values.conf.on_prem_enabled }}
+  AUDIENCES: "{{ .Values.data.google_audiences }}"
+  {{- end }}  
