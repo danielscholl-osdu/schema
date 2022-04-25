@@ -296,8 +296,8 @@ It can be overridden by:
 | Property | Description |
 | --- | --- |
 | obm.minio.endpoint | - url |
-| obm.minio.credentials.accessKey | - username |
-| obm.minio.credentials.secretKey | - password |
+| obm.minio.accessKey | - username |
+| obm.minio.secretKey | - password |
 
 <details><summary>Example of a single tenant definition</summary>
 
@@ -309,11 +309,11 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
       "sensitive": false,
       "value": "localhost"
     },
-    "obm.minio.credentials.accessKey": {
+    "obm.minio.accessKey": {
       "sensitive": false,
       "value": "minioadmin"
     },
-    "obm.minio.credentials.secretKey": {
+    "obm.minio.secretKey": {
       "sensitive": false,
       "value": "<MINIO_SECRETKEY_ENV_VARIABLE_NAME>" <- (Not actual value, just name of env variable)
     }
