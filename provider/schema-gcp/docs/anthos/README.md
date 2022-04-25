@@ -9,6 +9,7 @@ Must have:
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
 | `SPRING_PROFILES_ACTIVE` | ex `anthos` | Spring profile that activate default configuration for GCP environment | false | - |
+| `SHARED_TENANT_NAME` | ex `anthos` | Shared account id | no | - |
 | `<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | Potgres user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service)  | yes | - |
 | `<MINIO_SECRETKEY_ENV_VARIABLE_NAME>` | ex `password` | Minio password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
 | `<AMQP_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
@@ -295,8 +296,8 @@ It can be overridden by:
 | Property | Description |
 | --- | --- |
 | obm.minio.endpoint | - url |
-| obm.minio.credentials.access.key | - username |
-| obm.minio.credentials.secret.key | - password |
+| obm.minio.credentials.accessKey | - username |
+| obm.minio.credentials.secretKey | - password |
 
 <details><summary>Example of a single tenant definition</summary>
 
@@ -308,11 +309,11 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
       "sensitive": false,
       "value": "localhost"
     },
-    "obm.minio.credentials.access.key": {
+    "obm.minio.credentials.accessKey": {
       "sensitive": false,
       "value": "minioadmin"
     },
-    "obm.minio.credentials.secret.key": {
+    "obm.minio.credentials.secretKey": {
       "sensitive": false,
       "value": "<MINIO_SECRETKEY_ENV_VARIABLE_NAME>" <- (Not actual value, just name of env variable)
     }
