@@ -10,7 +10,7 @@ data:
   bootstrap_limits_cpu: "0.05"
   bootstrap_limits_memory: "50M"
   bootstrap_image: ""
-  bootstrapServiceAccountName: "schema-bootstrap"
+  bootstrapServiceAccountName: ""
   image: ""
   imagePullPolicy: "IfNotPresent"
   serviceAccountName: "schema"
