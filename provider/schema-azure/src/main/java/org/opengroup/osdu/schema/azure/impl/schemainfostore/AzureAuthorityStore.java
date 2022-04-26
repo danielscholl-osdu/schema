@@ -72,10 +72,6 @@ public class AzureAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority get(String authorityId) throws NotFoundException, ApplicationException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.getSystemAuthority(authorityId);
-        }
 
         String id = headers.getPartitionId() + ":" + authorityId;
         AuthorityDoc authorityDoc;
@@ -111,10 +107,6 @@ public class AzureAuthorityStore implements IAuthorityStore {
      */
     @Override
     public Authority create(Authority authority) throws ApplicationException, BadRequestException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.createSystemAuthority(authority);
-        }
 
         String id = headers.getPartitionId() + ":" + authority.getAuthorityId();
 

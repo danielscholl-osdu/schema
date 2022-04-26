@@ -102,6 +102,8 @@ curl -L -X PATCH 'http://partition.com/api/partition/v1/partitions/opendes' -H '
 
 ### Schema configuration:
 
+For private tenants:
+
 ```
 -- Table: dataecosystem.authority
 -- DROP TABLE IF EXISTS dataecosystem.authority;
@@ -181,6 +183,89 @@ CREATE INDEX IF NOT EXISTS source_datagin
     TABLESPACE pg_default;
 
 ```
+
+For shared tenant:
+
+```
+-- Table: dataecosystem.system_authority
+-- DROP TABLE IF EXISTS dataecosystem.system_authority;
+CREATE TABLE IF NOT EXISTS dataecosystem.system_authority
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "Authority_pkey" PRIMARY KEY (pk),
+    CONSTRAINT authority_id UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem.system_authority
+    OWNER to postgres;
+-- Index: system_authority_datagin
+-- DROP INDEX IF EXISTS dataecosystem.system_authority_datagin;
+CREATE INDEX IF NOT EXISTS system_authority_datagin
+    ON dataecosystem.system_authority USING gin
+    (data)
+    TABLESPACE pg_default;
+-- Table: dataecosystem.system_entityType
+-- DROP TABLE IF EXISTS dataecosystem."system_entityType";
+CREATE TABLE IF NOT EXISTS dataecosystem."system_entityType"
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "EntityType_pkey" PRIMARY KEY (pk),
+    CONSTRAINT entitytype_id UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem."system_entityType"
+    OWNER to postgres;
+-- Index: system_entityType_datagin
+-- DROP INDEX IF EXISTS dataecosystem.system_entityType_datagin;
+CREATE INDEX IF NOT EXISTS system_entityType_datagin
+    ON dataecosystem."system_entityType" USING gin
+    (data)
+    TABLESPACE pg_default;
+    -- Table: dataecosystem.system_schema_osm
+-- DROP TABLE IF EXISTS dataecosystem."system_schema_osm";
+CREATE TABLE IF NOT EXISTS dataecosystem."system_schema_osm"
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "Schema_pkey" PRIMARY KEY (pk),
+    CONSTRAINT schemarequest_id UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem."system_schema_osm"
+    OWNER to postgres;
+-- Index: schemarequest_datagin
+-- DROP INDEX IF EXISTS dataecosystem.schemarequest_datagin;
+CREATE INDEX IF NOT EXISTS schemarequest_datagin
+    ON dataecosystem."system_schema_osm" USING gin
+    (data)
+    TABLESPACE pg_default;
+    -- Table: dataecosystem.system_source
+-- DROP TABLE IF EXISTS dataecosystem.system_source;
+CREATE TABLE IF NOT EXISTS dataecosystem.system_source
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "Source_pkey" PRIMARY KEY (pk),
+    CONSTRAINT source_id UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem.system_source
+    OWNER to postgres;
+-- Index: system_source_datagin
+-- DROP INDEX IF EXISTS dataecosystem.system_source_datagin;
+CREATE INDEX IF NOT EXISTS system_source_datagin
+    ON dataecosystem.system_source USING gin
+    (data)
+    TABLESPACE pg_default;
+
+```
+
 
 ## RabbitMQ configuration:
 
@@ -330,6 +415,9 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
 MinIO (or any other supported by OBM)
 
 #### Per-tenant buckets configuration
+
+For each private tenant:
+
 These buckets must be defined in tenants’ dedicated object store servers. OBM connection properties of these servers (url, etc.) are defined as specific properties in tenants’ PartitionInfo registration objects at the Partition service as described in accordant sections of this document.
 
 <table>
@@ -341,6 +429,23 @@ These buckets must be defined in tenants’ dedicated object store servers. OBM 
   </tr>
   <tr>
    <td>&lt;PartitionInfo.projectId>-<strong>schema</strong>
+   </td>
+   <td>ListObjects, CRUDObject
+   </td>
+  </tr>
+</table>
+
+For shared tenant only:
+
+<table>
+  <tr>
+   <td>Bucket Naming template 
+   </td>
+   <td>Permissions required
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;PartitionInfo.projectId><strong>-system-schema</strong>
    </td>
    <td>ListObjects, CRUDObject
    </td>

@@ -15,7 +15,7 @@ bootstrap_schema_onprem() {
   --data-urlencode "client_secret=${OPENID_PROVIDER_CLIENT_SECRET}" | jq -r ".id_token")"
 
   echo "Bootstrap Schema Service"
-  python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schema
+  python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schemas/system
 
 }
 
@@ -29,7 +29,7 @@ bootstrap_schema_gcp() {
   sleep 5
 
   echo "Bootstrap Schema Service"
-  python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schema
+  python3 ./scripts/DeploySharedSchemas.py -u ${SCHEMA_URL}/api/schema-service/v1/schemas/system
 
 }
 

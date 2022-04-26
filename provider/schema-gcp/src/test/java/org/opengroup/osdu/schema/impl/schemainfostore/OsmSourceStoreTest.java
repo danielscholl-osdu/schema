@@ -16,6 +16,7 @@ import org.opengroup.osdu.core.gcp.osm.model.Kind;
 import org.opengroup.osdu.core.gcp.osm.model.Namespace;
 import org.opengroup.osdu.core.gcp.osm.service.Context;
 import org.opengroup.osdu.core.gcp.osm.translate.TranslatorRuntimeException;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.impl.OsmDestinationProvider;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -66,10 +67,13 @@ public class OsmSourceStoreTest {
     @Mock
     OsmDestinationProvider destinationProvider;
 
+    @Mock
+    PropertiesConfiguration configuration;
 
     @Before
     public void setUp() {
-        ReflectionTestUtils.setField(osmSourceStore, "sharedTenant", COMMON_TENANT_ID);
+        when(configuration.getSharedTenantName()).thenReturn(COMMON_TENANT_ID);
+        ReflectionTestUtils.setField(osmSourceStore, "configuration", configuration);
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
 

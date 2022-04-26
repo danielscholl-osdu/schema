@@ -12,7 +12,6 @@ class RunEnv(object):
     APP_KEY = os.environ.get('APP_KEY')
     SCHEMA_SERVICE_URL = None
     STORAGE_SERVICE_URL = None
-    DATA_PARTITION = os.environ.get('DATA_PARTITION')
     SCHEMA_AUTHORITY = os.environ.get('SCHEMA_AUTHORITY')
     SCHEMAS_FOLDER = 'shared-schemas'
     DEFAULT_BOOTSTRAP_OPTIONS = '[{"authority": "osdu", "folder": "osdu", "load-sequence": "load_sequence.1.0.0.json"}]'
@@ -27,7 +26,7 @@ class RunEnv(object):
         ok = True
         if storage_service: ok = ok and self.STORAGE_SERVICE_URL is not None
         if schema_service: ok = ok and self.SCHEMA_SERVICE_URL is not None
-        ok = ok and self.BEARER_TOKEN is not None  and self.DATA_PARTITION is not None
+        ok = ok and self.BEARER_TOKEN is not None
         message = self.__create_message(message, ok)
         return ok, message
 
@@ -38,15 +37,12 @@ class RunEnv(object):
                 parts.append('BEARER TOKEN')
             if self.SCHEMA_SERVICE_URL is None:
                 parts.append('Schema service URL')
-            if self.DATA_PARTITION is None:
-                parts.append('Data-partition')
             message = ', '.join(parts) + ' missing.'
         return message
 
     @staticmethod
     def get_headers():
         return {
-            'data-partition-id': RunEnv.DATA_PARTITION,
             'Content-Type': 'application/json',
             'AppKey': RunEnv.APP_KEY,
             'Authorization': RunEnv.BEARER_TOKEN

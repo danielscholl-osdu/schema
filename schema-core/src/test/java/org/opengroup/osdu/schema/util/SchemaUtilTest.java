@@ -83,7 +83,7 @@ public class SchemaUtilTest {
 		Mockito.when(schemaInfoStore.getSchemaInfoList( Mockito.any(QueryParams.class), Mockito.anyString()))
 		.thenReturn(new LinkedList<>());
 		Mockito.when(headers.getPartitionId()).thenReturn("opendes");
-		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(schInf);
+		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(schInf, false);
 		assertNull(schemaInfoArr[0]);
 		assertNull(schemaInfoArr[1]);
 
@@ -107,7 +107,7 @@ public class SchemaUtilTest {
 		Mockito.when(schemaInfoStore.getSchemaInfoList( Mockito.any(QueryParams.class), Mockito.anyString()))
 		.thenReturn(schemaInfoList);
 		Mockito.when(headers.getPartitionId()).thenReturn("opendes");
-		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(inputSchemaInfo);
+		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(inputSchemaInfo, false);
 		assertEquals(schemaInfoArr[0], schInfLatest);
 		assertNull(schemaInfoArr[1]);
 
@@ -161,14 +161,14 @@ public class SchemaUtilTest {
 		Mockito.when(schemaInfoStore.getSchemaInfoList( latestPatchQueryParams, "opendes"))
 		.thenReturn(new LinkedList<>());
 
-		Mockito.when(schemaInfoStore.getSchemaInfoList( latestPatchQueryParams, "common"))
+		Mockito.when(schemaInfoStore.getSystemSchemaInfoList( latestPatchQueryParams))
 		.thenReturn(new LinkedList<>());
 
 		Mockito.when(schemaInfoStore.getSchemaInfoList( queryParamsForAllMajorVersion, "opendes"))
 		.thenReturn(getMockedList());
 
 		Mockito.when(headers.getPartitionId()).thenReturn("opendes");
-		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(inputSchemaInfo);
+		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(inputSchemaInfo, false);
 		assertEquals(schemaInfoArr[0], smaller);
 		assertEquals(schemaInfoArr[1], bigger);
 
@@ -218,7 +218,7 @@ public class SchemaUtilTest {
 		Mockito.when(schemaInfoStore.getSchemaInfoList( queryParamsForAllMajorVersion, "opendes"))
 		.thenReturn(getMockedList());
 		Mockito.when(headers.getPartitionId()).thenReturn("opendes");
-		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(inputSchemaInfo);
+		SchemaInfo[] schemaInfoArr = schemaUtil.findSchemaToCompare(inputSchemaInfo, false);
 		assertEquals(schemaInfoArr[0], schInfLatest);
 		assertNull(schemaInfoArr[1]);
 	}

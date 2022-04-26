@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.schema.azure.service.serviceimpl.AuthorizationServiceForServicePrincipalImpl;
+import org.opengroup.osdu.schema.azure.service.serviceimpl.AuthorizationServiceForServiceAdminImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AuthorizationServiceForServicePrincipalImplTest {
+public class AuthorizationServiceForServiceAdminImplTest {
     @Mock
     private Authentication auth;
 
@@ -39,7 +39,7 @@ public class AuthorizationServiceForServicePrincipalImplTest {
     private SecurityContext securityContext;
 
     @InjectMocks
-    private AuthorizationServiceForServicePrincipalImpl authorizationService;
+    private AuthorizationServiceForServiceAdminImpl authorizationService;
 
     @Before
     public void setup() {

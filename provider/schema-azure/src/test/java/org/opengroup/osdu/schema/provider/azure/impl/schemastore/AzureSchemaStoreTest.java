@@ -91,8 +91,6 @@ public class AzureSchemaStoreTest {
 
         Assert.assertEquals(CONTENT, schemaStore.getSystemSchema(FILE_PATH));
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        Assert.assertEquals(CONTENT, schemaStore.getSchema(sharedTenantId, FILE_PATH));
     }
 
     @Test
@@ -153,10 +151,6 @@ public class AzureSchemaStoreTest {
         doReturn(true).when(blobStore).deleteFromStorageContainer(filePathPublic, systemContainerName);
 
         Assert.assertEquals(true, schemaStore.cleanSystemSchemaProject(FILE_PATH));
-
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        Boolean result = schemaStore.cleanSchemaProject(FILE_PATH);
-        Assert.assertEquals(true, result);
     }
 
     @Test
@@ -197,8 +191,6 @@ public class AzureSchemaStoreTest {
 
         Assert.assertEquals(filePathPublic, schemaStore.createSystemSchema(FILE_PATH, CONTENT));
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        Assert.assertEquals(filePathPublic, schemaStore.createSchema(FILE_PATH, CONTENT));
     }
 
     @Test

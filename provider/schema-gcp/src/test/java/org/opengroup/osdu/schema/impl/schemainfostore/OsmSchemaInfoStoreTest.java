@@ -1,5 +1,17 @@
 package org.opengroup.osdu.schema.impl.schemainfostore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,11 +28,10 @@ import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
 import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.model.Kind;
 import org.opengroup.osdu.core.gcp.osm.model.Namespace;
-import org.opengroup.osdu.core.gcp.osm.model.query.GetQuery;
-import org.opengroup.osdu.core.gcp.osm.model.where.predicate.Eq;
 import org.opengroup.osdu.core.gcp.osm.service.Context;
 import org.opengroup.osdu.core.gcp.osm.translate.TranslatorException;
 import org.opengroup.osdu.core.gcp.osm.translate.TranslatorRuntimeException;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.impl.OsmDestinationProvider;
 import org.opengroup.osdu.schema.enums.SchemaScope;
@@ -34,16 +45,6 @@ import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class OsmSchemaInfoStoreTest {
@@ -82,13 +83,17 @@ public class OsmSchemaInfoStoreTest {
     @Mock
     OsmDestinationProvider destinationProvider;
 
+    @Mock
+    PropertiesConfiguration configuration;
+
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
-        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", COMMON_TENANT_ID);
+        when(configuration.getSharedTenantName()).thenReturn(COMMON_TENANT_ID);
+        ReflectionTestUtils.setField(schemaInfoStore, "configuration", configuration);
         when(headers.getPartitionId()).thenReturn("tenant");
         when(tenantFactory.getTenantInfo("tenant")).thenReturn(tenantInfo);
 
@@ -558,7 +563,7 @@ public class OsmSchemaInfoStoreTest {
     private void setUpMocksForMultiTenant_PositiveScenario(String privateTenant, String commonTenant, String schemaId) {
         this.setUpMocksForMultipleTenants(privateTenant, commonTenant, schemaId);
         when(context.getResultsAsList(any())).thenReturn(queryResult);
-        when(queryResult.size()).thenReturn(1);
+        when(queryResult.isEmpty()).thenReturn(true);
     }
 
     private void setUpMocksForMultiTenant_NegativeScenario(String privateTenant, String commonTenant, String schemaId) {
@@ -568,7 +573,7 @@ public class OsmSchemaInfoStoreTest {
     }
 
     private void setUpMocksForMultipleTenants(String privateTenant, String commonTenant, String schemaId) {
-        schemaInfoStore.setSharedTenant(commonTenant);
+        when(configuration.getSharedTenantName()).thenReturn(commonTenant);
         when(tenantFactory.getTenantInfo(privateTenant)).thenReturn(tenantInfo);
         when(tenantFactory.getTenantInfo(commonTenant)).thenReturn(tenantInfoCommon);
         when(tenantInfo.getName()).thenReturn(privateTenant);

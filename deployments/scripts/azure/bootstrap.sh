@@ -11,8 +11,7 @@ if [[ -z "${NAMESPACE}" ]]; then
   NAMESPACE="osdu-azure"
 fi
 
-export AZURE_SCHEMA_URL="http://schema.${NAMESPACE}.svc.cluster.local/api/schema-service/v1/schema/"
-
+export AZURE_SCHEMA_URL="http://schema.${NAMESPACE}.svc.cluster.local/api/schema-service/v1/schemas/system/"
 currentStatus="success"
 currentMessage="All schemas uploaded successfully"
 BEARER_TOKEN=`python $AZURE_DEPLOYMENTS_SUBDIR/Token.py`
