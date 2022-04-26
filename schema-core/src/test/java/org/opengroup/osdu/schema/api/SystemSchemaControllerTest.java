@@ -1,12 +1,10 @@
-package org.opengroup.osdu.schema.provider.azure.api;
+package org.opengroup.osdu.schema.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.opengroup.osdu.schema.azure.api.AzureSchemaApi;
-import org.opengroup.osdu.schema.azure.interfaces.ISchemaServiceAzure;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -16,6 +14,7 @@ import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.model.SchemaUpsertResponse;
+import org.opengroup.osdu.schema.service.ISchemaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -25,32 +24,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class AzureSchemaApiTest {
-    
+public class SystemSchemaControllerTest {
+
     @Mock
-    ISchemaServiceAzure schemaServiceAzure;
+    ISchemaService schemaService;
 
     @InjectMocks
-    AzureSchemaApi azureSchemaApi;
+    SystemSchemaController systemSchemaController;
 
     private SchemaRequest schemaRequest;
-
-    @Test
-    public void testCreateSchema()
-            throws ApplicationException, NotFoundException, BadRequestException, JsonProcessingException {
-        schemaRequest = getSchemaRequestObject();
-
-        when(schemaServiceAzure.createSystemSchema(schemaRequest)).thenReturn(getSchemaInfoObject());
-        assertNotNull(schemaServiceAzure.createSystemSchema(schemaRequest));
-
-    }
-
+    
     @Test
     public void testUpsertSchema_update() throws ApplicationException, BadRequestException {
         schemaRequest = getSchemaRequestObject();
 
-        when(schemaServiceAzure.upsertSystemSchema(schemaRequest)).thenReturn(getSchemaUpsertResponse_Updated());
-        assertNotNull(azureSchemaApi.upsertSystemSchema(schemaRequest));
+        when(schemaService.upsertSystemSchema(schemaRequest)).thenReturn(getSchemaUpsertResponse_Updated());
+        assertNotNull(systemSchemaController.upsertSystemSchema(schemaRequest));
 
     }
 
@@ -58,8 +47,8 @@ public class AzureSchemaApiTest {
     public void testUpsertSchema_create() throws ApplicationException, BadRequestException {
         schemaRequest = getSchemaRequestObject();
 
-        when(schemaServiceAzure.upsertSystemSchema(schemaRequest)).thenReturn(getSchemaUpsertResponse_Created());
-        assertNotNull(azureSchemaApi.upsertSystemSchema(schemaRequest));
+        when(schemaService.upsertSystemSchema(schemaRequest)).thenReturn(getSchemaUpsertResponse_Created());
+        assertNotNull(systemSchemaController.upsertSystemSchema(schemaRequest));
 
     }
 
@@ -67,8 +56,8 @@ public class AzureSchemaApiTest {
     public void testUpsertSchema_Failed() throws ApplicationException, BadRequestException {
         schemaRequest = getSchemaRequestObject();
 
-        when(schemaServiceAzure.upsertSystemSchema(schemaRequest)).thenThrow(BadRequestException.class);
-        azureSchemaApi.upsertSystemSchema(schemaRequest);
+        when(schemaService.upsertSystemSchema(schemaRequest)).thenThrow(BadRequestException.class);
+        systemSchemaController.upsertSystemSchema(schemaRequest);
     }
 
     private SchemaRequest getSchemaRequestObject() {

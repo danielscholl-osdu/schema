@@ -90,6 +90,16 @@ public class MessageBusImpl implements IMessageBus {
     }
   }
 
+  //  TODO stub must be replaced with actual implementation
+  @Override
+  public void publishMessageForSystemSchema(String schemaId, String eventType) {
+    String correlationId = headers.getCorrelationId();
+    String dataPartitionId = headers.getPartitionId();
+    this.logger.debug("Status changed messaging disabled, writing message to log.");
+    this.logger.debug(DpsHeaders.CORRELATION_ID + " " + correlationId + DpsHeaders.DATA_PARTITION_ID + " " + dataPartitionId
+        + " schema id: " + schemaId + " event type: " + eventType);
+  }
+
   private OqmMessage createMessage(String schemaId, String eventType) {
     SchemaPubSubInfo schemaPubSubMsg = new SchemaPubSubInfo(schemaId, eventType);
 

@@ -1,8 +1,9 @@
 package org.opengroup.osdu.schema.azure.service.serviceimpl;
 
 
-import org.opengroup.osdu.schema.azure.interfaces.IAuthorizationServiceForServicePrincipal;
+
 import com.azure.spring.autoconfigure.aad.UserPrincipal;
+import org.opengroup.osdu.schema.provider.interfaces.authorization.IAuthorizationServiceForServiceAdmin;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class AuthorizationServiceForServicePrincipalImpl implements IAuthorizationServiceForServicePrincipal {
+public class AuthorizationServiceForServiceAdminImpl implements IAuthorizationServiceForServiceAdmin {
 
     private final String AAD_issuer_v1 = "https://sts.windows.net";
     private final String AAD_issuer_v2 = "https://login.microsoftonline.com";

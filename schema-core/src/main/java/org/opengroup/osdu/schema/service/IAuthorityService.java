@@ -4,4 +4,6 @@ public interface IAuthorityService {
 
     Boolean checkAndRegisterAuthorityIfNotPresent(String authorityId);
 
+    Boolean checkAndRegisterSystemAuthorityIfNotPresent(String authorityId);
+
 }

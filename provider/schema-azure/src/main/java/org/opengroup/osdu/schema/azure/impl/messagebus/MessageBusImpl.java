@@ -62,13 +62,6 @@ public class MessageBusImpl implements IMessageBus {
 	@Override
 	public void publishMessage(String schemaId, String eventType) {
 
-		// This if block will be removed once schema-core starts consuming *System* methods.
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.
-				getPartitionId())) { this.publishMessageForSystemSchema(schemaId, eventType);
-				return; 
-		}
-
-
 		if (eventGridConfig.isEventGridEnabled() || pubSubConfig.isServiceBusEnabled()) {
 			logger.info("Generating event of type {}",eventType);
 			try {
@@ -128,7 +121,7 @@ public class MessageBusImpl implements IMessageBus {
 		schemaPubSubMsgs[0]=new SchemaPubSubInfo(schemaId,eventType);
 
 
-		//EventGridEvent supports array of messages to be triggered in a batch but at present we do not support 
+		//EventGridEvent supports array of messages to be triggered in a batch but at present we do not support
 		//schema creation in bulk so generating one event at a time.
 		PublisherInfo publisherInfo = PublisherInfo.builder()
 				.batch(schemaPubSubMsgs)

@@ -30,4 +30,14 @@ public interface ISchemaService {
     
     SchemaInfoResponse getSchemaInfoList(QueryParams queryParams) throws BadRequestException, ApplicationException;
 
+	/**
+	 * This method first tries to update the System schema with the given schema-id. If there is no schema found,
+	 * it tries to create the new System schema.
+	 * @param schemaRequest
+	 * @return SchemaUpsertResponse
+	 * @throws ApplicationException
+	 * @throws BadRequestException
+	 */
+	SchemaUpsertResponse upsertSystemSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
+
 }

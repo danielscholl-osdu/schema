@@ -30,12 +30,10 @@ class DeploySharedSchemas:
         self.schema_registered = None
         self.schema_info_registered = None
         self.headers = {
-            'data-partition-id': RunEnv.DATA_PARTITION,
             'Content-Type': 'application/json',
             'AppKey': RunEnv.APP_KEY,
             'Authorization': RunEnv.BEARER_TOKEN
         }
-        print('Current data-partition-id: {}'.format(RunEnv.DATA_PARTITION))
         ok, error_mess = RunEnv().is_ok()
         if not ok:
             exit('Error: environment setting incomplete: {}'.format(error_mess))
@@ -91,7 +89,7 @@ class DeploySharedSchemas:
         return kind
 
     def __register_one(self, kind, schema, messages):
-        method = 'POST'
+        method = 'PUT'
         try_it = 'Try {} for id: {}'
         print(try_it.format(method, kind))
         response = requests.request(method, self.url, headers=self.headers, data=schema)
@@ -117,6 +115,9 @@ class DeploySharedSchemas:
         method = 'Give up'
         error = code not in range(200, 300)
         if error:
+            print(response.text)
+            print(response.url)
+            print(code)
             # further test:
             try:
                 js_err = json.loads(response.text)

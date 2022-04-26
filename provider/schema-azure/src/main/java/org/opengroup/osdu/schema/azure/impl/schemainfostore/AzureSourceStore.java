@@ -67,10 +67,6 @@ public class AzureSourceStore implements ISourceStore {
      */
     @Override
     public Source get(String sourceId) throws NotFoundException, ApplicationException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.getSystemSource(sourceId);
-        }
 
         String id = headers.getPartitionId().toString() + ":" + sourceId;
         SourceDoc sourceDoc;
@@ -106,10 +102,6 @@ public class AzureSourceStore implements ISourceStore {
      */
     @Override
     public Source create(Source source) throws BadRequestException, ApplicationException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.createSystemSource(source);
-        }
 
         String id = headers.getPartitionId() + ":" + source.getSourceId();
 

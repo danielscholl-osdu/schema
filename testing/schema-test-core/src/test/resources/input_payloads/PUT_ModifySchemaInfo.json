@@ -1,12 +1,12 @@
 {
   "schemaInfo": {
     "schemaIdentity": {
-      "authority": "DevSanity",
+      "authority": "SchemaSanityTest",
       "source": "testSource",
       "entityType": "testEntity",
       "schemaVersionMajor": 5,
       "schemaVersionMinor": 6,
-      "schemaVersionPatch": 5,
+      "schemaVersionPatch": 0,
       "id": "DevSanity:testSource:testEntity:5.5.5"
     },
     "status": "DEVELOPMENT",

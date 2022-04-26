@@ -116,9 +116,6 @@ public class AzureEntityTypeStoreTest {
         assertNotNull(store.getSystemEntity(entityTypeId));
         assertEquals(entityTypeId, store.getSystemEntity(entityTypeId).getEntityTypeId());
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        assertNotNull(store.get(entityTypeId));
-        assertEquals(entityTypeId, store.get(entityTypeId).getEntityTypeId());
     }
 
     @Test
@@ -233,16 +230,6 @@ public class AzureEntityTypeStoreTest {
             fail("Should not get different exception");
         }
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        try {
-            store.create(mockEntityType);
-            fail("Should not succeed");
-        } catch (BadRequestException e) {
-            assertEquals("EntityType already registered with Id: testEntityId", e.getMessage());
-
-        } catch (Exception e) {
-            fail("Should not get different exception");
-        }
     }
 
     @Test
@@ -277,15 +264,6 @@ public class AzureEntityTypeStoreTest {
             fail("Should not get different exception");
         }
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        try {
-            store.create(mockEntityType);
-            fail("Should not succeed");
-        } catch (ApplicationException e) {
-            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
-        } catch (Exception e) {
-            fail("Should not get different exception");
-        }
     }
 
     private EntityTypeDoc getEntityTypeDoc(String partitionId, String EntityTypeName)

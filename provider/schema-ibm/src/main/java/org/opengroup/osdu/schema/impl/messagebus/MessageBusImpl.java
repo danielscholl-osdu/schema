@@ -14,6 +14,7 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.ibm.messagebus.IMessageFactory;
+import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.impl.messagebus.model.SchemaPubSubInfo;
 import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class MessageBusImpl implements IMessageBus{
 	
 	@Value("${schema.update.event.topic:schema-event-default-topic}")
 	private String SCHEMA_UPDATE_EVENT_TOPIC;
+
+	@Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 	
 	Map<String, String> message = new HashMap<>();
 	Gson gson = new Gson();
@@ -61,6 +65,12 @@ public class MessageBusImpl implements IMessageBus{
 		String topicNameWithPrefix = dataPartitionId + "-" + SCHEMA_UPDATE_EVENT_TOPIC;
 
 		sendMessageToTopic(topicNameWithPrefix, gson.toJson(message), -1L);
+	}
+
+	@Override
+	public void publishMessageForSystemSchema(String schemaId, String eventType) {
+		this.updateDataPartitionId();
+		this.publishMessage(schemaId, eventType);
 	}
 	
 	public String createTopic(String topicNameWithPrefix) {
@@ -97,6 +107,10 @@ public class MessageBusImpl implements IMessageBus{
 			logger.error(e.getMessage(), e);
 			e.printStackTrace();
 		}
+	}
+
+	protected void updateDataPartitionId() {
+		headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
 	}
 
 }

@@ -83,36 +83,9 @@ java -jar provider/schema-aws/target/schema-aws-*.*.*-SNAPSHOT-spring-boot.jar
  | `AWS_ACCESS_KEY_ID` | `ASIAXXXXXXXXXXXXXX` | The AWS Access Key for a user with access to Backend Resources required by the service | yes |
  | `AWS_SECRET_ACCESS_KEY` | `super-secret-key==` | The AWS Secret Key for a user with access to Backend Resources required by the service | yes |
  | `AWS_SESSION_TOKEN` | `session-token-xxxxxxxxx` | AWS Session token needed if using an SSO user session to authenticate | yes |
- | `AWS_COGNITO_USER_POOL_ID` | `us-east-1_xxxxxxxx` | User Pool Id for the reference cognito | no |
- | `AWS_COGNITO_CLIENT_ID` | `xxxxxxxxxxxx` | Client ID for the Auth Flow integrated with the Cognito User Pool | no |
- | `AWS_COGNITO_AUTH_FLOW` | `USER_PASSWORD_AUTH` | Auth flow used by reference cognito deployment | no |
- | `AWS_COGNITO_AUTH_PARAMS_USER` | `int-test-user@testing.com` | Int Test Username | no |
- | `AWS_COGNITO_AUTH_PARAMS_USER_NO_ACCESS` | `no-access-user@testing.com` | Int Test No Access Username | no |
- | `AWS_COGNITO_AUTH_PARAMS_PASSWORD` | `some-secure-password` | Int Test User/NoAccessUser Password | yes |
- | `HOST` | `http://localhost:8080` | The url where the Schema API is hosted | no |  
- | `PRIVATE_TENANT1` | `opendes` | Data Partition Id used by int tests | no |
- | `PRIVATE_TENANT2` | `tenant2` | Data Partition Id used by int tests | no |
- | `SHARED_TENANT` | `common` | Shared Data Partition Id used by int tests | no |
- | `VENDOR` | `aws` | CSP running these tests | no |
- 
+ | `SCHEMA_URL` | `http://localhost:8080` | The url where the Schema API is hosted | no |  
 
- **Creating a new user to use for integration tests**
- ```
- aws cognito-idp admin-create-user --user-pool-id ${AWS_COGNITO_USER_POOL_ID} --username ${AWS_COGNITO_AUTH_PARAMS_USER} --user-attributes Name=email,Value=${AWS_COGNITO_AUTH_PARAMS_USER} Name=email_verified,Value=True --message-action SUPPRESS
-
- aws cognito-idp initiate-auth --auth-flow ${AWS_COGNITO_AUTH_FLOW} --client-id ${AWS_COGNITO_CLIENT_ID} --auth-parameters USERNAME=${AWS_COGNITO_AUTH_PARAMS_USER},PASSWORD=${AWS_COGNITO_AUTH_PARAMS_PASSWORD}
- ```
- 
- **Entitlements group configuration for integration accounts**
- <br/>
- In order to add user entitlements, run entitlements bootstrap scripts in the entitlements project
- 
- | AWS_COGNITO_AUTH_PARAMS_USER | AWS_COGNITO_AUTH_PARAMS_USER_NO_ACCESS | 
- | ---  | --- |
- | service.schema-service.editors | service.entitlements.user |
- | service.schema-service.viewers |
-
- 
+  
  Execute following command to build code and run all the integration tests:
 
 ### Run Tests simulating Pipeline

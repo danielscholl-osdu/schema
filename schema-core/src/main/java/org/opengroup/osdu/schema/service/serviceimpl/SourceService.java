@@ -20,8 +20,7 @@ public class SourceService implements ISourceService {
     /**
      * check and create Source if its not present in dataPartitionId store
      *
-     * @param Source id
-     * @param dataPartitionId
+     * @param sourceId
      * @return true or false of successful registration of Source.
      */
     @Override
@@ -38,5 +37,24 @@ public class SourceService implements ISourceService {
         }
         return true;
 
+    }
+
+    /**
+     * check and create system Source if its not present
+     * @param sourceId
+     * @return true or false of successful registration of Source.
+     */
+    @Override
+    public Boolean checkAndRegisterSystemSourceIfNotPresent(String sourceId) {
+        try {
+            Source source = new Source();
+            source.setSourceId(sourceId);
+            this.sourceStore.createSystemSource(source);
+        } catch (ApplicationException e) {
+            return false;
+        } catch (BadRequestException ex) {
+            return true;
+        }
+        return true;
     }
 }
