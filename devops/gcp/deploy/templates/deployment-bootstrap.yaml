@@ -4,8 +4,7 @@ metadata:
   labels:
     app: "{{ .Values.conf.app_name }}-bootstrap"
   name: "{{ .Values.conf.app_name }}-bootstrap"
-  # FIXME should be "{{ .Release.Namespace }}"
-  namespace: "{{ .Values.conf.bootstrap_namespace }}"
+  namespace: "{{ .Release.Namespace }}"
 spec:
   replicas: 1
   selector:

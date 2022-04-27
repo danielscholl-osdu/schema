@@ -12,7 +12,6 @@ data:
   serviceAccountName: "schema"
 conf:
   app_name: "schema"
-  bootstrap_namespace: "default"
   bootstrap_secret_name: "datafier-secret"
   configmap: "schema-config"
   minio_secret_name: "schema-minio-secret"

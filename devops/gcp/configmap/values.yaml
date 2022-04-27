@@ -13,6 +13,5 @@ data:
   schema_host: "http://schema"
 conf:
   app_name: "schema"
-  bootstrap_namespace: "default"
   configmap: "schema-config"
   on_prem_enabled: false
