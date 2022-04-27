@@ -115,9 +115,6 @@ public class AzureSourceStoreTest {
         assertNotNull(store.getSystemSource(sourceId));
         assertEquals(sourceId, store.getSystemSource(sourceId).getSourceId());
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        assertNotNull(store.get(sourceId));
-        assertEquals(sourceId, store.get(sourceId).getSourceId());
     }
 
     @Test
@@ -231,16 +228,6 @@ public class AzureSourceStoreTest {
             fail("Should not get different exception");
         }
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        try {
-            store.create(mockSource);
-            fail("Should not succeed");
-        } catch (BadRequestException e) {
-            assertEquals("Source already registered with Id: testSourceId", e.getMessage());
-
-        } catch (Exception e) {
-            fail("Should not get different exception");
-        }
     }
 
     @Test
@@ -268,16 +255,6 @@ public class AzureSourceStoreTest {
 
         try {
             store.createSystemSource(mockSource);
-            fail("Should not succeed");
-        } catch (ApplicationException e) {
-            assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());
-        } catch (Exception e) {
-            fail("Should not get different exception");
-        }
-
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        try {
-            store.create(mockSource);
             fail("Should not succeed");
         } catch (ApplicationException e) {
             assertEquals(SchemaConstants.INVALID_INPUT, e.getMessage());

@@ -36,6 +36,7 @@ variables:
   AWS_DEPLOY_TARGET: EKS
   AWS_EKS_DEPLOYMENT_NAME: os-schema
 
+  OSDU_GCP_ENABLE_BOOTSTRAP: "true"
   OSDU_GCP_SERVICE: schema
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_TESTS_SUBDIR: testing/schema-test-core
@@ -44,9 +45,54 @@ variables:
   OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
   OSDU_GCP_HELM_CONFIG_SERVICE: schema-config
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE: schema-deploy
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: "--set data.log_level=INFO  --set data.authorize_api=$OSDU_GCP_AUTHORIZE_API --set data.google_audiences=$GOOGLE_AUDIENCE --set data.partition_api=$OSDU_GCP_PARTITION_API --set data.shared_tenant_name=$OSDU_GCP_TENANT"
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: "--set data.log_level=INFO  --set data.authorize_api=$OSDU_GCP_AUTHORIZE_API --set data.google_audiences=$GOOGLE_AUDIENCE --set data.partition_api=$OSDU_GCP_PARTITION_API --set data.shared_tenant_name=$OSDU_GCP_TENANT"
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: "--set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA  --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s"
+  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: >
+    --set data.log_level=INFO
+    --set data.google_audiences=$GOOGLE_AUDIENCE
+    --set data.shared_tenant_name=$OSDU_GCP_TENANT
+    --set data.data_partition_id=$DATA_PARTITION_ID
+  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: >
+    --set data.log_level=INFO
+    --set data.google_audiences=$GOOGLE_AUDIENCE
+    --set data.shared_tenant_name=$OSDU_GCP_TENANT
+    --set data.data_partition_id=$DATA_PARTITION_ID
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: >
+    --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA
+    --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
+    --set data.bootstrap_image=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
+    --set data.bootstrapServiceAccountName=datafier-workload-identity-gke
+  # FIXME add value below for DEV2 pipeline
+  # OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS_DEV2: >
+
+# REFACTOR to common pipeline
+osdu-gcp-deploy-deployment:
+  needs:
+    - osdu-gcp-containerize-gitlab
+    - osdu-gcp-deploy-configmap
+    - osdu-gcp-containerize-bootstrap-gitlab
+  after_script:
+    - echo ----- Verify Bootstrap -----
+    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
+    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
+    - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
+    - echo $STATUS
+    - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
+
+# REFACTOR to common pipeline for DEV2
+# osdu-gcp-dev2-deploy-deployment:
+#   variables:
+#     OSDU_GCP_BOOTSTRAP_NAMESPACE: config
+#     OSDU_GCP_BOOTSTRAP_SERVICE_ACCOUNT: workload-gke-bootstrap-sa
+#   needs:
+#     - osdu-gcp-containerize-gitlab
+#     - osdu-gcp-deploy-configmap
+#     - osdu-gcp-containerize-bootstrap-schema
+#   after_script:
+#      - echo ----- Verify Bootstrap -----
+#      - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
+#      - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
+#      - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
+#      - echo $STATUS
+#      - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -79,7 +125,14 @@ include:
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/aws/bootstrap.yaml"
   - local: "/devops/ibm/bootstrap.yaml"
-  - local: "/devops/gcp/bootstrap.yaml"
+  
+osdu-gcp-containerize-bootstrap-gitlab:
+  variables:
+    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
+
+osdu-gcp-containerize-bootstrap-gcr:
+  variables:
+    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
 
 osdu-gcp-test:
   image: maven:3.8.2-jdk-8
@@ -93,30 +146,3 @@ osdu-gcp-test:
     reports:
       junit:
         - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
-
-osdu-gcp-helm-charts-master:
-  variables:
-    OSDU_GCP_HELM_BOOTSTRAP_DIR: "devops/gcp/bootstrap"
-  script:
-    - helm cm-push $OSDU_GCP_HELM_CONFIG_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --username gitlab-ci-token --password $CI_JOB_TOKEN
-    - helm cm-push $OSDU_GCP_HELM_DEPLOYMENT_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --username gitlab-ci-token --password $CI_JOB_TOKEN
-    - helm cm-push $OSDU_GCP_HELM_BOOTSTRAP_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --username gitlab-ci-token --password $CI_JOB_TOKEN
-
-osdu-gcp-helm-charts-release:
-  variables:
-    OSDU_GCP_HELM_BOOTSTRAP_DIR: "devops/gcp/bootstrap"
-  script:
-    - >
-      if [[ -z $CI_COMMIT_TAG ]] && [[ $CI_COMMIT_BRANCH =~ ^release\/[0-9]{1,2}.[0-9]{1,2}$ ]];
-      then
-          RELEASE_VER=$(echo $CI_COMMIT_BRANCH | sed "s?^release/??");
-          VER="$RELEASE_VER.0-release"
-      elif [[ $CI_COMMIT_TAG =~ ^v[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$ ]];
-      then
-          VER=$(echo $CI_COMMIT_TAG | sed "s/^v//");
-      else
-          VER="0.0.0-invalid";
-      fi;
-    - helm cm-push $OSDU_GCP_HELM_CONFIG_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --version $VER --username gitlab-ci-token --password $CI_JOB_TOKEN
-    - helm cm-push $OSDU_GCP_HELM_DEPLOYMENT_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --version $VER --username gitlab-ci-token --password $CI_JOB_TOKEN
-    - helm cm-push $OSDU_GCP_HELM_BOOTSTRAP_DIR ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable --version $VER --username gitlab-ci-token --password $CI_JOB_TOKEN

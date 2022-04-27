@@ -4,4 +4,6 @@ public interface ISourceService {
 
     Boolean checkAndRegisterSourceIfNotPresent(String sourceId);
 
+    Boolean checkAndRegisterSystemSourceIfNotPresent(String sourceId);
+
 }

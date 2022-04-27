@@ -17,58 +17,64 @@
 
 package org.opengroup.osdu.schema.impl.schemainfostore;
 
-import java.text.MessageFormat;
+import static org.opengroup.osdu.core.gcp.osm.model.where.predicate.Eq.eq;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import java.text.MessageFormat;
 import org.apache.commons.lang3.ObjectUtils;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
-import org.opengroup.osdu.core.gcp.multitenancy.DatastoreFactory;
 import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.model.query.GetQuery;
 import org.opengroup.osdu.core.gcp.osm.model.where.Where;
 import org.opengroup.osdu.core.gcp.osm.service.Context;
+import org.opengroup.osdu.core.gcp.osm.translate.TranslatorRuntimeException;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.DestinationProvider;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
-import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.model.Source;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISourceStore;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.google.cloud.Timestamp;
-import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.DatastoreException;
-import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.Key;
-
-import static org.opengroup.osdu.core.gcp.osm.model.where.predicate.Eq.eq;
 /**
  * Repository class to register Source in KV store.
- *
- *
  */
 
 @Repository
-public class OsmSourceStore extends AbstractOsmRepository<Source> implements ISourceStore {
+public class OsmSourceStore implements ISourceStore {
 
-    static {
-        ENTITY_CREATED = SchemaConstants.SOURCE_CREATED;
+    private static final String NAME_FIELD = "name";
+    private static final String SYSTEM_SOURCE_KIND = "system_source";
+    private final DpsHeaders headers;
+    private final DestinationProvider<Destination> destinationProvider;
+    private final JaxRsDpsLog log;
+    private final PropertiesConfiguration configuration;
+    private final Context context;
+
+    public OsmSourceStore(DpsHeaders headers,
+        DestinationProvider<Destination> destinationProvider, JaxRsDpsLog log, PropertiesConfiguration configuration,
+        Context context) {
+        this.headers = headers;
+        this.destinationProvider = destinationProvider;
+        this.log = log;
+        this.configuration = configuration;
+        this.context = context;
     }
 
-    @Autowired
-    public OsmSourceStore(DpsHeaders headers, DestinationProvider<Destination> destinationProvider, JaxRsDpsLog log, Context context) {
-        super(headers, destinationProvider, log, context);
+    @Override
+    public Source get(String sourceId) throws NotFoundException, ApplicationException {
+        Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
+
+        return context.findOne(buildQueryFor(tenantDestination, eq(NAME_FIELD, sourceId)))
+            .orElseThrow(() ->
+                new NotFoundException("bad input parameter"));
     }
 
     /**
      * Method to get System Source in KV store
+     *
      * @param sourceId
      * @return Source object
      * @throws NotFoundException
@@ -76,11 +82,32 @@ public class OsmSourceStore extends AbstractOsmRepository<Source> implements ISo
      */
     @Override
     public Source getSystemSource(String sourceId) throws NotFoundException, ApplicationException {
-        return this.getSystemEntity(sourceId);
+        Destination systemDestination = getSystemDestination();
+
+        return context.findOne(buildQueryFor(systemDestination, eq(NAME_FIELD, sourceId)))
+            .orElseThrow(() ->
+                new NotFoundException("bad input parameter"));
+    }
+
+    @Override
+    public Source create(Source source) throws BadRequestException, ApplicationException {
+        Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
+        checkEntityExistence(source, tenantDestination);
+
+        Source entityFromDb;
+        try {
+            entityFromDb = context.createAndGet(source, tenantDestination);
+        } catch (TranslatorRuntimeException ex) {
+            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+        }
+        log.info(SchemaConstants.SOURCE_CREATED);
+        return entityFromDb;
     }
 
     /**
      * Method to create System Source in KV store
+     *
      * @param source
      * @return Source object
      * @throws BadRequestException
@@ -88,29 +115,47 @@ public class OsmSourceStore extends AbstractOsmRepository<Source> implements ISo
      */
     @Override
     public Source createSystemSource(Source source) throws BadRequestException, ApplicationException {
-        return this.createSystemEntity(source);
+        Destination systemDestination = getSystemDestination();
+        checkEntityExistence(source, systemDestination);
+
+        Source entityFromDb;
+        try {
+            entityFromDb = context.createAndGet(source, systemDestination);
+        } catch (TranslatorRuntimeException ex) {
+            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+        }
+        log.info(SchemaConstants.SOURCE_CREATED);
+        return entityFromDb;
     }
-    protected Destination getDestination() {
+
+    private Destination getPrivateTenantDestination(String partitionId) {
         return destinationProvider.getDestination(
-                headers.getPartitionId(),
-                SchemaConstants.NAMESPACE,
-                SchemaConstants.SOURCE_KIND
+            partitionId,
+            SchemaConstants.NAMESPACE,
+            SchemaConstants.SOURCE_KIND
         );
     }
 
-    @Override
-    protected GetQuery<Source> buildQueryFor(Destination destination, Where where) {
+    private Destination getSystemDestination() {
+        return destinationProvider.getDestination(
+            configuration.getSharedTenantName(),
+            SchemaConstants.NAMESPACE,
+            SYSTEM_SOURCE_KIND
+        );
+    }
+
+    private GetQuery<Source> buildQueryFor(Destination destination, Where where) {
         return new GetQuery<>(Source.class, destination, where);
     }
 
-    @Override
-    protected void checkEntityExistence(Source source) throws BadRequestException {
-        Source entityFromDb = context.getOne(buildQueryFor(getDestination(), eq(NAME_FIELD, source.getSourceId())));
+    private void checkEntityExistence(Source source, Destination destination) throws BadRequestException {
+        Source entityFromDb = context.getOne(buildQueryFor(destination, eq(NAME_FIELD, source.getSourceId())));
 
         if (ObjectUtils.isNotEmpty(entityFromDb)) {
             log.warning(SchemaConstants.SOURCE_EXISTS);
             throw new BadRequestException(
-                    MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION, source.getSourceId()));
+                MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION, source.getSourceId()));
         }
     }
 }

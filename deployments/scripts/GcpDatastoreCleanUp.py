@@ -9,7 +9,7 @@ schema_namespace = os.environ.get("SCHEMA_NAMESPACE")
 schema_kind = os.environ.get("SCHEMA_KIND")
 shared_partition_id = os.environ.get("SHARED_PARTITION_ID", default="osdu")
 default_namespace = "dataecosystem"
-default_kind = "schema"
+default_kind = "system_schema_osm"
 
 
 def cleanup_datastore():

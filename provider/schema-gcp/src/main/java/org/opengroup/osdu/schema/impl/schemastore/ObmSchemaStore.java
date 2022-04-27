@@ -17,6 +17,10 @@
 
 package org.opengroup.osdu.schema.impl.schemastore;
 
+import static org.opengroup.osdu.core.gcp.obm.driver.S3CompatibleErrors.NO_SUCH_KEY;
+
+import java.nio.charset.StandardCharsets;
+
 import com.google.cloud.storage.StorageException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -25,38 +29,38 @@ import org.opengroup.osdu.core.gcp.obm.driver.Driver;
 import org.opengroup.osdu.core.gcp.obm.driver.ObmDriverRuntimeException;
 import org.opengroup.osdu.core.gcp.obm.model.Blob;
 import org.opengroup.osdu.core.gcp.obm.persistence.ObmDestination;
-import org.opengroup.osdu.core.gcp.osm.model.query.GetQuery;
-import org.opengroup.osdu.core.gcp.osm.model.where.Where;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.DestinationProvider;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
-import org.opengroup.osdu.schema.impl.mapper.AbstractMapperRepository;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
-import java.nio.charset.StandardCharsets;
-
-import static org.opengroup.osdu.core.gcp.obm.driver.S3CompatibleErrors.NO_SUCH_KEY;
-
 /**
  * Repository class to register resolved Schema in Blob storage.
- *
- *
  */
 @Repository
-public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestination> implements ISchemaStore {
+public class ObmSchemaStore implements ISchemaStore {
 
+    private static final String SCHEMA_BUCKET_EXTENSION = "-system-schema";
     private final ITenantFactory tenantFactory;
-
+    private final DpsHeaders headers;
+    private final DestinationProvider<ObmDestination> destinationProvider;
+    private final JaxRsDpsLog log;
+    private final PropertiesConfiguration configuration;
     private final Driver driver;
 
-    @Autowired
-    public ObmSchemaStore(DpsHeaders headers, DestinationProvider<ObmDestination> destinationProvider, JaxRsDpsLog log, ITenantFactory tenantFactory, Driver driver) {
-        super(headers, destinationProvider, log);
+    public ObmSchemaStore(ITenantFactory tenantFactory, DpsHeaders headers,
+                          DestinationProvider<ObmDestination> destinationProvider, JaxRsDpsLog log, PropertiesConfiguration configuration,
+                          Driver driver) {
         this.tenantFactory = tenantFactory;
+        this.headers = headers;
+        this.destinationProvider = destinationProvider;
+        this.log = log;
+        this.configuration = configuration;
         this.driver = driver;
     }
 
@@ -77,13 +81,12 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
         byte[] blob = null;
 
         try {
-            blob = driver.getBlobContent(bucketName, filePath, getDestination());
-        } catch (ObmDriverRuntimeException | NullPointerException ex){
+            blob = driver.getBlobContent(bucketName, filePath, getDestination(this.headers.getPartitionId()));
+        } catch (ObmDriverRuntimeException | NullPointerException ex) {
             if (isNotFoundException(ex)){
                 log.warning(ex.getMessage());
                 throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
-            }
-            else {
+            } else {
                 throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
             }
         }
@@ -115,6 +118,7 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
 
     /**
      * Method to get System schema from Blob Storage
+     *
      * @param filePath
      * @return Schema object
      * @throws NotFoundException
@@ -122,7 +126,26 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
      */
     @Override
     public String getSystemSchema(String filePath) throws NotFoundException, ApplicationException {
-        return this.getSchema(sharedTenant, filePath);
+        filePath = filePath + SchemaConstants.JSON_EXTENSION;
+        String systemSchemaBucketName = getSystemSchemaBucketName();
+
+        byte[] blob = null;
+
+        try {
+            blob = driver.getBlobContent(systemSchemaBucketName, filePath, getSystemDestination());
+        } catch (ObmDriverRuntimeException | NullPointerException ex) {
+            if (ex instanceof NullPointerException
+                    || NO_SUCH_KEY.equals(((ObmDriverRuntimeException) ex.getCause()).getError())) {
+                throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
+            } else {
+                throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        if (blob != null) {
+            return new String(blob, StandardCharsets.UTF_8);
+        }
+        throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
     }
 
     /**
@@ -146,7 +169,7 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
                 .build();
 
         try {
-            Blob blobFromStorage = driver.createAndGetBlob(blob, content.getBytes(StandardCharsets.UTF_8), getDestination());
+            Blob blobFromStorage = driver.createAndGetBlob(blob, content.getBytes(StandardCharsets.UTF_8), getDestination(this.headers.getPartitionId()));
             log.info(SchemaConstants.SCHEMA_CREATED);
             return blobFromStorage.getName();
         } catch (ObmDriverRuntimeException ex) {
@@ -156,6 +179,7 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
 
     /**
      * Method to write System schema to Blob Storage
+     *
      * @param filePath
      * @param content
      * @return schema object
@@ -163,45 +187,59 @@ public class ObmSchemaStore extends AbstractMapperRepository<String, ObmDestinat
      */
     @Override
     public String createSystemSchema(String filePath, String content) throws ApplicationException {
-        this.updateDataPartitionId();
-        return this.createSchema(filePath, content);
+        filePath = filePath + SchemaConstants.JSON_EXTENSION;
+        String systemSchemaBucketName = getSystemSchemaBucketName();
 
+        Blob blob = Blob.builder()
+                .bucket(systemSchemaBucketName)
+                .name(filePath)
+                .build();
+
+        try {
+            Blob blobFromStorage = driver.createAndGetBlob(blob, content.getBytes(StandardCharsets.UTF_8), getSystemDestination());
+            log.info(SchemaConstants.SCHEMA_CREATED);
+            return blobFromStorage.getName();
+        } catch (ObmDriverRuntimeException ex) {
+            throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
-    public boolean cleanSchemaProject(String schemaId) throws ApplicationException {
+    public boolean cleanSchemaProject(String schemaId) {
         String dataPartitionId = headers.getPartitionId();
         String fileName = schemaId + SchemaConstants.JSON_EXTENSION;
         String bucketName = getSchemaBucketName(dataPartitionId);
-        return driver.deleteBlob(bucketName, fileName, getDestination());
-
-
+        return driver.deleteBlob(bucketName, fileName, getDestination(this.headers.getPartitionId()));
     }
 
     /**
      * Method to clean System schema from Blob Storage
+     *
      * @param schemaId
      * @return
      * @throws ApplicationException
      */
     @Override
-    public boolean cleanSystemSchemaProject(String schemaId) throws ApplicationException {
-        this.updateDataPartitionId();
-        return this.cleanSchemaProject(schemaId);
+    public boolean cleanSystemSchemaProject(String schemaId) {
+        String fileName = schemaId + SchemaConstants.JSON_EXTENSION;
+        String systemSchemaBucketName = getSystemSchemaBucketName();
+        return driver.deleteBlob(systemSchemaBucketName, fileName, getSystemDestination());
     }
 
     private String getSchemaBucketName(String dataPartitionId) {
         return tenantFactory.getTenantInfo(dataPartitionId).getProjectId() + SchemaConstants.SCHEMA_BUCKET_EXTENSION;
     }
 
-    @Override
-    protected ObmDestination getDestination() {
-        return destinationProvider.getDestination(headers.getPartitionId());
+    private String getSystemSchemaBucketName() {
+        return tenantFactory.getTenantInfo(configuration.getSharedTenantName()).getProjectId() + SCHEMA_BUCKET_EXTENSION;
     }
 
-    @Override
-    protected GetQuery<String> buildQueryFor(ObmDestination destination, Where where) {
-        return null;
+    private ObmDestination getDestination(String partitionId) {
+        return destinationProvider.getDestination(partitionId);
+    }
+
+    private ObmDestination getSystemDestination() {
+        return destinationProvider.getDestination(configuration.getSharedTenantName());
     }
 
 }
