@@ -29,52 +29,38 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage -->
-		<dependency>
-			<groupId>com.google.cloud</groupId>
-			<artifactId>google-cloud-storage</artifactId>
-			<version>1.108.0</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-datastore -->
-		<dependency>
-			<groupId>com.google.cloud</groupId>
-			<artifactId>google-cloud-datastore</artifactId>
-			<version>1.102.2</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
 			<version>0.15.0-SNAPSHOT</version>
+			<!-- excluded due to runtime conflict with latest core-lib-gcp transient dependencies -->
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.api-client</groupId>
+					<artifactId>google-api-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.http-client</groupId>
+					<artifactId>google-http-client</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-iam -->
-		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-iam</artifactId>
-			<version>v1-rev310-1.25.0</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>core-lib-gcp</artifactId>
-			<version>0.14.0-rc2</version>
+			<version>0.15.0-rc3</version>
 		</dependency>
-
 		<dependency>
 			<groupId>ch.qos.logback.contrib</groupId>
 			<artifactId>logback-json-classic</artifactId>

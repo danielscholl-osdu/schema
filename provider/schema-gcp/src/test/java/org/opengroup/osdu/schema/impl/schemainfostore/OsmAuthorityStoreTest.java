@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
-import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.model.Kind;
 import org.opengroup.osdu.core.gcp.osm.model.Namespace;
@@ -53,7 +53,7 @@ public class OsmAuthorityStoreTest {
     DpsHeaders headers;
 
     @Mock
-    TenantFactory tenantFactory;
+    ITenantFactory tenantFactory;
 
     @Mock
     TenantInfo tenantInfo;
