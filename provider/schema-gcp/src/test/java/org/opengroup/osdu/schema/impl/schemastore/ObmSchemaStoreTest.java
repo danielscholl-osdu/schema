@@ -1,5 +1,6 @@
 package org.opengroup.osdu.schema.impl.schemastore;
 
+import com.google.cloud.storage.StorageException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,12 +12,12 @@ import org.mockito.Mock;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
-import org.opengroup.osdu.core.gcp.multitenancy.GcsMultiTenantAccess;
-import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.obm.driver.Driver;
 import org.opengroup.osdu.core.gcp.obm.driver.ObmDriverRuntimeException;
 import org.opengroup.osdu.core.gcp.obm.model.Blob;
 import org.opengroup.osdu.core.gcp.obm.persistence.ObmDestination;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.impl.ObmDestinationProvider;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -26,7 +27,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ObmSchemaStoreTest {
@@ -39,9 +39,6 @@ public class ObmSchemaStoreTest {
     private Driver driver;
 
     @Mock
-    private GcsMultiTenantAccess storageFactory;
-
-    @Mock
     private Blob blob;
 
     @Mock
@@ -51,13 +48,16 @@ public class ObmSchemaStoreTest {
     DpsHeaders headers;
 
     @Mock
-    TenantFactory tenantFactory;
+    ITenantFactory tenantFactory;
 
     @Mock
     TenantInfo TenantInfo;
 
     @Mock
     JaxRsDpsLog log;
+
+    @Mock
+    PropertiesConfiguration configuration;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -71,7 +71,8 @@ public class ObmSchemaStoreTest {
 
     @Before
     public void setUp() {
-    	 ReflectionTestUtils.setField(schemaStore, "sharedTenant", COMMON_TENANT_ID);
+        when(configuration.getSharedTenantName()).thenReturn(COMMON_TENANT_ID);
+    	 ReflectionTestUtils.setField(schemaStore, "configuration", configuration);
 
          when(destinationProvider.getDestination(any())).thenReturn(DESTINATION);
          when(driver.createAndGetBlob(any(), any(), any())).thenReturn(blob);
@@ -160,6 +161,20 @@ public class ObmSchemaStoreTest {
         when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(TenantInfo);
         when(TenantInfo.getProjectId()).thenReturn("test");
         when(driver.getBlobContent(BUCKET, filePath, DESTINATION)).thenReturn(null);
+        schemaStore.getSchema(dataPartitionId, FILE_PATH);
+    }
+
+    @Test
+    public void testGetSchema_NotFound_StorageException() throws ApplicationException, NotFoundException {
+
+        expectedException.expect(NotFoundException.class);
+        expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
+        String filePath = FILE_PATH + SchemaConstants.JSON_EXTENSION;
+        ObmDriverRuntimeException obmDriverRuntimeException = new ObmDriverRuntimeException(new StorageException(404, "test"));
+
+        when(tenantFactory.getTenantInfo(dataPartitionId)).thenReturn(TenantInfo);
+        when(TenantInfo.getProjectId()).thenReturn("test");
+        when(driver.getBlobContent(BUCKET, filePath, DESTINATION)).thenThrow(obmDriverRuntimeException);
         schemaStore.getSchema(dataPartitionId, FILE_PATH);
     }
 

@@ -151,7 +151,7 @@
                 "items": {
                   "type": "object",
                   "title": "Fluid",
-                  "description": "Information regarding an individual activity that is part of the Drilling Report",
+                  "description": "Information regarding an individual fluid that is part of the Drilling Report.",
                   "properties": {
                     "Type": {
                       "type": "string",
@@ -1021,6 +1021,11 @@
                     "EntityType": "Wellbore"
                   }
                 ]
+              },
+              "Name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Name of Fluids Report"
               }
             },
             "required": [
@@ -1048,7 +1053,7 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "NOT APPROVED!",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultLocation": {
         "type": "object",

@@ -11,8 +11,7 @@ if [[ -z "${NAMESPACE}" ]]; then
   NAMESPACE="osdu-azure"
 fi
 
-export AZURE_SCHEMA_URL="http://schema.${NAMESPACE}.svc.cluster.local/api/schema-service/v1/schema/"
-
+export AZURE_SCHEMA_URL="http://schema.${NAMESPACE}.svc.cluster.local/api/schema-service/v1/schemas/system/"
 currentStatus="success"
 currentMessage="All schemas uploaded successfully"
 BEARER_TOKEN=`python $AZURE_DEPLOYMENTS_SUBDIR/Token.py`
@@ -38,4 +37,10 @@ if [ ! -z "$CONFIG_MAP_NAME" -a "$CONFIG_MAP_NAME" != " " ]; then
 	--from-literal=status="$currentStatus" \
 	--from-literal=message="$Message" \
 	-o yaml --dry-run=client | kubectl replace -f -
+fi
+
+if [[ ${currentStatus} == "success" ]]; then
+  exit 0
+else
+  exit 1
 fi

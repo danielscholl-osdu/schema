@@ -19,7 +19,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "x-osdu-schema-source": "osdu:wks:reference-data--OperatingEnvironment:1.0.0",
     "title": "OperatingEnvironment",
-    "description": "Used to describe the operating environments, e.g. for well facilities or seismic acquisition.",
+    "description": "The geographic environment in which operations occur or data is collected.",
     "type": "object",
     "properties": {
       "id": {

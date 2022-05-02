@@ -62,10 +62,6 @@ public class AzureSchemaStore implements ISchemaStore {
      */
     @Override
     public String getSchema(String dataPartitionId, String filePath) throws ApplicationException, NotFoundException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
-            return this.getSystemSchema(filePath);
-        }
 
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
         try {
@@ -116,10 +112,6 @@ public class AzureSchemaStore implements ISchemaStore {
 
     @Override
     public String createSchema(String filePath, String content) throws ApplicationException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.createSystemSchema(filePath, content);
-        }
 
         String dataPartitionId = headers.getPartitionId();
         filePath = dataPartitionId + ":" + filePath + SchemaConstants.JSON_EXTENSION;
@@ -159,10 +151,6 @@ public class AzureSchemaStore implements ISchemaStore {
      */
     @Override
     public boolean cleanSchemaProject(String schemaId) throws ApplicationException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.cleanSystemSchemaProject(schemaId);
-        }
 
         String dataPartitionId = headers.getPartitionId();
         String filePath = dataPartitionId + ":" + schemaId + SchemaConstants.JSON_EXTENSION;

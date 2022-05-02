@@ -114,7 +114,7 @@ You can access the service APIs by following the service contract in [schema.yam
  
  | INTEGRATION_TESTER | 
  | ---  | 
- | users<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 | 
+ | users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 | 
  
  Execute following command to build code and run all the integration tests:
  

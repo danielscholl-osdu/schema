@@ -176,7 +176,7 @@
                 "title": "Projected Coordinate Reference System ID",
                 "description": "Coordinate Reference System defining the Projection of the station EASTING and NORTHING values. If  type is \"Grid North\" and EASTING and NORTHING attributes are stored, clearly identifying their projection is required.",
                 "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                "example": "namespace:reference-data--CoordinateReferenceSystem:ProjectedCRS.EPSG.32615:",
+                "example": "namespace:reference-data--CoordinateReferenceSystem:Projected:EPSG::32615:",
                 "x-osdu-relationship": [
                   {
                     "GroupType": "reference-data",
@@ -205,7 +205,7 @@
                 "title": "Geographic Coordinate Reference System",
                 "description": "Coordinate Reference System defining the Geodetic Datum of the station LATITUDE and LONGITUDE values. If LATITUDE and LONGITUDE attributes are stored, clearly identifying their Datum is required.",
                 "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                "example": "namespace:reference-data--CoordinateReferenceSystem:GeodeticCRS.EPSG.4326:",
+                "example": "namespace:reference-data--CoordinateReferenceSystem:Geographic2D:EPSG::4326:",
                 "x-osdu-relationship": [
                   {
                     "GroupType": "reference-data",

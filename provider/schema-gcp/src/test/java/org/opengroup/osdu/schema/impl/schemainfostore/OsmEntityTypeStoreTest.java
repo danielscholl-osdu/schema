@@ -13,6 +13,7 @@ import org.opengroup.osdu.core.gcp.osm.model.Kind;
 import org.opengroup.osdu.core.gcp.osm.model.Namespace;
 import org.opengroup.osdu.core.gcp.osm.service.Context;
 import org.opengroup.osdu.core.gcp.osm.translate.TranslatorRuntimeException;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.destination.provider.impl.OsmDestinationProvider;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -52,6 +53,9 @@ public class OsmEntityTypeStoreTest {
     @Mock
     JaxRsDpsLog log;
 
+    @Mock
+    PropertiesConfiguration configuration;
+
     private static final String COMMON_TENANT_ID = "common";
     private static final Destination DESTINATION = Destination.builder()
             .partitionId("partitionId")
@@ -61,7 +65,8 @@ public class OsmEntityTypeStoreTest {
 
     @Before
     public void setUp() throws BadRequestException {
-        ReflectionTestUtils.setField(osmEntityTypeStore, "sharedTenant", COMMON_TENANT_ID);
+        when(configuration.getSharedTenantName()).thenReturn(COMMON_TENANT_ID);
+        ReflectionTestUtils.setField(osmEntityTypeStore, "configuration", configuration);
         when(headers.getPartitionId()).thenReturn("partitionId");
         when(destinationProvider.getDestination(any(), any(), any())).thenReturn(DESTINATION);
         when(context.getOne(any())).thenReturn(null);

@@ -3,11 +3,12 @@ kind: Service
 metadata:
   name: "{{ .Values.conf.app_name }}"
   annotations:
+    {{- if not .Values.conf.on_prem_enabled }}
     cloud.google.com/neg: '{"ingress": true}'
+    {{- end }}
   namespace: "{{ .Release.Namespace }}"
   labels:
     app: "{{ .Values.conf.app_name }}"
-    service: "{{ .Values.conf.app_name }}"
 spec:
   ports:
     - protocol: TCP

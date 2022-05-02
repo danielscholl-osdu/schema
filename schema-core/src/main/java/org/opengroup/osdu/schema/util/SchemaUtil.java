@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -31,19 +31,22 @@ public class SchemaUtil {
 
 	private final DpsHeaders headers;
 
-	public SchemaInfo[] findSchemaToCompare(SchemaInfo schemaInfo) throws ApplicationException {
+	@Value("${shared.tenant.name:common}")
+	private String sharedTenant;
 
-		SchemaInfo[] matchingSchemaInfo = findClosestSchemas(schemaInfo, true);
+	public SchemaInfo[] findSchemaToCompare(SchemaInfo schemaInfo, Boolean isSystemSchema) throws ApplicationException {
+
+		SchemaInfo[] matchingSchemaInfo = findClosestSchemas(schemaInfo, true, isSystemSchema);
 
 		if(null == matchingSchemaInfo[0] && null == matchingSchemaInfo[1]) {
 			log.info("Latest patch version is not found so trying to find the nearest matching major version");
-			matchingSchemaInfo =  findClosestSchemas(schemaInfo, false);
+			matchingSchemaInfo =  findClosestSchemas(schemaInfo, false, isSystemSchema);
 		}
 
 		return matchingSchemaInfo;
 	}
 
-	public SchemaInfo[] findClosestSchemas(SchemaInfo schemaInfo, boolean atPatchlevel) throws ApplicationException {
+	public SchemaInfo[] findClosestSchemas(SchemaInfo schemaInfo, boolean atPatchlevel, Boolean isSystemSchema) throws ApplicationException {
 		SchemaIdentity schemaIdentity = schemaInfo.getSchemaIdentity();
 		SchemaInfo[] schemaInfoArr = new SchemaInfo [2];
 		QueryParams.QueryParamsBuilder queryParamBuilder = QueryParams.builder().authority(schemaIdentity.getAuthority())
@@ -55,8 +58,13 @@ public class SchemaUtil {
 			queryParamBuilder.schemaVersionMinor(schemaIdentity.getSchemaVersionMinor());
 
 		QueryParams queryParams = queryParamBuilder.build();
+		List<SchemaInfo> schemaInfoList;
 
-		List<SchemaInfo> schemaInfoList = schemaInfoStore.getSchemaInfoList(queryParams, headers.getPartitionId());
+		if (isSystemSchema) {
+			schemaInfoList = schemaInfoStore.getSystemSchemaInfoList(queryParams);
+		} else {
+			schemaInfoList = schemaInfoStore.getSchemaInfoList(queryParams, headers.getPartitionId());
+		}
 
 		if(null == schemaInfoList || schemaInfoList.isEmpty())
 			return schemaInfoArr;
@@ -113,7 +121,5 @@ public class SchemaUtil {
 			return false;
 
 		return true;
-
 	}
-
 }

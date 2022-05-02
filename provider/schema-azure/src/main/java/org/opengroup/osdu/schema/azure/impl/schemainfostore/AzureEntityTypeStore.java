@@ -69,10 +69,6 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.getSystemEntity(entityTypeId);
-        }
 
         String id = headers.getPartitionId() + ":" + entityTypeId;
         EntityTypeDoc entityTypeDoc;
@@ -107,10 +103,6 @@ public class AzureEntityTypeStore implements IEntityTypeStore {
      */
     @Override
     public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
-        // This if block will be removed once schema-core starts consuming *System* methods.
-        if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-            return this.createSystemEntity(entityType);
-        }
 
         String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
         try {

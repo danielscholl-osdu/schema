@@ -1,10 +1,11 @@
 FROM google/cloud-sdk:slim
 
-COPY ./devops/gcp/bootstrap-osdu-module/bootstrap_schema.sh /opt 
-COPY ./deployments /opt/
+WORKDIR /opt
 
-RUN chmod 775 /opt/bootstrap_schema.sh
+COPY ./devops/gcp/bootstrap-osdu-module/*.sh ./
+COPY ./deployments ./
 
-RUN pip3 install --upgrade pip && pip3 install -r /opt/scripts/requirements.txt && pip3 install -r /opt/scripts/gcp-deployment-requirements.txt
+RUN apt-get update && apt-get install jq -y
+RUN pip3 install --upgrade pip && pip3 install -r ./scripts/requirements.txt && pip3 install -r ./scripts/gcp-deployment-requirements.txt
 
-CMD ["/bin/bash", "-c", "source /opt/bootstrap_schema.sh"]
+CMD ["/bin/bash", "-c", "source ./bootstrap_schema.sh && sleep 365d"]

@@ -16,12 +16,7 @@ public class AuthUtil {
                     System.getenv("INTEGRATION_TEST_AUDIENCE"));
             token = new GoogleServiceAccount(serviceAccountFile).getAuthToken(audience);
         }else if (Strings.isNullOrEmpty(token) && vendor.equals("aws")) {
-            String awsCognitoClientId = System.getProperty("AWS_COGNITO_CLIENT_ID", System.getenv("AWS_COGNITO_CLIENT_ID"));
-            String awsCognitoAuthFlow = "USER_PASSWORD_AUTH";
-            String awsCognitoAuthParamsUser = System.getProperty("AWS_COGNITO_AUTH_PARAMS_USER", System.getenv("AWS_COGNITO_AUTH_PARAMS_USER"));
-            String awsCognitoAuthParamsPassword = System.getProperty("AWS_COGNITO_AUTH_PARAMS_PASSWORD", System.getenv("AWS_COGNITO_AUTH_PARAMS_PASSWORD"));
-            AWSCognitoClient client = new AWSCognitoClient(awsCognitoClientId, awsCognitoAuthFlow, awsCognitoAuthParamsUser,  awsCognitoAuthParamsPassword);
-            token=client.getToken();
+            token = AwsServicePrincipalUtil.getAccessToken();
         } else if (Strings.isNullOrEmpty(token) && vendor.equals("azure")) {
             String sp_id = System.getProperty("INTEGRATION_TESTER", System.getenv("INTEGRATION_TESTER"));
             String sp_secret = System.getProperty("TESTER_SERVICEPRINCIPAL_SECRET", System.getenv("TESTER_SERVICEPRINCIPAL_SECRET"));

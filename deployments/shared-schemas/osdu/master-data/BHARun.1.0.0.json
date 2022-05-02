@@ -368,6 +368,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -411,6 +412,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -493,6 +495,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -536,6 +539,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -632,6 +636,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -675,6 +680,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -757,6 +763,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -800,6 +807,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -882,6 +890,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -925,6 +934,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1004,6 +1014,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1047,6 +1058,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1126,6 +1138,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1169,6 +1182,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1248,6 +1262,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1291,6 +1306,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1383,6 +1399,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1426,6 +1443,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1508,6 +1526,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1551,6 +1570,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1633,6 +1653,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1676,6 +1697,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1772,6 +1794,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1815,6 +1838,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -1897,6 +1921,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -1940,6 +1965,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -2022,6 +2048,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -2065,6 +2092,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -2161,6 +2189,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -2204,6 +2233,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -2286,6 +2316,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -2329,6 +2360,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"
@@ -2411,6 +2443,7 @@
                                         "type": "number",
                                         "title": "Value",
                                         "description": "The value observed at the measured depth",
+                                        "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                         "x-osdu-attribution-authority": "The Open Group",
                                         "x-osdu-attribution-publication": "The OSDU Data Platform",
                                         "x-osdu-attribution-revision": "evergreen"
@@ -2454,6 +2487,7 @@
                                               "type": "number",
                                               "title": "Value",
                                               "description": "The value at that point.",
+                                              "x-osdu-frame-of-reference": "UOM_via_property:ValueUnitID",
                                               "x-osdu-attribution-authority": "The Open Group",
                                               "x-osdu-attribution-publication": "The OSDU Data Platform",
                                               "x-osdu-attribution-revision": "evergreen"

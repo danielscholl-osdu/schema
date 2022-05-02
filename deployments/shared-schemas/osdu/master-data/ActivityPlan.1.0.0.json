@@ -439,6 +439,9 @@
         "type": "string",
         "priority": [
           {
+            "path": "data.ProjectName"
+          },
+          {
             "path": "data.Name"
           }
         ]

@@ -374,10 +374,7 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-supported-file-formats": [
-      "RESQML",
-      "csv"
-    ],
+    "x-osdu-supported-file-formats": [],
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultLocation": {
         "type": "object",
