@@ -48,3 +48,5 @@ else
   source ./validate-env.sh "AUDIENCES"
   bootstrap_schema_gcp
 fi
+
+touch /tmp/bootstrap_ready
