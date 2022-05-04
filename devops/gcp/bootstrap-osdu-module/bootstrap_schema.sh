@@ -5,6 +5,10 @@ set -e
 source ./validate-env.sh "DATA_PARTITION"
 source ./validate-env.sh "SCHEMA_URL"
 
+# FIXME find a better solution about a sidecar container readiness
+echo "Waiting for a sidecar container is provisioned"
+sleep 10
+
 bootstrap_schema_onprem() {
 
   export BEARER_TOKEN="$(curl --location --request POST "${OPENID_PROVIDER_URL}/protocol/openid-connect/token" \
@@ -25,7 +29,8 @@ bootstrap_schema_gcp() {
 
   echo "Clean-up for Datastore schemas"
   python3 ./scripts/GcpDatastoreCleanUp.py
-
+  
+  # FIXME find a better solution about datastore cleaning completion
   sleep 5
 
   echo "Bootstrap Schema Service"
