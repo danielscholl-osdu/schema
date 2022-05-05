@@ -17,6 +17,8 @@
 
 package org.opengroup.osdu.schema.destination.provider.impl;
 
+import static org.opengroup.osdu.schema.destination.provider.model.DestinationInstructions.toObmDestination;
+
 import lombok.extern.slf4j.Slf4j;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.obm.persistence.ObmDestination;
@@ -25,19 +27,17 @@ import org.opengroup.osdu.schema.destination.provider.model.DestinationInstructi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.opengroup.osdu.schema.destination.provider.model.DestinationInstructions.toObmDestination;
-
 @Component
 @Slf4j
 public class ObmDestinationProvider extends DestinationProviderImpl<ObmDestination> {
 
-    @Autowired
-    public ObmDestinationProvider(ITenantFactory tenantFactory) {
-        super(tenantFactory);
-    }
+  @Autowired
+  public ObmDestinationProvider(ITenantFactory tenantFactory) {
+    super(tenantFactory);
+  }
 
-    @Override
-    protected ObmDestination buildDestination(DestinationInstructions instructions) {
-        return toObmDestination(instructions);
-    }
+  @Override
+  protected ObmDestination buildDestination(DestinationInstructions instructions) {
+    return toObmDestination(instructions);
+  }
 }

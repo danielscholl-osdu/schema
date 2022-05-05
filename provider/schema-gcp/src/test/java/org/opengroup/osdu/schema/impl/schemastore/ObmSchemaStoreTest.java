@@ -12,8 +12,7 @@ import org.mockito.Mock;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
-import org.opengroup.osdu.core.gcp.multitenancy.GcsMultiTenantAccess;
-import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.obm.driver.Driver;
 import org.opengroup.osdu.core.gcp.obm.driver.ObmDriverRuntimeException;
 import org.opengroup.osdu.core.gcp.obm.model.Blob;
@@ -40,9 +39,6 @@ public class ObmSchemaStoreTest {
     private Driver driver;
 
     @Mock
-    private GcsMultiTenantAccess storageFactory;
-
-    @Mock
     private Blob blob;
 
     @Mock
@@ -52,7 +48,7 @@ public class ObmSchemaStoreTest {
     DpsHeaders headers;
 
     @Mock
-    TenantFactory tenantFactory;
+    ITenantFactory tenantFactory;
 
     @Mock
     TenantInfo TenantInfo;

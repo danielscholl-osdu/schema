@@ -77,7 +77,7 @@ At Google cloud storage should be created bucket:
    </td>
   </tr>
   <tr>
-   <td>&lt;PartitionInfo.projectId><strong>-schema</strong>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name><strong>-schema</strong>
    </td>
    <td>ListObjects, CRUDObject
    </td>
@@ -96,7 +96,7 @@ At Google cloud storage should be created bucket:
    </td>
   </tr>
   <tr>
-   <td>&lt;PartitionInfo.projectId><strong>-system-schema</strong>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name><strong>-system-schema</strong>
    </td>
    <td>ListObjects, CRUDObject
    </td>
