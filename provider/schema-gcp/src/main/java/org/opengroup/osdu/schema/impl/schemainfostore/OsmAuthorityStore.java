@@ -42,106 +42,110 @@ import org.springframework.stereotype.Repository;
 /**
  * Repository class to register authority in KV Store using OSM
  */
-
 @Repository
 public class OsmAuthorityStore implements IAuthorityStore {
 
-    private static final String SYSTEM_AUTHORITY_KIND = "system_authority";
-    private static final String NAME_FIELD = "name";
-    private final DpsHeaders headers;
-    private final DestinationProvider<Destination> destinationProvider;
-    private final JaxRsDpsLog log;
-    private final PropertiesConfiguration configuration;
-    private final Context context;
+  private static final String SYSTEM_AUTHORITY_KIND = "system_authority";
+  private static final String NAME_FIELD = "name";
+  private final DpsHeaders headers;
+  private final DestinationProvider<Destination> destinationProvider;
+  private final JaxRsDpsLog log;
+  private final PropertiesConfiguration configuration;
+  private final Context context;
 
-    @Autowired
-    public OsmAuthorityStore(DpsHeaders headers, DestinationProvider<Destination> destinationProvider, JaxRsDpsLog log, Context context,
-        PropertiesConfiguration configuration) {
-        this.headers = headers;
-        this.destinationProvider = destinationProvider;
-        this.log = log;
-        this.configuration = configuration;
-        this.context = context;
+  @Autowired
+  public OsmAuthorityStore(DpsHeaders headers, DestinationProvider<Destination> destinationProvider,
+      JaxRsDpsLog log, Context context,
+      PropertiesConfiguration configuration) {
+    this.headers = headers;
+    this.destinationProvider = destinationProvider;
+    this.log = log;
+    this.configuration = configuration;
+    this.context = context;
+  }
+
+  @Override
+  public Authority get(String authorityId) throws NotFoundException, ApplicationException {
+    Destination destination = getPrivateTenantDestination(this.headers.getPartitionId());
+
+    return context.findOne(buildQueryFor(destination, eq(NAME_FIELD, authorityId)))
+        .orElseThrow(() ->
+            new NotFoundException("bad input parameter"));
+  }
+
+  @Override
+  public Authority getSystemAuthority(String authorityId)
+      throws NotFoundException, ApplicationException {
+    Destination systemDestination = getSystemDestination();
+
+    return context.findOne(buildQueryFor(systemDestination, eq(NAME_FIELD, authorityId)))
+        .orElseThrow(() ->
+            new NotFoundException("bad input parameter"));
+  }
+
+  @Override
+  public Authority create(Authority authority) throws ApplicationException, BadRequestException {
+    Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
+    checkEntityExistence(authority, tenantDestination);
+
+    Authority entityFromDb;
+    try {
+      entityFromDb = context.createAndGet(authority, tenantDestination);
+    } catch (TranslatorRuntimeException ex) {
+      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+      throw new ApplicationException(SchemaConstants.INVALID_INPUT);
     }
+    log.info(SchemaConstants.AUTHORITY_CREATED);
+    return entityFromDb;
+  }
 
-    @Override
-    public Authority get(String authorityId) throws NotFoundException, ApplicationException {
-        Destination destination = getPrivateTenantDestination(this.headers.getPartitionId());
+  @Override
+  public Authority createSystemAuthority(Authority authority)
+      throws ApplicationException, BadRequestException {
+    Destination systemDestination = getSystemDestination();
+    checkEntityExistence(authority, systemDestination);
 
-        return context.findOne(buildQueryFor(destination, eq(NAME_FIELD, authorityId)))
-            .orElseThrow(() ->
-                new NotFoundException("bad input parameter"));
+    Authority entityFromDb;
+    try {
+      entityFromDb = context.createAndGet(authority, systemDestination);
+    } catch (TranslatorRuntimeException ex) {
+      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+      throw new ApplicationException(SchemaConstants.INVALID_INPUT);
     }
+    log.info(SchemaConstants.AUTHORITY_CREATED);
+    return entityFromDb;
+  }
 
-    @Override
-    public Authority getSystemAuthority(String authorityId) throws NotFoundException, ApplicationException {
-        Destination systemDestination = getSystemDestination();
+  private GetQuery<Authority> buildQueryFor(Destination destination, Where where) {
+    return new GetQuery<>(Authority.class, destination, where);
+  }
 
-        return context.findOne(buildQueryFor(systemDestination, eq(NAME_FIELD, authorityId)))
-            .orElseThrow(() ->
-                new NotFoundException("bad input parameter"));
+  private void checkEntityExistence(Authority authority, Destination destination)
+      throws BadRequestException {
+    Authority entityFromDb =
+        context.getOne(buildQueryFor(destination, eq(NAME_FIELD, authority.getAuthorityId())));
+
+    if (ObjectUtils.isNotEmpty(entityFromDb)) {
+      log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
+      throw new BadRequestException(
+          MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION,
+              authority.getAuthorityId()));
     }
+  }
 
-    @Override
-    public Authority create(Authority authority) throws ApplicationException, BadRequestException {
-        Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
-        checkEntityExistence(authority, tenantDestination);
+  private Destination getPrivateTenantDestination(String partitionId) {
+    return destinationProvider.getDestination(
+        partitionId,
+        SchemaConstants.NAMESPACE,
+        SchemaConstants.AUTHORITY_KIND
+    );
+  }
 
-        Authority entityFromDb;
-        try {
-            entityFromDb = context.createAndGet(authority, tenantDestination);
-        } catch (TranslatorRuntimeException ex) {
-            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-        }
-        log.info(SchemaConstants.AUTHORITY_CREATED);
-        return entityFromDb;
-    }
-
-    @Override
-    public Authority createSystemAuthority(Authority authority) throws ApplicationException, BadRequestException {
-        Destination systemDestination = getSystemDestination();
-        checkEntityExistence(authority, systemDestination);
-
-        Authority entityFromDb;
-        try {
-            entityFromDb = context.createAndGet(authority, systemDestination);
-        } catch (TranslatorRuntimeException ex) {
-            log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-            throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-        }
-        log.info(SchemaConstants.AUTHORITY_CREATED);
-        return entityFromDb;
-    }
-
-    private GetQuery<Authority> buildQueryFor(Destination destination, Where where) {
-        return new GetQuery<>(Authority.class, destination, where);
-    }
-
-    private void checkEntityExistence(Authority authority, Destination destination) throws BadRequestException {
-        Authority entityFromDb =
-            context.getOne(buildQueryFor(destination, eq(NAME_FIELD, authority.getAuthorityId())));
-
-        if (ObjectUtils.isNotEmpty(entityFromDb)) {
-            log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
-            throw new BadRequestException(
-                MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION, authority.getAuthorityId()));
-        }
-    }
-
-    private Destination getPrivateTenantDestination(String partitionId) {
-        return destinationProvider.getDestination(
-            partitionId,
-            SchemaConstants.NAMESPACE,
-            SchemaConstants.AUTHORITY_KIND
-        );
-    }
-
-    private Destination getSystemDestination() {
-        return destinationProvider.getDestination(
-            configuration.getSharedTenantName(),
-            SchemaConstants.NAMESPACE,
-            SYSTEM_AUTHORITY_KIND
-        );
-    }
+  private Destination getSystemDestination() {
+    return destinationProvider.getDestination(
+        configuration.getSharedTenantName(),
+        SchemaConstants.NAMESPACE,
+        SYSTEM_AUTHORITY_KIND
+    );
+  }
 }
