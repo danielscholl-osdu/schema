@@ -15,9 +15,9 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2022, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/reference-data/CoordinateTransformation.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/reference-data/CoordinateTransformation.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.1.0",
+    "x-osdu-schema-source": "osdu:wks:reference-data--CoordinateTransformation:1.1.0",
     "title": "CoordinateTransformation",
     "description": "Used to describe a coordinate operation between two geodetic CRSs. The type is identified by CoordinateTransformationType (used by the system) and Kind facing the end-user. The Code is according to OSDU standard a string, the EPSG standard number is available via the CodeAsNumber property. Description carries EPSG's Remark. AttributionAuthority carries EPSG's DataSource. AliasNames carry the EPSG Alias contents.",
     "type": "object",
@@ -34,7 +34,7 @@
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.1.0"
+        "example": "osdu:wks:reference-data--CoordinateTransformation:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -208,7 +208,7 @@
                       "description": "The relationship to the single Transformation item in the list of concatenated transformations.",
                       "type": "string",
                       "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateTransformation:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                      "example": "namespace:reference-data--CoordinateTransformation:Transformation_EPSG_1613:",
+                      "example": "namespace:reference-data--CoordinateTransformation:EPSG::1613:",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -247,7 +247,7 @@
               },
               "CoordinateTransformationType": {
                 "type": "string",
-                "title": "CRS Type",
+                "title": "CT Type",
                 "description": "The type of coordinate transformation. This is an enumeration of concrete sub-types. Transformation is a single operation between a source and a target geodetic CRS; ConcatenatedOperation is a chained set of Transformations.",
                 "enum": [
                   "Transformation",
@@ -290,7 +290,7 @@
                     "type": "string",
                     "description": "The relationship to the source CoordinateReferenceSystem.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateReferenceSystem:ProjectedCrs_EPSG_4230:",
+                    "example": "namespace:reference-data--CoordinateReferenceSystem:Geographic2D:EPSG::4230:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -336,7 +336,7 @@
                     "type": "string",
                     "description": "The relationship to the target CRS.",
                     "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-CoordinateReferenceSystem:[\\w\\-\\.\\:\\%]+:[0-9]*$",
-                    "example": "namespace:reference-data--CoordinateReferenceSystem:GeodeticCrs_EPSG_4326:",
+                    "example": "namespace:reference-data--CoordinateReferenceSystem:Geographic2D:EPSG::4326:",
                     "x-osdu-relationship": [
                       {
                         "GroupType": "reference-data",
@@ -426,13 +426,13 @@
                         },
                         "BoundingBoxWestBoundLongitude": {
                           "title": "West Longitude",
-                          "description": "Western latitude limit of the bounding box in degrees based on WGS 84",
+                          "description": "Western longitude limit of the bounding box in degrees based on WGS 84",
                           "type": "number",
                           "example": 1.37
                         },
                         "BoundingBoxEastBoundLongitude": {
                           "title": "East Longitude",
-                          "description": "Eastern latitude limit of the bounding box in degrees based on WGS 84",
+                          "description": "Eastern longitude limit of the bounding box in degrees based on WGS 84",
                           "type": "number",
                           "example": 11.14
                         },
@@ -556,13 +556,13 @@
                       },
                       "BoundingBoxWestBoundLongitude": {
                         "title": "Preferred Extent West Longitude",
-                        "description": "Western latitude limit of the bounding box in degrees based on WGS 84",
+                        "description": "Western longitude limit of the bounding box in degrees based on WGS 84",
                         "type": "number",
                         "example": 1.37
                       },
                       "BoundingBoxEastBoundLongitude": {
                         "title": "Preferred Extent East Longitude",
-                        "description": "Eastern latitude limit of the bounding box in degrees based on WGS 84",
+                        "description": "Eastern longitude limit of the bounding box in degrees based on WGS 84",
                         "type": "number",
                         "example": 11.14
                       },
@@ -613,12 +613,12 @@
                 "title": "Persistable Reference",
                 "description": "Used for export and actionable instructions to a conversion/transformation engine. It is initially based on Esri well-known text (WKT). Eventually, when Esri WKT are convertible into ISO WKT and vice versa, the definition can be replaced by https://proj.org/schemas/v0.2/projjson.schema.json.",
                 "type": "string",
-                "example": "{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"1613\"},\"type\":\"ST\",\"ver\":\"PE_10_3_1\",\"name\":\"ED_1950_To_WGS_1984_24\",\"wkt\":\"GEOGTRAN[\\\"ED_1950_To_WGS_1984_24\\\",GEOGCS[\\\"GCS_European_1950\\\",DATUM[\\\"D_European_1950\\\",SPHEROID[\\\"International_1924\\\",6378388.0,297.0]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"Position_Vector\\\"],PARAMETER[\\\"X_Axis_Translation\\\",-90.365],PARAMETER[\\\"Y_Axis_Translation\\\",-101.13],PARAMETER[\\\"Z_Axis_Translation\\\",-123.384],PARAMETER[\\\"X_Axis_Rotation\\\",0.333],PARAMETER[\\\"Y_Axis_Rotation\\\",0.077],PARAMETER[\\\"Z_Axis_Rotation\\\",0.894],PARAMETER[\\\"Scale_Difference\\\",1.994],AUTHORITY[\\\"EPSG\\\",1613]]\"}"
+                "example": "{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"1613\"},\"name\":\"ED_1950_To_WGS_1984_24\",\"type\":\"ST\",\"ver\":\"PE_10_9_1\",\"wkt\":\"GEOGTRAN[\\\"ED_1950_To_WGS_1984_24\\\",GEOGCS[\\\"GCS_European_1950\\\",DATUM[\\\"D_European_1950\\\",SPHEROID[\\\"International_1924\\\",6378388.0,297.0]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"Position_Vector\\\"],PARAMETER[\\\"X_Axis_Translation\\\",-90.365],PARAMETER[\\\"Y_Axis_Translation\\\",-101.13],PARAMETER[\\\"Z_Axis_Translation\\\",-123.384],PARAMETER[\\\"X_Axis_Rotation\\\",0.333],PARAMETER[\\\"Y_Axis_Rotation\\\",0.077],PARAMETER[\\\"Z_Axis_Rotation\\\",0.894],PARAMETER[\\\"Scale_Difference\\\",1.994],OPERATIONACCURACY[1.0],AUTHORITY[\\\"EPSG\\\",1613]]\"}"
               },
               "Wgs84Coordinates": {
                 "title": "WGS 84 Coordinates",
-                "description": "The 2-dimensional bounding box derived from the extent (Polygon or MultiPolygon) based on WGS 84 (EPSG:4326). The schema of this substructure is identical to the GeoJSON FeatureCollection https://geojson.org/schema/FeatureCollection.json. The coordinate sequence follows GeoJSON standard, i.e. longitude, latitude. CoordinateReferenceSystems with an extent crossing the anti-meridian are represented by a MultiPolygon.",
-                "$ref": "osdu:wks:AbstractFeatureCollection:1.0.0"
+                "description": "The 2-dimensional bounding box derived from the extent (Polygon or MultiPolygon) based on WGS 84 (EPSG:4326). The schema of this substructure is identical to the GeoJSON FeatureCollection https://geojson.org/schema/FeatureCollection.json. The coordinate sequence follows GeoJSON standard, i.e. longitude, latitude. CoordinateTransformations with an extent crossing the anti-meridian are represented by a MultiPolygon.",
+                "$ref": "{{schema-authority}}:wks:AbstractFeatureCollection:1.0.0"
               }
             },
             "title": "IndividualProperties"
