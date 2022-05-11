@@ -20,6 +20,11 @@ spec:
       containers:
         - name: "{{ .Values.conf.app_name }}-bootstrap"
           image: "{{ .Values.data.bootstrap_image }}"
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /tmp/bootstrap_ready
           imagePullPolicy: "{{ .Values.data.imagePullPolicy }}"
           envFrom:
           - configMapRef:

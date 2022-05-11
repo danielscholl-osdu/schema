@@ -102,6 +102,9 @@ curl -L -X PATCH 'http://partition.com/api/partition/v1/partitions/opendes' -H '
 
 ### Schema configuration:
 
+```
+CREATE SCHEMA IF NOT EXISTS dataecosystem AUTHORIZATION <SCHEMA_POSTGRESQL_USERNAME>;
+```
 For private tenants:
 
 ```
@@ -117,7 +120,7 @@ CREATE TABLE IF NOT EXISTS dataecosystem.authority
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem.authority
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: authority_datagin
 -- DROP INDEX IF EXISTS dataecosystem.authority_datagin;
 CREATE INDEX IF NOT EXISTS authority_datagin
@@ -136,16 +139,16 @@ CREATE TABLE IF NOT EXISTS dataecosystem."entityType"
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem."entityType"
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: entitytype_datagin
 -- DROP INDEX IF EXISTS dataecosystem.entitytype_datagin;
 CREATE INDEX IF NOT EXISTS entitytype_datagin
     ON dataecosystem."entityType" USING gin
     (data)
     TABLESPACE pg_default;
-    -- Table: dataecosystem.schema-osm
--- DROP TABLE IF EXISTS dataecosystem."schema-osm";
-CREATE TABLE IF NOT EXISTS dataecosystem."schema-osm"
+    -- Table: dataecosystem.schema_osm
+-- DROP TABLE IF EXISTS dataecosystem."schema_osm";
+CREATE TABLE IF NOT EXISTS dataecosystem."schema_osm"
 (
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -154,12 +157,12 @@ CREATE TABLE IF NOT EXISTS dataecosystem."schema-osm"
     CONSTRAINT schemarequest_id UNIQUE (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE IF EXISTS dataecosystem."schema-osm"
-    OWNER to postgres;
+ALTER TABLE IF EXISTS dataecosystem."schema_osm"
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: schemarequest_datagin
 -- DROP INDEX IF EXISTS dataecosystem.schemarequest_datagin;
 CREATE INDEX IF NOT EXISTS schemarequest_datagin
-    ON dataecosystem."schema-osm" USING gin
+    ON dataecosystem."schema_osm" USING gin
     (data)
     TABLESPACE pg_default;
     -- Table: dataecosystem.source
@@ -174,18 +177,16 @@ CREATE TABLE IF NOT EXISTS dataecosystem.source
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem.source
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: source_datagin
 -- DROP INDEX IF EXISTS dataecosystem.source_datagin;
 CREATE INDEX IF NOT EXISTS source_datagin
     ON dataecosystem.source USING gin
     (data)
     TABLESPACE pg_default;
-
 ```
 
-For shared tenant:
-
+-- For shared tenant:
 ```
 -- Table: dataecosystem.system_authority
 -- DROP TABLE IF EXISTS dataecosystem.system_authority;
@@ -194,35 +195,35 @@ CREATE TABLE IF NOT EXISTS dataecosystem.system_authority
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     data jsonb NOT NULL,
-    CONSTRAINT "Authority_pkey" PRIMARY KEY (pk),
-    CONSTRAINT authority_id UNIQUE (id)
+    CONSTRAINT "Authority_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT authority_id_system UNIQUE (id)
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem.system_authority
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: system_authority_datagin
 -- DROP INDEX IF EXISTS dataecosystem.system_authority_datagin;
 CREATE INDEX IF NOT EXISTS system_authority_datagin
     ON dataecosystem.system_authority USING gin
     (data)
     TABLESPACE pg_default;
--- Table: dataecosystem.system_entityType
--- DROP TABLE IF EXISTS dataecosystem."system_entityType";
-CREATE TABLE IF NOT EXISTS dataecosystem."system_entityType"
+-- Table: dataecosystem.system_entity_type
+-- DROP TABLE IF EXISTS dataecosystem."system_entity_type";
+CREATE TABLE IF NOT EXISTS dataecosystem."system_entity_type"
 (
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     data jsonb NOT NULL,
-    CONSTRAINT "EntityType_pkey" PRIMARY KEY (pk),
-    CONSTRAINT entitytype_id UNIQUE (id)
+    CONSTRAINT "EntityType_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT entitytype_id_system UNIQUE (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE IF EXISTS dataecosystem."system_entityType"
-    OWNER to postgres;
--- Index: system_entityType_datagin
--- DROP INDEX IF EXISTS dataecosystem.system_entityType_datagin;
-CREATE INDEX IF NOT EXISTS system_entityType_datagin
-    ON dataecosystem."system_entityType" USING gin
+ALTER TABLE IF EXISTS dataecosystem."system_entity_type"
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
+-- Index: system_entity_type_datagin
+-- DROP INDEX IF EXISTS dataecosystem.system_entity_type_datagin;
+CREATE INDEX IF NOT EXISTS system_entity_type_datagin
+    ON dataecosystem."system_entity_type" USING gin
     (data)
     TABLESPACE pg_default;
     -- Table: dataecosystem.system_schema_osm
@@ -232,12 +233,12 @@ CREATE TABLE IF NOT EXISTS dataecosystem."system_schema_osm"
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     data jsonb NOT NULL,
-    CONSTRAINT "Schema_pkey" PRIMARY KEY (pk),
-    CONSTRAINT schemarequest_id UNIQUE (id)
+    CONSTRAINT "Schema_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT schemarequest_id_system UNIQUE (id)
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem."system_schema_osm"
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: schemarequest_datagin
 -- DROP INDEX IF EXISTS dataecosystem.schemarequest_datagin;
 CREATE INDEX IF NOT EXISTS schemarequest_datagin
@@ -251,21 +252,19 @@ CREATE TABLE IF NOT EXISTS dataecosystem.system_source
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     data jsonb NOT NULL,
-    CONSTRAINT "Source_pkey" PRIMARY KEY (pk),
-    CONSTRAINT source_id UNIQUE (id)
+    CONSTRAINT "Source_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT source_id_system UNIQUE (id)
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem.system_source
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: system_source_datagin
 -- DROP INDEX IF EXISTS dataecosystem.system_source_datagin;
 CREATE INDEX IF NOT EXISTS system_source_datagin
     ON dataecosystem.system_source USING gin
     (data)
     TABLESPACE pg_default;
-
 ```
-
 
 ## RabbitMQ configuration:
 
@@ -428,7 +427,7 @@ These buckets must be defined in tenants’ dedicated object store servers. OBM 
    </td>
   </tr>
   <tr>
-   <td>&lt;PartitionInfo.projectId>-<strong>schema</strong>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name>-<strong>schema</strong>
    </td>
    <td>ListObjects, CRUDObject
    </td>
@@ -445,7 +444,7 @@ For shared tenant only:
    </td>
   </tr>
   <tr>
-   <td>&lt;PartitionInfo.projectId><strong>-system-schema</strong>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name><strong>-system-schema</strong>
    </td>
    <td>ListObjects, CRUDObject
    </td>
