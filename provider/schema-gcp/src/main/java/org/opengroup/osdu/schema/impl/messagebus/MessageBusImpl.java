@@ -18,6 +18,11 @@
 package org.opengroup.osdu.schema.impl.messagebus;
 
 import com.google.gson.Gson;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
@@ -35,14 +40,7 @@ import org.opengroup.osdu.schema.destination.provider.DestinationProvider;
 import org.opengroup.osdu.schema.impl.messagebus.model.SchemaPubSubInfo;
 import org.opengroup.osdu.schema.logging.AuditLogger;
 import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -60,7 +58,7 @@ public class MessageBusImpl implements IMessageBus {
   private OqmTopic oqmTopic = null;
 
   @PostConstruct
-  void postConstruct(){
+  void postConstruct() {
     oqmTopic = OqmTopic.builder().name(eventMessagingPropertiesConfig.getTopicName()).build();
   }
 
@@ -73,7 +71,8 @@ public class MessageBusImpl implements IMessageBus {
 
       if (Objects.isNull(this.oqmTopic)) {
         try {
-          this.oqmTopic = OqmTopic.builder().name(eventMessagingPropertiesConfig.getTopicName()).build();
+          this.oqmTopic = OqmTopic.builder().name(eventMessagingPropertiesConfig.getTopicName())
+              .build();
         } catch (OqmDriverRuntimeException e) {
           this.logger.info(SchemaConstants.SCHEMA_NOTIFICATION_FAILED);
           this.auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
@@ -90,6 +89,18 @@ public class MessageBusImpl implements IMessageBus {
     }
   }
 
+  //  TODO stub must be replaced with actual implementation
+  @Override
+  public void publishMessageForSystemSchema(String schemaId, String eventType) {
+    String correlationId = headers.getCorrelationId();
+    String dataPartitionId = headers.getPartitionId();
+    this.logger.debug("Status changed messaging disabled, writing message to log.");
+    this.logger.debug(
+        DpsHeaders.CORRELATION_ID + " " + correlationId + DpsHeaders.DATA_PARTITION_ID + " "
+            + dataPartitionId
+            + " schema id: " + schemaId + " event type: " + eventType);
+  }
+
   private OqmMessage createMessage(String schemaId, String eventType) {
     SchemaPubSubInfo schemaPubSubMsg = new SchemaPubSubInfo(schemaId, eventType);
 
@@ -98,14 +109,15 @@ public class MessageBusImpl implements IMessageBus {
     Map<String, String> attributes = new HashMap<>();
 
     attributes.put(DpsHeaders.ACCOUNT_ID, this.tenantInfo.getName());
-    attributes.put(DpsHeaders.DATA_PARTITION_ID, this.headers.getPartitionIdWithFallbackToAccountId());
+    attributes.put(DpsHeaders.DATA_PARTITION_ID,
+        this.headers.getPartitionIdWithFallbackToAccountId());
     this.headers.addCorrelationIdIfMissing();
     attributes.put(DpsHeaders.CORRELATION_ID, this.headers.getCorrelationId());
 
     return OqmMessage.builder()
-            .data(data)
-            .attributes(attributes)
-            .build();
+        .data(data)
+        .attributes(attributes)
+        .build();
   }
 
 }

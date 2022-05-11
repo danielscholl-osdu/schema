@@ -28,27 +28,28 @@ import org.opengroup.osdu.core.gcp.osm.model.Namespace;
 @Data
 @Builder
 public class DestinationInstructions {
-    private String dataPartition;
-    private Namespace namespace;
-    private Kind kind;
 
-    public static Destination toOsmDestination(DestinationInstructions instructions){
-        return Destination.builder()
-                .partitionId(instructions.dataPartition)
-                .namespace(instructions.namespace)
-                .kind(instructions.kind)
-                .build();
-    }
+  private String dataPartition;
+  private Namespace namespace;
+  private Kind kind;
 
-    public static OqmDestination toOqmDestination(DestinationInstructions instructions){
-        return OqmDestination.builder()
-                .partitionId(instructions.dataPartition)
-                .build();
-    }
+  public static Destination toOsmDestination(DestinationInstructions instructions) {
+    return Destination.builder()
+        .partitionId(instructions.dataPartition)
+        .namespace(instructions.namespace)
+        .kind(instructions.kind)
+        .build();
+  }
 
-    public static ObmDestination toObmDestination(DestinationInstructions instructions){
-        return ObmDestination.builder()
-                .partitionId(instructions.dataPartition)
-                .build();
-    }
+  public static OqmDestination toOqmDestination(DestinationInstructions instructions) {
+    return OqmDestination.builder()
+        .partitionId(instructions.dataPartition)
+        .build();
+  }
+
+  public static ObmDestination toObmDestination(DestinationInstructions instructions) {
+    return ObmDestination.builder()
+        .partitionId(instructions.dataPartition)
+        .build();
+  }
 }

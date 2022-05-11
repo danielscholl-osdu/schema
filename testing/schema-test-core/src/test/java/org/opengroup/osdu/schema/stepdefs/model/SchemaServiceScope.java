@@ -25,6 +25,7 @@ public class SchemaServiceScope {
 	private HttpResponse httpResponse;
 	private String jsonPayloadForPostPUT;
 	private String status;
+	private String scope;
 
 	private Map<String, String> authHeaders;
 	private Map<String, String> queryParams;
@@ -98,5 +99,12 @@ public class SchemaServiceScope {
 		this.status = status;
 	}
 
+	public String getScope() {
+		return scope;
+	}
+
+	public void setScope(String scope) {
+		this.scope = scope;
+	}
 
 }

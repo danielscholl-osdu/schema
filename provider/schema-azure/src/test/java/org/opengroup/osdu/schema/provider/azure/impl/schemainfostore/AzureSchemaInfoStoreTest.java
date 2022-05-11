@@ -164,7 +164,6 @@ public class AzureSchemaInfoStoreTest {
 
     @Test
     public void testGetSchemaInfo_NotEmpty_PublicSchemas() throws NotFoundException, ApplicationException {
-        Mockito.when(headers.getPartitionId()).thenReturn(commonTenantId);
         Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
         doReturn(cosmosItem)
                 .when(cosmosStore)
@@ -180,11 +179,7 @@ public class AzureSchemaInfoStoreTest {
         SchemaInfo schemaInfo1 = schemaInfoStore.getSystemSchemaInfo(schemaId);
         assertNotNull(schemaInfo1);
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        SchemaInfo schemaInfo = schemaInfoStore.getSchemaInfo(schemaId);
-        assertNotNull(schemaInfo);
-
-        verify(this.cosmosStore, times(2)).findItem(any(), any(), eq("os:wks:well:1.1.1"), eq("os:wks:well:1"), eq(SchemaInfoDoc.class));
+        verify(this.cosmosStore, times(1)).findItem(any(), any(), eq("os:wks:well:1.1.1"), eq("os:wks:well:1"), eq(SchemaInfoDoc.class));
         verify(this.cosmosStore, times(0)).findItem(anyString(), anyString(), anyString(), anyString(), anyString(), any());
     }
 
@@ -225,7 +220,6 @@ public class AzureSchemaInfoStoreTest {
 
     @Test
     public void testCreateSchemaInfo_Positive_PublicSchemas() throws ApplicationException, BadRequestException {
-        Mockito.when(headers.getPartitionId()).thenReturn(commonTenantId);
         // the schema is not present in schemaInfoStore
         doReturn(Optional.empty())
                 .when(cosmosStore)
@@ -239,10 +233,7 @@ public class AzureSchemaInfoStoreTest {
 
         assertNotNull(schemaInfoStore.createSystemSchemaInfo(getMockSchemaObject_Published()));
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        assertNotNull(schemaInfoStore.createSchemaInfo(getMockSchemaObject_Published()));
-
-        verify(this.cosmosStore, times(2)).createItem(any(), any(), eq("os:wks:well:1"), any());
+        verify(this.cosmosStore, times(1)).createItem(any(), any(), eq("os:wks:well:1"), any());
         verify(this.cosmosStore, times(0)).createItem(anyString(), anyString(), anyString(), anyString(), any());
         verify(this.cosmosStore, times(0)).findItem(any(), anyString(), anyString(), anyString(), anyString(), any());
     }
@@ -408,7 +399,7 @@ public class AzureSchemaInfoStoreTest {
                         eq(dataPartitionId + ":" + schemaId),
                         eq(partitionKey),
                         any());
-        assertFalse(schemaInfoStore.isUnique(schemaId, commonTenantId));
+        assertFalse(schemaInfoStore.isUniqueSystemSchema(schemaId));
     }
 
     @Test
@@ -599,7 +590,6 @@ public class AzureSchemaInfoStoreTest {
     @Test
     public void testGetSchemaInfoList_withqueryparam_PublicSchemas()
             throws NotFoundException, ApplicationException, BadRequestException {
-        Mockito.when(headers.getPartitionId()).thenReturn(commonTenantId);
         List<SchemaInfoDoc> schemaInfoDocsList = new LinkedList<>();
         schemaInfoDocsList.add(getMockSchemaInfoDoc());
         doReturn(schemaInfoDocsList).when(cosmosStore).queryItems(eq(systemCosmosDBName), any(), any(), any(), any());
@@ -609,13 +599,7 @@ public class AzureSchemaInfoStoreTest {
                         .schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test").latestVersion(false)
                         .limit(100).offset(0).build()).size());
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        assertEquals(1,
-                schemaInfoStore.getSchemaInfoList(QueryParams.builder().authority("test").source("test").entityType("test")
-                        .schemaVersionMajor(1l).schemaVersionMinor(1l).scope("test").status("test").latestVersion(false)
-                        .limit(100).offset(0).build(), commonTenantId).size());
-
-        verify(this.cosmosStore, times(2)).queryItems(eq(systemCosmosDBName), any(),any(), any(), eq(SchemaInfoDoc.class));
+        verify(this.cosmosStore, times(1)).queryItems(eq(systemCosmosDBName), any(),any(), any(), eq(SchemaInfoDoc.class));
         verify(this.cosmosStore, times(0)).queryItems(any(), any(), any(),any(), any(), eq(SchemaInfoDoc.class));
     }
 
@@ -647,7 +631,6 @@ public class AzureSchemaInfoStoreTest {
 
     @Test
     public void testCleanSchema_Success_PublicSchemas() throws ApplicationException {
-        doReturn(commonTenantId).when(headers).getPartitionId();
         doReturn(Optional.of(schemaInfoDoc))
                 .when(cosmosStore)
                 .findItem(
@@ -659,10 +642,7 @@ public class AzureSchemaInfoStoreTest {
 
         assertEquals(true, schemaInfoStore.cleanSystemSchema(schemaId));
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        assertEquals(true, schemaInfoStore.cleanSchema(schemaId));
-
-        verify(cosmosStore, times(2)).deleteItem(any(), any(), any(), any());
+        verify(cosmosStore, times(1)).deleteItem(any(), any(), any(), any());
         verify(cosmosStore, times(0)).deleteItem(any(), any(), any(), any(), any());
         verify(cosmosStore, times(0)).findItem(any(), any(), any(), any(), any(), any());
     }

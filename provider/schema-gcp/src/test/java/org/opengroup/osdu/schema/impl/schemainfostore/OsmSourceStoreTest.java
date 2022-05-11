@@ -10,12 +10,13 @@ import org.mockito.Mockito;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
-import org.opengroup.osdu.core.gcp.multitenancy.TenantFactory;
+import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.model.Kind;
 import org.opengroup.osdu.core.gcp.osm.model.Namespace;
 import org.opengroup.osdu.core.gcp.osm.service.Context;
 import org.opengroup.osdu.core.gcp.osm.translate.TranslatorRuntimeException;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.impl.OsmDestinationProvider;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -55,7 +56,7 @@ public class OsmSourceStoreTest {
     TenantInfo tenantInfo;
 
     @Mock
-    TenantFactory tenantFactory;
+    ITenantFactory tenantFactory;
 
     @Mock
     JaxRsDpsLog log;
@@ -66,10 +67,13 @@ public class OsmSourceStoreTest {
     @Mock
     OsmDestinationProvider destinationProvider;
 
+    @Mock
+    PropertiesConfiguration configuration;
 
     @Before
     public void setUp() {
-        ReflectionTestUtils.setField(osmSourceStore, "sharedTenant", COMMON_TENANT_ID);
+        when(configuration.getSharedTenantName()).thenReturn(COMMON_TENANT_ID);
+        ReflectionTestUtils.setField(osmSourceStore, "configuration", configuration);
         Mockito.when(headers.getPartitionId()).thenReturn("test");
         Mockito.when(tenantFactory.getTenantInfo("test")).thenReturn(tenantInfo);
 

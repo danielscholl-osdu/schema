@@ -97,10 +97,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
-		// This if block will be removed once schema-core starts consuming *System* methods.
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-			return this.getSystemSchemaInfo(schemaId);
-		}
 
 		String id = headers.getPartitionId() + ":" + schemaId;
 
@@ -139,10 +135,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
-		// This if block will be removed once schema-core starts consuming *System* methods.
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-			return this.createSystemSchemaInfo(schema);
-		}
 
 		String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
 		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema, headers.getPartitionId());
@@ -192,10 +184,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
-		// This if block will be removed once schema-core starts consuming *System* methods.
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-			return this.updateSystemSchemaInfo(schema);
-		}
 
 		String id = headers.getPartitionId() + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
 		FlattenedSchemaInfo flattenedSchemaInfo = populateSchemaInfo(schema, headers.getPartitionId());
@@ -246,10 +234,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public boolean cleanSchema(String schemaId) throws ApplicationException {
-		// This if block will be removed once schema-core starts consuming *System* methods.
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(headers.getPartitionId())) {
-			return this.cleanSystemSchema(schemaId);
-		}
 
 		String id = headers.getPartitionId() + ":" + schemaId;
 
@@ -336,10 +320,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	 */
 	@Override
 	public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
-		// This if block will be removed once schema-core starts consuming *System* methods.
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(tenantId)) {
-			return this.getSystemSchemaInfoList(queryParams);
-		}
 
 		SqlQuerySpec query = this.prepareSqlQuery(queryParams);
 		CosmosQueryRequestOptions options = this.prepareCosmosQueryRequestOptions(queryParams);
@@ -385,10 +365,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 
 	@Override
 	public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
-		// This if block will be removed once schema-core starts consuming *System* methods.
-		if (systemResourceConfig.getSharedTenant().equalsIgnoreCase(tenantId)) {
-			return this.isUniqueSystemSchema(schemaId);
-		}
 
 		// Check for uniqueness in the system schemas
 		String partitionKey = createSchemaInfoPartitionKey(schemaKindToSchemaIdentity(schemaId));
@@ -428,11 +404,6 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 
 		for (String tenant : tenantList) {
 			String id = tenant + ":" + schemaId;
-
-			// don't check in the erstwhile common tenant
-			if (tenant.equalsIgnoreCase(sharedTenant)) {
-				continue;
-			}
 
 			try {
 				Boolean existsInTenant = findItemInCosmosStore(tenant, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).isPresent();
@@ -688,8 +659,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			String partitionKey,
 			Class<T> clazz) {
 		if (dataPartitionId == null ||
-				dataPartitionId.isEmpty() ||
-				systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+				dataPartitionId.isEmpty()) {
 			return cosmosStore.findItem(systemResourceConfig.getCosmosDatabase(), containerName, id, partitionKey, clazz);
 		} else {
 			return cosmosStore.findItem(dataPartitionId, dataBaseName, containerName, id, partitionKey, clazz);
@@ -704,8 +674,7 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			CosmosQueryRequestOptions options,
 			Class<T> clazz) {
 		if (dataPartitionId == null ||
-				dataPartitionId.isEmpty() ||
-				systemResourceConfig.getSharedTenant().equalsIgnoreCase(dataPartitionId)) {
+				dataPartitionId.isEmpty()) {
 			return cosmosStore.queryItems(systemResourceConfig.getCosmosDatabase(), collection, query, options, clazz);
 		} else {
 			return cosmosStore.queryItems(dataPartitionId, cosmosDBName, collection, query, options, clazz);

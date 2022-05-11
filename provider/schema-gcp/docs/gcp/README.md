@@ -44,7 +44,13 @@ Example:
 
 ![Screenshot](./pics/namespace.PNG)
 
+For private tenants:
+
 Kind `schema-osm` `authority` `entityType` `source` will be created by service if it does not exist.
+
+For shared tenant:
+
+Kind `system_schema_osm` `system_authority` `system_entityType` `system_source` will be created by service if it does not exist.
 
 ## Pubsub configuration:
 
@@ -59,8 +65,9 @@ It can be overridden by:
 
 ## GCS configuration <a name="ObjectStoreConfig"></a>
 
-### Per-tenant buckets configuration
-These buckets must be defined in tenants’ “data” GCP projects that names are pointed in tenants’ PartitionInfo registration objects’ “projectId” property at the Partition service.
+For each private tenant:
+
+At Google cloud storage should be created bucket:
 
 <table>
   <tr>
@@ -70,7 +77,26 @@ These buckets must be defined in tenants’ “data” GCP projects that names a
    </td>
   </tr>
   <tr>
-   <td>&lt;PartitionInfo.projectId><strong>-schema</strong>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name><strong>-schema</strong>
+   </td>
+   <td>ListObjects, CRUDObject
+   </td>
+  </tr>
+</table>
+
+For shared tenant only:
+
+At Google cloud storage should be created bucket:
+
+<table>
+  <tr>
+   <td>Bucket Naming template 
+   </td>
+   <td>Permissions required
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name><strong>-system-schema</strong>
    </td>
    <td>ListObjects, CRUDObject
    </td>

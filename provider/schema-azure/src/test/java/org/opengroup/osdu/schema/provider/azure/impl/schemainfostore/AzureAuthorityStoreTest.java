@@ -115,10 +115,6 @@ public class AzureAuthorityStoreTest {
         assertNotNull(store.getSystemAuthority(authorityId));
         assertEquals(authorityId, store.getSystemAuthority(authorityId).getAuthorityId());
 
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        assertNotNull(store.get(authorityId));
-        assertEquals(authorityId, store.get(authorityId).getAuthorityId());
-
     }
 
     @Test
@@ -222,17 +218,6 @@ public class AzureAuthorityStoreTest {
 
         try {
             store.createSystemAuthority(mockAuthority);
-            fail("Should not succeed");
-        } catch (BadRequestException e) {
-            assertEquals("Authority already registered with Id: testAuthorityId", e.getMessage());
-
-        } catch (Exception e) {
-            fail("Should not get different exception");
-        }
-
-        // This is temporary and will be removed once schema-core starts consuming *system* methods
-        try {
-            store.create(mockAuthority);
             fail("Should not succeed");
         } catch (BadRequestException e) {
             assertEquals("Authority already registered with Id: testAuthorityId", e.getMessage());

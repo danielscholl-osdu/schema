@@ -378,6 +378,7 @@ public class SchemaServiceStepDef_GET implements En {
 				JsonObject schemaIdentity_ForEachSchemaStatus = (JsonObject) (eachSchemaInfo.getAsJsonObject());
 
 				this.context.setStatus(schemaIdentity_ForEachSchemaStatus.get("status").getAsString());
+				this.context.setScope(schemaIdentity_ForEachSchemaStatus.get("scope").getAsString());
 
 				JsonObject schemaIdentity_ForEachSchemaInfo = (JsonObject) eachSchemaInfo.getAsJsonObject()
 						.get("schemaIdentity");

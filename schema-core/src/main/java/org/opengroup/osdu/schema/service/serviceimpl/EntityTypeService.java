@@ -21,7 +21,7 @@ public class EntityTypeService implements IEntityTypeService {
     /**
      * check and create EntityType if its not present of dataPartitionId store
      *
-     * @param EntityType id
+     * @param entityTypeId
      * @return true or false of successful registration of EntityType.
      */
     @Override
@@ -38,6 +38,25 @@ public class EntityTypeService implements IEntityTypeService {
         }
         return true;
 
+    }
+
+    /**
+     * check and create EntityType if its not present
+     * @param entityTypeId
+     * @return
+     */
+    @Override
+    public Boolean checkAndRegisterSystemEntityTypeIfNotPresent(String entityTypeId) {
+        try {
+            EntityType entityType = new EntityType();
+            entityType.setEntityTypeId(entityTypeId);
+            entityTypeStore.createSystemEntity(entityType);
+        } catch (ApplicationException e) {
+            return false;
+        } catch (BadRequestException ex) {
+            return true;
+        }
+        return true;
     }
 
 }

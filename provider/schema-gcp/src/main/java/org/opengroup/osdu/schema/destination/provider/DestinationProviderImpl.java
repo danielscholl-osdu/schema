@@ -28,46 +28,47 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public abstract class DestinationProviderImpl<DestinationT> implements DestinationProvider<DestinationT> {
+public abstract class DestinationProviderImpl<DestinationT> implements
+    DestinationProvider<DestinationT> {
 
-    private final ITenantFactory tenantFactory;
+  private final ITenantFactory tenantFactory;
 
-    @Autowired
-    public DestinationProviderImpl(ITenantFactory tenantFactory) {
-        this.tenantFactory = tenantFactory;
-    }
+  @Autowired
+  protected DestinationProviderImpl(ITenantFactory tenantFactory) {
+    this.tenantFactory = tenantFactory;
+  }
 
-    @Override
-    public DestinationT getDestination(String partitionId) {
-        TenantInfo tenantInfo = tenantFactory.getTenantInfo(partitionId);
-        return getDestination(tenantInfo, "");
-    }
+  @Override
+  public DestinationT getDestination(String partitionId) {
+    TenantInfo tenantInfo = tenantFactory.getTenantInfo(partitionId);
+    return getDestination(tenantInfo, "");
+  }
 
-    @Override
-    public DestinationT getDestination(String partitionId, String kindName) {
-        TenantInfo tenantInfo = tenantFactory.getTenantInfo(partitionId);
-        return getDestination(tenantInfo, kindName);
-    }
+  @Override
+  public DestinationT getDestination(String partitionId, String kindName) {
+    TenantInfo tenantInfo = tenantFactory.getTenantInfo(partitionId);
+    return getDestination(tenantInfo, kindName);
+  }
 
-    @Override
-    public DestinationT getDestination(TenantInfo tenantInfo, String kindName) {
-        log.debug("Providing destination for the tenant: " + tenantInfo.getName());
-        String partitionId = tenantInfo.getDataPartitionId();
-        String namespace = tenantInfo.getName();
-        return getDestination(partitionId, namespace, kindName);
-    }
+  @Override
+  public DestinationT getDestination(TenantInfo tenantInfo, String kindName) {
+    log.debug("Providing destination for the tenant: " + tenantInfo.getName());
+    String partitionId = tenantInfo.getDataPartitionId();
+    String namespace = tenantInfo.getName();
+    return getDestination(partitionId, namespace, kindName);
+  }
 
-    @Override
-    public DestinationT getDestination(String partitionId, String namespace, String kindName) {
+  @Override
+  public DestinationT getDestination(String partitionId, String namespace, String kindName) {
 
-        DestinationInstructions instructions = DestinationInstructions.builder()
-                .dataPartition(partitionId)
-                .namespace(new Namespace(namespace))
-                .kind(new Kind(kindName))
-                .build();
+    DestinationInstructions instructions = DestinationInstructions.builder()
+        .dataPartition(partitionId)
+        .namespace(new Namespace(namespace))
+        .kind(new Kind(kindName))
+        .build();
 
-        return buildDestination(instructions);
-    }
+    return buildDestination(instructions);
+  }
 
-    protected abstract DestinationT buildDestination(DestinationInstructions instructions);
+  protected abstract DestinationT buildDestination(DestinationInstructions instructions);
 }

@@ -6,10 +6,12 @@ package org.opengroup.osdu.schema.impl.schemastore;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.ibm.objectstorage.CloudObjectStorageFactory;
@@ -25,9 +27,12 @@ import org.springframework.web.context.annotation.RequestScope;
 import org.opengroup.osdu.schema.exceptions.UnauthorizedException;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
+import com.ibm.cloud.objectstorage.services.s3.Headers;
 import com.ibm.cloud.objectstorage.services.s3.model.AmazonS3Exception;
 import com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata;
 import com.ibm.cloud.objectstorage.services.s3.model.PutObjectRequest;
+
+import io.netty.util.internal.StringUtil;
 
 /**
  * Repository class to to register resolved Schema in IBM storage.
@@ -83,7 +88,10 @@ public class IBMSchemaStore implements ISchemaStore {
 		}
 
 		try {
-			content = getObjectAsString(schemaId);
+			if(dataPartitionId.equalsIgnoreCase(sharedTenant))
+			    content = getObjectAsSystemString(schemaId);
+			else
+				content = getObjectAsString(schemaId);
 		} catch (AmazonS3Exception s3Exp) {
 			if(s3Exp.getStatusCode() == 404) {
 				throw new NotFoundException(HttpStatus.NOT_FOUND, SchemaConstants.SCHEMA_NOT_PRESENT);
@@ -158,9 +166,20 @@ public class IBMSchemaStore implements ISchemaStore {
 	private String getObjectAsString(String objectName) throws Exception {
 		return s3Client.getObjectAsString(getSchemaBucketName(), objectName);
 	}
+	
+	private String getObjectAsSystemString(String objectName) throws Exception {
+		return s3Client.getObjectAsString(getPublicSchemaBucketName(), objectName);
+	}
 
-	private String getSchemaBucketName()  throws Exception {
-		return getSchemaBucketName(headers.getPartitionIdWithFallbackToAccountId());
+	private String getSchemaBucketName() throws Exception {
+			return getSchemaBucketName(headers.getPartitionIdWithFallbackToAccountId());
+		
+	}
+	
+	private String getPublicSchemaBucketName() throws Exception {
+			Map<String, String> authHeader = headers.getHeaders();
+			authHeader.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
+			return getSchemaBucketName(authHeader.get(SchemaConstants.DATA_PARTITION_ID));
 	}
 
 	private String getSchemaBucketName(String dataPartitionId)  throws Exception {

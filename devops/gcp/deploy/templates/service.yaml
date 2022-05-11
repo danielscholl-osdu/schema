@@ -9,7 +9,6 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
   labels:
     app: "{{ .Values.conf.app_name }}"
-    service: "{{ .Values.conf.app_name }}"
 spec:
   ports:
     - protocol: TCP

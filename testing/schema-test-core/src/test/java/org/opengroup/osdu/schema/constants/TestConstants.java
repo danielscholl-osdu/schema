@@ -3,6 +3,7 @@ package org.opengroup.osdu.schema.constants;
 public class TestConstants {
     public static final String FORWARD_SLASH = "/";
     public static final String PUT_ENDPOINT = "/api/schema-service/v1/schema";
+    public static final String PUT_SYSTEM_SCHEMA_ENDPOINT = "/api/schema-service/v1/schemas/system";
     public static final String POST_ENDPOINT = "/api/schema-service/v1/schema";
     public static final String GET_LIST_ENDPOINT = "/api/schema-service/v1/schema";
     public static final String GET_ENDPOINT = "/api/schema-service/v1/schema/";

@@ -21,7 +21,7 @@ public class AuthorityService implements IAuthorityService {
     /**
      * check and create authority if its not present in the tenant dataPartitionId
      *
-     * @param authority id
+     * @param authorityId
      * @return true or false of successful registration of authority.
      */
     @Override
@@ -30,6 +30,25 @@ public class AuthorityService implements IAuthorityService {
             Authority authority = new Authority();
             authority.setAuthorityId(authorityId);
             authorityStore.create(authority);
+        } catch (ApplicationException e) {
+            return false;
+        } catch (BadRequestException ex) {
+            return true;
+        }
+        return true;
+    }
+
+    /**
+     * check and create System authority if its not present
+     * @param authorityId
+     * @return
+     */
+    @Override
+    public Boolean checkAndRegisterSystemAuthorityIfNotPresent(String authorityId) {
+        try {
+            Authority authority = new Authority();
+            authority.setAuthorityId(authorityId);
+            authorityStore.createSystemAuthority(authority);
         } catch (ApplicationException e) {
             return false;
         } catch (BadRequestException ex) {

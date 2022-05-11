@@ -17,6 +17,9 @@
 
 package org.opengroup.osdu.schema.impl.schemainfostore;
 
+import static org.opengroup.osdu.core.gcp.osm.model.where.predicate.Eq.eq;
+
+import java.text.MessageFormat;
 import org.apache.commons.lang3.ObjectUtils;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -24,6 +27,8 @@ import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.model.query.GetQuery;
 import org.opengroup.osdu.core.gcp.osm.model.where.Where;
 import org.opengroup.osdu.core.gcp.osm.service.Context;
+import org.opengroup.osdu.core.gcp.osm.translate.TranslatorRuntimeException;
+import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.DestinationProvider;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
@@ -34,71 +39,129 @@ import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IEntityType
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.text.MessageFormat;
-
-import static org.opengroup.osdu.core.gcp.osm.model.where.predicate.Eq.eq;
-
 /**
  * Repository class to register Entity type in KV store using OSM.
- *
  */
-
 @Repository
-public class OsmEntityTypeStore extends AbstractOsmRepository<EntityType> implements IEntityTypeStore {
-    static {
-        ENTITY_CREATED = SchemaConstants.ENTITY_TYPE_CREATED;
-    }
+public class OsmEntityTypeStore implements IEntityTypeStore {
 
-    @Autowired
-    public OsmEntityTypeStore(DpsHeaders headers, DestinationProvider<Destination> destinationProvider, JaxRsDpsLog log, Context context) {
-        super(headers, destinationProvider, log, context);
-    }
+  private static final String NAME_FIELD = "name";
+  private static final String SYSTEM_ENTITY_KIND = "system_entity_type";
+  private final DpsHeaders headers;
+  private final DestinationProvider<Destination> destinationProvider;
+  private final JaxRsDpsLog log;
+  private final PropertiesConfiguration configuration;
+  private final Context context;
 
-    /**
-     * Method to get System entity type from google store
-     * @param entityTypeId
-     * @return EntityType object
-     * @throws NotFoundException
-     * @throws ApplicationException
-     */
-    @Override
-    public EntityType getSystemEntity(String entityTypeId) throws NotFoundException, ApplicationException {
-        return super.getSystemEntity(entityTypeId);
-    }
+  @Autowired
+  public OsmEntityTypeStore(DpsHeaders headers,
+      DestinationProvider<Destination> destinationProvider, JaxRsDpsLog log, Context context,
+      PropertiesConfiguration configuration) {
+    this.headers = headers;
+    this.destinationProvider = destinationProvider;
+    this.log = log;
+    this.configuration = configuration;
+    this.context = context;
+  }
 
-    /**
-     * Method to create entityType in google store of dataPartitionId GCP
-     * @param entityType
-     * @return EntityType object
-     * @throws BadRequestException
-     * @throws ApplicationException
-     */
-    @Override
-    public EntityType createSystemEntity(EntityType entityType) throws BadRequestException, ApplicationException {
-        return super.createSystemEntity(entityType);
-    }
+  @Override
+  public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
+    Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
 
-    @Override
-    protected Destination getDestination() {
-        return destinationProvider.getDestination(
-                headers.getPartitionId(),
-                SchemaConstants.NAMESPACE,
-                SchemaConstants.ENTITYTYPE_KIND
-        );
-    }
+    return context.findOne(buildQueryFor(tenantDestination, eq(NAME_FIELD, entityTypeId)))
+        .orElseThrow(() ->
+            new NotFoundException("bad input parameter"));
+  }
 
-    @Override
-    protected GetQuery<EntityType> buildQueryFor(Destination destination, Where where) {
-        return new GetQuery<>(EntityType.class, destination, where);
-    }
+  /**
+   * Method to get System entity type from google store
+   *
+   * @param entityTypeId
+   * @return EntityType object
+   * @throws NotFoundException
+   * @throws ApplicationException
+   */
+  @Override
+  public EntityType getSystemEntity(String entityTypeId)
+      throws NotFoundException, ApplicationException {
+    Destination systemDestination = getSystemDestination();
 
-    @Override
-    protected void checkEntityExistence(EntityType entityType) throws BadRequestException {
-        EntityType entityFromDb = context.getOne(buildQueryFor(getDestination(), eq(NAME_FIELD, entityType.getEntityTypeId())));
-        if (ObjectUtils.isNotEmpty(entityFromDb)) {
-            log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
-            throw new BadRequestException(MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
-                    entityType.getEntityTypeId()));
-        }
+    return context.findOne(buildQueryFor(systemDestination, eq(NAME_FIELD, entityTypeId)))
+        .orElseThrow(() ->
+            new NotFoundException("bad input parameter"));
+  }
+
+  @Override
+  public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
+    Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
+    checkEntityExistence(entityType, tenantDestination);
+
+    EntityType entityFromDb;
+    try {
+      entityFromDb = context.createAndGet(entityType,
+          getPrivateTenantDestination(this.headers.getPartitionId()));
+    } catch (TranslatorRuntimeException ex) {
+      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+      throw new ApplicationException(SchemaConstants.INVALID_INPUT);
     }
+    log.info(SchemaConstants.ENTITY_TYPE_CREATED);
+    return entityFromDb;
+  }
+
+  /**
+   * Method to create entityType in google store of dataPartitionId GCP
+   *
+   * @param entityType
+   * @return EntityType object
+   * @throws BadRequestException
+   * @throws ApplicationException
+   */
+  @Override
+  public EntityType createSystemEntity(EntityType entityType)
+      throws BadRequestException, ApplicationException {
+    Destination systemDestination = getSystemDestination();
+    checkEntityExistence(entityType, systemDestination);
+
+    EntityType entityFromDb;
+    try {
+      entityFromDb = context.createAndGet(entityType, systemDestination);
+    } catch (TranslatorRuntimeException ex) {
+      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+      throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+    }
+    log.info(SchemaConstants.ENTITY_TYPE_CREATED);
+    return entityFromDb;
+  }
+
+  private GetQuery<EntityType> buildQueryFor(Destination destination, Where where) {
+    return new GetQuery<>(EntityType.class, destination, where);
+  }
+
+  private void checkEntityExistence(EntityType entityType, Destination destination)
+      throws BadRequestException {
+    EntityType entityFromDb = context.getOne(
+        buildQueryFor(destination, eq(NAME_FIELD, entityType.getEntityTypeId())));
+    if (ObjectUtils.isNotEmpty(entityFromDb)) {
+      log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
+      throw new BadRequestException(
+          MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
+              entityType.getEntityTypeId()));
+    }
+  }
+
+  private Destination getPrivateTenantDestination(String partitionId) {
+    return destinationProvider.getDestination(
+        partitionId,
+        SchemaConstants.NAMESPACE,
+        SchemaConstants.ENTITYTYPE_KIND
+    );
+  }
+
+  private Destination getSystemDestination() {
+    return destinationProvider.getDestination(
+        configuration.getSharedTenantName(),
+        SchemaConstants.NAMESPACE,
+        SYSTEM_ENTITY_KIND
+    );
+  }
 }

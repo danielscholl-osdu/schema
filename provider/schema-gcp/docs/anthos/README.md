@@ -9,6 +9,7 @@ Must have:
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
 | `SPRING_PROFILES_ACTIVE` | ex `anthos` | Spring profile that activate default configuration for GCP environment | false | - |
+| `SHARED_TENANT_NAME` | ex `anthos` | Shared account id | no | - |
 | `<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | Potgres user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service)  | yes | - |
 | `<MINIO_SECRETKEY_ENV_VARIABLE_NAME>` | ex `password` | Minio password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
 | `<AMQP_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
@@ -102,6 +103,11 @@ curl -L -X PATCH 'http://partition.com/api/partition/v1/partitions/opendes' -H '
 ### Schema configuration:
 
 ```
+CREATE SCHEMA IF NOT EXISTS dataecosystem AUTHORIZATION <SCHEMA_POSTGRESQL_USERNAME>;
+```
+For private tenants:
+
+```
 -- Table: dataecosystem.authority
 -- DROP TABLE IF EXISTS dataecosystem.authority;
 CREATE TABLE IF NOT EXISTS dataecosystem.authority
@@ -114,7 +120,7 @@ CREATE TABLE IF NOT EXISTS dataecosystem.authority
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem.authority
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: authority_datagin
 -- DROP INDEX IF EXISTS dataecosystem.authority_datagin;
 CREATE INDEX IF NOT EXISTS authority_datagin
@@ -133,16 +139,16 @@ CREATE TABLE IF NOT EXISTS dataecosystem."entityType"
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem."entityType"
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: entitytype_datagin
 -- DROP INDEX IF EXISTS dataecosystem.entitytype_datagin;
 CREATE INDEX IF NOT EXISTS entitytype_datagin
     ON dataecosystem."entityType" USING gin
     (data)
     TABLESPACE pg_default;
-    -- Table: dataecosystem.schema-osm
--- DROP TABLE IF EXISTS dataecosystem."schema-osm";
-CREATE TABLE IF NOT EXISTS dataecosystem."schema-osm"
+    -- Table: dataecosystem.schema_osm
+-- DROP TABLE IF EXISTS dataecosystem."schema_osm";
+CREATE TABLE IF NOT EXISTS dataecosystem."schema_osm"
 (
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -151,12 +157,12 @@ CREATE TABLE IF NOT EXISTS dataecosystem."schema-osm"
     CONSTRAINT schemarequest_id UNIQUE (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE IF EXISTS dataecosystem."schema-osm"
-    OWNER to postgres;
+ALTER TABLE IF EXISTS dataecosystem."schema_osm"
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: schemarequest_datagin
 -- DROP INDEX IF EXISTS dataecosystem.schemarequest_datagin;
 CREATE INDEX IF NOT EXISTS schemarequest_datagin
-    ON dataecosystem."schema-osm" USING gin
+    ON dataecosystem."schema_osm" USING gin
     (data)
     TABLESPACE pg_default;
     -- Table: dataecosystem.source
@@ -171,14 +177,93 @@ CREATE TABLE IF NOT EXISTS dataecosystem.source
 )
 TABLESPACE pg_default;
 ALTER TABLE IF EXISTS dataecosystem.source
-    OWNER to postgres;
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: source_datagin
 -- DROP INDEX IF EXISTS dataecosystem.source_datagin;
 CREATE INDEX IF NOT EXISTS source_datagin
     ON dataecosystem.source USING gin
     (data)
     TABLESPACE pg_default;
+```
 
+-- For shared tenant:
+```
+-- Table: dataecosystem.system_authority
+-- DROP TABLE IF EXISTS dataecosystem.system_authority;
+CREATE TABLE IF NOT EXISTS dataecosystem.system_authority
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "Authority_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT authority_id_system UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem.system_authority
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
+-- Index: system_authority_datagin
+-- DROP INDEX IF EXISTS dataecosystem.system_authority_datagin;
+CREATE INDEX IF NOT EXISTS system_authority_datagin
+    ON dataecosystem.system_authority USING gin
+    (data)
+    TABLESPACE pg_default;
+-- Table: dataecosystem.system_entity_type
+-- DROP TABLE IF EXISTS dataecosystem."system_entity_type";
+CREATE TABLE IF NOT EXISTS dataecosystem."system_entity_type"
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "EntityType_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT entitytype_id_system UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem."system_entity_type"
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
+-- Index: system_entity_type_datagin
+-- DROP INDEX IF EXISTS dataecosystem.system_entity_type_datagin;
+CREATE INDEX IF NOT EXISTS system_entity_type_datagin
+    ON dataecosystem."system_entity_type" USING gin
+    (data)
+    TABLESPACE pg_default;
+    -- Table: dataecosystem.system_schema_osm
+-- DROP TABLE IF EXISTS dataecosystem."system_schema_osm";
+CREATE TABLE IF NOT EXISTS dataecosystem."system_schema_osm"
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "Schema_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT schemarequest_id_system UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem."system_schema_osm"
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
+-- Index: schemarequest_datagin
+-- DROP INDEX IF EXISTS dataecosystem.schemarequest_datagin;
+CREATE INDEX IF NOT EXISTS schemarequest_datagin
+    ON dataecosystem."system_schema_osm" USING gin
+    (data)
+    TABLESPACE pg_default;
+    -- Table: dataecosystem.system_source
+-- DROP TABLE IF EXISTS dataecosystem.system_source;
+CREATE TABLE IF NOT EXISTS dataecosystem.system_source
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    data jsonb NOT NULL,
+    CONSTRAINT "Source_pkey_system" PRIMARY KEY (pk),
+    CONSTRAINT source_id_system UNIQUE (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS dataecosystem.system_source
+    OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
+-- Index: system_source_datagin
+-- DROP INDEX IF EXISTS dataecosystem.system_source_datagin;
+CREATE INDEX IF NOT EXISTS system_source_datagin
+    ON dataecosystem.system_source USING gin
+    (data)
+    TABLESPACE pg_default;
 ```
 
 ## RabbitMQ configuration:
@@ -295,8 +380,8 @@ It can be overridden by:
 | Property | Description |
 | --- | --- |
 | obm.minio.endpoint | - url |
-| obm.minio.credentials.access.key | - username |
-| obm.minio.credentials.secret.key | - password |
+| obm.minio.accessKey | - username |
+| obm.minio.secretKey | - password |
 
 <details><summary>Example of a single tenant definition</summary>
 
@@ -308,11 +393,11 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
       "sensitive": false,
       "value": "localhost"
     },
-    "obm.minio.credentials.access.key": {
+    "obm.minio.accessKey": {
       "sensitive": false,
       "value": "minioadmin"
     },
-    "obm.minio.credentials.secret.key": {
+    "obm.minio.secretKey": {
       "sensitive": false,
       "value": "<MINIO_SECRETKEY_ENV_VARIABLE_NAME>" <- (Not actual value, just name of env variable)
     }
@@ -329,6 +414,9 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
 MinIO (or any other supported by OBM)
 
 #### Per-tenant buckets configuration
+
+For each private tenant:
+
 These buckets must be defined in tenants’ dedicated object store servers. OBM connection properties of these servers (url, etc.) are defined as specific properties in tenants’ PartitionInfo registration objects at the Partition service as described in accordant sections of this document.
 
 <table>
@@ -339,7 +427,24 @@ These buckets must be defined in tenants’ dedicated object store servers. OBM 
    </td>
   </tr>
   <tr>
-   <td>&lt;PartitionInfo.projectId>-<strong>schema</strong>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name>-<strong>schema</strong>
+   </td>
+   <td>ListObjects, CRUDObject
+   </td>
+  </tr>
+</table>
+
+For shared tenant only:
+
+<table>
+  <tr>
+   <td>Bucket Naming template 
+   </td>
+   <td>Permissions required
+   </td>
+  </tr>
+  <tr>
+   <td>&lt;PartitionInfo.projectId-PartitionInfo.name><strong>-system-schema</strong>
    </td>
    <td>ListObjects, CRUDObject
    </td>
