@@ -18,3 +18,4 @@ conf:
   on_prem_enabled: false
   postgres_secret_name: "schema-postgres-secret"
   rabbitmq_secret_name: "rabbitmq-secret"
+  domain: ""
