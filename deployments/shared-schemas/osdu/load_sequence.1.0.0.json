@@ -408,8 +408,16 @@
     "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateReferenceSystem:1.1.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.1.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.1.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--Currency:1.0.0",
