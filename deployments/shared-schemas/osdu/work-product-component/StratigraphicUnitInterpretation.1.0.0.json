@@ -11,7 +11,7 @@
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2022, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
@@ -128,8 +128,12 @@
                 "title": "Local Rock Volume Feature ID",
                 "description": "The reference to a local rock volume feature, to which this interpretation is associated.",
                 "example": "namespace:work-product-component--LocalRockVolumeFeature:85348741-3433-406B-9189-22B298C2A2D2:",
-                "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-LocalRockVolumeFeature:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "pattern": "^[\\w\\-\\.]+:(master-data\\-\\-RockVolumeFeature|work-product-component\\-\\-LocalRockVolumeFeature):[\\w\\-\\.\\:\\%]+:[0-9]*$",
                 "x-osdu-relationship": [
+                  {
+                    "GroupType": "master-data",
+                    "EntityType": "RockVolumeFeature"
+                  },
                   {
                     "GroupType": "work-product-component",
                     "EntityType": "LocalRockVolumeFeature"
