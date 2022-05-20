@@ -26,13 +26,13 @@ sleep 10
 
 bootstrap_schema_onprem() {
 
-  BEARER_TOKEN="$(curl --location --request POST "${OPENID_PROVIDER_URL}/protocol/openid-connect/token" \
+  ID_TOKEN="$(curl --location --request POST "${OPENID_PROVIDER_URL}/protocol/openid-connect/token" \
   --header "Content-Type: application/x-www-form-urlencoded" \
   --data-urlencode "grant_type=client_credentials" \
   --data-urlencode "scope=openid" \
   --data-urlencode "client_id=${OPENID_PROVIDER_CLIENT_ID}" \
   --data-urlencode "client_secret=${OPENID_PROVIDER_CLIENT_SECRET}" | jq -r ".id_token")"
-  export BEARER_TOKEN
+  export BEARER_TOKEN="Bearer ${ID_TOKEN}"
 
   echo "Bootstrap Schema Service On Prem"
   python3 ./scripts/DeploySharedSchemas.py -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
