@@ -25,7 +25,7 @@ variables:
   DATA_PARTITION: opendes
   AZURE_AD_APP_RESOURCE_ID: $AZURE_APP_ID
   AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
-  AZURE_COVERAGE_THRESHOLD: 70
+  AZURE_COVERAGE_THRESHOLD: $AZURE_CODE_COVERAGE_THRESHOLD
 
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   AWS_TEST_SUBDIR: testing/schema-test-core
@@ -35,65 +35,6 @@ variables:
   AWS_MAVEN_TEST_COMMAND_OVERRIDE: verify
   AWS_DEPLOY_TARGET: EKS
   AWS_EKS_DEPLOYMENT_NAME: os-schema
-
-  OSDU_GCP_ENABLE_BOOTSTRAP: "true"
-  OSDU_GCP_SERVICE: schema
-  OSDU_GCP_VENDOR: gcp
-  OSDU_GCP_TESTS_SUBDIR: testing/schema-test-core
-  OSDU_GCP_HELM_PACKAGE_CHARTS: "devops/gcp/deploy devops/gcp/configmap"
-  OSDU_GCP_DEPLOYMENTS_SUBDIR: deployments/scripts/google
-  OSDU_GCP_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
-  OSDU_GCP_HELM_CONFIG_SERVICE: schema-config
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE: schema-deploy
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: >
-    --set data.log_level=INFO
-    --set data.google_audiences=$GOOGLE_AUDIENCE
-    --set data.shared_tenant_name=$OSDU_GCP_TENANT
-    --set data.data_partition_id=$DATA_PARTITION_ID
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: >
-    --set data.log_level=INFO
-    --set data.google_audiences=$GOOGLE_AUDIENCE
-    --set data.shared_tenant_name=$OSDU_GCP_TENANT
-    --set data.data_partition_id=$DATA_PARTITION_ID
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: >
-    --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA
-    --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
-    --set data.bootstrap_image=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-    --set data.bootstrapServiceAccountName=datafier-workload-identity-gke
-    --timeout 15m
-  # FIXME add value below for DEV2 pipeline
-  # OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS_DEV2: >
-
-# REFACTOR to common pipeline
-osdu-gcp-deploy-deployment:
-  needs:
-    - osdu-gcp-containerize-gitlab
-    - osdu-gcp-deploy-configmap
-    - osdu-gcp-containerize-bootstrap-gitlab
-  after_script:
-    - echo ----- Verify Bootstrap -----
-    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
-    - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
-    - echo $STATUS
-    - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
-
-# REFACTOR to common pipeline for DEV2
-# osdu-gcp-dev2-deploy-deployment:
-#   variables:
-#     OSDU_GCP_BOOTSTRAP_NAMESPACE: config
-#     OSDU_GCP_BOOTSTRAP_SERVICE_ACCOUNT: workload-gke-bootstrap-sa
-#   needs:
-#     - osdu-gcp-containerize-gitlab
-#     - osdu-gcp-deploy-configmap
-#     - osdu-gcp-containerize-bootstrap-schema
-#   after_script:
-#      - echo ----- Verify Bootstrap -----
-#      - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-#      - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
-#      - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
-#      - echo $STATUS
-#      - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -123,27 +64,8 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/osdu-gcp-gke.yml"
 
+  - local: "devops/gcp/pipeline/override-stages.yml"
+
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/aws/bootstrap.yaml"
   - local: "/devops/ibm/bootstrap.yaml"
-
-osdu-gcp-containerize-bootstrap-gitlab:
-  variables:
-    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
-
-osdu-gcp-containerize-bootstrap-gcr:
-  variables:
-    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
-
-osdu-gcp-test:
-  image: maven:3.8.2-jdk-8
-  script:
-    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TESTS_SUBDIR/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
-    reports:
-      junit:
-        - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
