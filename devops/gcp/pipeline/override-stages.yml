@@ -2,7 +2,6 @@ variables:
   OSDU_GCP_ENABLE_BOOTSTRAP: "true"
   OSDU_GCP_SERVICE: schema
   OSDU_GCP_VENDOR: gcp
-  OSDU_GCP_TESTS_SUBDIR: testing/schema-test-core
   OSDU_GCP_HELM_CONFIG_SERVICE: schema-config
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE: schema-deploy
   OSDU_GCP_HELM_TIMEOUT: "--timeout 15m"
@@ -24,6 +23,14 @@ variables:
     $OSDU_GCP_HELM_TIMEOUT
   # FIXME add value below for DEV2 pipeline
   # OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS_DEV2: >
+
+osdu-gcp-containerize-bootstrap-gitlab:
+  variables:
+    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
+
+osdu-gcp-containerize-bootstrap-gcr:
+  variables:
+    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
 
 # REFACTOR to common pipeline
 osdu-gcp-deploy-deployment:
@@ -56,28 +63,45 @@ osdu-gcp-deploy-deployment:
 #      - echo $STATUS
 #      - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
 
-osdu-gcp-containerize-bootstrap-gitlab:
-  variables:
-    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
-
-osdu-gcp-containerize-bootstrap-gcr:
-  variables:
-    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
-
-osdu-gcp-test:
-  script:
-    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TESTS_SUBDIR/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
-    reports:
-      junit:
-        - $OSDU_GCP_TESTS_SUBDIR/target/*/TEST-*.xml
-
 osdu-gcp-anthos-deploy-deployment:
   needs:
     - osdu-gcp-containerize-gitlab
     - osdu-gcp-containerize-bootstrap-gitlab
     - osdu-gcp-anthos-deploy-configmap
+
+osdu-gcp-test:
+  script:
+    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
+  artifacts:
+    when: always
+    paths:
+      - test-results.log
+      - testing/schema-test-core/target/*/TEST-*.xml
+    reports:
+      junit:
+        - testing/schema-test-core/target/*/TEST-*.xml
+
+# FIXME for DEV2
+osdu-gcp-dev2-test:
+  script:
+    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
+  artifacts:
+    when: always
+    paths:
+      - test-results.log
+      - testing/schema-test-core/target/*/TEST-*.xml
+    reports:
+      junit:
+        - testing/schema-test-core/target/*/TEST-*.xml
+
+osdu-gcp-anthos-test:
+  script:
+    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
+  artifacts:
+    when: always
+    paths:
+      - test-results.log
+      - testing/schema-test-core/target/*/TEST-*.xml
+    reports:
+      junit:
+        - testing/schema-test-core/target/*/TEST-*.xml
