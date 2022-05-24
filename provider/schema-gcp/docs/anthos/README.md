@@ -54,7 +54,6 @@ You will need to have the following environment variables defined.
 | `SHARED_TENANT` | ex`common` | OSDU tenant used for testing | no | - |
 | `TEST_OPENID_PROVIDER_CLIENT_ID` | `********` | Client Id for `$INTEGRATION_TESTER` | yes | -- |
 | `TEST_OPENID_PROVIDER_CLIENT_SECRET` | `********` |  | Client secret for `$INTEGRATION_TESTER` | -- |
-| `INTEGRATION_TESTER_EMAIL` | `datafier@service.local` |  | Email of `$INTEGRATION_TESTER` | -- |
 | `TEST_OPENID_PROVIDER_URL` | `https://keycloak.com/auth/realms/osdu` | OpenID provider url | yes | -- |
 
 **Entitlements configuration for integration accounts**
