@@ -2,8 +2,9 @@ package org.opengroup.osdu.schema.util;
 
 import com.google.common.base.Strings;
 import org.opengroup.osdu.azure.util.AzureServicePrincipal;
-import org.opengroup.osdu.core.aws.cognito.AWSCognitoClient;
 import org.opengroup.osdu.core.ibm.util.IdentityClient;
+import org.opengroup.osdu.schema.util.gcp.GoogleServiceAccount;
+import org.opengroup.osdu.schema.util.gcp.OpenIDTokenProvider;
 
 
 public class AuthUtil {
@@ -25,6 +26,8 @@ public class AuthUtil {
             token = new AzureServicePrincipal().getIdToken(sp_id, sp_secret, tenant_id, app_resource_id);
         } else if (Strings.isNullOrEmpty(token) && vendor.equals("ibm")) {
             token = IdentityClient.getTokenForUserWithAccess();
+        } else if (Strings.isNullOrEmpty(token) && vendor.equals("anthos")){
+            token = new OpenIDTokenProvider().getToken();
         }
         return "Bearer " + token;
     }
