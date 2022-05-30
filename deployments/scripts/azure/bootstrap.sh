@@ -17,7 +17,9 @@ currentMessage="All schemas uploaded successfully"
 BEARER_TOKEN=`python $AZURE_DEPLOYMENTS_SUBDIR/Token.py`
 export BEARER_TOKEN=$BEARER_TOKEN
 python $AZURE_DEPLOYMENTS_SCRIPTS_SUBDIR/DeploySharedSchemas.py -u $AZURE_SCHEMA_URL
-if [ $ret -ne 0 ]; then
+ret=$?
+echo "Return value is $ret"
+if [[ $ret -ne 0 ]]; then
 	currentStatus="failure"
 	currentMessage="Schema loading failed. Please check error logs for more details."
 fi
