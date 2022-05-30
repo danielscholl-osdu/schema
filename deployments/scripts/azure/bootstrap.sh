@@ -8,16 +8,22 @@ cleanup() {
 trap cleanup EXIT
 
 if [[ -z "${NAMESPACE}" ]]; then
-  NAMESPACE="osdu-azure"
+  NAMESPACE="osdu"
 fi
 
-export AZURE_SCHEMA_URL="http://schema.${NAMESPACE}.svc.cluster.local/api/schema-service/v1/schemas/system/"
+if [[ -z "${AZURE_DNS_NAME}" ]]; then
+  AZURE_DNS_NAME="osdu-glab.msft-osdu-test.org"
+fi
+
+export AZURE_SCHEMA_URL="https://${AZURE_DNS_NAME}/api/schema-service/v1/schemas/system"
 currentStatus="success"
 currentMessage="All schemas uploaded successfully"
 BEARER_TOKEN=`python $AZURE_DEPLOYMENTS_SUBDIR/Token.py`
 export BEARER_TOKEN=$BEARER_TOKEN
 python $AZURE_DEPLOYMENTS_SCRIPTS_SUBDIR/DeploySharedSchemas.py -u $AZURE_SCHEMA_URL
-if [ $ret -ne 0 ]; then
+ret=$?
+echo "Return value is $ret"
+if [[ $ret -ne 0 ]]; then
 	currentStatus="failure"
 	currentMessage="Schema loading failed. Please check error logs for more details."
 fi
