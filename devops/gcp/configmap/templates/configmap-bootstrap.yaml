@@ -9,6 +9,7 @@ data:
   DATA_PARTITION: "{{ .Values.data.data_partition_id }}"
   ONPREM_ENABLED: "{{ .Values.conf.on_prem_enabled }}"
   SCHEMA_URL: "{{ .Values.data.schema_host }}"
+  ENTITLEMENTS_HOST: "{{ .Values.data.entitlements_host }}"
   {{- if not .Values.conf.on_prem_enabled }}
   AUDIENCES: "{{ .Values.data.google_audiences }}"
   {{- end }}  

@@ -94,36 +94,10 @@ Once the above Prerequisite are done, we can follow the below steps to run the s
 You can access the service APIs by following the service contract in [schema.yaml](docs/api/schema.yaml) 
 
 ## Testing
-
- ### Running E2E Tests 
- This section describes how to run cloud OSDU E2E tests (testing/schema-test-core).
- 
- You will need to have the following environment variables defined.
- 
- | name | value | description | sensitive? | source |
- | ---  | ---   | ---         | ---        | ---    |
- | `INTEGRATION_TEST_AUDIENCE` | `*****.apps.googleusercontent.com` | client application ID | yes | https://console.cloud.google.com/apis/credentials |
- | `VENDOR` | `gcp` | Use value 'gcp' to run gcp tests | no | - |
- | `HOST` | ex`http://localhost:8080` | Schema service host | no | - |
- | `INTEGRATION_TESTER` | `********` | Service account base64 encoded string for API calls. Note: this user must have entitlements configured already | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
- | `PRIVATE_TENANT2` | ex`opendes` | OSDU tenant used for testing | no | - |
- | `PRIVATE_TENANT1` | ex`osdu` | OSDU tenant used for testing | no | - |
- | `SHARED_TENANT` | ex`common` | OSDU tenant used for testing | no | - |
- 
- **Entitlements configuration for integration accounts**
- 
- | INTEGRATION_TESTER | 
- | ---  | 
- | users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 | 
- 
- Execute following command to build code and run all the integration tests:
- 
- ```bash
- # Note: this assumes that the environment variables for integration tests as outlined
- #       above are already exported in your environment.
- # build + install integration test core
- $ (cd testing/schema-test-core/ && mvn clean test)
- ```
+#### Anthos:
+[Anthos Testing](docs/anthos/README.md)
+#### GCP:
+[Gcp Testing](docs/gcp/README.md)
 
 ## Deployment
 

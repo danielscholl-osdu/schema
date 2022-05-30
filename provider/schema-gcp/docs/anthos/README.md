@@ -39,6 +39,38 @@ and usage in mixed mode was not tested. Usage of spring profiles is preferred.
 | `OBMDRIVER` | `gcs` or `minio` | Obm driver mode that defines which object storage will be used | no | - |
 | `SERVICE_TOKEN_PROVIDER` | `GCP` or `OPENID` |Service account token provider, `GCP` means use Google service account `OPEIND` means use OpenId provider like `Keycloak` | no | - |
 
+## Testing
+### Running E2E Tests
+This section describes how to run cloud OSDU E2E tests (testing/schema-test-core).
+
+You will need to have the following environment variables defined.
+
+| name | value | description | sensitive? | source |
+ | ---  | ---   | ---         | ---        | ---    |
+| `VENDOR` | `anthos` | Use value 'gcp' to run gcp tests | no | - |
+| `HOST` | ex`http://localhost:8080` | Schema service host | no | - |
+| `PRIVATE_TENANT2` | ex`opendes` | OSDU tenant used for testing | no | - |
+| `PRIVATE_TENANT1` | ex`osdu` | OSDU tenant used for testing | no | - |
+| `SHARED_TENANT` | ex`common` | OSDU tenant used for testing | no | - |
+| `TEST_OPENID_PROVIDER_CLIENT_ID` | `********` | Client Id for `$INTEGRATION_TESTER` | yes | -- |
+| `TEST_OPENID_PROVIDER_CLIENT_SECRET` | `********` |  | Client secret for `$INTEGRATION_TESTER` | -- |
+| `TEST_OPENID_PROVIDER_URL` | `https://keycloak.com/auth/realms/osdu` | OpenID provider url | yes | -- |
+
+**Entitlements configuration for integration accounts**
+
+| INTEGRATION_TESTER | 
+ | ---  | 
+| users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 | 
+
+Execute following command to build code and run all the integration tests:
+
+ ```bash
+ # Note: this assumes that the environment variables for integration tests as outlined
+ #       above are already exported in your environment.
+ # build + install integration test core
+ $ (cd testing/schema-test-core/ && mvn clean test)
+ ```
+
 ### Properties set in Partition service:
 
 Note that properties can be set in Partition as `sensitive` in that case in property `value` should be present not value itself, but ENV variable name.
