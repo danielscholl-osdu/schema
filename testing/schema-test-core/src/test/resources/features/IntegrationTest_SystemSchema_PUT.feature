@@ -37,12 +37,12 @@ Feature: To verify functionality of PUT schema Service
     Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
 
     Examples:
-      | InputPayload                                                   | ReponseStatusCode | ResponseMessage                                        | status      |
-      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "400"             | "/output_payloads/SchemaPut_InvalidStatusMessage.json" | "OBSOLETE"  |
-      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "400"             | "/output_payloads/SchemaPut_InvalidStatusMessage.json" | "PUBLISHED" |
+      | InputPayload                                                | ReponseStatusCode | ResponseMessage                                                    | status      |
+      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "200"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "OBSOLETE"  |
+      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "200"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "PUBLISHED" |
 
   @SchemaService
-  Scenario Outline: Verify that System schema PUT API throws error if modification in schemaInfo is requested
+  Scenario Outline: Verify that System schema PUT API throws e rror if modification in schemaInfo is requested
     Given I hit system schema PUT API with <InputPayload> with different entityType
     Then put schema service should respond back with <ReponseStatusCodeForPUT>
     Given I set request headers for "TENANT1"
