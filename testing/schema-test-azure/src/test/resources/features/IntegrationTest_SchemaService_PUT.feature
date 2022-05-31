@@ -30,14 +30,13 @@ Feature: To verify functionality of PUT schema Service
       | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "200"                   | "200"                   | "/output_payloads/UpdatedResolvedSchema.json" | "/input_payloads/putUpdatedSchema_positiveScenario.json" |
 
   @SchemaServiceAzure
-  Scenario Outline: Verify that Schema Service's PUT API throws error if put request tries to create new record without development status
+  Scenario Outline: Verify that Schema Service's PUT API throws error if put request tries to create new record in obsolete status
     Given I hit schema service PUT API with <InputPayload> and mark schema as <status> for next major version
     Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
 
     Examples:
       | InputPayload                                                   | ReponseStatusCode | ResponseMessage                                        | status      |
       | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "400"             | "/output_payloads/SchemaPut_InvalidStatusMessage.json" | "OBSOLETE"  |
-      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "400"             | "/output_payloads/SchemaPut_InvalidStatusMessage.json" | "PUBLISHED" |
 
   @SchemaServiceAzure
   Scenario Outline: Verify that Schema Service's PUT API throws error if modification in schemaInfo is requested
