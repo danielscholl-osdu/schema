@@ -42,7 +42,7 @@ Feature: To verify functionality of PUT schema Service
       | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "200"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "PUBLISHED" |
 
   @SchemaService
-  Scenario Outline: Verify that System schema PUT API throws e rror if modification in schemaInfo is requested
+  Scenario Outline: Verify that System schema PUT API throws error if modification in schemaInfo is requested
     Given I hit system schema PUT API with <InputPayload> with different entityType
     Then put schema service should respond back with <ReponseStatusCodeForPUT>
     Given I set request headers for "TENANT1"
