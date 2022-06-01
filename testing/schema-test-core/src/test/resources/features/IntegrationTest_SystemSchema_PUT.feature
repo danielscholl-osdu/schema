@@ -34,7 +34,7 @@ Feature: To verify functionality of PUT schema Service
   @SchemaService
   Scenario Outline: Verify that System schema PUT API throws error if put request tries to create new record without development status
     Given I hit system schema PUT API with <InputPayload> and mark schema as <status> for next major version
-    Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
+    Then service should respond back with error <ReponseStatusCode>
 
     Examples:
       | InputPayload                                                | ReponseStatusCode | ResponseMessage                                                    | status      |
