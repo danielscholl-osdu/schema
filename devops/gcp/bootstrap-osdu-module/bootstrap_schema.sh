@@ -40,8 +40,9 @@ bootstrap_schema_gettoken_gcp() {
   BEARER_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
   export BEARER_TOKEN
   
-  echo "Clean-up for Datastore schemas"
-  python3 ./scripts/GcpDatastoreCleanUp.py
+  # FIXME CleanUP script needed only for TF installation
+  # echo "Clean-up for Datastore schemas"
+  # python3 ./scripts/GcpDatastoreCleanUp.py
   
   # FIXME find a better solution about datastore cleaning completion
   sleep 5
