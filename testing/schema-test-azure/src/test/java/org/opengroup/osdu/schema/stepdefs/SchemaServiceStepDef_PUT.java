@@ -325,7 +325,7 @@ public class SchemaServiceStepDef_PUT implements En {
 
 		Given("I hit schema service PUT API for supersededBy with {string}",
 				(String inputPayload) -> {
-					String body = this.context.getFileUtils().read(inputPayload);
+					String body = this.context. ().read(inputPayload);
 
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
