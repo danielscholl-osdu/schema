@@ -128,7 +128,7 @@ public class SystemSchemaStepDef_PUT implements En {
                     int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
                     int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
                     currentMajorVersion = currentMajorVersion + 1;
-                    currentMinorVersion = currentMinorVersion + 1;
+                    currentMinorVersion = currentMinorVersion;
                     String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
                             + currentMinorVersion + ".0";
                     updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
