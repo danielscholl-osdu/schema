@@ -107,6 +107,7 @@ public class SchemaServiceStepDef_PUT implements En {
 					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
 					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					currentMajorVersion = currentMajorVersion + 1;
 					String id = "OSDUTest:testSource:testEntity:" + currentMajorVersion + "."
 							+ currentMinorVersion + ".0";
 					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, id);
