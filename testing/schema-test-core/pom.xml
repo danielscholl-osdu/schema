@@ -10,7 +10,7 @@
 
 	<artifactId>schema-test-core</artifactId>
 	<properties>
-		<os-core-lib-ibm.version>0.15.0-rc3</os-core-lib-ibm.version>
+		<os-core-lib-ibm.version>0.15.0</os-core-lib-ibm.version>
 		<os-core-lib-azure.version>0.6.1</os-core-lib-azure.version>
         <os-core-lib-aws.version>0.13.0</os-core-lib-aws.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
