@@ -50,7 +50,6 @@ osdu-gcp-dev2-deploy-deployment:
     - osdu-gcp-dev2-deploy-configmap
     - osdu-gcp-containerize-bootstrap-gitlab
 
-
 osdu-gcp-anthos-deploy-deployment:
   needs:
     - osdu-gcp-containerize-gitlab
