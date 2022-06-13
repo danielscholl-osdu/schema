@@ -1,7 +1,7 @@
 data:
   # common
   entitlements_host: "http://entitlements"
-  gcp_schema_changed_topic_name: "schema_changed"
+  gcp_schema_changed_topic_name: "schema-changed"
   log_level: "INFO"
   partition_host: "http://partition"
   shared_tenant_name: ""
