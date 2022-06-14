@@ -32,14 +32,14 @@ Feature: To verify functionality of PUT schema Service
       | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "200"                   | "200"                   | "/output_payloads/UpdatedResolvedSchema.json" | "/input_payloads/putUpdatedSchema_positiveScenario.json" |
 
   @SchemaService
-  Scenario Outline: Verify that System schema PUT API throws error if put request tries to create new record without development status
+  Scenario Outline: Verify that System schema PUT API is success if put request tries to create new record without development status
     Given I hit system schema PUT API with <InputPayload> and mark schema as <status> for next major version
-    Then service should respond back with error <ReponseStatusCode> and <ResponseMessage>
+    Then service should respond back with <ReponseStatusCode> and <ResponseMessage>
 
     Examples:
-      | InputPayload                                                   | ReponseStatusCode | ResponseMessage                                        | status      |
-      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "400"             | "/output_payloads/SchemaPut_InvalidStatusMessage.json" | "OBSOLETE"  |
-      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "400"             | "/output_payloads/SchemaPut_InvalidStatusMessage.json" | "PUBLISHED" |
+      | InputPayload                                                | ReponseStatusCode | ResponseMessage                                                    | status      |
+      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "OBSOLETE"  |
+      | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" | "PUBLISHED" |
 
   @SchemaService
   Scenario Outline: Verify that System schema PUT API throws error if modification in schemaInfo is requested

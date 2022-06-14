@@ -23,7 +23,6 @@ source ./validate-env.sh "SCHEMA_URL"
 source ./validate-env.sh "ENTITLEMENTS_HOST"
 
 bootstrap_schema_gettoken_onprem() {
-  echo "Waiting for a sidecar container is provisioned"
 
   ID_TOKEN="$(curl --location --request POST "${OPENID_PROVIDER_URL}/protocol/openid-connect/token" \
   --header "Content-Type: application/x-www-form-urlencoded" \
@@ -35,21 +34,21 @@ bootstrap_schema_gettoken_onprem() {
 }
 
 bootstrap_schema_gettoken_gcp() {
-  echo "Waiting for a sidecar container is provisioned"
 
   BEARER_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
   export BEARER_TOKEN
   
-  echo "Clean-up for Datastore schemas"
-  python3 ./scripts/GcpDatastoreCleanUp.py
+  # FIXME CleanUP script needed only for TF installation
+  # echo "Clean-up for Datastore schemas"
+  # python3 ./scripts/GcpDatastoreCleanUp.py
   
   # FIXME find a better solution about datastore cleaning completion
-  sleep 5
+  # sleep 5
 }
 
 bootstrap_schema_prechek_env() {
-  status_code=$(curl --retry 1 --location -globoff --request POST \
-  "${ENTITLEMENTS_HOST}/api/entitlements/v2/tenant-provisioning" \
+  status_code=$(curl --retry 1 --location -globoff --request GET \
+  "${ENTITLEMENTS_HOST}/api/entitlements/v2/groups" \
   --write-out "%{http_code}" --silent --output "/dev/null"\
   --header 'Content-Type: application/json' \
   --header "data-partition-id: ${DATA_PARTITION}" \
@@ -59,7 +58,7 @@ bootstrap_schema_prechek_env() {
   then
     echo "$status_code: Entitlements provisioning completed successfully!"
   else
-    echo "$status_code: Entitlements provisioning failed!"
+    echo "$status_code: Entitlements provisioning is in progress or failed!"
     exit 1
   fi
 }
