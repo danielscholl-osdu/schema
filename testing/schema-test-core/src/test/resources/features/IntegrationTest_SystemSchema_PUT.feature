@@ -32,7 +32,7 @@ Feature: To verify functionality of PUT schema Service
       | "/input_payloads/postInPrivateScope_positiveScenario.json"  | "200"                   | "200"                   | "/output_payloads/UpdatedResolvedSchema.json" | "/input_payloads/putUpdatedSchema_positiveScenario.json" |
 
   @SchemaService
-  Scenario Outline: Verify that System schema PUT API throws error if put request tries to create new record without development status
+  Scenario Outline: Verify that System schema PUT API success if put request tries to create new record
     Given I hit system schema PUT API with <InputPayload> and mark schema as <status> for next major version
     Then service should respond back with <ReponseStatusCode> and <ResponseMessage>
 
