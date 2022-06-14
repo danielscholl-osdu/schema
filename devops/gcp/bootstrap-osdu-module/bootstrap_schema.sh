@@ -14,7 +14,7 @@
 # - OPENID_PROVIDER_URL
 # - OPENID_PROVIDER_CLIENT_ID
 # - OPENID_PROVIDER_CLIENT_SECRET
-# 
+#
 
 set -e
 
@@ -37,11 +37,11 @@ bootstrap_schema_gettoken_gcp() {
 
   BEARER_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
   export BEARER_TOKEN
-  
+
   # FIXME CleanUP script needed only for TF installation
   # echo "Clean-up for Datastore schemas"
   # python3 ./scripts/GcpDatastoreCleanUp.py
-  
+
   # FIXME find a better solution about datastore cleaning completion
   # sleep 5
 }
@@ -85,6 +85,7 @@ else
 fi
 
 # Precheck entitlements
+
 bootstrap_schema_prechek_env
 
 # Deploy shared schemas
