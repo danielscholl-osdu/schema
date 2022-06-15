@@ -210,7 +210,7 @@ public class SchemaService implements ISchemaService {
                 schemaInfo = this.getSchemaInfo(createdSchemaId, isSystemSchema);
         } catch (NotFoundException e) {
             log.error(SchemaConstants.INVALID_SCHEMA_UPDATE);
-            if (!SchemaStatus.DEVELOPMENT.equals(schemaRequest.getSchemaInfo().getStatus()))
+            if (!SchemaStatus.DEVELOPMENT.equals(schemaRequest.getSchemaInfo().getStatus()) && !isSystemSchema)
                 throw new BadRequestException(SchemaConstants.SCHEMA_PUT_CREATE_EXCEPTION);
             throw new NoSchemaFoundException(SchemaConstants.INVALID_SCHEMA_UPDATE);
         }
