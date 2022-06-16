@@ -62,7 +62,7 @@ public class RemoveOperationHandler implements SchemaValidationHandler{
 		if(!pattern.matcher(path).matches() || !isAtRoot(path))
 			return false;
 		
-		Iterator<String> fieldNameItr = schemaDiff.getTargetDefinition().fieldNames();
+		Iterator<String> fieldNameItr = schemaDiff.getTargetSchema().fieldNames();
 		while(fieldNameItr.hasNext()) {
 			String fieldName = fieldNameItr.next();
 			if(pattern.matcher(fieldName).matches()) {
