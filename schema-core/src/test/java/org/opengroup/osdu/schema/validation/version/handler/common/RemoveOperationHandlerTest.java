@@ -38,7 +38,19 @@ public class RemoveOperationHandlerTest {
 
 	@Test
 	public void testCompare_ValidChange_RemovePropWithOldTrue() throws IOException, ApplicationException {
-		Assert.fail();
+
+		List<SchemaBreakingChanges> schemaBreakingChanges = new ArrayList<>();
+		Set<String> processedArrayPath = new HashSet<>();
+		SchemaHandlerVO schemaHandlerVO = getMockSchemaHandlerVO("/schema_compare/remove_operation/allowed/base-schema.json"
+				,"/schema_compare/remove_operation/allowed/new-schema.json");
+		List<SchemaPatch> schemaPatchList = TestUtility.findSchemaPatch(schemaHandlerVO.getSourceSchema(), schemaHandlerVO.getTargetSchema());
+		schemaHandlerVO.getChangedRefIds().put("osdu:wks:AbstractCommonResources:1.0.0", "osdu:wks:AbstractCommonResources:1.1.0");
+		for(SchemaPatch patch : schemaPatchList) {
+			removeOperationHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
+			if(schemaBreakingChanges.size() > 0)
+				Assert.fail();
+		}
+
 	}
 	
 	@Test
