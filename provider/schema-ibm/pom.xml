@@ -12,7 +12,7 @@
 	
 	<properties>
 		<start-class>org.opengroup.osdu.schema.provider.ibm.app.SchemaIBMApplication</start-class>
-		<os-core-lib-ibm.version>0.15.1</os-core-lib-ibm.version>
+		<os-core-lib-ibm.version>0.15.2</os-core-lib-ibm.version>
 	</properties>
 
 	<dependencyManagement>
