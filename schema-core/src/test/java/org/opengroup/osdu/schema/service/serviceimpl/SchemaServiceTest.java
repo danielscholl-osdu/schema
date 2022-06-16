@@ -273,7 +273,6 @@ public class SchemaServiceTest {
 	public void testCreateSchema_SharedSchema()
 			throws JsonProcessingException, ApplicationException, BadRequestException, NotFoundException {
 		String dataPartitionId = "common";
-		String schemaId = "os:wks:well:1.1.1";
 
 		SchemaRequest  schReqInt = getMockSchemaObject_published_InternalScope();
 		SchemaRequest schReqPub = getMockSchemaObject_published();
@@ -297,7 +296,7 @@ public class SchemaServiceTest {
 		Mockito.when(schemaInfoStore.createSchemaInfo(schReqPub)).thenReturn(schInfoPub);
 		Mockito.when(schemaStore.getSchema(anyString(), anyString())).thenReturn(schReqPub.getSchema().toString());
 
-		Mockito.when(schemaUtil.findSchemaToCompare(schReqPub.getSchemaInfo(), true)).thenReturn(schemaInfoArr);
+		Mockito.when(schemaUtil.findSchemaToCompare(schReqPub.getSchemaInfo(), false)).thenReturn(schemaInfoArr);
 		Mockito.when(schemaVersionValidatorFactory.getVersionValidator(Matchers.any(SchemaValidationType.class)))
 		.thenReturn(mock(VersionValidator.class));
 		assertEquals(SchemaStatus.PUBLISHED, schemaService.createSchema(schReqPub).getStatus());

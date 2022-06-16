@@ -4,51 +4,21 @@ variables:
   OSDU_GCP_SERVICE: schema
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_HELM_TIMEOUT: "--timeout 15m"
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: >
-    --set data.log_level=INFO
-    --set data.google_audiences=$GOOGLE_AUDIENCE
-    --set data.shared_tenant_name=$OSDU_GCP_TENANT
-    --set data.data_partition_id=$DATA_PARTITION_ID
-
-osdu-gcp-dev2-deploy-deployment:
-  needs:
-    - osdu-gcp-containerize-gitlab
-    - osdu-gcp-dev2-deploy-configmap
-    - osdu-gcp-containerize-bootstrap-gitlab
 
 osdu-gcp-test:
+  variables:
+    OSDU_GCP_TEST_SUBDIR: testing/schema-test-core
   script:
-    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - testing/schema-test-core/target/*/TEST-*.xml
-    reports:
-      junit:
-        - testing/schema-test-core/target/*/TEST-*.xml
+    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TEST_SUBDIR/pom.xml
 
-# FIXME for DEV2
 osdu-gcp-dev2-test:
+  variables:
+    OSDU_GCP_TEST_SUBDIR: testing/schema-test-core
   script:
-    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - testing/schema-test-core/target/*/TEST-*.xml
-    reports:
-      junit:
-        - testing/schema-test-core/target/*/TEST-*.xml
+    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TEST_SUBDIR/pom.xml
 
 osdu-gcp-anthos-test:
+  variables:
+    OSDU_GCP_TEST_SUBDIR: testing/schema-test-core
   script:
-    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - testing/schema-test-core/target/*/TEST-*.xml
-    reports:
-      junit:
-        - testing/schema-test-core/target/*/TEST-*.xml
+    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TEST_SUBDIR/pom.xml
