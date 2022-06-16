@@ -1,95 +1,24 @@
 variables:
+  BUILD_BOOTSTRAP_PATH: "devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile"
   OSDU_GCP_ENABLE_BOOTSTRAP: "true"
   OSDU_GCP_SERVICE: schema
   OSDU_GCP_VENDOR: gcp
-  OSDU_GCP_HELM_CONFIG_SERVICE: schema-config
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE: schema-deploy
   OSDU_GCP_HELM_TIMEOUT: "--timeout 15m"
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: >
-    --set data.log_level=INFO
-    --set data.google_audiences=$GOOGLE_AUDIENCE
-    --set data.shared_tenant_name=$OSDU_GCP_TENANT
-    --set data.data_partition_id=$DATA_PARTITION_ID
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: >
-    --set data.log_level=INFO
-    --set data.google_audiences=$GOOGLE_AUDIENCE
-    --set data.shared_tenant_name=$OSDU_GCP_TENANT
-    --set data.data_partition_id=$DATA_PARTITION_ID
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: >
-    --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-    --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
-    --set data.bootstrap_image=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-    --set data.bootstrapServiceAccountName=datafier-workload-identity-gke
-    $OSDU_GCP_HELM_TIMEOUT
-
-osdu-gcp-containerize-bootstrap-gitlab:
-  variables:
-    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
-
-osdu-gcp-containerize-bootstrap-gcr:
-  variables:
-    BUILD_PATH: devops/$OSDU_GCP_VENDOR/bootstrap-osdu-module/Dockerfile
-
-# REFACTOR to common pipeline
-osdu-gcp-deploy-deployment:
-  needs:
-    - osdu-gcp-containerize-gitlab
-    - osdu-gcp-deploy-configmap
-    - osdu-gcp-containerize-bootstrap-gitlab
-  after_script:
-    - echo ----- Verify Bootstrap -----
-    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
-    - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
-    - echo $STATUS
-    - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
-
-osdu-gcp-dev2-deploy-deployment:
-  needs:
-    - osdu-gcp-containerize-gitlab
-    - osdu-gcp-dev2-deploy-configmap
-    - osdu-gcp-containerize-bootstrap-gitlab
-
-
-osdu-gcp-anthos-deploy-deployment:
-  needs:
-    - osdu-gcp-containerize-gitlab
-    - osdu-gcp-containerize-bootstrap-gitlab
-    - osdu-gcp-anthos-deploy-configmap
 
 osdu-gcp-test:
+  variables:
+    OSDU_GCP_TEST_SUBDIR: testing/schema-test-core
   script:
-    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - testing/schema-test-core/target/*/TEST-*.xml
-    reports:
-      junit:
-        - testing/schema-test-core/target/*/TEST-*.xml
+    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TEST_SUBDIR/pom.xml
 
-# FIXME for DEV2
 osdu-gcp-dev2-test:
+  variables:
+    OSDU_GCP_TEST_SUBDIR: testing/schema-test-core
   script:
-    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - testing/schema-test-core/target/*/TEST-*.xml
-    reports:
-      junit:
-        - testing/schema-test-core/target/*/TEST-*.xml
+    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TEST_SUBDIR/pom.xml
 
 osdu-gcp-anthos-test:
+  variables:
+    OSDU_GCP_TEST_SUBDIR: testing/schema-test-core
   script:
-    - $MAVEN_BUILD . test-results.log verify -q -f testing/schema-test-core/pom.xml
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-      - testing/schema-test-core/target/*/TEST-*.xml
-    reports:
-      junit:
-        - testing/schema-test-core/target/*/TEST-*.xml
+    - $MAVEN_BUILD . test-results.log verify -q -f $OSDU_GCP_TEST_SUBDIR/pom.xml
