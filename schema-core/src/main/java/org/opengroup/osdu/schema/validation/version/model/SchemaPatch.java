@@ -1,6 +1,5 @@
 package org.opengroup.osdu.schema.validation.version.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.Data;
