@@ -3,15 +3,15 @@ package org.opengroup.osdu.schema.validation.version.handler;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.util.JSONUtil;
-import org.opengroup.osdu.schema.validation.version.handler.SchemaValidationChainOfHandlers;
-import org.opengroup.osdu.schema.validation.version.handler.SchemaValidationHandler;
 import org.opengroup.osdu.schema.validation.version.model.SchemaBreakingChanges;
 import org.opengroup.osdu.schema.validation.version.model.SchemaHandlerVO;
 import org.opengroup.osdu.schema.validation.version.model.SchemaPatch;
+import org.opengroup.osdu.schema.validation.version.model.SchemaPatchRefComp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,10 @@ public class SchemaValidationManager {
 			
 			log.info("Finding difference between two schemas");
 			schemaPatchList = jsonUtil.findJSONDiff(schemaDiff.getSourceSchema(), schemaDiff.getTargetSchema());
-			
+			//Sort the patch such that $ref are processed first
+			if(schemaPatchList != null && schemaPatchList.size()>0) {
+				schemaPatchList = schemaPatchList.stream().sorted(new SchemaPatchRefComp()).collect(Collectors.toList());
+			}
 			log.info("Total differences found :"+schemaPatchList.size());
 			Set<String> processedArrayPath = new HashSet<>();
 
