@@ -12,6 +12,10 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractAliasNames.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:AbstractAnyCrsFeatureCollection:1.1.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractAnyCrsFeatureCollection.1.1.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:AbstractAnyCrsFeatureCollection:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractAnyCrsFeatureCollection.1.0.0.json"
   },
@@ -22,6 +26,10 @@
   {
     "kind": "{{schema-authority}}:wks:AbstractFeatureCollection:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractFeatureCollection.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:AbstractSpatialLocation:1.1.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractSpatialLocation.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:AbstractSpatialLocation:1.0.0",
@@ -168,6 +176,10 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractLegalTags.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:AbstractMaster:1.1.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractMaster.1.1.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:AbstractMaster:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractMaster.1.0.0.json"
   },
@@ -188,6 +200,10 @@
     "relativePath": "shared-schemas/osdu/abstract/AbstractProjectActivity.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:AbstractQualityMetric:1.1.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractQualityMetric.1.1.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:AbstractQualityMetric:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractQualityMetric.1.0.0.json"
   },
@@ -202,6 +218,14 @@
   {
     "kind": "{{schema-authority}}:wks:AbstractSpatialReference:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractSpatialReference.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:AbstractStorageLocation:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractStorageLocation.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:AbstractTechnicalAssurance:1.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractTechnicalAssurance.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:AbstractUnstructuredColumnLayerGridPatch:1.0.0",
@@ -226,6 +250,10 @@
   {
     "kind": "{{schema-authority}}:wks:AbstractWellboreDrillingReason:1.0.0",
     "relativePath": "shared-schemas/osdu/abstract/AbstractWellboreDrillingReason.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:AbstractWorkProductComponent:1.1.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractWorkProductComponent.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:AbstractWorkProductComponent:1.0.0",
@@ -404,20 +432,32 @@
     "relativePath": "shared-schemas/osdu/reference-data/ContractorType.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:reference-data--CoordinateReferenceSystem:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.0.0.json"
+    "kind": "{{schema-authority}}:wks:reference-data--ConventionalCoreType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ConventionalCoreType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--CoordinateReferenceSystem:1.1.0",
     "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.1.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.0.0",
-    "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.0.0.json"
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateReferenceSystem:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.1.0",
     "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--CorePreservationType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CorePreservationType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--Coring:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/Coring.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--Currency:1.0.0",
@@ -436,8 +476,16 @@
     "relativePath": "shared-schemas/osdu/data-collection/DataCollection.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:work-product-component--DataQuality:1.1.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/DataQuality.1.1.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:work-product-component--DataQuality:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product-component/DataQuality.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--DataRuleDimensionType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DataRuleDimensionType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--DataRulePurposeType:1.0.0",
@@ -474,6 +522,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--DrillingReasonType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/DrillingReasonType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:dataset--ETPDataspace:1.0.0",
+    "relativePath": "shared-schemas/osdu/dataset/ETPDataspace.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--EarthModelInterpretation:1.0.0",
@@ -724,6 +776,10 @@
     "relativePath": "shared-schemas/osdu/work-product-component/GpGridRepresentation.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--GrainDensityMeasurementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/GrainDensityMeasurementType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:work-product-component--GridConnectionSetRepresentation:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product-component/GridConnectionSetRepresentation.1.0.0.json"
   },
@@ -750,6 +806,26 @@
   {
     "kind": "{{schema-authority}}:wks:work-product-component--IjkGridRepresentation:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product-component/IjkGridRepresentation.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--InSARApplication:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/InSARApplication.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--InSARFrequencyBand:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/InSARFrequencyBand.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--InSARImageMode:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/InSARImageMode.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--InSARPolarisation:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/InSARPolarisation.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--InSARProcessingType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/InSARProcessingType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--IndexableElement:1.0.0",
@@ -948,6 +1024,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/ParameterType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--PermeabilityMeasurementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PermeabilityMeasurementType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:work-product-component--PersistedCollection:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product-component/PersistedCollection.1.0.0.json"
   },
@@ -986,6 +1066,18 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--PlugType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/PlugType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--PorosityMeasurementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PorosityMeasurementType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--PressureMeasurementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PressureMeasurementType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--ProcessedInSAR:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/ProcessedInSAR.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--ProcessingParameterType:1.0.0",
@@ -1028,12 +1120,20 @@
     "relativePath": "shared-schemas/osdu/reference-data/QualitativeSpatialAccuracyType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--QualityDataRule:1.1.0",
+    "relativePath": "shared-schemas/osdu/reference-data/QualityDataRule.1.1.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--QualityDataRule:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/QualityDataRule.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--QualityDataRuleSet:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/QualityDataRuleSet.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--QualityDataRuleSet:2.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/QualityDataRuleSet.2.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--QuantitativeAccuracyBand:1.0.0",
@@ -1054,6 +1154,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--RepresentationType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/RepresentationType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--ReservoirCompartmentInterpretation:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/ReservoirCompartmentInterpretation.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--ResourceCurationStatus:1.0.0",
@@ -1124,8 +1228,36 @@
     "relativePath": "shared-schemas/osdu/work-product-component/RockFluidUnitInterpretation.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:master-data--RockSample:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/RockSample.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--RockSampleAnalysis:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/RockSampleAnalysis.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--RockSampleType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/RockSampleType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:master-data--RockVolumeFeature:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/RockVolumeFeature.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--SampleOrientationType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SampleOrientationType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--SatelliteGeometry:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SatelliteGeometry.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--SatelliteMission:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SatelliteMission.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--SaturationMethodType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SaturationMethodType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--SchemaFormatType:1.0.0",
@@ -1154,6 +1286,10 @@
   {
     "kind": "{{schema-authority}}:wks:master-data--Seismic3DInterpretationSet:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/Seismic3DInterpretationSet.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--SeismicAcquisitionSurvey:1.2.0",
+    "relativePath": "shared-schemas/osdu/master-data/SeismicAcquisitionSurvey.1.2.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:master-data--SeismicAcquisitionSurvey:1.1.0",
@@ -1280,6 +1416,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/SequenceStratigraphySurfaceType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--SidewallCoreType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/SidewallCoreType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--SpatialGeometryType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/SpatialGeometryType.1.0.0.json"
   },
@@ -1290,6 +1430,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--StandardsOrganisation:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/StandardsOrganisation.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--StorageFacility:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/StorageFacility.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--StratigraphicColumn:1.0.0",
@@ -1384,6 +1528,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/TubularAssemblyType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:work-product-component--TubularComponent:1.1.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/TubularComponent.1.1.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:work-product-component--TubularComponent:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product-component/TubularComponent.1.0.0.json"
   },
@@ -1402,6 +1550,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--TubularComponentType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/TubularComponentType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--TubularMaterialType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/TubularMaterialType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--TubularUmbilical:1.0.0",
@@ -1480,8 +1632,16 @@
     "relativePath": "shared-schemas/osdu/reference-data/VerticalMeasurementType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:work-product-component--VoidageGroupInterpretation:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/VoidageGroupInterpretation.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--WeatherType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/WeatherType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--Well:1.1.0",
+    "relativePath": "shared-schemas/osdu/master-data/Well.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:master-data--Well:1.0.0",
@@ -1502,6 +1662,22 @@
   {
     "kind": "{{schema-authority}}:wks:master-data--WellBarrierElementTest:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/WellBarrierElementTest.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellBusinessIntention:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellBusinessIntention.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellBusinessIntentionOutcome:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellBusinessIntentionOutcome.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellCondition:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellCondition.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellFluidDirection:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellFluidDirection.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellInterestType:1.0.0",
@@ -1532,8 +1708,24 @@
     "relativePath": "shared-schemas/osdu/master-data/WellPlanningWellbore.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--WellProductType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellProductType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellRole:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellRole.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--WellSiteProductType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/WellSiteProductType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellStatusSummary:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellStatusSummary.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--Wellbore:1.1.0",
+    "relativePath": "shared-schemas/osdu/master-data/Wellbore.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:master-data--Wellbore:1.0.0",
@@ -1578,5 +1770,13 @@
   {
     "kind": "{{schema-authority}}:wks:work-product--WorkProduct:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product/WorkProduct.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WorkflowPersonaType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WorkflowPersonaType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WorkflowUsageType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WorkflowUsageType.1.0.0.json"
   }
 ]
