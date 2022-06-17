@@ -10,12 +10,14 @@
 
 	<artifactId>schema-test-core</artifactId>
 	<properties>
-		<os-core-lib-ibm.version>0.15.0-rc3</os-core-lib-ibm.version>
+		<os-core-lib-ibm.version>0.15.2</os-core-lib-ibm.version>
 		<os-core-lib-azure.version>0.6.1</os-core-lib-azure.version>
         <os-core-lib-aws.version>0.13.0</os-core-lib-aws.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jackson-databind.version>2.13.2.2</jackson-databind.version>
+		<jackson.version>2.13.2</jackson.version>
 	</properties>
 
 	<dependencies>
@@ -62,6 +64,22 @@
 			<artifactId>cucumber-guice</artifactId>
 			<version>7.1.0</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson-databind.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
 
 		<dependency>
