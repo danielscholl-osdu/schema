@@ -5,9 +5,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.junit.Assert;
@@ -18,6 +20,7 @@ import org.opengroup.osdu.schema.stepdefs.model.SchemaServiceScope;
 import org.opengroup.osdu.schema.util.HttpClientFactory;
 import org.opengroup.osdu.schema.util.JsonUtils;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -34,7 +37,8 @@ public class SchemaServiceStepDef_POST implements En {
 	static String[] GetListBaseFilterArray;
 	static String[] GetListVersionFilterArray;
 	String queryParameter;
- 
+	HashMap<String, String> map1=new HashMap<>();
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	List<HashMap<String, String>> list_schemaParameterMap = new ArrayList<HashMap<String, String>>();
 
@@ -91,13 +95,15 @@ public class SchemaServiceStepDef_POST implements En {
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + nextMajorVersion + "."
 							+ nextMinorVersion + "." + nextPatchVersion;
 					this.context.setSchemaIdFromInputPayload(schemaId);
-					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, nextPatchVersion, schemaId);
+					map1.put("id1", schemaId);
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, nextPatchVersion,
+							schemaId);
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 					prepareSchemaParameterMapList();
 
 				});
-		
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string}",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -112,12 +118,13 @@ public class SchemaServiceStepDef_POST implements En {
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + nextMajorVersion + "."
 							+ nextMinorVersion + "." + nextPatchVersion;
 					this.context.setSchemaIdFromInputPayload(schemaId);
-					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, nextPatchVersion, schemaId);
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, nextPatchVersion,
+							schemaId);
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 
 				});
-		
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with no version increase",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -127,6 +134,38 @@ public class SchemaServiceStepDef_POST implements En {
 					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
 							+ currentMinorVersion + ".0";
+					this.context.setSchemaIdFromInputPayload(schemaId);
+					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, schemaId);
+					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
+					this.context.setHttpResponse(response);
+				});
+		
+		Given("I hit schema service POST API with {string} and data-partition-id as {string} from directpayload and no version increase",
+				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					
+					String currentMajorVersion1 = jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo")
+							.getAsJsonObject("schemaIdentity").get("schemaVersionMajor").toString();
+					int currentMajorVersion = Integer.parseInt(currentMajorVersion1);
+					String currentMinorVersion1 = jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo")
+							.getAsJsonObject("schemaIdentity").get("schemaVersionMinor").toString();
+					int currentMinorVersion = Integer.parseInt(currentMinorVersion1);
+					String currentPatchVersion1 = jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo")
+							.getAsJsonObject("schemaIdentity").get("schemaVersionPatch").toString();
+					int currentPatchVersion = Integer.parseInt(currentPatchVersion1);
+					String authority = jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo")
+							.getAsJsonObject("schemaIdentity").get("authority").toString();
+					String source = jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo")
+							.getAsJsonObject("schemaIdentity").get("source").toString();
+					String entityType = jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo")
+							.getAsJsonObject("schemaIdentity").get("entityType").toString();
+					
+					String schemaId = authority +":"+ source +":"+ entityType+":" + currentMajorVersion + "."
+							+ currentMinorVersion + "."+ currentPatchVersion;
+					
+					
 					this.context.setSchemaIdFromInputPayload(schemaId);
 					updateVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, schemaId);
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
@@ -163,12 +202,158 @@ public class SchemaServiceStepDef_POST implements En {
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
 							+ nextMinorVersion + "." + currentPatchVersion;
 					this.context.setSchemaIdFromInputPayload(schemaId);
-					updateVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion,
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion, currentPatchVersion,
 							schemaId);
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 				});
+
+		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased versions and update $ref1",
+				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					int currentPatchVersion = Integer.parseInt(this.context.getSchemaVersionPatch());
+					String previousSchemaId = this.context.getSchemaIdFromInputPayload();
+					System.out.println("previousSchemaId : " + previousSchemaId);
+					int nextMajorVersion = currentMajorVersion + 1;
+					int nextPatchVersion = currentPatchVersion + 1;
+					int nextMinorVersion = currentMinorVersion + 1;
+					String schemaId = "SchemaSanityTest:testSource:testEntity:" + nextMajorVersion
+							+ "." + nextMinorVersion + "." + nextPatchVersion;
+					map1.put("id2", schemaId);
+					System.out.println("id2 : " + schemaId);
+					//idVals[1] = schemaId;
+					this.context.setSchemaIdFromInputPayload(schemaId);
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, nextPatchVersion, schemaId);
+					jsonBody = updateRefValue(jsonBody, previousSchemaId);
+					System.out.println("json body is : " + jsonBody.toString());
+					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
+					this.context.setHttpResponse(response);
+					prepareSchemaParameterMapList();
+				});
 		
+		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased versions and update $ref2",
+				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
+					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
+					int currentPatchVersion = Integer.parseInt(this.context.getSchemaVersionPatch());
+					String previousSchemaId = this.context.getSchemaIdFromInputPayload();
+					System.out.println("previousSchemaId : " + previousSchemaId);
+					int nextMajorVersion = currentMajorVersion + 1;
+					int nextPatchVersion = currentPatchVersion + 1;
+					int nextMinorVersion = currentMinorVersion + 1;
+					String schemaId = "SchemaSanityTest:testSource:testEntity:" + nextMajorVersion
+							+ "." + nextMinorVersion + "." + nextPatchVersion;
+					map1.put("id3", schemaId);
+					//idVals[2] = schemaId;
+					System.out.println("id3 : " + schemaId);
+					this.context.setSchemaIdFromInputPayload(schemaId);
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, nextPatchVersion, schemaId);
+					jsonBody = updateRefValue(jsonBody, previousSchemaId);
+					System.out.println("json body is : " + jsonBody.toString());
+					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
+					this.context.setHttpResponse(response);
+					prepareSchemaParameterMapList();
+				});
+
+		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version from any ID provided1",
+				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
+
+					String firstSchema = map1.get("id1");
+					System.out.println("firstSchema : " + firstSchema);
+					String[] s = firstSchema.split(":");
+					System.out.println("s[3] : " + s[3]);
+					String[] s1 = s[3].split("\\.");
+					System.out.println("s1[0] : " + s1[0]);
+					System.out.println("s1[1] : " + s1[1]);
+					System.out.println("s1[2] : " + s1[2]);
+					
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(s1[1]);
+					int currentMajorVersion = Integer.parseInt(s1[0]);
+					int currentPatchVersion = Integer.parseInt(s1[2]);
+					String currentSchemaId = "SchemaSanityTest:testSource:testEntity:"
+							+ currentMajorVersion + "." + currentMajorVersion + "." + currentPatchVersion;
+					int nextMinorVersion = currentMinorVersion + 1;
+					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ nextMinorVersion + "." + currentPatchVersion;
+					System.out.println("Current schemaId : " + schemaId);
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion, currentPatchVersion, schemaId);
+					System.out.println("json body is : " + jsonBody.toString());
+					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
+					this.context.setHttpResponse(response);
+				});
+		
+		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version from any ID provided2",
+				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
+
+					String firstSchema = map1.get("id2");
+					System.out.println("firstSchema : " + firstSchema);
+					String[] s = firstSchema.split(":");
+					System.out.println("s[3] : " + s[3]);
+					String[] s1 = s[3].split("\\.");
+					System.out.println("s1[0] : " + s1[0]);
+					System.out.println("s1[1] : " + s1[1]);
+					System.out.println("s1[2] : " + s1[2]);
+					
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(s1[1]);
+					int currentMajorVersion = Integer.parseInt(s1[0]);
+					int currentPatchVersion = Integer.parseInt(s1[2]);
+					String currentSchemaId = "SchemaSanityTest:testSource:testEntity:"
+							+ currentMajorVersion + "." + currentMajorVersion + "." + currentPatchVersion;
+					int nextMinorVersion = currentMinorVersion + 1;
+					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ nextMinorVersion + "." + currentPatchVersion;
+					System.out.println("Current schemaId : " + schemaId);
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion, currentPatchVersion, schemaId);
+					jsonBody = updateRefValue(jsonBody, currentSchemaId);
+					System.out.println("json body is : " + jsonBody.toString());
+					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
+					this.context.setHttpResponse(response);
+				});
+		
+		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version from any ID provided3",
+				(String inputPayload, String tenant) -> {
+					tenant = selectTenant(tenant);
+
+					String firstSchema = map1.get("id3");
+					System.out.println("firstSchema : " + firstSchema);
+					String[] s = firstSchema.split(":");
+					System.out.println("s[3] : " + s[3]);
+					String[] s1 = s[3].split("\\.");
+					System.out.println("s1[0] : " + s1[0]);
+					System.out.println("s1[1] : " + s1[1]);
+					System.out.println("s1[2] : " + s1[2]);
+					
+					String body = this.context.getFileUtils().read(inputPayload);
+					JsonElement jsonBody = new Gson().fromJson(body, JsonElement.class);
+					int currentMinorVersion = Integer.parseInt(s1[1]);
+					int currentMajorVersion = Integer.parseInt(s1[0]);
+					int currentPatchVersion = Integer.parseInt(s1[2]);
+					String currentSchemaId = "SchemaSanityTest:testSource:testEntity:"
+							+ currentMajorVersion + "." + currentMajorVersion + "." + currentPatchVersion;
+					int nextMinorVersion = currentMinorVersion + 1;
+					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ nextMinorVersion + "." + currentPatchVersion;
+					System.out.println("Current schemaId : " + schemaId);
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion, currentPatchVersion, schemaId);
+					jsonBody = updateRefValue(jsonBody, currentSchemaId);
+					System.out.println("json body is : " + jsonBody.toString());
+					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
+					this.context.setHttpResponse(response);
+				});
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version with 2 count",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -179,15 +364,15 @@ public class SchemaServiceStepDef_POST implements En {
 					int currentPatchVersion = Integer.parseInt(this.context.getSchemaVersionPatch());
 					int nextMinorVersion = currentMinorVersion + 2;
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
-							+ nextMinorVersion + "."+currentPatchVersion;
+							+ nextMinorVersion + "." + currentPatchVersion;
 					this.context.setSchemaIdFromInputPayload(schemaId);
-					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion,currentPatchVersion,
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion, currentPatchVersion,
 							schemaId);
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 					prepareSchemaParameterMapList();
 				});
-		
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version with 1 count",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -198,15 +383,15 @@ public class SchemaServiceStepDef_POST implements En {
 					int currentPatchVersion = Integer.parseInt(this.context.getSchemaVersionPatch());
 					int nextMinorVersion = currentMinorVersion + 1;
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
-							+ nextMinorVersion + "."+currentPatchVersion;
+							+ nextMinorVersion + "." + currentPatchVersion;
 					this.context.setSchemaIdFromInputPayload(schemaId);
-					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion,currentPatchVersion,
+					updatePatchVersionInJsonBody(jsonBody, nextMinorVersion, currentMajorVersion, currentPatchVersion,
 							schemaId);
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 					prepareSchemaParameterMapList();
 				});
-		
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with less minor version by 1 count than earlier",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -215,16 +400,16 @@ public class SchemaServiceStepDef_POST implements En {
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
 					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
 					int currentPatchVersion = Integer.parseInt(this.context.getSchemaVersionPatch());
-					int previousMinorVersion = currentMinorVersion - 1 ;
+					int previousMinorVersion = currentMinorVersion - 1;
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
 							+ previousMinorVersion + "." + currentPatchVersion;
 					this.context.setSchemaIdFromInputPayload(schemaId);
-					updatePatchVersionInJsonBody(jsonBody, previousMinorVersion, currentMajorVersion, currentPatchVersion,
-							schemaId);
+					updatePatchVersionInJsonBody(jsonBody, previousMinorVersion, currentMajorVersion,
+							currentPatchVersion, schemaId);
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 				});
-		
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with less minor version by 1 count than earlier and increase patch by 1",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -233,7 +418,7 @@ public class SchemaServiceStepDef_POST implements En {
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
 					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
 					int currentPatchVersion = Integer.parseInt(this.context.getSchemaVersionPatch());
-					int previousMinorVersion = currentMinorVersion - 1 ;
+					int previousMinorVersion = currentMinorVersion - 1;
 					int nextPatchVersion = currentPatchVersion + 1;
 					String schemaId = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
 							+ previousMinorVersion + "." + nextPatchVersion;
@@ -243,7 +428,7 @@ public class SchemaServiceStepDef_POST implements En {
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 				});
-				
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version and patch version",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -262,7 +447,7 @@ public class SchemaServiceStepDef_POST implements En {
 					HttpResponse response = postRequest(jsonBody, schemaId, tenant);
 					this.context.setHttpResponse(response);
 				});
-		
+
 		Given("I hit schema service POST API with {string} and data-partition-id as {string} with increased minor version only",
 				(String inputPayload, String tenant) -> {
 					tenant = selectTenant(tenant);
@@ -298,9 +483,10 @@ public class SchemaServiceStepDef_POST implements En {
 					int currentMinorVersion = Integer.parseInt(this.context.getSchemaVersionMinor());
 					int currentMajorVersion = Integer.parseInt(this.context.getSchemaVersionMajor());
 					int currentPatchVersion = Integer.parseInt(this.context.getSchemaVersionPatch());
-					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "." + currentMinorVersion
-							+ "." + currentPatchVersion;
-					updatePatchVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion, currentPatchVersion, id);
+					String id = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
+							+ currentMinorVersion + "." + currentPatchVersion;
+					updatePatchVersionInJsonBody(jsonBody, currentMinorVersion, currentMajorVersion,
+							currentPatchVersion, id);
 					body = new Gson().toJson(jsonBody);
 					this.context.setSchemaIdFromInputPayload(id);
 					this.context
@@ -377,11 +563,11 @@ public class SchemaServiceStepDef_POST implements En {
 					Gson gsn = new Gson();
 					JsonObject responseMsg = gsn.fromJson(response.getBody().toString(), JsonObject.class);
 					if (!response.getBody().isEmpty())
-						assertTrue(responseMsg.toString().contains("Patch version validation failed.")); 
+						assertTrue(responseMsg.toString().contains("Patch version validation failed."));
 
 				});
 
-		Then("user gets minor version error response as {string} and {string}", 
+		Then("user gets minor version error response as {string} and {string}",
 				(String ReponseStatusCode, String ResponseToBeVerified) -> {
 					HttpResponse response = this.context.getHttpResponse();
 					assertEquals(ReponseStatusCode, String.valueOf(response.getCode()));
@@ -392,7 +578,7 @@ public class SchemaServiceStepDef_POST implements En {
 						assertTrue(responseMsg.toString().contains("Minor version validation failed"));
 
 				});
-		
+
 		Then("user gets oneOf attribute error response as {string} and {string}",
 				(String ReponseStatusCode, String ResponseToBeVerified) -> {
 					HttpResponse response = this.context.getHttpResponse();
@@ -401,7 +587,8 @@ public class SchemaServiceStepDef_POST implements En {
 					Gson gsn = new Gson();
 					JsonObject responseMsg = gsn.fromJson(response.getBody().toString(), JsonObject.class);
 					if (!response.getBody().isEmpty())
-						assertTrue(responseMsg.toString().contains("Changing list of \\\"oneOf\\\",\\\"allOf\\\" or \\\"anyOf\\\"  is not permitted,"));
+						assertTrue(responseMsg.toString().contains(
+								"Changing list of \\\"oneOf\\\",\\\"allOf\\\" or \\\"anyOf\\\"  is not permitted,"));
 
 				});
 
@@ -423,7 +610,7 @@ public class SchemaServiceStepDef_POST implements En {
 					.body(body).httpMethod(HttpRequest.POST).requestHeaders(this.context.getAuthHeaders()).build();
 			HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 			this.context.setHttpResponse(response);
-		}); 
+		});
 
 		Given("I hit schema service POST API with {string}", (String inputPayload) -> {
 			String body = this.context.getFileUtils().read(inputPayload);
@@ -450,7 +637,7 @@ public class SchemaServiceStepDef_POST implements En {
 					String supersededById = "SchemaSanityTest:testSource:testEntity:" + currentMajorVersion + "."
 							+ currentMinorVersion + ".0";
 					updateSupersededByInJsonBody(jsonBody, supersededById);
-					this.context.setSupersededById(supersededById); 
+					this.context.setSupersededById(supersededById);
 
 					int nextMinorVersion = currentMinorVersion + 1;
 					int nextMajorVersion = currentMajorVersion + 1;
@@ -545,6 +732,22 @@ public class SchemaServiceStepDef_POST implements En {
 				.addProperty("id", id);
 	}
 
+	private JsonElement updateRefValue(JsonElement jsonBody, String id) {
+		jsonBody.getAsJsonObject().getAsJsonObject("schema").getAsJsonObject("properties")
+				.getAsJsonObject("SpatialLocation").getAsJsonObject().remove("$ref");
+		jsonBody.getAsJsonObject().getAsJsonObject("schema").getAsJsonObject("properties")
+				.getAsJsonObject("SpatialLocation").getAsJsonObject().addProperty("$ref", "#/definitions/" + id);
+		System.out.println("Final value of ref is : " + jsonBody.getAsJsonObject().getAsJsonObject("schema")
+				.getAsJsonObject("properties").getAsJsonObject("SpatialLocation").get("$ref"));
+		
+		String jsonBodyString = jsonBody.toString().replace("SchemaSanityTest:testSource:testEntity:1.0.0", id);
+		System.out.println("============ Final string payload body ================" + jsonBodyString);
+		Gson gson = new Gson();
+		jsonBody = gson.fromJson(jsonBodyString, JsonElement.class);
+		System.out.println("============ Final json payload body ================" + jsonBody);
+		return jsonBody;
+	}
+
 	private void updatePatchVersionInJsonBody(JsonElement jsonBody, int nextMinorVersion, int nextMajorVersion,
 			int nextPatchVersion, String id) {
 		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").get("schemaIdentity").getAsJsonObject()
@@ -592,7 +795,7 @@ public class SchemaServiceStepDef_POST implements En {
 		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject(TestConstants.SUPERSEDED_BY)
 				.remove(TestConstants.ID);
 		jsonBody.getAsJsonObject().getAsJsonObject("schemaInfo").getAsJsonObject(TestConstants.SUPERSEDED_BY)
-				.addProperty(TestConstants.ID, id); 
+				.addProperty(TestConstants.ID, id);
 	}
 
 	public void prepareSchemaParameterMapList() throws IOException {

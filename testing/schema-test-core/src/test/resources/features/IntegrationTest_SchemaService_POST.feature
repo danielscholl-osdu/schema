@@ -79,5 +79,20 @@ Feature: To verify functionality of POST schema Service
     Then user gets minor version error response as <ReponseStatusCode> and <ResponseMessage>
 
     Examples: 
+    
       | EmptyInputPayload                                    | InputPayload                                           | ReponseStatusCode | ResponseMessage                                             | tenant    |
       | "/input_payloads/postSchemaService_EmptySchema.json" | "/input_payloads/inputPayloadWithExistingVersion.json" | "400"             | "/output_payloads/SchemaPost_MinorBreakingChangeError.json" | "TENANT1" |
+
+  @SchemaService
+  Scenario Outline: Verify that Schema Service's POST API creates a schema correctly when minor version is increased for $ref value
+    When I hit schema service POST API with <InputPayload1> and data-partition-id as <tenant> and update versions
+    And I hit schema service POST API with <InputPayload2> and data-partition-id as <tenant> with increased versions and update $ref1
+    And I hit schema service POST API with <InputPayload3> and data-partition-id as <tenant> with increased versions and update $ref2
+    And I hit schema service POST API with <InputPayload11> and data-partition-id as <tenant> with increased minor version from any ID provided1
+    And I hit schema service POST API with <InputPayload21> and data-partition-id as <tenant> with increased minor version from any ID provided2
+    And I hit schema service POST API with <InputPayload31> and data-partition-id as <tenant> with increased minor version from any ID provided3
+    Then service should respond back with <ReponseStatusCode> and <ResponseMessage>
+
+    Examples: 
+      | InputPayload1                                    | InputPayload2                                    | InputPayload3                                    | InputPayload11                                    | InputPayload21                                    | InputPayload31                                    | tenant    | ReponseStatusCode | ResponseMessage                                                    |
+      | "/input_payloads/postSchemaService_Schema1.json" | "/input_payloads/postSchemaService_Schema2.json" | "/input_payloads/postSchemaService_Schema3.json" | "/input_payloads/postSchemaService_Schema11.json" | "/input_payloads/postSchemaService_Schema21.json" | "/input_payloads/postSchemaService_Schema31.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
