@@ -11,6 +11,7 @@ data:
   # bootstrap
   data_partition_id: ""
   schema_host: "http://schema"
+  java_options: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
 conf:
   app_name: "schema"
   configmap: "schema-config"
