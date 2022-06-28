@@ -12,6 +12,7 @@ data:
   PARTITION_HOST: "{{ .Values.data.partition_host }}"
   SHARED_TENANT_NAME: "{{ .Values.data.shared_tenant_name }}"
   SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
+  _JAVA_OPTIONS: "{{ .Values.data.java_options }}"
   {{- if not .Values.conf.on_prem_enabled }}
   GOOGLE_AUDIENCES: "{{ .Values.data.google_audiences }}"
   {{- end }}
