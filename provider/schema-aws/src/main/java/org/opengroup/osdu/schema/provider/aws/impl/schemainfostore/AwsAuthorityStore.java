@@ -25,11 +25,14 @@ import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.aws.models.AuthorityDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IAuthorityStore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
 
+@ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb",
+        matchIfMissing = true)
 @Repository
 public class AwsAuthorityStore implements IAuthorityStore {
 
@@ -55,9 +58,9 @@ public class AwsAuthorityStore implements IAuthorityStore {
 
   @Override
   public Authority get(String authorityId) throws NotFoundException, ApplicationException {
-    
+
     DynamoDBQueryHelperV2 queryHelper = getAuthorityTableQueryHelper();
-    
+
     String id = headers.getPartitionId() + ":" + authorityId;
     AuthorityDoc result = queryHelper.loadByPrimaryKey(AuthorityDoc.class, id);
     if (result == null) {
@@ -73,8 +76,8 @@ public class AwsAuthorityStore implements IAuthorityStore {
   }
 
   @Override
-  public Authority create(Authority authority) throws ApplicationException, BadRequestException {    
-    
+  public Authority create(Authority authority) throws ApplicationException, BadRequestException {
+
     DynamoDBQueryHelperV2 queryHelper = getAuthorityTableQueryHelper();
 
     String id = headers.getPartitionId() + ":" + authority.getAuthorityId();
