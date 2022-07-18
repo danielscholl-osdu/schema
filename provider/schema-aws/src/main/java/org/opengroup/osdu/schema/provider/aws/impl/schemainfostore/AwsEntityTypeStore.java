@@ -25,11 +25,14 @@ import org.opengroup.osdu.schema.model.EntityType;
 import org.opengroup.osdu.schema.provider.aws.models.EntityTypeDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IEntityTypeStore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
 
+@ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb",
+        matchIfMissing = true)
 @Repository
 public class AwsEntityTypeStore implements IEntityTypeStore {
 
@@ -73,7 +76,7 @@ public class AwsEntityTypeStore implements IEntityTypeStore {
 
   @Override
   public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
-    
+
     DynamoDBQueryHelperV2 queryHelper = getEntityTypeTableQueryHelper();
 
     String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
