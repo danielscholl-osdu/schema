@@ -5,9 +5,11 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.opengroup.osdu.core.aws.partition.PartitionInfoAws;
 import org.opengroup.osdu.core.aws.partition.PartitionServiceClientWithCache;
 import org.opengroup.osdu.core.common.http.DpsHeaderFactory;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.partition.Property;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.provider.interfaces.authorization.IAuthorizationServiceForServiceAdmin;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
@@ -17,6 +19,8 @@ import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class ParentUtil {
@@ -39,6 +43,11 @@ public abstract class ParentUtil {
     public void setUpAnyTime() {
         MockitoAnnotations.openMocks(this);
         Mockito.when(headers.getPartitionId()).thenReturn(DATA_PARTITION);
+        PartitionInfoAws partitionInfoAws = new PartitionInfoAws();
+        Property tenantIdProperty = new Property();
+        tenantIdProperty.setValue(DATA_PARTITION);
+        partitionInfoAws.setTenantIdProperty(tenantIdProperty);
+        Mockito.when(partitionServiceClient.getPartition(anyString())).thenReturn(partitionInfoAws);
     }
 
 
