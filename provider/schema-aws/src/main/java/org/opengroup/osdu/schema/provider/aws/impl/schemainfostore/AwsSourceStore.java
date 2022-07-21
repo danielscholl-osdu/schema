@@ -25,11 +25,14 @@ import org.opengroup.osdu.schema.model.Source;
 import org.opengroup.osdu.schema.provider.aws.models.SourceDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISourceStore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
 
+@ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb",
+        matchIfMissing = true)
 @Repository
 public class AwsSourceStore implements ISourceStore {
 

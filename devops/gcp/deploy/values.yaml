@@ -1,8 +1,8 @@
 data:
   requests_cpu: "0.1"
-  requests_memory: "400M"
+  requests_memory: "1G"
   limits_cpu: "1"
-  limits_memory: "1G"
+  limits_memory: "1.5G"
   bootstrap_limits_cpu: "0.2"
   bootstrap_limits_memory: "200M"
   bootstrap_image: ""

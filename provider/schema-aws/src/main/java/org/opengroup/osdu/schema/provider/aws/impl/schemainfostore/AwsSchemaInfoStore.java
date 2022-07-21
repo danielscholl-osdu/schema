@@ -48,11 +48,14 @@ import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
+@ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb",
+        matchIfMissing = true)
 @Repository
 public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
@@ -63,7 +66,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   private ITenantFactory tenantFactory;
 
   @Inject
-  private JaxRsDpsLog log;  
+  private JaxRsDpsLog log;
 
   @Inject
   private ISchemaStore schemaStore;
@@ -73,7 +76,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}")
   String schemaInfoTableParameterRelativePath;
-  
+
   @Value("${shared.tenant.name:common}")
   private String sharedTenant;
 
@@ -292,7 +295,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
  @Override
-  public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {    
+  public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
 
    Set<String> tenantList = new HashSet<>();
    tenantList.add(sharedTenant);
@@ -347,9 +350,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   private void validateSupersededById(SchemaIdentity superseding_schema, String tenantId) throws ApplicationException, BadRequestException {
-    
+
     DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenantId);
-    
+
     if (superseding_schema != null) {
       String id = tenantId + ":" + superseding_schema.getId();
       SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
