@@ -8,8 +8,14 @@ metadata:
 data:
   DATA_PARTITION: "{{ .Values.data.data_partition_id }}"
   ONPREM_ENABLED: "{{ .Values.conf.on_prem_enabled }}"
+  ENABLE_CLEANUP: "{{ .Values.data.enable_cleanup }}"
   SCHEMA_URL: "{{ .Values.data.schema_host }}"
   ENTITLEMENTS_HOST: "{{ .Values.data.entitlements_host }}"
   {{- if not .Values.conf.on_prem_enabled }}
   AUDIENCES: "{{ .Values.data.google_audiences }}"
+  {{- end }}  
+  {{- if .Values.data.enable_cleanup }}
+  SCHEMA_BUCKET: "{{ .Values.data.schema_bucket }}"
+  DATASTORE_NAMESPACE: "{{ .Values.data.datastore_namespace }}"
+  DATASTORE_KIND: "{{ .Values.data.datastore_kind }}"
   {{- end }}  

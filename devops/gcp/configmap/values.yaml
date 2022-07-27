@@ -9,8 +9,13 @@ data:
   # gcp
   google_audiences: ""
   # bootstrap
+  enable_cleanup: false
   data_partition_id: ""
   schema_host: "http://schema"
+  # cleanup
+  schema_bucket: ""
+  datastore_namespace: "dataecosystem"
+  datastore_kind: "system_schema_osm"
   java_options: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
 conf:
   app_name: "schema"

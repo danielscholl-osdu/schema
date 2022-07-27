@@ -21,6 +21,7 @@ set -e
 source ./validate-env.sh "DATA_PARTITION"
 source ./validate-env.sh "SCHEMA_URL"
 source ./validate-env.sh "ENTITLEMENTS_HOST"
+source ./validate-env.sh "ENABLE_CLEANUP"
 
 bootstrap_schema_gettoken_onprem() {
 
@@ -38,12 +39,6 @@ bootstrap_schema_gettoken_gcp() {
   BEARER_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
   export BEARER_TOKEN
 
-  # FIXME CleanUP script needed only for TF installation
-  # echo "Clean-up for Datastore schemas"
-  # python3 ./scripts/GcpDatastoreCleanUp.py
-
-  # FIXME find a better solution about datastore cleaning completion
-  # sleep 5
 }
 
 bootstrap_schema_prechek_env() {
@@ -67,6 +62,7 @@ bootstrap_schema_deploy_shared_schemas() {
   python3 ./scripts/DeploySharedSchemas.py -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
 }
 
+
 if [ "${ONPREM_ENABLED}" == "true" ]
 then
   source ./validate-env.sh "OPENID_PROVIDER_URL"
@@ -77,6 +73,16 @@ then
   bootstrap_schema_gettoken_onprem
 
 else
+  if [ "${ENABLE_CLEANUP}" == "true" ]
+  then
+    source ./validate-env.sh "SCHEMA_BUCKET"
+    source ./validate-env.sh "DATASTORE_NAMESPACE"
+    source ./validate-env.sh "DATASTORE_KIND"
+    echo "Started schema cleanup"
+    python3 ./scripts/schema-cleaner/main.py -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
+    echo "Finished schema cleanup"
+  fi
+
   source ./validate-env.sh "AUDIENCES"
 
   # Get credentials for GCP
