@@ -15,6 +15,7 @@
 		<springfox-version>2.7.0</springfox-version>
 		<jackson-databind.version>2.13.2.2</jackson-databind.version>
 		<jackson.version>2.13.2</jackson.version>
+		<spring-webmvc.version>5.3.22</spring-webmvc.version>
 	</properties>
 
 	<dependencyManagement>
@@ -113,6 +114,11 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring-webmvc.version}</version>
 		</dependency>
 
 		<dependency>
