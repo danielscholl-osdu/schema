@@ -43,6 +43,10 @@ spec:
         - name: {{ .Chart.Name }}
           image: {{ .Values.image.repository }}/{{ .Chart.Name }}-{{ .Values.image.branch }}:{{ .Values.image.tag | default .Chart.AppVersion }}
           imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","90"]
           ports:
             - containerPort: 80
           readinessProbe:
@@ -132,5 +136,6 @@ spec:
             {{- end }}
             - name: SPRING_CONFIG_NAME
               value: "common,application"
+      terminationGracePeriodSeconds: 101 
 
 
