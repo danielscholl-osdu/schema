@@ -32,10 +32,6 @@ analyze:
     type: mvn
     target: provider/schema-azure/pom.xml
     path: .
-  - name: schema-reference
-    type: mvn
-    target: provider/schema-reference/pom.xml
-    path: .
   - name: google
     type: pip
     target: deployments/scripts/google
