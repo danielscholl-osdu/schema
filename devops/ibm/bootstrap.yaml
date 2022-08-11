@@ -10,10 +10,10 @@ ibm_bootstrap:
     - $IBM_DEPLOYMENTS_SUBDIR/bootstrap.sh
   only:
     variables:
-      - $IBM == 'true'
+      - $IBM == '1'
 
 ibm-test:
   needs: ["ibm_bootstrap"]
   only:
     variables:
-      - $IBM == 'true'
+      - $IBM == '1'
