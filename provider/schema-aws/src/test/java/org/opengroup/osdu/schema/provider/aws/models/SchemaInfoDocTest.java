@@ -38,10 +38,4 @@ public class SchemaInfoDocTest {
     SchemaInfo actual = converter.unconvert(converter.convert(obj));
     assertEquals(obj, actual);
   }
-
-
-  @Test
-  public void mapFrom() {
-    // TBD
-  }
 }
