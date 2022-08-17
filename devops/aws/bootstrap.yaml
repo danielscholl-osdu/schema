@@ -12,10 +12,10 @@ aws_bootstrap:
     - $AWS_DEPLOYMENTS_SUBDIR/bootstrap.sh
   only:
     variables:
-      - $AWS == 'true'
+      - $AWS == '1'
 
 aws-test-java:
   needs: ["aws_bootstrap"]
   only:
     variables:
-      - $AWS == 'true'
+      - $AWS == '1'
