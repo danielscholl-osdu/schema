@@ -7,6 +7,11 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+	<properties>
+		<jackson-databind.version>2.13.2.2</jackson-databind.version>
+		<jackson.version>2.13.2</jackson.version>
+	</properties>
+
 	<artifactId>os-schema-gcp</artifactId>
 	<description>Google cloud related implementation staff.</description>
 	<packaging>jar</packaging>
@@ -46,6 +51,21 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson-databind.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>5.3.22</version>
@@ -64,7 +84,7 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>core-lib-gcp</artifactId>
-			<version>0.15.0</version>
+			<version>0.16.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback.contrib</groupId>
