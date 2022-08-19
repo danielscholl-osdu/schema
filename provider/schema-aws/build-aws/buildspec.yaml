@@ -80,6 +80,9 @@ phases:
       - chmod +x ./deployments/scripts/aws/prepare-dist.sh
       - ./deployments/scripts/aws/prepare-dist.sh
 
+      - echo "--Copying Helm Charts to ${OUTPUT_DIR:-dist}--"
+      - rsync -r devops/aws/* "${OUTPUT_DIR:-dist}"
+
       - echo "Logging into Docker Hub..."
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
