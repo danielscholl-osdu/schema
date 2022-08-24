@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: "{{ .Values.conf.app_name }}-bootstrap"
-  name: "{{ .Values.conf.app_name }}-bootstrap"
+    app: "{{ .Values.conf.appName }}-bootstrap"
+  name: "{{ .Values.conf.appName }}-bootstrap"
   namespace: "{{ .Release.Namespace }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "{{ .Values.conf.app_name }}-bootstrap"
+      app: "{{ .Values.conf.appName }}-bootstrap"
   template:
     metadata:
       labels:
-        app: "{{ .Values.conf.app_name }}-bootstrap"
+        app: "{{ .Values.conf.appName }}-bootstrap"
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
     spec:
       containers:
-        - name: "{{ .Values.conf.app_name }}-bootstrap"
-          image: "{{ .Values.data.bootstrap_image }}"
+        - name: "{{ .Values.conf.appName }}-bootstrap"
+          image: "{{ .Values.data.bootstrapImage }}"
           readinessProbe:
             exec:
               command:
@@ -29,12 +29,12 @@ spec:
           envFrom:
           - configMapRef:
               name: "{{ .Values.conf.configmap }}-bootstrap"
-          {{- if .Values.conf.on_prem_enabled }}
+          {{- if .Values.conf.onPremEnabled }}
           - secretRef:
-              name: "{{ .Values.conf.bootstrap_secret_name }}"
+              name: "{{ .Values.conf.bootstrapSecretName }}"
           {{- end }}
           resources:
             limits:
-              cpu: "{{ .Values.data.bootstrap_limits_cpu}}"
-              memory: "{{ .Values.data.bootstrap_limits_memory }}"
+              cpu: "{{ .Values.data.bootstrapLimitsCpu}}"
+              memory: "{{ .Values.data.bootstrapLimitsMemory }}"
       serviceAccountName: "{{ .Values.data.bootstrapServiceAccountName }}"

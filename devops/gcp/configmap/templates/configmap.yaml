@@ -2,17 +2,17 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    app: "{{ .Values.conf.app_name }}"
+    app: "{{ .Values.conf.appName }}"
   name: "{{ .Values.conf.configmap }}"
   namespace: "{{ .Release.Namespace }}"
 data:
-  LOG_LEVEL: "{{ .Values.data.log_level }}"
-  ENTITLEMENTS_HOST: "{{ .Values.data.entitlements_host }}"
-  GCP_SCHEMA_CHANGED_TOPIC_NAME: "{{ .Values.data.gcp_schema_changed_topic_name }}"
-  PARTITION_HOST: "{{ .Values.data.partition_host }}"
-  SHARED_TENANT_NAME: "{{ .Values.data.shared_tenant_name }}"
-  SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
-  _JAVA_OPTIONS: "{{ .Values.data.java_options }}"
-  {{- if not .Values.conf.on_prem_enabled }}
-  GOOGLE_AUDIENCES: "{{ .Values.data.google_audiences }}"
+  LOG_LEVEL: "{{ .Values.data.logLevel }}"
+  ENTITLEMENTS_HOST: "{{ .Values.data.entitlementsHost }}"
+  GCP_SCHEMA_CHANGED_TOPIC_NAME: "{{ .Values.data.schemaTopicName }}"
+  PARTITION_HOST: "{{ .Values.data.partitionHost }}"
+  SHARED_TENANT_NAME: "{{ .Values.data.dataPartitionId }}"
+  SPRING_PROFILES_ACTIVE: "{{ .Values.data.springProfilesActive }}"
+  _JAVA_OPTIONS: "{{ .Values.data.javaOptions }}"
+  {{- if not .Values.conf.onPremEnabled }}
+  GOOGLE_AUDIENCES: "{{ .Values.data.googleAudiences }}"
   {{- end }}
