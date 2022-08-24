@@ -1,23 +1,21 @@
 data:
   # common
-  entitlements_host: "http://entitlements"
-  gcp_schema_changed_topic_name: "schema-changed"
-  log_level: "INFO"
-  partition_host: "http://partition"
-  shared_tenant_name: ""
-  spring_profiles_active: "gcp"
+  dataPartitionId: ""
+  entitlementsHost: "http://entitlements"
+  javaOptions: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
+  logLevel: "INFO"
+  partitionHost: "http://partition"
+  schemaTopicName: "schema-changed"
+  springProfilesActive: "gcp"
   # gcp
-  google_audiences: ""
-  # bootstrap
-  enable_cleanup: false
-  data_partition_id: ""
-  schema_host: "http://schema"
-  # cleanup
-  schema_bucket: ""
-  datastore_namespace: "dataecosystem"
-  datastore_kind: "system_schema_osm"
-  java_options: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
+  googleAudiences: ""
+  # Datastore cleanup and bootstrap schemas
+  datastoreKind: "system_schema_osm"
+  datastoreNamespace: "dataecosystem"
+  enableCleanup: false
+  schemaBucket: ""
+  schemaHost: "http://schema"
 conf:
-  app_name: "schema"
+  appName: "schema"
   configmap: "schema-config"
-  on_prem_enabled: false
+  onPremEnabled: false
