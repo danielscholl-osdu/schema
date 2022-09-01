@@ -3,8 +3,6 @@ data:
   requestsMemory: "1G"
   limitsCpu: "1"
   limitsMemory: "1.5G"
-  bootstrapLimitsCpu: "0.2"
-  bootstrapLimitsMemory: "200M"
   bootstrapImage: ""
   bootstrapServiceAccountName: ""
   image: ""

@@ -33,8 +33,4 @@ spec:
           - secretRef:
               name: "{{ .Values.conf.bootstrapSecretName }}"
           {{- end }}
-          resources:
-            limits:
-              cpu: "{{ .Values.data.bootstrapLimitsCpu}}"
-              memory: "{{ .Values.data.bootstrapLimitsMemory }}"
       serviceAccountName: "{{ .Values.data.bootstrapServiceAccountName }}"
