@@ -43,8 +43,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**bootstrapLimitsCpu** | CPU limit | string | 0.2 | yes
-**bootstrapLimitsMemory** | memory limit | string | 200M | yes
 **bootstrapImage** | bootstrap image | string | - | yes
 **bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
 
