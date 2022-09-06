@@ -49,8 +49,7 @@ public class ReferenceAttributeHandlerTest {
 		List<SchemaPatch> schemaPatchList = TestUtility.findSchemaPatch(schemaHandlerVO.getSourceSchema(), schemaHandlerVO.getTargetSchema());
 		for(SchemaPatch patch : schemaPatchList) {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
-			if(schemaBreakingChanges.size() > 0)
-				Assert.fail();
+			assertThat(schemaBreakingChanges.size() > 0).isFalse();
 		}
 
 	}
@@ -67,8 +66,7 @@ public class ReferenceAttributeHandlerTest {
 		List<SchemaPatch> schemaPatchList = TestUtility.findSchemaPatch(schemaHandlerVO.getSourceSchema(), schemaHandlerVO.getTargetSchema());
 		for(SchemaPatch patch : schemaPatchList) {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
-			if(schemaBreakingChanges.size() > 0)
-				Assert.fail();
+			assertThat(schemaBreakingChanges.size() > 0).isFalse();
 		}
 
 	}
@@ -86,9 +84,8 @@ public class ReferenceAttributeHandlerTest {
 		for(SchemaPatch patch : schemaPatchList) {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
-		
-		if(schemaBreakingChanges.size() == 0)
-			Assert.fail();
+
+		assertThat(schemaBreakingChanges.size() == 0).isFalse();
 	}
 	
 	@Test
@@ -104,9 +101,8 @@ public class ReferenceAttributeHandlerTest {
 		for(SchemaPatch patch : schemaPatchList) {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
-		
-		if(schemaBreakingChanges.size() == 0)
-			Assert.fail();
+
+		assertThat(schemaBreakingChanges.size() == 0).isFalse();
 	}
 	
 	@Test
@@ -122,9 +118,8 @@ public class ReferenceAttributeHandlerTest {
 		for(SchemaPatch patch : schemaPatchList) {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
-		
-		if(schemaBreakingChanges.size() == 0)
-			Assert.fail();
+
+		assertThat(schemaBreakingChanges.size() == 0).isFalse();
 	}
 	
 	@Test
@@ -143,7 +138,7 @@ public class ReferenceAttributeHandlerTest {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
 		
-		assertThat(schemaBreakingChanges.size() == 0);
+		assertThat(schemaBreakingChanges.size()).isSameAs(0);
 		Mockito.verify(dummyHandler, Mockito.atLeastOnce()).compare(schemaHandlerVO, schemaPatchList.get(0), schemaBreakingChanges, processedArrayPath);
 	}
 	
@@ -166,10 +161,8 @@ public class ReferenceAttributeHandlerTest {
 		for(SchemaPatch patch : schemaPatchList) {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
-		
-		if(schemaBreakingChanges.size() == 0)
-			Assert.fail();
 
+		assertThat(schemaBreakingChanges.size() == 0).isFalse();
 	}
 	
 	@Test
@@ -185,9 +178,7 @@ public class ReferenceAttributeHandlerTest {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
 		
-		if(schemaBreakingChanges.size() == 0)
-			Assert.fail();
-
+		assertThat(schemaBreakingChanges.size() == 0).isFalse();
 	}
 	
 	@Test
@@ -204,8 +195,7 @@ public class ReferenceAttributeHandlerTest {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
 		
-		if(schemaBreakingChanges.size() == 0)
-			Assert.fail();
+		assertThat(schemaBreakingChanges.size() == 0).isFalse();
 	}
 	
 	@Test
@@ -221,7 +211,8 @@ public class ReferenceAttributeHandlerTest {
 		for(SchemaPatch patch : schemaPatchList) {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
-		
+
+		assertThat(schemaBreakingChanges.size() == 0).isFalse();
 	}
 	
 	@Test
@@ -240,7 +231,7 @@ public class ReferenceAttributeHandlerTest {
 			referenceAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
 		
-		assertThat(schemaBreakingChanges.size() == 0);
+		assertThat(schemaBreakingChanges.size()).isSameAs(0);
 		Mockito.verify(dummyHandler, Mockito.atLeastOnce()).compare(schemaHandlerVO, schemaPatchList.get(0), schemaBreakingChanges, processedArrayPath);
 	}
 	

@@ -94,7 +94,7 @@ public class RequiredAttributeHandlerTest {
 			requiredAttributeHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
 		}
 
-		assertThat(schemaBreakingChanges.size() == 0);
+		assertThat(schemaBreakingChanges.size()).isSameAs(0);
 		Mockito.verify(dummyHandler, Mockito.atLeastOnce()).compare(schemaHandlerVO, schemaPatchList.get(0), schemaBreakingChanges, processedArrayPath);
 	}
 	
