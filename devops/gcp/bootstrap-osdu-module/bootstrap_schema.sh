@@ -14,6 +14,11 @@
 # - OPENID_PROVIDER_URL
 # - OPENID_PROVIDER_CLIENT_ID
 # - OPENID_PROVIDER_CLIENT_SECRET
+# (with datastore cleanup)
+# - SCHEMA_BUCKET
+# - DATASTORE_NAMESPACE
+# - DATASTORE_KIND
+# - ENABLE_CLEANUP
 #
 
 set -e
@@ -31,20 +36,21 @@ bootstrap_schema_gettoken_onprem() {
   --data-urlencode "scope=openid" \
   --data-urlencode "client_id=${OPENID_PROVIDER_CLIENT_ID}" \
   --data-urlencode "client_secret=${OPENID_PROVIDER_CLIENT_SECRET}" | jq -r ".id_token")"
+
   export BEARER_TOKEN="Bearer ${ID_TOKEN}"
 }
 
 bootstrap_schema_gettoken_gcp() {
 
   BEARER_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
-  export BEARER_TOKEN
 
+  export BEARER_TOKEN
 }
 
 bootstrap_schema_prechek_env() {
-  status_code=$(curl --retry 1 --location -globoff --request GET \
-  "${ENTITLEMENTS_HOST}/api/entitlements/v2/groups" \
-  --write-out "%{http_code}" --silent --output "/dev/null"\
+
+  status_code=$(curl --retry 1 --location -globoff --request GET "${ENTITLEMENTS_HOST}/api/entitlements/v2/groups" \
+  --write-out "%{http_code}" --silent --output "/dev/null" \
   --header 'Content-Type: application/json' \
   --header "data-partition-id: ${DATA_PARTITION}" \
   --header "Authorization: ${BEARER_TOKEN}")
@@ -61,7 +67,6 @@ bootstrap_schema_prechek_env() {
 bootstrap_schema_deploy_shared_schemas() {
   python3 ./scripts/DeploySharedSchemas.py -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
 }
-
 
 if [ "${ONPREM_ENABLED}" == "true" ]
 then
@@ -91,7 +96,6 @@ else
 fi
 
 # Precheck entitlements
-
 bootstrap_schema_prechek_env
 
 # Deploy shared schemas
