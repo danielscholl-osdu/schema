@@ -7,10 +7,10 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.EntityType;
+import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBEntityTypeStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.EntityTypeDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
 import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
-import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IEntityTypeStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -26,8 +26,9 @@ import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.
 @RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {SchemaTestConfig.class})
 public class MongoDBEntityTypeStoreTest extends ParentUtil {
+
     @Autowired
-    private IEntityTypeStore awsEntityTypeStore;
+    private MongoDBEntityTypeStore entityTypeStore;
 
     @Test
     public void get() throws ApplicationException, NotFoundException {
@@ -41,7 +42,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         mongoTemplateHelper.insert(entityTypeDto, ENTITY_TYPE_PREFIX + DATA_PARTITION);
 
         //when
-        EntityType authorityfromstore = awsEntityTypeStore.get(entityTypeDto.getId());
+        EntityType authorityfromstore = entityTypeStore.get(entityTypeDto.getId());
 
         //then
         assertNotNull(authorityfromstore);
@@ -56,7 +57,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         assertNull(byId);
 
         //then
-        awsEntityTypeStore.get(id);
+        entityTypeStore.get(id);
     }
 
     @Test
@@ -70,11 +71,11 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         entityTypeDto.setData(entityType);
         mongoTemplateHelper.insert(entityTypeDto, ENTITY_TYPE_PREFIX + "common");
 
-        ReflectionTestUtils.setField(awsEntityTypeStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(entityTypeStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        EntityType systemEntity = awsEntityTypeStore.getSystemEntity(id);
+        EntityType systemEntity = entityTypeStore.getSystemEntity(id);
         //then
         assertNotNull(systemEntity);
         assertEquals(id, systemEntity.getEntityTypeId());
@@ -88,7 +89,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         entityType.setEntityTypeId(id);
 
         //when
-        EntityType entityTypeFromStore = awsEntityTypeStore.create(entityType);
+        EntityType entityTypeFromStore = entityTypeStore.create(entityType);
 
         //then
         assertNotNull(entityTypeFromStore);
@@ -111,7 +112,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         mongoTemplateHelper.insert(entityTypeDto, ENTITY_TYPE_PREFIX + DATA_PARTITION);
 
         //then
-        awsEntityTypeStore.create(entityType);
+        entityTypeStore.create(entityType);
     }
 
     @Test
@@ -123,11 +124,11 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
 
         String common = "common";
 
-        ReflectionTestUtils.setField(awsEntityTypeStore, "sharedTenant", common);
+        ReflectionTestUtils.setField(entityTypeStore, "sharedTenant", common);
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        EntityType systemEntity = awsEntityTypeStore.createSystemEntity(entityType);
+        EntityType systemEntity = entityTypeStore.createSystemEntity(entityType);
 
         //then
         assertNotNull(systemEntity);

@@ -7,10 +7,10 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
+import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBAuthorityStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.AuthorityDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
 import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
-import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.IAuthorityStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -29,7 +29,7 @@ import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.
 public class MongoDBAuthorityStoreTest extends ParentUtil {
 
     @Autowired
-    private IAuthorityStore awsAuthorityStore;
+    private MongoDBAuthorityStore authorityStore;
 
     @Test
     public void get() throws ApplicationException, NotFoundException {
@@ -39,7 +39,7 @@ public class MongoDBAuthorityStoreTest extends ParentUtil {
         mongoTemplateHelper.insert(authority, AUTHORITY_PREFIX + DATA_PARTITION);
 
         //when
-        Authority authorityFromStore = awsAuthorityStore.get(authority.getId());
+        Authority authorityFromStore = authorityStore.get(authority.getId());
 
         //then
         assertNotNull(authorityFromStore);
@@ -54,7 +54,7 @@ public class MongoDBAuthorityStoreTest extends ParentUtil {
         assertNull(byId);
 
         //then
-        awsAuthorityStore.get(id);
+        authorityStore.get(id);
     }
 
     @Test
@@ -64,11 +64,11 @@ public class MongoDBAuthorityStoreTest extends ParentUtil {
         AuthorityDto authority = new AuthorityDto(id);
         mongoTemplateHelper.insert(authority, AUTHORITY_PREFIX + "common");
 
-        ReflectionTestUtils.setField(awsAuthorityStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(authorityStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        Authority authorityFromStore = awsAuthorityStore.getSystemAuthority(authority.getId());
+        Authority authorityFromStore = authorityStore.getSystemAuthority(authority.getId());
 
         //then
         assertNotNull(authorityFromStore);
@@ -83,7 +83,7 @@ public class MongoDBAuthorityStoreTest extends ParentUtil {
         authority.setAuthorityId(authorityId);
         //when
 
-        Authority authorityFromStore = awsAuthorityStore.create(authority);
+        Authority authorityFromStore = authorityStore.create(authority);
 
         //then
         assertNotNull(authorityFromStore);
@@ -102,7 +102,7 @@ public class MongoDBAuthorityStoreTest extends ParentUtil {
         authority.setAuthorityId(authorityId);
 
         //then
-        awsAuthorityStore.create(authority);
+        authorityStore.create(authority);
     }
 
     @Test
@@ -113,11 +113,11 @@ public class MongoDBAuthorityStoreTest extends ParentUtil {
         authority.setAuthorityId(authorityId);
         String common = "common";
 
-        ReflectionTestUtils.setField(awsAuthorityStore, "sharedTenant", common);
+        ReflectionTestUtils.setField(authorityStore, "sharedTenant", common);
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        Authority authorityFromStore = awsAuthorityStore.createSystemAuthority(authority);
+        Authority authorityFromStore = authorityStore.createSystemAuthority(authority);
 
         //then
         assertNotNull(authorityFromStore);

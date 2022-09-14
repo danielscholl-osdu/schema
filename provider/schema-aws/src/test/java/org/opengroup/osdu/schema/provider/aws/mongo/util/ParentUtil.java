@@ -1,10 +1,8 @@
 package org.opengroup.osdu.schema.provider.aws.mongo.util;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.opengroup.osdu.core.aws.partition.PartitionInfoAws;
 import org.opengroup.osdu.core.aws.partition.PartitionServiceClientWithCache;
 import org.opengroup.osdu.core.common.http.DpsHeaderFactory;
@@ -15,9 +13,7 @@ import org.opengroup.osdu.schema.provider.interfaces.authorization.IAuthorizatio
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -39,23 +35,18 @@ public abstract class ParentUtil {
     @MockBean
     private IAuthorizationServiceForServiceAdmin IAuthorizationServiceForServiceAdmin;
 
-    @Before
-    public void setUpAnyTime() {
-        MockitoAnnotations.openMocks(this);
-        Mockito.when(headers.getPartitionId()).thenReturn(DATA_PARTITION);
-        PartitionInfoAws partitionInfoAws = new PartitionInfoAws();
-        Property tenantIdProperty = new Property();
-        tenantIdProperty.setValue(DATA_PARTITION);
-        partitionInfoAws.setTenantIdProperty(tenantIdProperty);
-        Mockito.when(partitionServiceClient.getPartition(anyString())).thenReturn(partitionInfoAws);
-    }
-
-
     @Rule
     public ExternalResource resource = new ExternalResource() {
         @Override
         protected void before() {
             ParentUtil.this.mongoTemplateHelper.dropCollections();
+            Mockito.when(headers.getPartitionId()).thenReturn(DATA_PARTITION);
+            PartitionInfoAws partitionInfoAws = new PartitionInfoAws();
+            Property tenantIdProperty = new Property();
+            tenantIdProperty.setValue(DATA_PARTITION);
+            partitionInfoAws.setTenantIdProperty(tenantIdProperty);
+            Mockito.when(partitionServiceClient.getPartition(anyString())).thenReturn(partitionInfoAws);
+
         }
 
         @Override
@@ -70,6 +61,4 @@ public abstract class ParentUtil {
     public void set(MongoTemplate mongoTemplate) {
         this.mongoTemplateHelper = new MongoTemplateHelper(mongoTemplate);
     }
-
-
 }
