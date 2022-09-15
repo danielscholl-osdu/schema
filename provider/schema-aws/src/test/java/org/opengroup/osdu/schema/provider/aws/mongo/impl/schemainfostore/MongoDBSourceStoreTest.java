@@ -7,10 +7,10 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Source;
+import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSourceStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.SourceDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
 import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
-import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISourceStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -29,8 +29,7 @@ import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.
 public class MongoDBSourceStoreTest extends ParentUtil {
 
     @Autowired
-    private ISourceStore awsSourceStore;
-
+    private MongoDBSourceStore sourceStore;
 
     @Test
     public void get() throws ApplicationException, NotFoundException {
@@ -40,7 +39,7 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         mongoTemplateHelper.insert(sourceDto, SOURCE_PREFIX + DATA_PARTITION);
 
         //when
-        Source sourceFromStore = awsSourceStore.get(sourceDto.getId());
+        Source sourceFromStore = sourceStore.get(sourceDto.getId());
 
         //then
         assertNotNull(sourceFromStore);
@@ -55,7 +54,7 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         assertNull(byId);
 
         //then
-        awsSourceStore.get(id);
+        sourceStore.get(id);
     }
 
     @Test
@@ -65,10 +64,10 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         SourceDto sourceDto = new SourceDto(id);
         mongoTemplateHelper.insert(sourceDto, SOURCE_PREFIX + "common");
 
-        ReflectionTestUtils.setField(awsSourceStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(sourceStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
         //when
-        Source sourceFromStore = awsSourceStore.getSystemSource(sourceDto.getId());
+        Source sourceFromStore = sourceStore.getSystemSource(sourceDto.getId());
 
         //then
         assertNotNull(sourceFromStore);
@@ -83,7 +82,7 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         source.setSourceId(id);
 
         //when
-        Source sourceFromStore = awsSourceStore.create(source);
+        Source sourceFromStore = sourceStore.create(source);
 
         //then
         assertNotNull(sourceFromStore);
@@ -102,7 +101,7 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         source.setSourceId(id);
 
         //then
-        awsSourceStore.create(source);
+        sourceStore.create(source);
     }
 
     @Test
@@ -113,11 +112,11 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         source.setSourceId(sourceId);
         String common = "common";
 
-        ReflectionTestUtils.setField(awsSourceStore, "sharedTenant", common);
+        ReflectionTestUtils.setField(sourceStore, "sharedTenant", common);
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        Source sourceFromStore = awsSourceStore.createSystemSource(source);
+        Source sourceFromStore = sourceStore.createSystemSource(source);
 
         //then
         assertNotNull(sourceFromStore);

@@ -12,10 +12,10 @@ import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.SchemaInfoDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
 import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
-import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -42,9 +42,8 @@ import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.
 @SpringJUnitConfig(classes = {SchemaTestConfig.class})
 public class MongoDBSchemaInfoStoreTest extends ParentUtil {
 
-
     @Autowired
-    private ISchemaInfoStore awsSchemaInfoStore;
+    private MongoDBSchemaInfoStore schemaInfoStore;
     @Autowired
     private ISchemaStore awsSchemaStore;
 
@@ -62,7 +61,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
 
         requestSchemaInfo.setScope(SchemaScope.SHARED);
         //when
-        awsSchemaInfoStore.updateSchemaInfo(schemaRequest);
+        schemaInfoStore.updateSchemaInfo(schemaRequest);
 
         //then
         SchemaInfoDto fromDb = (SchemaInfoDto) mongoTemplateHelper.findById(id, SchemaInfoDto.class, SCHEMA_INFO_PREFIX + DATA_PARTITION);
@@ -76,7 +75,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         SchemaRequest schemaRequest = createSchemaRequest();
 
         //then
-        awsSchemaInfoStore.updateSchemaInfo(schemaRequest);
+        schemaInfoStore.updateSchemaInfo(schemaRequest);
     }
 
     @Test
@@ -92,11 +91,11 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertNotNull(inDb);
 
         requestSchemaInfo.setScope(SchemaScope.SHARED);
-        ReflectionTestUtils.setField(awsSchemaInfoStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        awsSchemaInfoStore.updateSystemSchemaInfo(schemaRequest);
+        schemaInfoStore.updateSystemSchemaInfo(schemaRequest);
 
         //then
         SchemaInfoDto fromDb = (SchemaInfoDto) mongoTemplateHelper.findById(id, SchemaInfoDto.class, SCHEMA_INFO_PREFIX + "common");
@@ -110,7 +109,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         SchemaRequest schemaRequest = createSchemaRequest();
 
         //when
-        SchemaInfo schemaInfo = awsSchemaInfoStore.createSchemaInfo(schemaRequest);
+        SchemaInfo schemaInfo = schemaInfoStore.createSchemaInfo(schemaRequest);
 
         //then
         assertNotNull(schemaInfo);
@@ -132,7 +131,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertNotNull(inDb);
 
         //then
-        awsSchemaInfoStore.createSchemaInfo(schemaRequest);
+        schemaInfoStore.createSchemaInfo(schemaRequest);
     }
 
     @Test
@@ -140,11 +139,11 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         //given
         SchemaRequest schemaRequest = createSchemaRequest();
 
-        ReflectionTestUtils.setField(awsSchemaInfoStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        SchemaInfo schemaInfo = awsSchemaInfoStore.createSystemSchemaInfo(schemaRequest);
+        SchemaInfo schemaInfo = schemaInfoStore.createSystemSchemaInfo(schemaRequest);
 
         //then
         assertNotNull(schemaInfo);
@@ -168,7 +167,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertNotNull(inDb);
 
         //when
-        SchemaInfo schemaInfo = awsSchemaInfoStore.getSchemaInfo(id);
+        SchemaInfo schemaInfo = schemaInfoStore.getSchemaInfo(id);
 
         //then
         assertNotNull(schemaInfo);
@@ -181,7 +180,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         String id = "schemaInfoId";
 
         //when
-        awsSchemaInfoStore.getSchemaInfo(id);
+        schemaInfoStore.getSchemaInfo(id);
     }
 
     @Test
@@ -195,11 +194,11 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         schemaInfoDto.setData(requestSchemaInfo);
         SchemaInfoDto inDb = (SchemaInfoDto) mongoTemplateHelper.insert(schemaInfoDto, SCHEMA_INFO_PREFIX + "common");
         assertNotNull(inDb);
-        ReflectionTestUtils.setField(awsSchemaInfoStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        SchemaInfo schemaInfo = awsSchemaInfoStore.getSystemSchemaInfo(id);
+        SchemaInfo schemaInfo = schemaInfoStore.getSystemSchemaInfo(id);
 
         //then
         assertNotNull(schemaInfo);
@@ -220,7 +219,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         mongoTemplateHelper.insert(getSchemas("other", 10), SCHEMA_INFO_PREFIX + DATA_PARTITION);
 
         //when
-        String latestMinorVerSchema = awsSchemaInfoStore.getLatestMinorVerSchema(schemas.stream().findAny().get().getData());
+        String latestMinorVerSchema = schemaInfoStore.getLatestMinorVerSchema(schemas.stream().findAny().get().getData());
 
         //then
         assertEquals(contentPrefix + schemas.get(9).getId(), latestMinorVerSchema);
@@ -255,11 +254,11 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         QueryParams queryParamsE = QueryParams.builder().authority("E").source("E").entityType("E").scope(scope).status(status).schemaVersionPatch(3000L).build();
 
         //when
-        List<SchemaInfo> schemaInfoListA = awsSchemaInfoStore.getSchemaInfoList(queryParamsA, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListB = awsSchemaInfoStore.getSchemaInfoList(queryParamsB, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListC = awsSchemaInfoStore.getSchemaInfoList(queryParamsC, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListD = awsSchemaInfoStore.getSchemaInfoList(queryParamsD, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListE = awsSchemaInfoStore.getSchemaInfoList(queryParamsE, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListA = schemaInfoStore.getSchemaInfoList(queryParamsA, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListB = schemaInfoStore.getSchemaInfoList(queryParamsB, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListC = schemaInfoStore.getSchemaInfoList(queryParamsC, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListD = schemaInfoStore.getSchemaInfoList(queryParamsD, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListE = schemaInfoStore.getSchemaInfoList(queryParamsE, DATA_PARTITION);
 
         //then
         assertEquals(a.size(), schemaInfoListA.size());
@@ -301,12 +300,12 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         QueryParams queryParamsF = QueryParams.builder().authority("F").source("F").entityType("F").scope(scope).status("any").build();
 
         //when
-        List<SchemaInfo> schemaInfoListA = awsSchemaInfoStore.getSchemaInfoList(queryParamsA, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListB = awsSchemaInfoStore.getSchemaInfoList(queryParamsB, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListC = awsSchemaInfoStore.getSchemaInfoList(queryParamsC, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListD = awsSchemaInfoStore.getSchemaInfoList(queryParamsD, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListE = awsSchemaInfoStore.getSchemaInfoList(queryParamsE, DATA_PARTITION);
-        List<SchemaInfo> schemaInfoListF = awsSchemaInfoStore.getSchemaInfoList(queryParamsF, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListA = schemaInfoStore.getSchemaInfoList(queryParamsA, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListB = schemaInfoStore.getSchemaInfoList(queryParamsB, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListC = schemaInfoStore.getSchemaInfoList(queryParamsC, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListD = schemaInfoStore.getSchemaInfoList(queryParamsD, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListE = schemaInfoStore.getSchemaInfoList(queryParamsE, DATA_PARTITION);
+        List<SchemaInfo> schemaInfoListF = schemaInfoStore.getSchemaInfoList(queryParamsF, DATA_PARTITION);
 
         //then
         assertEquals(1, schemaInfoListA.size());
@@ -320,7 +319,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
     @Test
     public void getSystemSchemaInfoList() throws ApplicationException {
         String tenant = "common";
-        ReflectionTestUtils.setField(awsSchemaInfoStore, "sharedTenant", tenant);
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", tenant);
 
         List<SchemaInfoDto> a = getSchemas("A", 7);
         mongoTemplateHelper.insert(a, SCHEMA_INFO_PREFIX + tenant);
@@ -340,10 +339,10 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         QueryParams queryParamsE = QueryParams.builder().authority("E").source("E").entityType("E").scope(scope).status(status).schemaVersionPatch(3000L).build();
 
         //when
-        List<SchemaInfo> schemaInfoListA = awsSchemaInfoStore.getSystemSchemaInfoList(queryParamsA);
-        List<SchemaInfo> schemaInfoListC = awsSchemaInfoStore.getSystemSchemaInfoList(queryParamsC);
-        List<SchemaInfo> schemaInfoListD = awsSchemaInfoStore.getSystemSchemaInfoList(queryParamsD);
-        List<SchemaInfo> schemaInfoListE = awsSchemaInfoStore.getSystemSchemaInfoList(queryParamsE);
+        List<SchemaInfo> schemaInfoListA = schemaInfoStore.getSystemSchemaInfoList(queryParamsA);
+        List<SchemaInfo> schemaInfoListC = schemaInfoStore.getSystemSchemaInfoList(queryParamsC);
+        List<SchemaInfo> schemaInfoListD = schemaInfoStore.getSystemSchemaInfoList(queryParamsD);
+        List<SchemaInfo> schemaInfoListE = schemaInfoStore.getSystemSchemaInfoList(queryParamsE);
 
         //then
         assertEquals(a.size(), schemaInfoListA.size());
@@ -358,11 +357,11 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         SchemaInfoDto schemaInfDto = createSchemaInfDto("test", 1);
 
         //when
-        boolean before = awsSchemaInfoStore.isUnique(schemaInfDto.getId(), DATA_PARTITION);
+        boolean before = schemaInfoStore.isUnique(schemaInfDto.getId(), DATA_PARTITION);
 
         mongoTemplateHelper.insert(schemaInfDto, SCHEMA_INFO_PREFIX + DATA_PARTITION);
 
-        boolean after = awsSchemaInfoStore.isUnique(schemaInfDto.getId(), DATA_PARTITION);
+        boolean after = schemaInfoStore.isUnique(schemaInfDto.getId(), DATA_PARTITION);
 
         //then
         assertTrue(before);
@@ -373,15 +372,15 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
     public void isUniqueSystemSchema() throws ApplicationException {
         //given
         String tenant = "common";
-        ReflectionTestUtils.setField(awsSchemaInfoStore, "sharedTenant", tenant);
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", tenant);
         SchemaInfoDto schemaInfDto = createSchemaInfDto("test", 1);
 
         //when
-        boolean before = awsSchemaInfoStore.isUniqueSystemSchema(schemaInfDto.getId());
+        boolean before = schemaInfoStore.isUniqueSystemSchema(schemaInfDto.getId());
 
         mongoTemplateHelper.insert(schemaInfDto, SCHEMA_INFO_PREFIX + tenant);
 
-        boolean after = awsSchemaInfoStore.isUniqueSystemSchema(schemaInfDto.getId());
+        boolean after = schemaInfoStore.isUniqueSystemSchema(schemaInfDto.getId());
 
         //then
         assertTrue(before);
@@ -401,7 +400,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertNotNull(inDb);
 
         //when
-        boolean isCleaned = awsSchemaInfoStore.cleanSchema(id);
+        boolean isCleaned = schemaInfoStore.cleanSchema(id);
 
         //then
         assertTrue(isCleaned);
@@ -420,11 +419,11 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         schemaInfoDto.setData(requestSchemaInfo);
         SchemaInfoDto inDb = (SchemaInfoDto) mongoTemplateHelper.insert(schemaInfoDto, SCHEMA_INFO_PREFIX + "common");
         assertNotNull(inDb);
-        ReflectionTestUtils.setField(awsSchemaInfoStore, "sharedTenant", "common");
+        ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
         //when
-        boolean isCleaned = awsSchemaInfoStore.cleanSystemSchema(id);
+        boolean isCleaned = schemaInfoStore.cleanSystemSchema(id);
 
         //then
         assertTrue(isCleaned);
