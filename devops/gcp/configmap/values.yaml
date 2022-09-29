@@ -3,7 +3,7 @@ data:
   dataPartitionId: ""
   entitlementsHost: "http://entitlements"
   javaOptions: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
-  logLevel: "INFO"
+  logLevel: "ERROR"
   partitionHost: "http://partition"
   schemaTopicName: "schema-changed"
   springProfilesActive: "gcp"
