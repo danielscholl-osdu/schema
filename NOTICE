@@ -391,7 +391,7 @@ The following software have components provided under the terms of this license:
 - Jackson datatype: jdk8 (from https://repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jdk8)
 - Jackson module: Afterburner (from http://wiki.fasterxml.com/JacksonHome, https://github.com/FasterXML/jackson-modules-base)
 - Jackson module: JAXB Annotations (from http://github.com/FasterXML/jackson-module-jaxb-annotations, http://wiki.fasterxml.com/JacksonJAXBAnnotations, https://github.com/FasterXML/jackson-modules-base)
-- Jackson-annotations (from http://github.com/FasterXML/jackson, http://wiki.fasterxml.com/JacksonHome)
+- Jackson-annotations (from http://github.com/FasterXML/jackson, http://wiki.fasterxml.com/JacksonHome, https://github.com/FasterXML/jackson)
 - Jackson-core (from http://wiki.fasterxml.com/JacksonHome, https://github.com/FasterXML/jackson-core)
 - Jackson-dataformat-XML (from http://wiki.fasterxml.com/JacksonExtensionXmlDataBinding, https://github.com/FasterXML/jackson-dataformat-xml)
 - Jackson-dataformat-YAML (from http://wiki.fasterxml.com/JacksonExtensionYAML, https://github.com/FasterXML/jackson, https://github.com/FasterXML/jackson-dataformats-text)
@@ -538,7 +538,7 @@ The following software have components provided under the terms of this license:
 - io.grpc:grpc-protobuf-lite (from https://github.com/grpc/grpc-java)
 - io.grpc:grpc-stub (from https://github.com/grpc/grpc-java)
 - ion-java (from https://github.com/amzn/ion-java/, https://github.com/amznlabs/ion-java/)
-- jackson-databind (from http://github.com/FasterXML/jackson, http://wiki.fasterxml.com/JacksonHome)
+- jackson-databind (from http://github.com/FasterXML/jackson, http://wiki.fasterxml.com/JacksonHome, https://github.com/FasterXML/jackson)
 - java-cloudant (from https://cloudant.com)
 - javatuples (from http://www.javatuples.org)
 - javax.annotation-api (from http://jcp.org/en/jsr/detail?id=250)
@@ -896,6 +896,7 @@ The following software have components provided under the terms of this license:
 - Azure Java Client Runtime for ARM (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Java Client Runtime for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Spring Boot AutoConfigure (from https://github.com/Azure/azure-sdk-for-java, https://github.com/Microsoft/azure-spring-boot)
+- Azure Spring Boot Starter for Azure AD Spring Security Integration (from https://github.com/Azure/azure-sdk-for-java)
 - Bouncy Castle Provider (from http://www.bouncycastle.org/java.html, https://www.bouncycastle.org/java.html)
 - Checker Qual (from https://checkerframework.org)
 - ClassGraph (from https://github.com/classgraph/classgraph)
@@ -990,6 +991,8 @@ Public-Domain
 ========================================================================
 Python-2.0
 ========================================================================
+The following software have components provided under the terms of this license:
+
 - google-auth (from https://github.com/GoogleCloudPlatform/google-auth-library-python, https://github.com/googleapis/google-auth-library-python)
 
 ========================================================================
@@ -1050,6 +1053,8 @@ The following software have components provided under the terms of this license:
 ========================================================================
 unknown
 ========================================================================
+The following software have components provided under the terms of this license:
+
 - Bouncy Castle Provider (from http://www.bouncycastle.org/java.html, https://www.bouncycastle.org/java.html)
 - Byte Buddy (without dependencies) (from https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy)
 - Checker Qual (from https://checkerframework.org)
@@ -1062,5 +1067,7 @@ unknown
 - JUnit Platform Engine API (from http://junit.org/junit5/, https://junit.org/junit5/)
 - Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
+- Java Native Access (from https://github.com/java-native-access/jna, https://github.com/twall/jna, https://repo1.maven.org/maven2/net/java/dev/jna/jna)
+- Java Native Access Platform (from https://github.com/java-native-access/jna)
 - RabbitMQ Java Client (from http://www.rabbitmq.com, https://www.rabbitmq.com)
 - Spongy Castle (from http://rtyley.github.io/spongycastle/)
