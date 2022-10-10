@@ -13,6 +13,8 @@ variables:
   IBM_TEST_CMD: verify
   IBM_DEPLOYMENTS_SUBDIR: deployments/scripts/ibm
   IBM_DEPLOYMENTS_SCRIPTS_SUBDIR: deployments/scripts
+  IBM_HELM_CONFIG_PATH: devops/ibm/ibm-schema-config
+  IBM_HELM_DEPLOY_PATH: devops/ibm/ibm-schema-deploy
 
   AZURE_SERVICE: schema
   AZURE_BUILD_SUBDIR: provider/schema-azure
