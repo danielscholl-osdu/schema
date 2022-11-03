@@ -1,4 +1,4 @@
-## Service Configuration for GCP
+## Service Configuration for Google Cloud
 
 ## Environment variables:
 
@@ -9,7 +9,7 @@ Must have:
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
 | `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
-| `SPRING_PROFILES_ACTIVE` | ex `gcp` | Spring profile that activate default configuration for GCP environment | false | - |
+| `SPRING_PROFILES_ACTIVE` | ex `gcp` | Spring profile that activate default configuration for Google Cloud environment | false | - |
 | `SHARED_TENANT_NAME` | ex `osdu` | Shared account id | no | - |
 
 Defined in default application property file but possible to override:

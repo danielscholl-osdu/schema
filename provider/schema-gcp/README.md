@@ -17,8 +17,8 @@ Pre-requisites
 ### Service Configuration
 #### Anthos:
 [Anthos service configuration ](docs/anthos/README.md)
-#### GCP:
-[Gcp service configuration ](docs/gcp/README.md)
+#### Google Cloud:
+[Google Cloud service configuration ](docs/gcp/README.md)
 
 ### Run Locally
 Check that maven is installed:
@@ -78,13 +78,13 @@ Once the above Prerequisite are done, we can follow the below steps to run the s
     ```bash
     mvn clean install
     ```
-    This will build the core project as well as all the underlying projects. If we want  to build projects for specific cloud vendor, we can use mvn --projects command. For example, if we want to build only for GCP(Google Cloud Platform), we can use below command :
+    This will build the core project as well as all the underlying projects. If we want  to build projects for specific cloud vendor, we can use mvn --projects command. For example, if we want to build only for Google Cloud, we can use below command :
     ```bash
     mvn --projects schema-core,provider/schema-gcp clean install
     ```
-2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for GCP, run the below command : 
+2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Google Cloud, run the below command : 
     ```bash 
-    # Running GCP : 
+    # Running Google Cloud : 
     java -jar  provider\schema-gcp\target\os-schema-gcp-0.0.1-spring-boot.jar
 3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used: 
     ```bash
@@ -96,8 +96,8 @@ You can access the service APIs by following the service contract in [schema.yam
 ## Testing
 #### Anthos:
 [Anthos Testing](docs/anthos/README.md)
-#### GCP:
-[Gcp Testing](docs/gcp/README.md)
+#### Google Cloud:
+[Google Cloud Testing](docs/gcp/README.md)
 
 ## Deployment
 
