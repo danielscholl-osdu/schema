@@ -439,9 +439,6 @@
               },
               "ProcessingParameters": {
                 "type": "array",
-                "x-osdu-indexing": {
-                  "type": "flattened"
-                },
                 "description": "Processing Parameters to simply capture process history until full provenance model can be implemented.",
                 "items": {
                   "type": "object",

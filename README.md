@@ -2,9 +2,9 @@
 
 The Schema Service is a Maven multi-module project with each cloud implemention placed in its submodule. To build or run Schema Service locally, follow the below steps :
 
-### 1. GCP deployment
+### 1. Google Cloud deployment
 
-Instructions for running the GCP implementation in the cloud can be found [here](./provider/schema-gcp/README.md).
+Instructions for running the Google Cloud implementation in the cloud can be found [here](./provider/schema-gcp/README.md).
 
 ### 2. Azure deployment 
 
@@ -14,13 +14,13 @@ Instructions for running the Azure implementation in the cloud can be found [her
 
 DevSanity tests are located in a schema-core project in testing directory under the project root directory.
 
-1. GCP
+1. Google Cloud
 These tests validate functionality of schema service. 
 
 They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
 Below command has to be run post building complete project.
 
-Instructions for running the GCP integration tests can be found [here](./provider/schema-gcp/README.md).
+Instructions for running the Google Cloud integration tests can be found [here](./provider/schema-gcp/README.md).
 
 Below command can be run through azure-pipeline.yml after setting environment variables in the pipeline.
 
