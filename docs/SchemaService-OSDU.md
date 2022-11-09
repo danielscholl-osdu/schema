@@ -18,14 +18,14 @@ Schema Service provides all necessary APIs to Fetch, create, update and mark a s
 * Schema Resolution - Schema definitions could include references to other schema definitions or fragments. During Schema creation, Schema Service resolves all the referred schema fragments and creates a completely resolved schema. A sample entity-relationship diagram below demonstrates the associations between various domain entities and how schema fragment references can be helpful in defining models for these entities.
 ![](drilling_e_r.png)
 * Schema Uniqueness - A schema is uniquely identified by the schema identity information. The identity information includes authority, source, entity type, major version, minor version and patch version. These attributes are used to generate the kind and id of the schema
-* Schema Scope - Schema defined with Schema Service has a defined scope. Scope values could be SHARED or INTERNAL. PUBLIC scope may get introduced in future versions.
+* Schema Scope - Schema defined with Schema Service has a defined `scope`. Scope values could be SHARED or INTERNAL. PUBLIC scope may get introduced in future versions.
     * **INTERNAL** - Schema with INTERNAL scope are defined in a specific data partition and is available only to the users of that data partition.
     * **SHARED** - Concept of sharing of schema is intended to allow creator of schema, to share a schema with other friend data partition. In current version a user of Schema Service cannot explicitly share an INTERNAL schema. Certain standards schema are available out of box with all data partitions on the Data Ecosystem. So these are the ones that are shared by default.
     * PUBLIC - Not available currently. In future, could include community approved and governed schema that would, by default be available in the entire data platform.
-* Schema State - Schema defined with Schema Service could be in one of the following state
-    * **PUBLISHED** - When a schema is created it could be set to PUBLISHED state. Or a schema in DEVELOPMENT state can be moved to a PUBLISHED state. Schema in PUBLISHED state is immutable.
-    * **DEVELOPMENT** - Schema in draft or evolutionary state. This state is usually set when schema definition is work in progress.Schema in DEVELOPMENT state is mutable.
-    * **OBSOLETE** - Schema when no longer in use or not needed can be marked as OBSOLETE. Only Schema in DEVELOPMENT state can be moved to OBSOLETE state.
+* Schema Status - Schema defined with Schema Service could be in one of the following `status` values:
+    * **PUBLISHED** - When a schema is created it could be set to PUBLISHED status. Or a schema in DEVELOPMENT status can be moved to a PUBLISHED status. A Schema in PUBLISHED status is immutable.
+    * **DEVELOPMENT** - Schema in draft or evolutionary status. This status is usually set when schema definition is work in progress.Schema in DEVELOPMENT status is mutable.
+    * **OBSOLETE** - Schema when no longer in use or not needed can be marked as OBSOLETE. Only Schema in DEVELOPMENT status can be moved to OBSOLETE status.
 * Semantic Schema versioning - Schema definitions are expected to be semantically versioned. Major, Minor and Patch versions are part of Schema identity information. Schema service does check for breaking changes across the schema(s) being created. And if a breaking change is found, it prompts the user to change the major version of the schema.
 * Schema Vs Storage Schema
 
@@ -273,10 +273,10 @@ Changes in the values of following attributes is permitted at patch version incr
 In addition to all permitted changes in PATCH versions, the following actions are permitted:
 1. Adding properties to existing data and nested structures
 2. Adding object structures to below arrays:
-  * [allOf](https://json-schema.org/understanding-json-schema/reference/combining.html#allof) : To validate against allOf, the given data must be valid against all of the given subschemas
-  * [oneOf](https://json-schema.org/understanding-json-schema/reference/combining.html#oneof) : To validate against oneOf, the given data must be valid against exactly one of the given subschemas
-  * [anyOf](https://json-schema.org/understanding-json-schema/reference/combining.html#anyof) : To validate against anyOf, the given data must be valid against any (one or more) of the given subschemas
-3. Changing the indices of objects containing title inside oneof or allof arrays
+  * [allOf](https://json-schema.org/understanding-json-schema/reference/combining.html#allof) : To validate against `allOf`, the given data must be valid against all of the given subschemas
+  * [oneOf](https://json-schema.org/understanding-json-schema/reference/combining.html#oneof) : To validate against `oneOf`, the given data must be valid against exactly one of the given subschemas
+  * [anyOf](https://json-schema.org/understanding-json-schema/reference/combining.html#anyof) : To validate against `anyOf`, the given data must be valid against any (one or more) of the given subschemas
+3. Changing the indices of objects containing title inside `oneOf` or `allOf` arrays
 4. Changing indices of ref attributes keeping same text values
 5. Changing the order of required attribute
 
@@ -294,10 +294,10 @@ It is permitted to declare existing properties as deprecated, preferable with in
 	
 Any changes are permitted, specifically
 1. Removal of properties
-2. Removal of structures in allOf, oneOf, anyOf
+2. Removal of structures in `allOf`, `oneOf`, `anyOf`
 3. Changing the list of required properties
 4. Changing the state of additionalProperties
-5. Changing the indices of attributes without title in oneof and allof arrays
+5. Changing the indices of attributes without title in `oneOf` and `allOf` arrays
 6. Changing type of any attribute
 7. Breaking change introduced in external schema of `ref` attribute
 
@@ -305,9 +305,9 @@ Following table gives you error message when breaking change is introduced at an
 
 ##### Error codes along with message
 
-| Error Code | Condition      | Error Message |
-|------------|----------------|---------------|
-| 400        | When breaking change not allowed at patch versionlevel |Patch version validation failed. Changes requiring a minor or major version increment were found; analysed version: 2.2.15 and 2.2.14. Updating the schema version to a higher minor or major version is required.|
+| Error Code | Condition                                               | Error Message |
+|------------|---------------------------------------------------------|---------------|
+| 400        | When breaking change not allowed at patch version level |Patch version validation failed. Changes requiring a minor or major version increment were found; analysed version: 2.2.15 and 2.2.14. Updating the schema version to a higher minor or major version is required.|
 | 400        | When breaking change not allowed at minor version level |  Minor version validation failed. Breaking changes were found; analysed versions 1013.2.0 and 1013.1.0. Updating the schema version to a higher major version is required.|
 
 Note: The above array message would contain given schema version and existing schema in the system
