@@ -11,6 +11,7 @@
 		<log4j2.version>2.17.1</log4j2.version>
 		<springfox.version>3.0.0</springfox.version>
 		<json-smart.version>2.4.7</json-smart.version>
+		<spring-boot-maven-plugin.version>2.7.6</spring-boot-maven-plugin.version>
 	</properties>
 
 	<licenses>
@@ -104,6 +105,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>build-info</id>
