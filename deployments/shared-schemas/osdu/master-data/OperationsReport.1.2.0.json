@@ -2131,6 +2131,7 @@
                       "type": "string",
                       "title": "Wave Period",
                       "description": "DEPRECATED: The elapsed time between the passing of two wave tops.",
+                      "format": "time",
                       "x-osdu-frame-of-reference": "DateTime",
                       "x-osdu-attribution-authority": "Energistics",
                       "x-osdu-attribution-publication": "WITSML",
