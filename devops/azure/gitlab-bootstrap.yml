@@ -39,9 +39,9 @@ azure_bootstrap:
 
   only:
     variables:
-      - $AZURE == 'true'
+      - $AZURE == '1'
 
 azure_test:
   only:
     variables:
-      - $AZURE == 'true'
+      - $AZURE == '1'
