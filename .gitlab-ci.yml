@@ -7,6 +7,8 @@ variables:
   GCP_TENANT_NAME: opendesevt
   GCP_DEPLOY_ENV: p4d
   GCP_DOMAIN: cloud.slb-ds.com
+  # FIXME remove when all services are migrated to a single helm
+  OSDU_GCP_ENABLE_HELM_CONFIG: "false"
 
   IBM_BUILD_SUBDIR: provider/schema-ibm
   IBM_INT_TEST_SUBDIR: testing/schema-test-core

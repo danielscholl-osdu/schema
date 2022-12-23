@@ -24,10 +24,22 @@ Packages are only needed for installation from a local computer.
 
 ## Installation
 
-Before installing deploy Helm chart you need to install [configmap Helm chart](../configmap).
 First you need to set variables in **values.yaml** file using any code editor. Some of the values are prefilled, but you need to specify some values as well. You can find more information about them below.
 
-### Common variables
+### Configmap variables
+
+| Name | Description | Type | Default |Required |
+|------|-------------|------|---------|---------|
+**dataPartitionId** | data partition id | string | - | yes
+**entitlementsHost** | entitlements host | string | "http://entitlements" | yes
+**javaOptions** | java options | string | "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45" | yes
+**logLevel** | logging level | string | INFO | yes
+**partitionHost** | partition host | string | "http://partition" | yes
+**schemaTopicName** | topic for schema changes events | string | "schema-changed" | yes
+**springProfilesActive** | active spring profile | string | gcp | yes
+**googleAudiences** | your GCP client ID | string | - | yes
+
+### Deployment variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
@@ -35,29 +47,35 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **requestsMemory** | amount of requested memory| string | 1G | yes
 **limitsCpu** | CPU limit | string | 1 | yes
 **limitsMemory** | memory limit | string | 1.5G | yes
+**bootstrapImage** | bootstrap image | string | - | yes
+**bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
 **image** | service image | string | - | yes
 **imagePullPolicy** | when to pull image | string | IfNotPresent | yes
 **serviceAccountName** | name of your service account | string | schema | yes
 
-### Bootstrap variables
-
-| Name | Description | Type | Default |Required |
-|------|-------------|------|---------|---------|
-**bootstrapImage** | bootstrap image | string | - | yes
-**bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
-
-### Config variables
+### Configuration variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **appName** | name of the app | string | `schema` | yes
-**configmap** | configmap to be used | string | `schema-config` | yes
 **bootstrapSecretName** | secret for bootstrap | string | `datafier-secret` | yes
+**configmap** | configmap to be used | string | `schema-config` | yes
 **domain** | your domain | string | - | yes
 **minioSecretName** | secret for minio | string | `schema-minio-secret` | yes
 **onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **postgresSecretName** | secret for postgres | string | `schema-postgres-secret` | yes
 **rabbitmqSecretName** | secret for rabbitmq | string | `rabbitmq-secret` | yes
+
+### Datastore cleanup and bootstrap schemas variables
+> Datastore cleanup is used for cleaning Datastore Schema Entities if they are not present in Schema bucket
+
+| Name | Description | Type | Default |Required |
+|------|-------------|------|---------|---------|
+**datastoreKind** | Datastore Kind for Schema | string | "system_schema_osm" | yes
+**datastoreNamespace** | Datastore Namespace for Schema | string | "dataecosystem" | yes
+**enableCleanup** | whether cleanup is enabled | boolean | false | yes
+**schemaBucket** | name of the bucket with schemas | string | - | yes
+**schemaHost** | schema host | string | "http://schema" | yes
 
 ### Install the helm chart
 

@@ -1,4 +1,19 @@
 data:
+  #Configmaps
+  dataPartitionId: ""
+  entitlementsHost: "http://entitlements"
+  javaOptions: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
+  logLevel: "ERROR"
+  partitionHost: "http://partition"
+  schemaTopicName: "schema-changed"
+  springProfilesActive: "gcp"
+  googleAudiences: ""
+  datastoreKind: "system_schema_osm"
+  datastoreNamespace: "dataecosystem"
+  enableCleanup: false
+  schemaBucket: ""
+  schemaHost: "http://schema"
+  #Deployments
   requestsCpu: "0.1"
   requestsMemory: "1G"
   limitsCpu: "1"
