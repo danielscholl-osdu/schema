@@ -23,6 +23,7 @@ data:
   image: ""
   imagePullPolicy: "IfNotPresent"
   serviceAccountName: "schema"
+
 conf:
   appName: "schema"
   bootstrapSecretName: "datafier-secret"
@@ -32,3 +33,11 @@ conf:
   onPremEnabled: false
   postgresSecretName: "schema-postgres-secret"
   rabbitmqSecretName: "rabbitmq-secret"
+
+istio:
+  proxyCPU: "50m"
+  proxyCPULimit: "500m"
+  proxyMemory: "64Mi"
+  proxyMemoryLimit: "512Mi"
+  bootstrapProxyCPU: "10m"
+  bootstrapProxyCPULimit: "100m"
