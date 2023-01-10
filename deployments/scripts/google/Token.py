@@ -10,15 +10,11 @@ import time
 class GoogleToken(object):
 
     JSON_KEY = os.environ.get('JSON_KEY')
-    AUDIENCE = os.environ.get('AUDIENCE')
 
     def get_google_id_token(self):
 
         if self.JSON_KEY is None:
             print('Please pass JSON key to generate token')
-            exit(1)
-        if self.AUDIENCE is None:
-            print('Please pass Audience to generate token')
             exit(1)
 
         svc_info = json.loads(base64.b64decode(self.JSON_KEY))
@@ -31,7 +27,7 @@ class GoogleToken(object):
             'iat': now,
             'exp': expires,
             'aud': 'https://www.googleapis.com/oauth2/v4/token',
-            'target_audience': self.AUDIENCE,
+            'target_audience': 'osdu',
             'iss': svc_info.get('client_email', '')
         }
 

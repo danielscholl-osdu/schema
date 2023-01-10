@@ -41,6 +41,7 @@ import org.apache.http.util.EntityUtils;
 
 public class GoogleServiceAccount {
 
+  private static final String DEFAULT_TARGET_AUDIENCE = "osdu";
   final ServiceAccountCredentials serviceAccount;
 
   public GoogleServiceAccount(String serviceAccountEncoded) throws IOException {
@@ -58,7 +59,7 @@ public class GoogleServiceAccount {
     return this.serviceAccount.getClientEmail();
   }
 
-  public String getAuthToken(String audience) throws IOException {
+  public String getAuthToken() throws IOException {
     JwtBuilder jwtBuilder = Jwts.builder();
 
     Map<String, Object> header = new HashMap<>();
@@ -67,7 +68,7 @@ public class GoogleServiceAccount {
     jwtBuilder.setHeader(header);
 
     Map<String, Object> claims = new HashMap<>();
-    claims.put("target_audience", audience);
+    claims.put("target_audience", DEFAULT_TARGET_AUDIENCE);
     claims.put("exp", System.currentTimeMillis() / 1000 + 3600);
     claims.put("iat", System.currentTimeMillis() / 1000);
     claims.put("iss", this.getEmail());
