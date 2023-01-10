@@ -68,18 +68,7 @@ public class MessageBusImpl implements IMessageBus {
       this.logger.info(String.format("Generating event of type %s", eventType));
 
       OqmDestination destination = destinationProvider.getDestination(headers.getPartitionId());
-
-      if (Objects.isNull(this.oqmTopic)) {
-        try {
-          this.oqmTopic = OqmTopic.builder().name(eventMessagingPropertiesConfig.getTopicName())
-              .build();
-        } catch (OqmDriverRuntimeException e) {
-          this.logger.info(SchemaConstants.SCHEMA_NOTIFICATION_FAILED);
-          this.auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
-          throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal error",
-              "A fatal internal error has occurred.", e);
-        }
-      }
+      healthCheckTopic(schemaId, false);
 
       OqmMessage message = createMessage(schemaId, eventType);
       this.driver.publish(message, oqmTopic, destination);
@@ -89,22 +78,39 @@ public class MessageBusImpl implements IMessageBus {
     }
   }
 
-  //  TODO stub must be replaced with actual implementation
   @Override
   public void publishMessageForSystemSchema(String schemaId, String eventType) {
-    String correlationId = headers.getCorrelationId();
-    String dataPartitionId = headers.getPartitionId();
-    this.logger.debug("Status changed messaging disabled, writing message to log.");
-    this.logger.debug(
-        DpsHeaders.CORRELATION_ID + " " + correlationId + DpsHeaders.DATA_PARTITION_ID + " "
-            + dataPartitionId
-            + " schema id: " + schemaId + " event type: " + eventType);
+    if (this.eventMessagingPropertiesConfig.isMessagingEnabled()) {
+      OqmDestination destination = destinationProvider.getDestination(headers.getPartitionId());
+
+      healthCheckTopic(schemaId, true);
+
+      OqmMessage message = createMessage(schemaId, eventType);
+      this.driver.publish(message, oqmTopic, destination);
+      this.auditLogger.schemaNotificationSuccess(Collections.singletonList(schemaId));
+    } else {
+      this.logger.info(SchemaConstants.SCHEMA_NOTIFICATION_IS_DISABLED);
+    }
+  }
+
+  private void healthCheckTopic(String schemaId, boolean isSystemSchema) {
+    if (Objects.isNull(this.oqmTopic)) {
+      try {
+        this.oqmTopic = OqmTopic.builder().name(eventMessagingPropertiesConfig.getTopicName()).build();
+      } catch (OqmDriverRuntimeException e) {
+        String errorMessage = isSystemSchema ? SchemaConstants.SYSTEM_SCHEMA_NOTIFICATION_FAILED :
+                SchemaConstants.SCHEMA_NOTIFICATION_FAILED;
+        this.logger.info(errorMessage);
+        this.auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
+        throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal error", errorMessage, e);
+      }
+    }
   }
 
   private OqmMessage createMessage(String schemaId, String eventType) {
     SchemaPubSubInfo schemaPubSubMsg = new SchemaPubSubInfo(schemaId, eventType);
 
-    String data = new Gson().toJson(schemaPubSubMsg);
+    String data = new Gson().toJson(Collections.singletonList(schemaPubSubMsg));
 
     Map<String, String> attributes = new HashMap<>();
 
@@ -113,7 +119,7 @@ public class MessageBusImpl implements IMessageBus {
         this.headers.getPartitionIdWithFallbackToAccountId());
     this.headers.addCorrelationIdIfMissing();
     attributes.put(DpsHeaders.CORRELATION_ID, this.headers.getCorrelationId());
-
+    attributes.put(SchemaConstants.SERVICE_NAME, SchemaConstants.SCHEMA);
     return OqmMessage.builder()
         .data(data)
         .attributes(attributes)

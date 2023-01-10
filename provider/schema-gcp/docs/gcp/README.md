@@ -23,7 +23,7 @@ Defined in default application property file but possible to override:
 | `PARTITION_API` | ex `http://localhost:8081/api/partition/v1` | Partition service endpoint | no | - |
 | `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
 | `GCP_SCHEMA_CHANGED_MESSAGING_ENABLED` | `true` OR `false` | Allows to configure message publishing about schemas changes to Pub/Sub | no | - |
-| `GCP_SCHEMA_CHANGED_TOPIC_NAME` | `schema_changed` | Topic for schema changes events | no | - |
+| `GCP_SCHEMA_CHANGED_TOPIC_NAME` | `schema-changed` | Topic for schema changes events | no | - |
 
 These variables define service behavior, and are used to switch between `anthos` or `gcp` environments, their overriding
 and usage in mixed mode was not tested. Usage of spring profiles is preferred.
