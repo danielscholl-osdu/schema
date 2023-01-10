@@ -45,6 +45,7 @@ public class SchemaConstants {
     public static final String ACCOUNT_ID = "account-Id";
     //public static final String ACCOUNT_ID_COMMON_PROJECT = "common";
     public static final String ON_BEHALF_OF = "on-Behalf-Of";
+    public static final String SERVICE_NAME = "service";
 
 
     public static final String ENTITLEMENT_SERVICE_GROUP_VIEWERS = "service.schema-service.viewers";
@@ -84,6 +85,8 @@ public class SchemaConstants {
     public static final String EMPTY_ID = "The id provided is empty";
     public static final String SCHEMA_CREATION_FAILED = "Schema creation failed";
     public static final String SCHEMA_NOTIFICATION_FAILED = "Failed to publish the schema notification.";
+
+    public static final String SYSTEM_SCHEMA_NOTIFICATION_FAILED = "Failed to publish the system schema notification.";
     public static final String SCHEMA_NOTIFICATION_IS_DISABLED = "Schema event notification is turned off.";
     public static final String SCHEMA_UPDATE_FAILED = "Schema updation failed";
     public static final String SCHEMA_UPDATE_EXCEPTION = "Only schema in developement stage can be updated";
