@@ -37,7 +37,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **partitionHost** | partition host | string | "http://partition" | yes
 **schemaTopicName** | topic for schema changes events | string | "schema-changed" | yes
 **springProfilesActive** | active spring profile | string | gcp | yes
-**googleAudiences** | your GCP client ID | string | - | yes
 
 ### Deployment variables
 

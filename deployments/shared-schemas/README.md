@@ -72,11 +72,10 @@ python deployments\scripts\DeploySharedSchemas.py -u https://opengroup.test.org/
 ```python
 import os
 JSON_KEY = os.environ.get('JSON_KEY')
-AUDIENCE = os.environ.get('AUDIENCE')
 ```
 
 The above snippet is from the [Token.py](../scripts/google/Token.py) script and lists the required
-environment variables for json key and audience. These value can be different as per cloud vendors token generation logic.
+environment variable for json key. This value can be different as per cloud vendors token generation logic.
 
 
 ###Bearer Token Generation
@@ -108,7 +107,6 @@ environment variables for bearer token, app key and tenant/data-partition-id.
 pip install -r deployments/scripts/google/requirements.txt
 
 export JSON_KEY=$(INTEGRATION_TESTER)
-export AUDIENCE=$(INTEGRATION_TEST_AUDIENCE)
 
 BEARER_TOKEN=`python deployments/scripts/google/Token.py`
 

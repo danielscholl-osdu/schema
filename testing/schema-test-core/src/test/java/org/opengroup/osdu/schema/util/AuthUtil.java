@@ -13,9 +13,7 @@ public class AuthUtil {
         String vendor = System.getProperty("VENDOR", System.getenv("VENDOR"));
         if (Strings.isNullOrEmpty(token) && vendor.equals("gcp")) {
             String serviceAccountFile = System.getProperty("INTEGRATION_TESTER", System.getenv("INTEGRATION_TESTER"));
-            String audience = System.getProperty("INTEGRATION_TEST_AUDIENCE",
-                    System.getenv("INTEGRATION_TEST_AUDIENCE"));
-            token = new GoogleServiceAccount(serviceAccountFile).getAuthToken(audience);
+            token = new GoogleServiceAccount(serviceAccountFile).getAuthToken();
         }else if (Strings.isNullOrEmpty(token) && vendor.equals("aws")) {
             token = AwsServicePrincipalUtil.getAccessToken();
         } else if (Strings.isNullOrEmpty(token) && vendor.equals("azure")) {

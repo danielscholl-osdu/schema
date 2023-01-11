@@ -11,9 +11,6 @@ data:
   ENABLE_CLEANUP: {{ .Values.data.enableCleanup | quote }}
   SCHEMA_URL: {{ .Values.data.schemaHost | quote }}
   ENTITLEMENTS_HOST: {{ .Values.data.entitlementsHost | quote }}
-  {{- if not .Values.conf.onPremEnabled }}
-  AUDIENCES: {{ .Values.data.googleAudiences | quote }}
-  {{- end }}  
   {{- if .Values.data.enableCleanup }}
   SCHEMA_BUCKET: {{ .Values.data.schemaBucket | quote }}
   DATASTORE_NAMESPACE: {{ .Values.data.datastoreNamespace | quote }}

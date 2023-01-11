@@ -8,7 +8,6 @@ data:
   schemaTopicName: "schema-changed"
   schemaChangedMessagingEnabled: true
   springProfilesActive: "gcp"
-  googleAudiences: ""
   datastoreKind: "system_schema_osm"
   datastoreNamespace: "dataecosystem"
   enableCleanup: false

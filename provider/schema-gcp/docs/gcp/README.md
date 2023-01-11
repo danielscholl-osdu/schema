@@ -8,7 +8,6 @@ Must have:
 
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
-| `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
 | `SPRING_PROFILES_ACTIVE` | ex `gcp` | Spring profile that activate default configuration for Google Cloud environment | false | - |
 | `SHARED_TENANT_NAME` | ex `osdu` | Shared account id | no | - |
 
@@ -43,8 +42,7 @@ This section describes how to run cloud OSDU E2E tests (testing/schema-test-core
 You will need to have the following environment variables defined.
 
 | name | value | description | sensitive? | source |
- | ---  | ---   | ---         | ---        | ---    |
-| `INTEGRATION_TEST_AUDIENCE` | `*****.apps.googleusercontent.com` | client application ID | yes | https://console.cloud.google.com/apis/credentials |
+| ---  | ---   | ---         | ---        | ---    |
 | `VENDOR` | `gcp` | Use value 'gcp' to run gcp tests | no | - |
 | `HOST` | ex`http://localhost:8080` | Schema service host | no | - |
 | `INTEGRATION_TESTER` | `********` | Service account base64 encoded string for API calls. Note: this user must have entitlements configured already | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
@@ -55,7 +53,7 @@ You will need to have the following environment variables defined.
 **Entitlements configuration for integration accounts**
 
 | INTEGRATION_TESTER | 
- | ---  | 
+| ---  |
 | users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 | 
 
 Execute following command to build code and run all the integration tests:

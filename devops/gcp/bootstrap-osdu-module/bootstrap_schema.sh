@@ -9,7 +9,6 @@
 # - SCHEMA_URL
 # - ENTITLEMENTS_HOST
 # (for gcp):
-# - AUDIENCES
 # (for onprem):
 # - OPENID_PROVIDER_URL
 # - OPENID_PROVIDER_CLIENT_ID
@@ -42,7 +41,7 @@ bootstrap_schema_gettoken_onprem() {
 
 bootstrap_schema_gettoken_gcp() {
 
-  BEARER_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
+  BEARER_TOKEN=$(gcloud auth print-identity-token)
 
   export BEARER_TOKEN
 }
@@ -87,8 +86,6 @@ else
     python3 ./scripts/schema-cleaner/main.py -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
     echo "Finished schema cleanup"
   fi
-
-  source ./validate-env.sh "AUDIENCES"
 
   # Get credentials for GCP
   bootstrap_schema_gettoken_gcp

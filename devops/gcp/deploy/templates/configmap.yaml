@@ -14,6 +14,3 @@ data:
   SHARED_TENANT_NAME: {{ .Values.data.dataPartitionId | quote }}
   SPRING_PROFILES_ACTIVE: {{ .Values.data.springProfilesActive | quote }}
   _JAVA_OPTIONS: {{ .Values.data.javaOptions | quote }}
-  {{- if not .Values.conf.onPremEnabled }}
-  GOOGLE_AUDIENCES: {{ .Values.data.googleAudiences | quote }}
-  {{- end }}
