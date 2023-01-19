@@ -606,7 +606,7 @@ The following software have components provided under the terms of this license:
 - Hamcrest (from http://hamcrest.org/JavaHamcrest/)
 - Hamcrest Core (from http://hamcrest.org/, http://hamcrest.org/JavaHamcrest/, https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core)
 - Jackson module: Afterburner (from http://wiki.fasterxml.com/JacksonHome, https://github.com/FasterXML/jackson-modules-base)
-- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://github.com/jakartaee/jaf-api, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta Annotations API (from https://projects.eclipse.org/projects/ee4j.ca)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
 - Microsoft Application Insights Java Agent (from https://github.com/Microsoft/ApplicationInsights-Java)
@@ -706,7 +706,7 @@ The following software have components provided under the terms of this license:
 
 - AspectJ Weaver (from http://www.aspectj.org, https://www.eclipse.org/aspectj/)
 - Expression Language 3.0 (from http://el-spec.java.net, http://uel.java.net, https://projects.eclipse.org/projects/ee4j.el)
-- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://github.com/jakartaee/jaf-api, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta Annotations API (from https://projects.eclipse.org/projects/ee4j.ca)
 - Jakarta Bean Validation API (from https://beanvalidation.org)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
@@ -732,7 +732,7 @@ The following software have components provided under the terms of this license:
 - JUnit Jupiter Params (from http://junit.org/junit5/, https://junit.org/junit5/)
 - JUnit Platform Commons (from http://junit.org/junit5/, https://junit.org/junit5/)
 - JUnit Platform Engine API (from http://junit.org/junit5/, https://junit.org/junit5/)
-- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://github.com/jakartaee/jaf-api, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta Annotations API (from https://projects.eclipse.org/projects/ee4j.ca)
 - Jakarta Bean Validation API (from https://beanvalidation.org)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
@@ -765,7 +765,7 @@ The following software have components provided under the terms of this license:
 - Expression Language 3.0 (from http://el-spec.java.net, http://uel.java.net, https://projects.eclipse.org/projects/ee4j.el)
 - Google Guice - Core Library (from https://repo1.maven.org/maven2/com/google/inject/guice)
 - JSR 374 (JSON Processing) API (from https://javaee.github.io/jsonp)
-- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://github.com/jakartaee/jaf-api, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta Annotations API (from https://projects.eclipse.org/projects/ee4j.ca)
 - Jakarta Bean Validation API (from https://beanvalidation.org)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
@@ -965,6 +965,6 @@ unknown
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://github.com/jakartaee/jaf-api, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Java Native Access (from https://github.com/java-native-access/jna, https://github.com/twall/jna)
 - Java Native Access Platform (from https://github.com/java-native-access/jna)
