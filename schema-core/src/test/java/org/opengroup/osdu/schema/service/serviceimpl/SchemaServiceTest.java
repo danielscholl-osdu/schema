@@ -99,19 +99,19 @@ public class SchemaServiceTest {
 
 	@Mock
 	AuditLogger auditLogger;
-	
+
 	@Mock
 	SchemaVersionValidatorFactory schemaVersionValidatorFactory;
 
     @Mock
     IMessageBus messageBus;
-    
+
     @Mock
     SchemaMinorVersionValidator minorVersionValidator;
-    
+
     @Mock
     SchemaPatchVersionValidator patchVersionValidator;
-    
+
 	private Date currDate = new Date();
 
 	@Rule
@@ -799,7 +799,7 @@ public class SchemaServiceTest {
 
 		Assert.assertEquals(1, (schemaService.getSchemaInfoList(queryParams).getSchemaInfos().size()));
 	}
-	
+
 	@Test
 	public void testGetSchemaInfoList_TestOffsetParameter_LatestVersion()
 			throws ApplicationException, NotFoundException, BadRequestException {
@@ -820,7 +820,7 @@ public class SchemaServiceTest {
 
 		Assert.assertEquals(0, (schemaService.getSchemaInfoList(queryParams).getSchemaInfos().size()));
 	}
-	
+
 	@Test
 	public void testGetSchemaInfoList_TestOffsetParameter()
 			throws ApplicationException, NotFoundException, BadRequestException {
@@ -838,9 +838,9 @@ public class SchemaServiceTest {
 		Mockito.when(headers.getPartitionId()).thenReturn("tenant");
 		Mockito.when(schemaInfoStore.getSystemSchemaInfoList(queryParams)).thenReturn(schemaPub);
 		Mockito.when(schemaInfoStore.getSchemaInfoList(queryParams, "tenant")).thenReturn(schemaInt);
-		
+
 		List<SchemaInfo> result = schemaService.getSchemaInfoList(queryParams).getSchemaInfos();
-		
+
 		Assert.assertEquals(1, (result.size()));
 		Assert.assertEquals("os:abc:well:1.1.1", (result.get(0).getSchemaIdentity().getId()));
 	}

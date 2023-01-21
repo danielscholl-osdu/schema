@@ -16,7 +16,7 @@ import org.opengroup.osdu.schema.validation.version.handler.SchemaValidationMana
 import org.opengroup.osdu.schema.validation.version.model.SchemaBreakingChanges;
 import org.opengroup.osdu.schema.validation.version.model.SchemaHandlerVO;
 import org.opengroup.osdu.schema.validation.version.model.SchemaPatch;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -27,13 +27,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class CompositionPropertiesHandler implements SchemaValidationHandler{
 
 	private SchemaValidationHandler nextHandler;
-	
-	@Autowired
-	SchemaValidationManager validationManager;
-	
-	@Autowired
-	SchemaUtil schemaUtil;
-	
+
+	private SchemaValidationManager validationManager;
+
+	private SchemaUtil schemaUtil;
+
+	public CompositionPropertiesHandler(@Lazy SchemaValidationManager validationManager, SchemaUtil schemaUtil) {
+		this.validationManager = validationManager;
+		this.schemaUtil = schemaUtil;
+	}
 	@Override
 	public void setNextHandler(SchemaValidationHandler nextHandler) {
 		this.nextHandler = nextHandler;
