@@ -12,7 +12,6 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<springfox-version>2.7.0</springfox-version>
 		<jackson-databind.version>2.13.2.2</jackson-databind.version>
 		<jackson.version>2.13.2</jackson.version>
 	</properties>
@@ -216,21 +215,6 @@
 			<groupId>org.glassfish</groupId>
 			<artifactId>javax.json</artifactId>
 			<version>1.1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>${springfox.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
