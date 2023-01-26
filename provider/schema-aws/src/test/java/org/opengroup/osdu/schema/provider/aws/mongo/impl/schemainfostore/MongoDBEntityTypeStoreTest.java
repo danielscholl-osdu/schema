@@ -7,12 +7,15 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.EntityType;
+import org.opengroup.osdu.schema.provider.aws.SchemaAwsApplication;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBEntityTypeStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.EntityTypeDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
 import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -25,6 +28,7 @@ import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.
 @DataMongoTest
 @RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {SchemaTestConfig.class})
+@ContextConfiguration(classes = {SchemaAwsApplication.class, MockServletContext.class})
 public class MongoDBEntityTypeStoreTest extends ParentUtil {
 
     @Autowired
