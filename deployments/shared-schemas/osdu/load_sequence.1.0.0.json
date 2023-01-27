@@ -504,6 +504,10 @@
     "relativePath": "shared-schemas/osdu/dataset/ConnectedSource.Generic.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceDataJob:1.3.0",
+    "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceDataJob.1.3.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceDataJob:1.2.0",
     "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceDataJob.1.2.0.json"
   },
@@ -514,6 +518,10 @@
   {
     "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceDataJob:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceDataJob.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceRegistryEntry:1.2.0",
+    "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceRegistryEntry.1.2.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceRegistryEntry:1.1.0",
@@ -530,6 +538,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--ContractorType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/ContractorType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--ConventionalCoreType:1.0.1",
+    "relativePath": "shared-schemas/osdu/reference-data/ConventionalCoreType.1.0.1.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--ConventionalCoreType:1.0.0",
@@ -652,6 +664,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/ExternalCatalogNamespace.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--ExternalReferenceValueMapping:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ExternalReferenceValueMapping.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--ExternalUnitOfMeasure:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/ExternalUnitOfMeasure.1.0.0.json"
   },
@@ -764,6 +780,14 @@
     "relativePath": "shared-schemas/osdu/dataset/FileCollection.Slb.OpenZGY.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:work-product-component--FluidBoundaryInterpretation:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/FluidBoundaryInterpretation.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--FluidContactType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FluidContactType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--FluidPhaseType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/FluidPhaseType.1.0.0.json"
   },
@@ -798,6 +822,26 @@
   {
     "kind": "{{schema-authority}}:wks:master-data--FluidsReport:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/FluidsReport.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--FormationIntegrityPressureDataSource:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FormationIntegrityPressureDataSource.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--FormationIntegritySurfacePressureDataSource:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FormationIntegritySurfacePressureDataSource.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--FormationIntegrityTest:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/FormationIntegrityTest.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--FormationIntegrityTestResult:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FormationIntegrityTestResult.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--FormationIntegrityTestType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/FormationIntegrityTestType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--FormationPressureTestType:1.0.0",
@@ -936,6 +980,10 @@
     "relativePath": "shared-schemas/osdu/work-product-component/IjkGridRepresentation.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--ImageLightingCondition:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ImageLightingCondition.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--InSARApplication:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/InSARApplication.1.0.0.json"
   },
@@ -1056,6 +1104,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/MarkerPropertyType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--MarkerType:1.0.1",
+    "relativePath": "shared-schemas/osdu/reference-data/MarkerType.1.0.1.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--MarkerType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/MarkerType.1.0.0.json"
   },
@@ -1066,6 +1118,10 @@
   {
     "kind": "{{schema-authority}}:wks:master-data--ModelFeature:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/ModelFeature.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--MudBaseType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/MudBaseType.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--MudClass:1.0.0",
@@ -1468,6 +1524,14 @@
     "relativePath": "shared-schemas/osdu/work-product-component/RockFluidUnitInterpretation.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:work-product-component--RockImage:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/RockImage.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--RockImageType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/RockImageType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:master-data--RockSample:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/RockSample.1.0.0.json"
   },
@@ -1526,6 +1590,10 @@
   {
     "kind": "{{schema-authority}}:wks:work-product-component--SealedSurfaceFramework:1.0.0",
     "relativePath": "shared-schemas/osdu/work-product-component/SealedSurfaceFramework.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--SealedVolumeFramework:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/SealedVolumeFramework.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--SectionType:1.0.0",
@@ -1916,6 +1984,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/ValueChainStatusType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--VelocityAnalysisMethod:1.0.1",
+    "relativePath": "shared-schemas/osdu/reference-data/VelocityAnalysisMethod.1.0.1.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--VelocityAnalysisMethod:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/VelocityAnalysisMethod.1.0.0.json"
   },
@@ -1978,6 +2050,10 @@
   {
     "kind": "{{schema-authority}}:wks:master-data--Well:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/Well.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--WellActivity:1.1.0",
+    "relativePath": "shared-schemas/osdu/master-data/WellActivity.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:master-data--WellActivity:1.0.0",
@@ -2068,6 +2144,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/WellTechnologyApplied.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:master-data--Wellbore:1.3.0",
+    "relativePath": "shared-schemas/osdu/master-data/Wellbore.1.3.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:master-data--Wellbore:1.2.0",
     "relativePath": "shared-schemas/osdu/master-data/Wellbore.1.2.0.json"
   },
@@ -2114,6 +2194,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellboreOpeningStateType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/WellboreOpeningStateType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellboreReason:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/WellboreReason.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--WellboreTrajectory:1.1.0",
