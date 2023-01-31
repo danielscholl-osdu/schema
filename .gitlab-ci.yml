@@ -1,14 +1,12 @@
 variables:
-  GCP_BUILD_SUBDIR: provider/schema-gcp
-  GCP_INT_TEST_SUBDIR: testing/schema-test-gcp
+  GCP_BUILD_SUBDIR: provider/schema-gc
+  GCP_INT_TEST_SUBDIR: testing/schema-test-gc
   GCP_APPLICATION_NAME: os-schema
   GCP_ENVIRONMENT: testing
   GCP_PROJECT: opendes-evt
   GCP_TENANT_NAME: opendesevt
   GCP_DEPLOY_ENV: p4d
   GCP_DOMAIN: cloud.slb-ds.com
-  # FIXME remove when all services are migrated to a single helm
-  OSDU_GCP_ENABLE_HELM_CONFIG: "false"
 
   IBM_BUILD_SUBDIR: provider/schema-ibm
   IBM_INT_TEST_SUBDIR: testing/schema-test-core
@@ -79,9 +77,9 @@ include:
     file: "cloud-providers/azure.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/osdu-gcp-global.yml"
+    file: "cloud-providers/gc-global.yml"
 
-  - local: "devops/gcp/pipeline/override-stages.yml"
+  - local: "devops/gc/pipeline/override-stages.yml"
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/aws/bootstrap.yaml"

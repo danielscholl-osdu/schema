@@ -319,7 +319,7 @@ For deployment available public `/info` endpoint, which provides build and git r
 ```json
 {
     "groupId": "org.opengroup.osdu",
-    "artifactId": "storage-gcp",
+    "artifactId": "storage-gc",
     "version": "0.10.0-SNAPSHOT",
     "buildTime": "2021-07-09T14:29:51.584Z",
     "branch": "feature/GONRG-2681_Build_info",

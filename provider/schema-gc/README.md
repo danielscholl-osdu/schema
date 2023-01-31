@@ -1,10 +1,13 @@
 # Schema Service
-schema-gcp is a Maven multi-module project service.
+
+os-schema-gc is a Maven multi-module project service.
 
 ## Getting Started
+
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites (Infra and access required) 
+### Prerequisites (Infra and access required)
+
 Pre-requisites
 
 * GCloud SDK with java (latest version)
@@ -15,12 +18,17 @@ Pre-requisites
 ### Installation
 
 ### Service Configuration
-#### Anthos:
-[Anthos service configuration ](docs/anthos/README.md)
-#### Google Cloud:
-[Google Cloud service configuration ](docs/gcp/README.md)
+
+#### Anthos
+
+[Anthos service configuration](docs/anthos/README.md)
+
+#### Google Cloud
+
+[Google Cloud service configuration](docs/gc/README.md)
 
 ### Run Locally
+
 Check that maven is installed:
 
 ```bash
@@ -56,11 +64,13 @@ $ cat ~/.m2/settings.xml
     </servers>
 </settings>
 ```
+
 * Update the Google cloud SDK to the latest version:
 
 ```bash
 gcloud components update
 ```
+
 * Set Google Project Id:
 
 ```bash
@@ -72,52 +82,63 @@ gcloud config set project <YOUR-PROJECT-ID>
 ```bash
 gcloud auth application-default login
 ```
+
 Once the above Prerequisite are done, we can follow the below steps to run the service locally,
 
 1. Navigate to the root of the schema project, os-schema. For building the project using command line, run below command :
+
     ```bash
     mvn clean install
     ```
+
     This will build the core project as well as all the underlying projects. If we want  to build projects for specific cloud vendor, we can use mvn --projects command. For example, if we want to build only for Google Cloud, we can use below command :
+
     ```bash
-    mvn --projects schema-core,provider/schema-gcp clean install
+    mvn --projects schema-core,provider/schema-gc clean install
     ```
-2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Google Cloud, run the below command : 
-    ```bash 
+
+2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Google Cloud, run the below command :
+
+    ```bash
     # Running Google Cloud : 
-    java -jar  provider\schema-gcp\target\os-schema-gcp-0.0.1-spring-boot.jar
-3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used: 
+    java -jar  provider\schema-gc\target\os-schema-gc-0.0.1-spring-boot.jar
+3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used:
+
     ```bash
     server.servlet.contextPath=/api/schema-service/v1/
     server.port=8080
-   
-You can access the service APIs by following the service contract in [schema.yaml](docs/api/schema.yaml) 
+
+You can access the service APIs by following the service contract in [schema.yaml](docs/api/schema.yaml)
 
 ## Testing
-#### Anthos:
+
+#### Anthos
+
 [Anthos Testing](docs/anthos/README.md)
-#### Google Cloud:
-[Google Cloud Testing](docs/gcp/README.md)
+
+#### Google Cloud
+
+[Google Cloud Testing](docs/gc/README.md)
 
 ## Deployment
 
 Schema Service is compatible with Cloud Run.
 
 * To deploy into Cloud run, please, use this documentation:
-https://cloud.google.com/run/docs/quickstarts/build-and-deploy
+<https://cloud.google.com/run/docs/quickstarts/build-and-deploy>
 
 ## License
 
 Copyright © Google LLC
 
 Copyright © EPAM Systems
- 
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
- 
+
 [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
- 
+
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.

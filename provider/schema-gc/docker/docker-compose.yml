@@ -3,7 +3,7 @@ services:
   os-schema-app:
     build:
       args: 
-        JAR_FILE: target/os-schema-gcp-0.0.1-spring-boot.jar
+        JAR_FILE: target/os-schema-gc-0.0.1-spring-boot.jar
       context: ..
       dockerfile: docker/Dockerfile
     image: gcr.io/opendes/os-schema-app
