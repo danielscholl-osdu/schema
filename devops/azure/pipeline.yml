@@ -23,7 +23,7 @@ trigger:
       - .gitignore
       - /docs
       - /provider/schema-aws
-      - /provider/schema-gcp
+      - /provider/schema-gc
       - /provider/schema-ibm
 
 resources:
@@ -36,8 +36,8 @@ resources:
       name: infra-azure-provisioning
 
 variables:
-  - group: 'Azure - OSDU'
-  - group: 'Azure - OSDU Secrets'
+  - group: "Azure - OSDU"
+  - group: "Azure - OSDU Secrets"
 
   - name: serviceName
     value: "schema-service"
@@ -45,22 +45,22 @@ variables:
     value: "devops/azure/chart"
   - name: valuesFile
     value: "devops/azure/chart/helm-config.yml"
-  - name: 'MANIFEST_REPO'
+  - name: "MANIFEST_REPO"
     value: $[ resources.repositories['FluxRepo'].name ]
-  - name: 'MAVEN_CACHE_FOLDER'
+  - name: "MAVEN_CACHE_FOLDER"
     value: $(Pipeline.Workspace)/.m2/repository
   - name: SKIP_TESTS
-    value: 'false'
+    value: "false"
   - name: SKIP_DEPLOY
-    value: 'false'
+    value: "false"
 
 stages:
   - template: /devops/build-stage.yml@TemplateRepo
     parameters:
-      mavenGoal: 'package'
+      mavenGoal: "package"
       mavenPublishJUnitResults: true
-      serviceCoreMavenOptions: '-P schema-core --settings .mvn/community-maven.settings.xml'
-      mavenOptions: '-P schema-azure --settings .mvn/community-maven.settings.xml -Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+      serviceCoreMavenOptions: "-P schema-core --settings .mvn/community-maven.settings.xml"
+      mavenOptions: "-P schema-azure --settings .mvn/community-maven.settings.xml -Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)"
       copyFileContents: |
         pom.xml
         provider/schema-azure/maven/settings.xml
@@ -68,27 +68,27 @@ stages:
         provider/schema-azure/target/*-spring-boot.jar
         .mvn/community-maven.settings.xml
         deployments/**
-      copyFileContentsToFlatten: ''
-      mavenSettingsFile: '.mvn/community-maven.settings.xml'
+      copyFileContentsToFlatten: ""
+      mavenSettingsFile: ".mvn/community-maven.settings.xml"
       serviceBase: ${{ variables.serviceName }}
-      testingRootFolder: 'testing'
+      testingRootFolder: "testing"
       chartPath: ${{ variables.chartPath }}
   - template: deploy-stage.yml
     parameters:
       serviceName: ${{ variables.serviceName }}
       chartPath: ${{ variables.chartPath }}
       valuesFile: ${{ variables.valuesFile }}
-      testCoreMavenPomFile: 'testing/schema-test-core/pom.xml'
-      testCoreMavenOptions: '--settings $(System.DefaultWorkingDirectory)/drop/.mvn/community-maven.settings.xml -DskipTests -DskipITs'
-      integrationTestMavenGoal: 'verify'
+      testCoreMavenPomFile: "testing/schema-test-core/pom.xml"
+      testCoreMavenOptions: "--settings $(System.DefaultWorkingDirectory)/drop/.mvn/community-maven.settings.xml -DskipTests -DskipITs"
+      integrationTestMavenGoal: "verify"
       skipDeploy: ${{ variables.SKIP_DEPLOY }}
       skipTest: ${{ variables.SKIP_TESTS }}
       providers:
-        -  name: Azure
-           environments: ['demo']
+        - name: Azure
+          environments: ["demo"]
   - template: bootstrap-stage.yml
     parameters:
       serviceName: ${{ variables.serviceName }}
       providers:
-        -  name: Azure
-           environments: ['demo']
+        - name: Azure
+          environments: ["demo"]

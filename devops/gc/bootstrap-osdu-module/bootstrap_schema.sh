@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 #
 # Script that bootstraps schema service using Python scripts, that make requests to schema service
-# Contains logic for both onprem and gcp version
+# Contains logic for both Reference and Google Cloud version
 #
 # Expected environment variables:
 # (both environments):
 # - DATA_PARTITION
 # - SCHEMA_URL
 # - ENTITLEMENTS_HOST
-# (for gcp):
-# (for onprem):
+# (for Google Cloud):
+# - AUDIENCES
+# (for Reference):
 # - OPENID_PROVIDER_URL
 # - OPENID_PROVIDER_CLIENT_ID
 # - OPENID_PROVIDER_CLIENT_SECRET
@@ -39,7 +40,7 @@ bootstrap_schema_gettoken_onprem() {
   export BEARER_TOKEN="Bearer ${ID_TOKEN}"
 }
 
-bootstrap_schema_gettoken_gcp() {
+bootstrap_schema_gettoken_gc() {
 
   BEARER_TOKEN=$(gcloud auth print-identity-token)
 
@@ -87,8 +88,8 @@ else
     echo "Finished schema cleanup"
   fi
 
-  # Get credentials for GCP
-  bootstrap_schema_gettoken_gcp
+  # Get credentials for Google Cloud
+  bootstrap_schema_gettoken_gc
 
 fi
 
