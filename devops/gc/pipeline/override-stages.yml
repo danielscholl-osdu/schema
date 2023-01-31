@@ -1,0 +1,28 @@
+variables:
+  BUILD_BOOTSTRAP_PATH: "devops/$GC_VENDOR/bootstrap-osdu-module/Dockerfile"
+  GC_ENABLE_BOOTSTRAP: "true"
+  GC_SERVICE: schema
+  GC_VENDOR: gc
+  GC_HELM_TIMEOUT: "--timeout 15m"
+  # FIXME remove when all services are migrated to a single helm
+  GC_ENABLE_HELM_CONFIG: "false"
+
+gc-test:
+  variables:
+    GC_TEST_SUBDIR: testing/schema-test-core
+    VENDOR: gcp
+  script:
+    - $MAVEN_BUILD . test-results.log verify -q -f $GC_TEST_SUBDIR/pom.xml
+
+gc-dev2-test:
+  variables:
+    GC_TEST_SUBDIR: testing/schema-test-core
+    VENDOR: gcp
+  script:
+    - $MAVEN_BUILD . test-results.log verify -q -f $GC_TEST_SUBDIR/pom.xml
+
+gc-anthos-test:
+  variables:
+    GC_TEST_SUBDIR: testing/schema-test-core
+  script:
+    - $MAVEN_BUILD . test-results.log verify -q -f $GC_TEST_SUBDIR/pom.xml

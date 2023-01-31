@@ -1,6 +1,6 @@
 ## Service Configuration for Anthos
 
-## Environment variables:
+## Environment variables
 
 Define the following environment variables.
 
@@ -10,10 +10,10 @@ Must have:
 | ---  | ---   | ---         | ---        | ---    |
 | `SPRING_PROFILES_ACTIVE` | ex `anthos` | Spring profile that activate default configuration for Google Cloud environment | false | - |
 | `SHARED_TENANT_NAME` | ex `anthos` | Shared account id | no | - |
-| `<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | Potgres user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service)  | yes | - |
-| `<MINIO_SECRETKEY_ENV_VARIABLE_NAME>` | ex `password` | Minio password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
-| `<AMQP_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
-| `<AMQP_ADMIN_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ Admin password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#Properties-set-in-Partition-service) | yes | - |
+| `<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | Potgres user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service)  | yes | - |
+| `<MINIO_SECRETKEY_ENV_VARIABLE_NAME>` | ex `password` | Minio password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service) | yes | - |
+| `<AMQP_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service) | yes | - |
+| `<AMQP_ADMIN_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ Admin password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service) | yes | - |
 
 Defined in default application property file but possible to override:
 
@@ -24,11 +24,11 @@ Defined in default application property file but possible to override:
 | `SERVER_SERVLET_CONTEXPATH` | `/api/schema-service/v1` | Servlet context path | no | - |
 | `AUTHORIZE_API` | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint | no | output of infrastructure deployment |
 | `PARTITION_API` | ex `http://localhost:8081/api/partition/v1` | Partition service endpoint | no | - |
-| `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
+| `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
 | `GCP_SCHEMA_CHANGED_MESSAGING_ENABLED` | `true` OR `false` | Allows to configure message publishing about schemas changes to Pub/Sub | no | - |
 | `GCP_SCHEMA_CHANGED_TOPIC_NAME` | `schema-changed` | Topic for schema changes events | no | - |
 
-These variables define service behavior, and are used to switch between `anthos` or `gcp` environments, their overriding
+These variables define service behavior, and are used to switch between `reference` or `Google Cloud` environments, their overriding
 and usage in mixed mode was not tested. Usage of spring profiles is preferred.
 
 | name | value | description | sensitive? | source |
@@ -37,17 +37,19 @@ and usage in mixed mode was not tested. Usage of spring profiles is preferred.
 | `OQMDRIVER` | `rabbitmq` or `pubsub` | Oqm driver mode that defines which message broker will be used | no | - |
 | `OSMDRIVER` | `datastore` or `postgres` | Osm driver mode that defines which KV storage will be used | no | - |
 | `OBMDRIVER` | `gcs` or `minio` | Obm driver mode that defines which object storage will be used | no | - |
-| `SERVICE_TOKEN_PROVIDER` | `GCP` or `OPENID` |Service account token provider, `GCP` means use Google service account `OPEIND` means use OpenId provider like `Keycloak` | no | - |
+| `SERVICE_TOKEN_PROVIDER` | `GCP` or `OPENID` |Service account token provider, `GCP` means use Google service account `OPENID` means use OpenId provider like `Keycloak` | no | - |
 
 ## Testing
+
 ### Running E2E Tests
+
 This section describes how to run cloud OSDU E2E tests (testing/schema-test-core).
 
 You will need to have the following environment variables defined.
 
 | name | value | description | sensitive? | source |
  | ---  | ---   | ---         | ---        | ---    |
-| `VENDOR` | `anthos` | Use value 'gcp' to run gcp tests | no | - |
+| `VENDOR` | `anthos` | Use value 'gcp' to run Google Cloud tests | no | - |
 | `HOST` | ex`http://localhost:8080` | Schema service host | no | - |
 | `PRIVATE_TENANT2` | ex`opendes` | OSDU tenant used for testing | no | - |
 | `PRIVATE_TENANT1` | ex`osdu` | OSDU tenant used for testing | no | - |
@@ -58,9 +60,9 @@ You will need to have the following environment variables defined.
 
 **Entitlements configuration for integration accounts**
 
-| INTEGRATION_TESTER | 
- | ---  | 
-| users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 | 
+| INTEGRATION_TESTER |
+ | ---  |
+| users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 |
 
 Execute following command to build code and run all the integration tests:
 
@@ -71,12 +73,13 @@ Execute following command to build code and run all the integration tests:
  $ (cd testing/schema-test-core/ && mvn clean test)
  ```
 
-### Properties set in Partition service:
+### Properties set in Partition service
 
 Note that properties can be set in Partition as `sensitive` in that case in property `value` should be present not value itself, but ENV variable name.
 This variable should be present in environment of service that need that variable.
 
 Example:
+
 ```
     "elasticsearch.port": {
       "sensitive": false, <- value not sensitive 
@@ -88,9 +91,9 @@ Example:
     }
 ```
 
-## Postgres configuration:
+## Postgres configuration
 
-### Properties set in Partition service:
+### Properties set in Partition service
 
 **prefix:** `osm.postgres`
 
@@ -132,11 +135,12 @@ curl -L -X PATCH 'http://partition.com/api/partition/v1/partitions/opendes' -H '
 
 </details>
 
-### Schema configuration:
+### Schema configuration
 
 ```
 CREATE SCHEMA IF NOT EXISTS dataecosystem AUTHORIZATION <SCHEMA_POSTGRESQL_USERNAME>;
 ```
+
 For private tenants:
 
 ```
@@ -219,6 +223,7 @@ CREATE INDEX IF NOT EXISTS source_datagin
 ```
 
 -- For shared tenant:
+
 ```
 -- Table: dataecosystem.system_authority
 -- DROP TABLE IF EXISTS dataecosystem.system_authority;
@@ -298,9 +303,9 @@ CREATE INDEX IF NOT EXISTS system_source_datagin
     TABLESPACE pg_default;
 ```
 
-## RabbitMQ configuration:
+## RabbitMQ configuration
 
-### Properties set in Partition service:
+### Properties set in Partition service
 
 **prefix:** `oqm.rabbitmq`
 
@@ -383,7 +388,7 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
 
 </details>
 
-### Exchanges & queues configuration:
+### Exchanges & queues configuration
 
 At RabbitMq should be created exchange with name:
 
@@ -396,9 +401,9 @@ It can be overridden by:
 
 ![Screenshot](./pics/rabbit.PNG)
 
-## Minio configuration :
+## Minio configuration
 
-### Properties set in Partition service:
+### Properties set in Partition service
 
 **prefix:** `obm.minio`
 
@@ -443,6 +448,7 @@ curl -L -X PATCH 'https://dev.osdu.club/api/partition/v1/partitions/opendes' -H 
 ### Object store configuration <a name="ObjectStoreConfig"></a>
 
 #### Used Technology
+
 MinIO (or any other supported by OBM)
 
 #### Per-tenant buckets configuration
@@ -453,7 +459,7 @@ These buckets must be defined in tenants’ dedicated object store servers. OBM 
 
 <table>
   <tr>
-   <td>Bucket Naming template 
+   <td>Bucket Naming template
    </td>
    <td>Permissions required
    </td>
@@ -470,7 +476,7 @@ For shared tenant only:
 
 <table>
   <tr>
-   <td>Bucket Naming template 
+   <td>Bucket Naming template
    </td>
    <td>Permissions required
    </td>

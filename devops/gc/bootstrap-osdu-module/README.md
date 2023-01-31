@@ -4,7 +4,7 @@ Schema service bootstrap is based on python bootstrap scripts at Schema service 
 
 Boostrap scripts contain python script which executes clean-up in Datastore to prevent incorrect bootstrap for Schema service.
 
-After bootstrap script execution, you can go to **GCP console** and look at logs under `Kubernetes Engine -> Workloads -> schema-bootstrap deployment`.
+After bootstrap script execution, you can go to **Google Cloud console** and look at logs under `Kubernetes Engine -> Workloads -> schema-bootstrap deployment`.
 
 Successful execution will lead to similar output:
 

@@ -14,7 +14,7 @@
 	<packaging>jar</packaging>
 
 
-	<name>schema-test-gcp</name>
+	<name>schema-test-gc</name>
 	<description>Anthos implementation of test project for schema service</description>
 
 </project>
