@@ -12,10 +12,8 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<springfox-version>2.7.0</springfox-version>
 		<jackson-databind.version>2.13.2.2</jackson-databind.version>
 		<jackson.version>2.13.2</jackson.version>
-		<spring-webmvc.version>5.3.22</spring-webmvc.version>
 	</properties>
 
 	<dependencyManagement>
@@ -34,7 +32,6 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>6.0.2.Final</version>
 		</dependency>
 
 		<dependency>
@@ -59,7 +56,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>2.6.6</version>
+			<version>2.7.7</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>
@@ -137,7 +134,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring-webmvc.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>
@@ -149,6 +145,13 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-inline</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.12.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -214,34 +217,16 @@
 			<version>1.1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>${springfox.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-core</artifactId>
-			<version>9.0.67</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>5.3.21</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>5.3.21</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>
@@ -273,7 +258,6 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>5.7.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>

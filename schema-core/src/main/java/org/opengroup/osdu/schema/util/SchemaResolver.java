@@ -20,7 +20,7 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.service.ISchemaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,11 +30,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class SchemaResolver {
 
-    @Autowired
     private ISchemaService schemaService;
 
-    @Autowired
     JaxRsDpsLog log;
+
+    public SchemaResolver(@Lazy ISchemaService schemaService, JaxRsDpsLog log) {
+        this.schemaService = schemaService;
+        this.log = log;
+    }
 
     /**
      * Method to resolve schema references.
