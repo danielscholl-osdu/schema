@@ -1,5 +1,14 @@
 package org.opengroup.osdu.schema.provider.aws.mongo.impl.schemainfostore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.SCHEMA_INFO_PREFIX;
+import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.createSchemaId;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -12,6 +21,7 @@ import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.provider.aws.SchemaAwsApplication;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.SchemaInfoDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
@@ -19,6 +29,8 @@ import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -27,19 +39,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.SCHEMA_INFO_PREFIX;
-import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.createSchemaId;
-
-
 @DataMongoTest
 @RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {SchemaTestConfig.class})
+@ContextConfiguration(classes = {SchemaAwsApplication.class, MockServletContext.class})
 public class MongoDBSchemaInfoStoreTest extends ParentUtil {
 
     @Autowired

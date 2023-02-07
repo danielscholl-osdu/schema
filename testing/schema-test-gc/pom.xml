@@ -4,17 +4,17 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema-test</artifactId>
-		<version>0.19.0-SNAPSHOT</version>
+		<version>0.20.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<groupId>org.opengroup.osdu</groupId>
-	<artifactId>os-schema-test-gcp</artifactId>
-	<version>0.19.0-SNAPSHOT</version>
+	<artifactId>os-schema-test-gc</artifactId>
+	<version>0.20.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 
-	<name>schema-test-gcp</name>
-	<description>GCP implementation of test project for schema service</description>
+	<name>schema-test-gc</name>
+	<description>Google Cloud implementation of test project for schema service</description>
 
 </project>

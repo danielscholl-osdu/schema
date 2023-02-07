@@ -66,6 +66,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **rabbitmqSecretName** | secret for rabbitmq | string | `rabbitmq-secret` | yes
 
 ### Datastore cleanup and bootstrap schemas variables
+
 > Datastore cleanup is used for cleaning Datastore Schema Entities if they are not present in Schema bucket
 
 | Name | Description | Type | Default |Required |
@@ -81,7 +82,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 Run this command from within this directory:
 
 ```console
-helm install gcp-schema-deploy .
+helm install gc-schema-deploy .
 ```
 
 ## Uninstalling the Chart
@@ -89,7 +90,7 @@ helm install gcp-schema-deploy .
 To uninstall the helm deployment:
 
 ```console
-helm uninstall gcp-schema-deploy
+helm uninstall gc-schema-deploy
 ```
 
 [Move-to-Top](#deploy-helm-chart)
