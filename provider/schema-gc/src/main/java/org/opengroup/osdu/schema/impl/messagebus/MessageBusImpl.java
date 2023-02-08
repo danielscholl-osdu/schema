@@ -112,14 +112,12 @@ public class MessageBusImpl implements IMessageBus {
 
     String data = new Gson().toJson(Collections.singletonList(schemaPubSubMsg));
 
-    Map<String, String> attributes = new HashMap<>();
-
-    attributes.put(DpsHeaders.ACCOUNT_ID, this.tenantInfo.getName());
-    attributes.put(DpsHeaders.DATA_PARTITION_ID,
-        this.headers.getPartitionIdWithFallbackToAccountId());
     this.headers.addCorrelationIdIfMissing();
-    attributes.put(DpsHeaders.CORRELATION_ID, this.headers.getCorrelationId());
-    attributes.put(SchemaConstants.SERVICE_NAME, SchemaConstants.SCHEMA);
+    Map<String, String> headersMap = headers.getHeaders();
+    headersMap.put(DpsHeaders.ACCOUNT_ID, this.tenantInfo.getName());
+    headersMap.remove(DpsHeaders.AUTHORIZATION);
+
+    Map<String, String> attributes = new HashMap<>(headersMap);
     return OqmMessage.builder()
         .data(data)
         .attributes(attributes)

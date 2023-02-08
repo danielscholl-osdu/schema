@@ -17,6 +17,13 @@
 
 package org.opengroup.osdu.schema.impl.messagebus;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -31,9 +38,6 @@ import org.opengroup.osdu.core.gcp.oqm.model.OqmTopic;
 import org.opengroup.osdu.schema.configuration.EventMessagingPropertiesConfig;
 import org.opengroup.osdu.schema.destination.provider.impl.OqmDestinationProvider;
 import org.opengroup.osdu.schema.logging.AuditLogger;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageBusImplTest {
@@ -84,9 +88,10 @@ public class MessageBusImplTest {
   public void should_publishEventMessage_WhenFlagIsTrue() {
     when(this.eventMessagingPropertiesConfig.isMessagingEnabled()).thenReturn(true);
     when(this.tenantInfo.getName()).thenReturn(TENANT_NAME);
-    when(this.headers.getPartitionIdWithFallbackToAccountId()).thenReturn(DATA_PARTITION_ID);
-    doNothing().when(this.headers).addCorrelationIdIfMissing();
-    when(this.headers.getCorrelationId()).thenReturn(CORRELATION_ID);
+    HashMap<String, String> headersMap = new HashMap<>();
+    headersMap.put(DpsHeaders.DATA_PARTITION_ID, DATA_PARTITION_ID);
+    headersMap.put(DpsHeaders.CORRELATION_ID, CORRELATION_ID);
+    when(this.headers.getHeaders()).thenReturn(headersMap);
 
     this.sut.publishMessage(SCHEMA_ID, EVENT_TYPE);
 
