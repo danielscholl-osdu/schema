@@ -4,8 +4,6 @@ variables:
   GC_SERVICE: schema
   GC_VENDOR: gc
   GC_HELM_TIMEOUT: "--timeout 15m"
-  # FIXME remove when all services are migrated to a single helm
-  GC_ENABLE_HELM_CONFIG: "false"
 
 gc-test:
   variables:
