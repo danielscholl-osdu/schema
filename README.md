@@ -20,7 +20,7 @@ These tests validate functionality of schema service.
 They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
 Below command has to be run post building complete project.
 
-Instructions for running the Google Cloud integration tests can be found [here](./provider/schema-gp/README.md).
+Instructions for running the Google Cloud integration tests can be found [here](./provider/schema-gc/README.md).
 
 Below command can be run through azure-pipeline.yml after setting environment variables in the pipeline.
 
