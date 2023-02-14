@@ -30,40 +30,40 @@ First you need to set variables in **values.yaml** file using any code editor. S
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**dataPartitionId** | data partition id | string | - | yes
-**entitlementsHost** | entitlements host | string | "http://entitlements" | yes
-**javaOptions** | java options | string | "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45" | yes
-**logLevel** | logging level | string | INFO | yes
-**partitionHost** | partition host | string | "http://partition" | yes
-**schemaTopicName** | topic for schema changes events | string | "schema-changed" | yes
-**springProfilesActive** | active spring profile | string | gcp | yes
+**data.dataPartitionId** | data partition id | string | - | yes
+**data.entitlementsHost** | entitlements host | string | "http://entitlements" | yes
+**data.javaOptions** | java options | string | "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45" | yes
+**data.logLevel** | logging level | string | INFO | yes
+**data.partitionHost** | partition host | string | "http://partition" | yes
+**data.schemaTopicName** | topic for schema changes events | string | "schema-changed" | yes
+**data.springProfilesActive** | active spring profile | string | gcp | yes
 
 ### Deployment variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**requestsCpu** | amount of requested CPU | string | 0.1 | yes
-**requestsMemory** | amount of requested memory| string | 1G | yes
-**limitsCpu** | CPU limit | string | 1 | yes
-**limitsMemory** | memory limit | string | 1.5G | yes
-**bootstrapImage** | bootstrap image | string | - | yes
-**bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
-**image** | service image | string | - | yes
-**imagePullPolicy** | when to pull image | string | IfNotPresent | yes
-**serviceAccountName** | name of your service account | string | schema | yes
+**data.requestsCpu** | amount of requested CPU | string | 0.1 | yes
+**data.requestsMemory** | amount of requested memory| string | 1G | yes
+**data.limitsCpu** | CPU limit | string | 1 | yes
+**data.limitsMemory** | memory limit | string | 1.5G | yes
+**data.bootstrapImage** | bootstrap image | string | - | yes
+**data.bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
+**data.image** | service image | string | - | yes
+**data.imagePullPolicy** | when to pull image | string | IfNotPresent | yes
+**data.serviceAccountName** | name of your service account | string | schema | yes
 
 ### Configuration variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**appName** | name of the app | string | `schema` | yes
-**bootstrapSecretName** | secret for bootstrap | string | `datafier-secret` | yes
-**configmap** | configmap to be used | string | `schema-config` | yes
-**domain** | your domain | string | - | yes
-**minioSecretName** | secret for minio | string | `schema-minio-secret` | yes
-**onPremEnabled** | whether on-prem is enabled | boolean | false | yes
-**postgresSecretName** | secret for postgres | string | `schema-postgres-secret` | yes
-**rabbitmqSecretName** | secret for rabbitmq | string | `rabbitmq-secret` | yes
+**conf.appName** | name of the app | string | `schema` | yes
+**conf.bootstrapSecretName** | secret for bootstrap | string | `datafier-secret` | yes
+**conf.configmap** | configmap to be used | string | `schema-config` | yes
+**conf.domain** | your domain | string | - | yes
+**conf.minioSecretName** | secret for minio | string | `schema-minio-secret` | yes
+**conf.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
+**conf.postgresSecretName** | secret for postgres | string | `schema-postgres-secret` | yes
+**conf.rabbitmqSecretName** | secret for rabbitmq | string | `rabbitmq-secret` | yes
 
 ### Datastore cleanup and bootstrap schemas variables
 
@@ -71,11 +71,22 @@ First you need to set variables in **values.yaml** file using any code editor. S
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**datastoreKind** | Datastore Kind for Schema | string | "system_schema_osm" | yes
-**datastoreNamespace** | Datastore Namespace for Schema | string | "dataecosystem" | yes
-**enableCleanup** | whether cleanup is enabled | boolean | false | yes
-**schemaBucket** | name of the bucket with schemas | string | - | yes
-**schemaHost** | schema host | string | "http://schema" | yes
+**data.datastoreKind** | Datastore Kind for Schema | string | "system_schema_osm" | yes
+**data.datastoreNamespace** | Datastore Namespace for Schema | string | "dataecosystem" | yes
+**data.enableCleanup** | whether cleanup is enabled | boolean | false | yes
+**data.schemaBucket** | name of the bucket with schemas | string | - | yes
+**data.schemaHost** | schema host | string | "http://schema" | yes
+
+### Istio variables
+
+| Name | Description | Type | Default |Required |
+|------|-------------|------|---------|---------|
+**istio.proxyCPU** | CPU request for Envoy sidecars | string | `50m` | yes
+**istio.proxyCPULimit** | CPU limit for Envoy sidecars | string | `500m` | yes
+**istio.proxyMemory** | memory request for Envoy sidecars | string | `64Mi` | yes
+**istio.proxyMemoryLimit** | memory limit for Envoy sidecars | string | `512Mi` | yes
+**istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | `10m` | yes
+**istio.bootstrapProxyCPULimit** | CPU limit for Envoy sidecars | string | `100m` | yes
 
 ### Install the helm chart
 
