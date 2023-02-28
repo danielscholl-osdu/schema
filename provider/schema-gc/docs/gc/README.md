@@ -69,17 +69,24 @@ Execute following command to build code and run all the integration tests:
 
 ## Datastore configuration
 
+### For private tenants:
+
+There must be a namespace `<data-partition-id>`
+
+Example:
+
+![Screenshot](./pics/namespace_osdu.PNG)
+
+Kind `schema_osm` `authority` `entityType` `source` will be created by service if it does not exist.
+
+### For shared tenant:
+
 There must be a namespace `dataecosystem`.
 
 Example:
 
-![Screenshot](./pics/namespace.PNG)
+![Screenshot](./pics/namespace_dataecosystem.PNG)
 
-For private tenants:
-
-Kind `schema-osm` `authority` `entityType` `source` will be created by service if it does not exist.
-
-For shared tenant:
 
 Kind `system_schema_osm` `system_authority` `system_entityType` `system_source` will be created by service if it does not exist.
 
