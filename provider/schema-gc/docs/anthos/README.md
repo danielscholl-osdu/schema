@@ -48,7 +48,7 @@ This section describes how to run cloud OSDU E2E tests (testing/schema-test-core
 You will need to have the following environment variables defined.
 
 | name | value | description | sensitive? | source |
- | ---  | ---   | ---         | ---        | ---    |
+| ---  | ---   | ---         | ---        | ---    |
 | `VENDOR` | `anthos` | Use value 'gcp' to run Google Cloud tests | no | - |
 | `HOST` | ex`http://localhost:8080` | Schema service host | no | - |
 | `PRIVATE_TENANT2` | ex`opendes` | OSDU tenant used for testing | no | - |
@@ -61,7 +61,7 @@ You will need to have the following environment variables defined.
 **Entitlements configuration for integration accounts**
 
 | INTEGRATION_TESTER |
- | ---  |
+| ---  |
 | users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 |
 
 Execute following command to build code and run all the integration tests:
@@ -144,9 +144,9 @@ CREATE SCHEMA IF NOT EXISTS dataecosystem AUTHORIZATION <SCHEMA_POSTGRESQL_USERN
 For private tenants:
 
 ```
--- Table: dataecosystem.authority
--- DROP TABLE IF EXISTS dataecosystem.authority;
-CREATE TABLE IF NOT EXISTS dataecosystem.authority
+-- Table: <data-partition-id>.authority
+-- DROP TABLE IF EXISTS <data-partition-id>.authority;
+CREATE TABLE IF NOT EXISTS <data-partition-id>.authority
 (
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -155,17 +155,17 @@ CREATE TABLE IF NOT EXISTS dataecosystem.authority
     CONSTRAINT authority_id UNIQUE (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE IF EXISTS dataecosystem.authority
+ALTER TABLE IF EXISTS <data-partition-id>.authority
     OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: authority_datagin
--- DROP INDEX IF EXISTS dataecosystem.authority_datagin;
+-- DROP INDEX IF EXISTS <data-partition-id>.authority_datagin;
 CREATE INDEX IF NOT EXISTS authority_datagin
-    ON dataecosystem.authority USING gin
+    ON <data-partition-id>.authority USING gin
     (data)
     TABLESPACE pg_default;
--- Table: dataecosystem.entityType
--- DROP TABLE IF EXISTS dataecosystem."entityType";
-CREATE TABLE IF NOT EXISTS dataecosystem."entityType"
+-- Table: <data-partition-id>.entityType
+-- DROP TABLE IF EXISTS <data-partition-id>."entityType";
+CREATE TABLE IF NOT EXISTS <data-partition-id>."entityType"
 (
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -174,17 +174,17 @@ CREATE TABLE IF NOT EXISTS dataecosystem."entityType"
     CONSTRAINT entitytype_id UNIQUE (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE IF EXISTS dataecosystem."entityType"
+ALTER TABLE IF EXISTS <data-partition-id>."entityType"
     OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: entitytype_datagin
--- DROP INDEX IF EXISTS dataecosystem.entitytype_datagin;
+-- DROP INDEX IF EXISTS <data-partition-id>.entitytype_datagin;
 CREATE INDEX IF NOT EXISTS entitytype_datagin
-    ON dataecosystem."entityType" USING gin
+    ON <data-partition-id>."entityType" USING gin
     (data)
     TABLESPACE pg_default;
-    -- Table: dataecosystem.schema_osm
--- DROP TABLE IF EXISTS dataecosystem."schema_osm";
-CREATE TABLE IF NOT EXISTS dataecosystem."schema_osm"
+    -- Table: <data-partition-id>.schema_osm
+-- DROP TABLE IF EXISTS <data-partition-id>."schema_osm";
+CREATE TABLE IF NOT EXISTS <data-partition-id>."schema_osm"
 (
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -193,17 +193,17 @@ CREATE TABLE IF NOT EXISTS dataecosystem."schema_osm"
     CONSTRAINT schemarequest_id UNIQUE (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE IF EXISTS dataecosystem."schema_osm"
+ALTER TABLE IF EXISTS <data-partition-id>."schema_osm"
     OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: schemarequest_datagin
 -- DROP INDEX IF EXISTS dataecosystem.schemarequest_datagin;
 CREATE INDEX IF NOT EXISTS schemarequest_datagin
-    ON dataecosystem."schema_osm" USING gin
+    ON <data-partition-id>."schema_osm" USING gin
     (data)
     TABLESPACE pg_default;
-    -- Table: dataecosystem.source
--- DROP TABLE IF EXISTS dataecosystem.source;
-CREATE TABLE IF NOT EXISTS dataecosystem.source
+    -- Table: <data-partition-id>.source
+-- DROP TABLE IF EXISTS <data-partition-id>.source;
+CREATE TABLE IF NOT EXISTS <data-partition-id>.source
 (
     id text COLLATE pg_catalog."default" NOT NULL,
     pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
@@ -212,12 +212,12 @@ CREATE TABLE IF NOT EXISTS dataecosystem.source
     CONSTRAINT source_id UNIQUE (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE IF EXISTS dataecosystem.source
+ALTER TABLE IF EXISTS <data-partition-id>.source
     OWNER to <SCHEMA_POSTGRESQL_USERNAME>;
 -- Index: source_datagin
--- DROP INDEX IF EXISTS dataecosystem.source_datagin;
+-- DROP INDEX IF EXISTS <data-partition-id>.source_datagin;
 CREATE INDEX IF NOT EXISTS source_datagin
-    ON dataecosystem.source USING gin
+    ON <data-partition-id>.source USING gin
     (data)
     TABLESPACE pg_default;
 ```
