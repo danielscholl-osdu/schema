@@ -26,6 +26,13 @@ Packages are only needed for installation from a local computer.
 
 First you need to set variables in **values.yaml** file using any code editor. Some of the values are prefilled, but you need to specify some values as well. You can find more information about them below.
 
+### Global variables
+
+| Name | Description | Type | Default |Required |
+|------|-------------|------|---------|---------|
+**global.domain** | your domain for the external endpoint, ex `example.com` | string | - | yes
+**global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
+
 ### Configmap variables
 
 | Name | Description | Type | Default |Required |
@@ -59,9 +66,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **conf.appName** | name of the app | string | `schema` | yes
 **conf.bootstrapSecretName** | secret for bootstrap | string | `datafier-secret` | yes
 **conf.configmap** | configmap to be used | string | `schema-config` | yes
-**conf.domain** | your domain | string | - | yes
 **conf.minioSecretName** | secret for minio | string | `schema-minio-secret` | yes
-**conf.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **conf.postgresSecretName** | secret for postgres | string | `schema-postgres-secret` | yes
 **conf.rabbitmqSecretName** | secret for rabbitmq | string | `rabbitmq-secret` | yes
 
