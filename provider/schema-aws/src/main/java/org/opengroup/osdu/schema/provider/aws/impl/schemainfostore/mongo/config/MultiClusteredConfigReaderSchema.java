@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 @Lazy
 @Component
 public class MultiClusteredConfigReaderSchema extends AbstractMultiClusteredConfigReader {
-    String serviceName = "schema";
 
     @Autowired
     public MultiClusteredConfigReaderSchema(SSMManagerUtil ssmManagerUtil) {
@@ -32,7 +31,7 @@ public class MultiClusteredConfigReaderSchema extends AbstractMultiClusteredConf
     }
 
     @Override
-    protected String applyServiceName(String originalName) {
-        return originalName.replace(serviceNamePlaceHolder, serviceName);
+    protected String getDatabaseName(String environment) {
+        return environment + "_osdu_schema";
     }
 }

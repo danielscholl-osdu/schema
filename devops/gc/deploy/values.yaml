@@ -1,3 +1,7 @@
+global:
+  domain: ""
+  onPremEnabled: false
+
 data:
   #Configmaps
   dataPartitionId: ""
@@ -28,9 +32,7 @@ conf:
   appName: "schema"
   bootstrapSecretName: "datafier-secret"
   configmap: "schema-config"
-  domain: ""
   minioSecretName: "schema-minio-secret"
-  onPremEnabled: false
   postgresSecretName: "schema-postgres-secret"
   rabbitmqSecretName: "rabbitmq-secret"
 
