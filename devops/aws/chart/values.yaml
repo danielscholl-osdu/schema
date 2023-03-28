@@ -28,6 +28,8 @@ environmentVariables:
     value: http://os-partition:8080
   - name: SCHEMA_SERVICE_REPOSITORY_IMPLEMENTATION
     value: "{{ default `dynamodb` .Values.global.coreDbProvider }}"
+  - name: TMP_VOLUME_PATH
+    value: "/tmp"
 
 # Resource Config
 replicaCount: 1
@@ -61,7 +63,7 @@ cors:
 securityContext: 
   runAsUser: 10001
   runAsNonRoot: true
-  readOnlyRootFilesystem: false
+  readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
   capabilities:
     drop:
