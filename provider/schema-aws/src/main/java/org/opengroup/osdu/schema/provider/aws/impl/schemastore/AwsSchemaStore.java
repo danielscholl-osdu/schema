@@ -103,8 +103,6 @@ public class AwsSchemaStore implements ISchemaStore {
 
     S3ClientWithBucket s3ClientWithBucket = getS3ClientWithBucket(dataPartitionId);
     AmazonS3 s3 = s3ClientWithBucket.getS3Client();
-    logger.info(s3.getClientConfiguration().getUserAgentPrefix()); 
-    logger.info(s3.getClientConfiguration().getUserAgentSuffix()); 
 
     String content;
     String path = resolvePath(dataPartitionId, filePath);
