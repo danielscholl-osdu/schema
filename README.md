@@ -36,6 +36,13 @@ Details to deploy shared schemas can be found under [README.md](./deployments/sh
 
 Instructions for running and testing this service can be found [here](./provider/schema-aws/README.md)  
 
+## Open API 3.0 - Swagger
+- Swagger UI : https://host/context-path/swagger (will redirect to https://host/context-path/swagger-ui/index.html)
+- api-docs (JSON) : https://host/context-path/api-docs
+- api-docs (YAML) : https://host/context-path/api-docs.yaml
+
+All the Swagger and OpenAPI related common properties are managed here [swagger.properties](./schema-core/src/main/resources/swagger.properties)
+
 ## License
 
 Copyright 2017-2020, Schlumberger

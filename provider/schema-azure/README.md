@@ -128,7 +128,7 @@ After configuring your environment as specified above, you can follow these step
 
 ### Test the application
 
-After the service has started it should be accessible via a web browser by visiting [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html). If the request does not fail, you can then run the integration tests.
+After the service has started it should be accessible via a web browser by visiting [http://localhost:8080/api/schema-service/v1/swagger](http://localhost:8080/api/schema-service/v1/swagger). If the request does not fail, you can then run the integration tests.
 
 They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
 
@@ -151,6 +151,12 @@ Below command can be run through azure-pipeline.yml after setting environment va
 
 	verify "-Dcucumber.options=--tags @SchemaService"
 
+## Open API 3.0 - Swagger
+- Swagger UI:  http://localhost:8080/api/schema-service/v1/swagger (will redirect to  http://localhost:8080/api/schema-service/v1/swagger-ui/index.html)
+- api-docs (JSON) :  http://localhost:8080/api/schema-service/v1/api-docs
+- api-docs (YAML) :  http://localhost:8080/api/schema-service/v1/api-docs.yaml
+
+All the Swagger and OpenAPI related common properties are managed here [swagger.properties](../../schema-core/src/main/resources/swagger.properties)
 
 
 ## Debugging
