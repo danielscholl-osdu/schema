@@ -3,6 +3,7 @@ package org.opengroup.osdu.schema.model;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.opengroup.osdu.schema.validation.request.SchemaRequestConstraint;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "Represents a model to Schema Request")
 public class SchemaRequest {
 
 	@NotNull(message = "schemaInfo must not be null")

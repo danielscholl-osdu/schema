@@ -128,7 +128,15 @@ public class SchemaConstants {
     public final static String SCHEMA_CREATE_EVENT_TYPE = "create";
     public final static String SCHEMA_UPDATE_EVENT_TYPE = "update";
     public final static String KIND = "kind";
-    
+
+    //Swagger
+    public final static String GET_SCHEMA_200_RESPONSE = "{$schema: 'http://json-schema.org/draft-07/schema#',\n" +
+            "            description: The entity shapefile.,\n" +
+            "            title: ShapeFile,\n" +
+            "            type: object,\n" +
+            "            definitions: {},\n" +
+            "        properties: {}}";
+
   //Schema Validation Constants
     public static enum SkipTags
     {

@@ -18,12 +18,14 @@ package org.opengroup.osdu.schema.provider.ibm.security;
  */
 
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Hidden
 @Controller
 public class WhoamiController {
     @RequestMapping(value = {"/", "/whoami"})
