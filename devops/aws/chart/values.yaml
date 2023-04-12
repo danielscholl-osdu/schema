@@ -30,6 +30,10 @@ environmentVariables:
     value: "{{ default `dynamodb` .Values.global.coreDbProvider }}"
   - name: TMP_VOLUME_PATH
     value: "/tmp"
+  - name: DISABLE_USER_AGENT
+    value: "{{ .Values.global.disableUserAgent }}"
+  - name: OSDU_VERSION
+    value: "3.18.0"
 
 # Resource Config
 replicaCount: 1
