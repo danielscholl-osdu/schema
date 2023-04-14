@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
-		<version>0.20.0-SNAPSHOT</version>
+		<version>0.21.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>os-schema-ibm</artifactId>
@@ -14,7 +14,7 @@
 		<start-class>org.opengroup.osdu.schema.provider.ibm.app.SchemaIBMApplication</start-class>
 		<os-core-lib-ibm.version>0.16.0-rc1</os-core-lib-ibm.version>
 		<jackson.version>2.13.2</jackson.version>
-		<jackson-databind.version>2.13.2.2</jackson-databind.version>
+		<jackson-databind.version>2.13.4.2</jackson-databind.version>
 	</properties>
 
 	<dependencyManagement>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
-			<version>0.20.0-SNAPSHOT</version>
+			<version>0.21.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>io.netty</groupId>
@@ -83,7 +83,7 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-codec</artifactId>
-			<version>4.1.68.Final</version>
+			<version>4.1.86.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -21,10 +21,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
 @ComponentScan({"org.opengroup.osdu"})
 @ConfigurationPropertiesScan
+@PropertySource("classpath:swagger.properties")
 public class GcpSchemaApplication {
 
   public static void main(String[] args) {

@@ -7,7 +7,7 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
 data:
   DATA_PARTITION: {{ .Values.data.dataPartitionId | quote }}
-  ONPREM_ENABLED: {{ .Values.conf.onPremEnabled | quote }}
+  ONPREM_ENABLED: {{ .Values.global.onPremEnabled | quote }}
   ENABLE_CLEANUP: {{ .Values.data.enableCleanup | quote }}
   SCHEMA_URL: {{ .Values.data.schemaHost | quote }}
   ENTITLEMENTS_HOST: {{ .Values.data.entitlementsHost | quote }}

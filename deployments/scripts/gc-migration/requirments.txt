@@ -1,0 +1,8 @@
+argparse
+google.cloud
+minio
+environs
+datetime
+psycopg2
+requests
+itertools
