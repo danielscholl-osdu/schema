@@ -21,7 +21,6 @@ import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParameterResult;
-import org.opengroup.osdu.core.aws.configurationsetup.ConfigSetup;
 import org.opengroup.osdu.core.aws.entitlements.ServicePrincipal;
 import org.opengroup.osdu.core.aws.iam.IAMConfig;
 import org.opengroup.osdu.core.aws.secrets.SecretsManager;
@@ -36,7 +35,6 @@ public class AwsServicePrincipalUtil {
     private static final AWSSimpleSystemsManagement ssmManager = AWSSimpleSystemsManagementClientBuilder.standard()
             .withCredentials(amazonAWSCredentials)
             .withRegion(amazonRegion)
-            .withClientConfiguration(ConfigSetup.setUpConfig())
             .build();
     private static final SecretsManager sm = new SecretsManager();
 
