@@ -18,8 +18,8 @@ data:
   schemaBucket: ""
   schemaHost: "http://schema"
   #Deployments
-  requestsCpu: "5m"
-  requestsMemory: "1.6G"
+  requestsCpu: "220m"
+  requestsMemory: "1.7G"
   limitsCpu: "1"
   limitsMemory: "2.5G"
   bootstrapImage: ""
@@ -37,9 +37,9 @@ conf:
   rabbitmqSecretName: "rabbitmq-secret"
 
 istio:
-  proxyCPU: "5m"
+  proxyCPU: "90m"
   proxyCPULimit: "500m"
-  proxyMemory: "64Mi"
+  proxyMemory: "100Mi"
   proxyMemoryLimit: "512Mi"
-  bootstrapProxyCPU: "6m"
+  bootstrapProxyCPU: "10m"
   bootstrapProxyCPULimit: "100m"
