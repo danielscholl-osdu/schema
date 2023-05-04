@@ -153,8 +153,8 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
         log.info(SchemaConstants.SCHEMA_INFO_CREATED);
         return entityFromDb.getSchemaInfo();
       } catch (TranslatorRuntimeException ex) {
-        log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-        throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+        log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()), ex);
+        throw new ApplicationException(SchemaConstants.INVALID_INPUT, ex);
       }
     } catch (ApplicationException e) {
       throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
@@ -182,8 +182,8 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
       try {
         entityFromDb = context.createAndGet(schema, systemDestination);
       } catch (TranslatorRuntimeException ex) {
-        log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-        throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+        log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()), ex);
+        throw new ApplicationException(SchemaConstants.INVALID_INPUT, ex);
       }
       log.info(SchemaConstants.SCHEMA_INFO_CREATED);
       return entityFromDb.getSchemaInfo();
@@ -211,7 +211,7 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
       entityFromDb = context.upsertAndGet(schema, tenantDestination);
     } catch (TranslatorRuntimeException ex) {
       log.error(SchemaConstants.OBJECT_INVALID);
-      throw new ApplicationException("Invalid object, update failed");
+      throw new ApplicationException("Invalid object, update failed", ex);
     }
     log.info(SchemaConstants.SCHEMA_INFO_UPDATED);
     return entityFromDb.getSchemaInfo();
@@ -236,7 +236,7 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
       entityFromDb = context.upsertAndGet(schema, systemDestination);
     } catch (TranslatorRuntimeException ex) {
       log.error(SchemaConstants.OBJECT_INVALID);
-      throw new ApplicationException("Invalid object, update failed");
+      throw new ApplicationException("Invalid object, update failed", ex);
     }
     log.info(SchemaConstants.SCHEMA_INFO_UPDATED);
     return entityFromDb.getSchemaInfo();
@@ -382,7 +382,7 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
     } catch (TranslatorRuntimeException e) {
       throw new AppException(HttpStatus.SC_BAD_REQUEST, "Schema uniqueness check failed",
           String.format("Misconfigured tenant-info for %s, not possible to check schema uniqueness",
-              tenantId));
+              tenantId), e);
     }
     return true;
   }
@@ -420,7 +420,7 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
         throw new AppException(HttpStatus.SC_BAD_REQUEST, "Schema uniqueness check failed",
             String.format(
                 "Misconfigured tenant-info for %s, not possible to check schema uniqueness",
-                tenant));
+                tenant), e);
       }
     }
     return true;
