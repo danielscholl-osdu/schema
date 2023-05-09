@@ -15,6 +15,8 @@
 package org.opengroup.osdu.schema.provider.aws.security;
 
 import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
+import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
 import org.opengroup.osdu.core.aws.ssm.SSMUtil;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -32,25 +34,14 @@ public class AuthorizationServiceForServiceAdminImpl implements IAuthorizationSe
     @Autowired
     private DpsHeaders headers;
 
-
-    @Value("${aws.region}")
-    private String awsRegion;
-
-    @Value("${aws.environment}")
-    private String awsEnvironment;
-
     String memberEmail=null;
-    SSMUtil ssmUtil = null;
     String spu_email=null;
 
     @PostConstruct
-    public void init() {
-        if (ssmUtil == null) {
-            ssmUtil = new SSMUtil("/osdu/" + awsEnvironment + "/");
-        }
+    public void init() throws K8sParameterNotFoundException {
         //get sp email
-        spu_email = ssmUtil.getSsmParameterAsString("service-principal-user");
-
+        K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
+        spu_email = provider.getParameterAsString("SERVICE_PRINCIPAL");
     }
 
     @Override
