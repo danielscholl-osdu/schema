@@ -28,7 +28,7 @@ import org.opengroup.osdu.core.aws.secrets.SecretsManager;
 
 public class AwsServicePrincipalUtil {
 
-    private static final String environment = System.getProperty("RESOURCE_PREFIX", System.getenv("RESOURCE_PREFIX"));
+    private static final String cognitoName = System.getProperty("COGNITO_NAME", System.getenv("COGNITO_NAME"));
     private static final String amazonRegion = System.getProperty("AWS_REGION", System.getenv("AWS_REGION"));
 
     private static final AWSCredentialsProvider amazonAWSCredentials = IAMConfig.amazonAWSCredentials();
@@ -38,17 +38,17 @@ public class AwsServicePrincipalUtil {
             .build();
     private static final SecretsManager sm = new SecretsManager();
 
-    private static final String oauth_token_url = "/osdu/" + environment + "/oauth-token-uri";
-    private static final String oauth_custom_scope = "/osdu/" + environment + "/oauth-custom-scope";
-    private static final String client_credentials_client_id = "/osdu/" + environment + "/client-credentials-client-id";
+    private static final String oauth_token_url = "/osdu/cognito/" + cognitoName + "/oauth/token-uri";
+    private static final String oauth_custom_scope = "/osdu/cognito/" + cognitoName + "/oauth/custom-scope";
+    private static final String client_credentials_client_id = "/osdu/cognito/" + cognitoName + "/client/client-credentials/id";
     private static final String client_secret_key = "client_credentials_client_secret";
-    private static final String client_secret_secretName = "/osdu/" + environment + "/client_credentials_secret";
+    private static final String client_secret_secretName = "/osdu/cognito/" + cognitoName + "/client-credentials-secret";
     private static final String client_credentials_clientid = getSsmParameter(client_credentials_client_id);
     private static final String client_credentials_secret = sm.getSecret(client_secret_secretName, amazonRegion, client_secret_key);
     private static final String tokenUrl = getSsmParameter(oauth_token_url);
     private static final String awsOauthCustomScope = getSsmParameter(oauth_custom_scope);
 
-    private static final ServicePrincipal sp = new ServicePrincipal(amazonRegion, environment, tokenUrl, awsOauthCustomScope);
+    private static final ServicePrincipal sp = new ServicePrincipal(amazonRegion, tokenUrl, awsOauthCustomScope);
 
     public static String getAccessToken() throws Exception {
         return sp.getServicePrincipalAccessToken(client_credentials_clientid, client_credentials_secret).replace("Bearer ", "");
