@@ -19,9 +19,9 @@ Pre-requisites
 
 ### Service Configuration
 
-#### Anthos
+#### Baremetal
 
-[Anthos service configuration](docs/anthos/README.md)
+[Baremetal service configuration](docs/baremetal/README.md)
 
 #### Google Cloud
 
@@ -112,9 +112,9 @@ You can access the service APIs by following the service contract in [schema.yam
 
 ## Testing
 
-#### Anthos
+#### Baremetal
 
-[Anthos Testing](docs/anthos/README.md)
+[Baremetal Testing](docs/baremetal/README.md)
 
 #### Google Cloud
 
