@@ -106,9 +106,8 @@ public class ObmSchemaStore implements ISchemaStore {
 
     ObmDriverRuntimeException obmException = (ObmDriverRuntimeException) ex;
 
-    if (obmException.getCause() instanceof ObmDriverRuntimeException) {
-      ObmDriverRuntimeException cause = (ObmDriverRuntimeException) obmException.getCause();
-      return NO_SUCH_KEY.equals(cause.getError());
+    if (obmException.getCause() instanceof IllegalArgumentException) {
+      return NO_SUCH_KEY.equals(obmException.getError());
     }
 
     if (obmException.getCause() instanceof StorageException) {
@@ -137,8 +136,8 @@ public class ObmSchemaStore implements ISchemaStore {
     try {
       blob = driver.getBlobContent(systemSchemaBucketName, filePath, getSystemDestination());
     } catch (ObmDriverRuntimeException | NullPointerException ex) {
-      if (ex instanceof NullPointerException
-          || NO_SUCH_KEY.equals(((ObmDriverRuntimeException) ex.getCause()).getError())) {
+      if (isNotFoundException(ex)) {
+        log.warning(ex.getMessage());
         throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
       } else {
         throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);

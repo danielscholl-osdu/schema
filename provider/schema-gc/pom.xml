@@ -8,8 +8,9 @@
 	</parent>
 
 	<properties>
-		<jackson-databind.version>2.13.2.2</jackson-databind.version>
-		<jackson.version>2.13.2</jackson.version>
+		<jackson-databind.version>2.15.0</jackson-databind.version>
+		<jackson.version>2.15.0</jackson.version>
+		<os-core-common.version>0.21.0</os-core-common.version>
 	</properties>
 
 	<artifactId>os-schema-gc</artifactId>
@@ -19,21 +20,41 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.opengroup.osdu</groupId>
-				<artifactId>os-core-common</artifactId>
-				<version>${os-core-common.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
 				<groupId>com.squareup.okhttp3</groupId>
 				<artifactId>okhttp</artifactId>
 				<version>4.9.2</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>2.7.10</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>2.15.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.google.cloud</groupId>
+				<artifactId>libraries-bom</artifactId>
+				<version>26.15.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>os-core-common</artifactId>
+			<version>${os-core-common.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
@@ -50,7 +71,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson-databind.version}</version>
@@ -64,7 +85,7 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -82,8 +103,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>core-lib-gcp</artifactId>
-			<version>0.19.0-rc3</version>
+			<artifactId>core-lib-gc</artifactId>
+			<version>0.21.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback.contrib</groupId>
@@ -117,6 +138,22 @@
 			<artifactId>guice</artifactId>
 			<version>4.2.0</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>oqm</artifactId>
+			<version>0.21.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>osm</artifactId>
+			<version>0.21.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>obm</artifactId>
+			<version>0.22.0-rc3</version>
 		</dependency>
 
 	</dependencies>
