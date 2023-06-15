@@ -9,7 +9,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<os-core-common.version>0.19.0-rc6</os-core-common.version>
 		<log4j2.version>2.17.1</log4j2.version>
-		<json-smart.version>2.4.7</json-smart.version>
+		<json-smart.version>2.4.9</json-smart.version>
 		<openapi.version>1.6.14</openapi.version>
 		<spring-boot-maven-plugin.version>2.7.6</spring-boot-maven-plugin.version>
 	</properties>
@@ -45,6 +45,26 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>${openapi.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-autoconfigure</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>2.7.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>2.0</version>
 		</dependency>
 	</dependencies>
 	
