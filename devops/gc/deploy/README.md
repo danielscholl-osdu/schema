@@ -32,6 +32,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **global.domain** | your domain for the external endpoint, ex `example.com` | string | - | yes
 **global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
+**global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | true | yes
 
 ### Configmap variables
 
@@ -51,8 +52,8 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **data.requestsCpu** | amount of requested CPU | string | 220m | yes
 **data.requestsMemory** | amount of requested memory| string | 1.7G | yes
-**data.limitsCpu** | CPU limit | string | 1 | yes
-**data.limitsMemory** | memory limit | string | 1.5G | yes
+**data.limitsCpu** | CPU limit | string | 1 | only if `global.limitsEnabled` is true
+**data.limitsMemory** | memory limit | string | 1.5G | only if `global.limitsEnabled` is true
 **data.bootstrapImage** | bootstrap image | string | - | yes
 **data.bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
 **data.image** | service image | string | - | yes
