@@ -44,6 +44,7 @@ variables:
   MONGODB_AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   MONGODB_AWS_TEST_SUBDIR: testing/schema-test-core
   MONGODB_AWS_EKS_DEPLOYMENT_NAME: os-schema
+  MONGODB_AWS_DEPLOY_TARGET: TF
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
