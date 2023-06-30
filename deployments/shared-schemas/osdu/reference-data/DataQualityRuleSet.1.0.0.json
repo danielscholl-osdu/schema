@@ -3,38 +3,38 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Reservoir",
-      "schemaVersionMajor": 0,
+      "entityType": "reference-data--DataQualityRuleSet",
+      "schemaVersionMajor": 1,
       "schemaVersionMinor": 0,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Reservoir:0.0.0"
+      "id": "{{schema-authority}}:wks:reference-data--DataQualityRuleSet:1.0.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2023, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Reservoir.0.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/reference-data/DataQualityRuleSet.1.0.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Reservoir:0.0.0",
-    "title": "Reservoir",
-    "description": "Preliminary placeholder for the Reservoir schema.",
+    "x-osdu-schema-source": "osdu:wks:reference-data--DataQualityRuleSet:1.0.0",
+    "title": "DataQualityRuleSet",
+    "description": "A set of data quality rules to assess a specific aspect in the trustworthiness of data. It can",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Reservoir:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Reservoir:19200196-dee7-54c2-b3d0-9c726dd7246c"
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-DataQualityRuleSet:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:reference-data--DataQualityRuleSet:cd4fdb7c-94c1-59f5-b69f-9555d468ea05"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Reservoir:0.0.0"
+        "example": "osdu:wks:reference-data--DataQualityRuleSet:1.0.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -109,15 +109,76 @@
             "$ref": "{{schema-authority}}:wks:AbstractCommonResources:1.0.0"
           },
           {
-            "$ref": "{{schema-authority}}:wks:AbstractMaster:1.2.0"
+            "$ref": "{{schema-authority}}:wks:AbstractReferenceType:1.0.0"
           },
           {
             "type": "object",
             "properties": {
-              "Name": {
+              "DataRuleSetIDs": {
+                "type": "array",
+                "description": "An aggregation of other DataRuleSet instances, which are more specialized. Cyclic inclusions are considered an error.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-DataQualityRuleSet:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "reference-data",
+                      "EntityType": "DataQualityRuleSet"
+                    }
+                  ]
+                }
+              },
+              "DataRules": {
+                "type": "array",
+                "description": "The list of DataQualityRule items that this DataQualityRuleSet consists of.",
+                "x-osdu-indexing": {
+                  "type": "nested"
+                },
+                "items": {
+                  "type": "object",
+                  "title": "DataRule",
+                  "properties": {
+                    "DataRuleID": {
+                      "type": "string",
+                      "title": "Data Rule ID",
+                      "description": "The reference to the DataQualityRule record.",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-DataQualityRule:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "reference-data",
+                          "EntityType": "DataQualityRule"
+                        }
+                      ]
+                    },
+                    "DataRulePurposeTypeID": {
+                      "type": "string",
+                      "title": "Data Rule Purpose Type ID",
+                      "description": "Indicated if the DataQualityRule is required to pass or for information.",
+                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-DataRulePurposeType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "reference-data",
+                          "EntityType": "DataRulePurposeType"
+                        }
+                      ]
+                    },
+                    "Weight": {
+                      "type": "number",
+                      "title": "Weight",
+                      "description": "The weight factor assigned to this rule in the current DataQualityRuleSet.",
+                      "example": 0.5
+                    }
+                  },
+                  "required": [
+                    "DataRuleID"
+                  ]
+                }
+              },
+              "EvaluatedKind": {
                 "type": "string",
-                "title": "Name",
-                "description": "The name of the Reservoir."
+                "description": "The kind of the data this ruleset applies to. Version-specific and non-version-specific kind can be defined. For example, osdu:wks:master-data--Well:1 (requiring only the major version and permits any minor and patch version); osdu:wks:master-data--Wellbore:1.0.0 (this is version-specific); osdu:wks:work-product-component--WellLog (this is unspecific accepting any version). Also note: a total wildcard would have to end with a :  like this: osdu:wks:group-type--EntityType:.",
+                "example": "osdu:wks:group-type--EntityType:2",
+                "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:([0-9]+)?(\\.)?([0-9]+)?(\\.)?([0-9]+)?$"
               }
             },
             "title": "IndividualProperties"
@@ -140,7 +201,11 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
+    "x-osdu-governance-model": "LOCAL",
+    "x-osdu-governance-authorities": [
+      "SomeAuthority"
+    ],
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
         "type": "string",
@@ -149,16 +214,13 @@
             "path": "data.Name"
           }
         ]
-      },
-      "data.VirtualProperties.DefaultLocation": {
-        "type": "object",
-        "priority": [
-          {
-            "path": "data.SpatialLocation"
-          }
-        ]
       }
     },
-    "x-osdu-inheriting-from-kind": []
+    "x-osdu-inheriting-from-kind": [
+      {
+        "name": "ReferenceType",
+        "kind": "osdu:wks:AbstractReferenceType:1.0.0"
+      }
+    ]
   }
 }

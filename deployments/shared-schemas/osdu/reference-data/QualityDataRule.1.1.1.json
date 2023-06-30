@@ -3,38 +3,38 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Reservoir",
-      "schemaVersionMajor": 0,
-      "schemaVersionMinor": 0,
-      "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Reservoir:0.0.0"
+      "entityType": "reference-data--QualityDataRule",
+      "schemaVersionMajor": 1,
+      "schemaVersionMinor": 1,
+      "schemaVersionPatch": 1,
+      "id": "{{schema-authority}}:wks:reference-data--QualityDataRule:1.1.1"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2023, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Reservoir.0.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/reference-data/QualityDataRule.1.1.1.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Reservoir:0.0.0",
-    "title": "Reservoir",
-    "description": "Preliminary placeholder for the Reservoir schema.",
+    "x-osdu-schema-source": "osdu:wks:reference-data--QualityDataRule:1.1.1",
+    "title": "QualityDataRule",
+    "description": "DEPRECATED: superseded by DataQualityRule. Generic reference object quality rule",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Reservoir:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Reservoir:19200196-dee7-54c2-b3d0-9c726dd7246c"
+        "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-QualityDataRule:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:reference-data--QualityDataRule:2bf14867-0512-5a60-89cd-be38d423c126"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Reservoir:0.0.0"
+        "example": "osdu:wks:reference-data--QualityDataRule:1.1.1"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -109,15 +109,58 @@
             "$ref": "{{schema-authority}}:wks:AbstractCommonResources:1.0.0"
           },
           {
-            "$ref": "{{schema-authority}}:wks:AbstractMaster:1.2.0"
+            "$ref": "{{schema-authority}}:wks:AbstractReferenceType:1.0.0"
           },
           {
             "type": "object",
             "properties": {
-              "Name": {
+              "ExternalRuleID": {
                 "type": "string",
-                "title": "Name",
-                "description": "The name of the Reservoir."
+                "description": "Unique identifier to an external data rule, e.g. PPDM rule ID number."
+              },
+              "DataRuleStatement": {
+                "type": "string",
+                "description": "Expression of data rule"
+              },
+              "DataRuleRevision": {
+                "type": "string",
+                "description": "Revision version number"
+              },
+              "DataRuleStatus": {
+                "type": "string",
+                "description": "status of the business rule such as Published"
+              },
+              "DataRuleCreatedOn": {
+                "type": "string",
+                "description": "Date of creation of data rule independent of OSDU",
+                "format": "date-time"
+              },
+              "DataRuleCreatedBy": {
+                "type": "string",
+                "description": "User that created the rule independent of OSDU"
+              },
+              "DataRulePublishedOn": {
+                "type": "string",
+                "description": "Timestamp of the time when the data rule was published independent of OSDU.",
+                "format": "date-time"
+              },
+              "DataRuleUpdatedOn": {
+                "type": "string",
+                "description": "Timestamp of the time when the data rule was updated independent of OSDU.",
+                "format": "date-time"
+              },
+              "DataRuleDimensionTypeID": {
+                "type": "string",
+                "title": "Data Rule Dimension Type Identifier",
+                "description": "Dimension of the Rule indicating the rule purpose like completeness, validity etc.",
+                "example": "partition_id:reference-data--DataRuleDimensionType:Completeness:",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-DataRuleDimensionType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "reference-data",
+                    "EntityType": "DataRuleDimensionType"
+                  }
+                ]
               }
             },
             "title": "IndividualProperties"
@@ -140,7 +183,8 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
+    "x-osdu-governance-model": "LOCAL",
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
         "type": "string",
@@ -149,16 +193,13 @@
             "path": "data.Name"
           }
         ]
-      },
-      "data.VirtualProperties.DefaultLocation": {
-        "type": "object",
-        "priority": [
-          {
-            "path": "data.SpatialLocation"
-          }
-        ]
       }
     },
-    "x-osdu-inheriting-from-kind": []
+    "x-osdu-inheriting-from-kind": [
+      {
+        "name": "ReferenceType",
+        "kind": "osdu:wks:AbstractReferenceType:1.0.0"
+      }
+    ]
   }
 }
