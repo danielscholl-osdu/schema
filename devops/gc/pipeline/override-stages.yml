@@ -19,8 +19,11 @@ gc-dev2-test:
   script:
     - $MAVEN_BUILD . test-results.log verify -q -f $GC_TEST_SUBDIR/pom.xml
 
-gc-anthos-test:
+gc-baremetal-test:
   variables:
     GC_TEST_SUBDIR: testing/schema-test-core
   script:
     - $MAVEN_BUILD . test-results.log verify -q -f $GC_TEST_SUBDIR/pom.xml
+
+gc-containerize-bootstrap-gitlab:
+  tags: ["osdu-medium"]

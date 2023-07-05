@@ -3,7 +3,7 @@
 
   <groupId>org.opengroup.osdu</groupId>
   <artifactId>os-schema-test</artifactId>
-  <version>0.21.0-SNAPSHOT</version>
+  <version>0.22.0-SNAPSHOT</version>
   <description>Schema Service Integration Test Root Project</description>
   <packaging>pom</packaging>
 
@@ -19,7 +19,7 @@
     <module>schema-test-core</module>
     <module>schema-test-gc</module>
     <module>schema-test-azure</module>
-	  <module>schema-test-anthos</module>
+	  <module>schema-test-baremetal</module>
   </modules>
 
   <repositories>

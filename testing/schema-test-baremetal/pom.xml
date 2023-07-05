@@ -4,17 +4,17 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema-test</artifactId>
-		<version>0.21.0-SNAPSHOT</version>
+		<version>0.22.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<groupId>org.opengroup.osdu</groupId>
-	<artifactId>os-schema-test-anthos</artifactId>
-	<version>0.21.0-SNAPSHOT</version>
+	<artifactId>os-schema-test-baremetal</artifactId>
+	<version>0.22.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 
 	<name>schema-test-gc</name>
-	<description>Anthos implementation of test project for schema service</description>
+	<description>Baremetal implementation of test project for schema service</description>
 
 </project>
