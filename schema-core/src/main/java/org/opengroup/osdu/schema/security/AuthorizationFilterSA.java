@@ -19,7 +19,7 @@ public class AuthorizationFilterSA {
     @Autowired
     private IAuthorizationServiceForServiceAdmin authorizationService;
 
-    public boolean hasPermissions() throws BadRequestException {
+    public boolean hasPermissions()  {
         headers.put(DpsHeaders.USER_EMAIL, "ServiceAdminUser");
         validateMandatoryHeaders();
         if (!StringUtils.isEmpty(this.headers.getPartitionId())) {
