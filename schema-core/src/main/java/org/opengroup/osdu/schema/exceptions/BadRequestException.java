@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BadRequestException extends Exception {
+public class BadRequestException extends RuntimeException {
 
 	private final HttpStatus status;
 	private final String errorMsg;
