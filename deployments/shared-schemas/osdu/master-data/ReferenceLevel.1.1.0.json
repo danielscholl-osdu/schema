@@ -3,38 +3,38 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Reservoir",
-      "schemaVersionMajor": 0,
-      "schemaVersionMinor": 0,
+      "entityType": "master-data--ReferenceLevel",
+      "schemaVersionMajor": 1,
+      "schemaVersionMinor": 1,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Reservoir:0.0.0"
+      "id": "{{schema-authority}}:wks:master-data--ReferenceLevel:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2023, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Reservoir.0.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/master-data/ReferenceLevel.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Reservoir:0.0.0",
-    "title": "Reservoir",
-    "description": "Preliminary placeholder for the Reservoir schema.",
+    "x-osdu-schema-source": "osdu:wks:master-data--ReferenceLevel:1.1.0",
+    "title": "ReferenceLevel",
+    "description": "A reference level or horizontal reference surface, which can be re-used by many other entities. The area of use is indicated by data.SpatialLocation - as a polygon or as a point if used in context of a Well or Wellbore.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Reservoir:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Reservoir:19200196-dee7-54c2-b3d0-9c726dd7246c"
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-ReferenceLevel:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:master-data--ReferenceLevel:ba97ce79-303d-53aa-98d4-f5c65936a377"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Reservoir:0.0.0"
+        "example": "osdu:wks:master-data--ReferenceLevel:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -112,12 +112,22 @@
             "$ref": "{{schema-authority}}:wks:AbstractMaster:1.2.0"
           },
           {
+            "$ref": "{{schema-authority}}:wks:AbstractReferenceLevel:1.0.0"
+          },
+          {
             "type": "object",
             "properties": {
               "Name": {
                 "type": "string",
                 "title": "Name",
-                "description": "The name of the Reservoir."
+                "description": "The name of the reference point or vertical reference plane.",
+                "example": "SRD at MSL"
+              },
+              "Description": {
+                "type": "string",
+                "title": "Description",
+                "description": "A description or remarks about this reference point.",
+                "example": "The seismic reference datum at Mean Sea Level."
               }
             },
             "title": "IndividualProperties"
@@ -140,7 +150,7 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
         "type": "string",

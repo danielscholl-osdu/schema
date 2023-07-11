@@ -3,38 +3,38 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Reservoir",
-      "schemaVersionMajor": 0,
-      "schemaVersionMinor": 0,
+      "entityType": "master-data--WellPlanningWell",
+      "schemaVersionMajor": 1,
+      "schemaVersionMinor": 1,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Reservoir:0.0.0"
+      "id": "{{schema-authority}}:wks:master-data--WellPlanningWell:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2023, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Reservoir.0.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/master-data/WellPlanningWell.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Reservoir:0.0.0",
-    "title": "Reservoir",
-    "description": "Preliminary placeholder for the Reservoir schema.",
+    "x-osdu-schema-source": "osdu:wks:master-data--WellPlanningWell:1.1.0",
+    "title": "WellPlanningWell",
+    "description": "Information about a single well. A well is a unique surface location from which wellbores are drilled into the Earth for the purpose of either (1) finding or producing underground resources; or (2) providing services related to the production of underground resources.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Reservoir:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Reservoir:19200196-dee7-54c2-b3d0-9c726dd7246c"
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-WellPlanningWell:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:master-data--WellPlanningWell:a09849c6-889b-5700-8e71-96165c89922f"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Reservoir:0.0.0"
+        "example": "osdu:wks:master-data--WellPlanningWell:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -114,10 +114,72 @@
           {
             "type": "object",
             "properties": {
+              "WellID": {
+                "type": "string",
+                "title": "Well ID",
+                "description": "Identifier of the parent well.",
+                "x-osdu-attribution-authority": "The Open Group",
+                "x-osdu-attribution-publication": "The OSDU Data Platform",
+                "x-osdu-attribution-revision": "evergreen",
+                "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Well:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "master-data",
+                    "EntityType": "Well"
+                  }
+                ]
+              },
+              "TimeZone": {
+                "type": "string",
+                "title": "Time Zone",
+                "description": "The UTC time zone in which  well is located - expressed as ISO 8601."
+              },
+              "TypeWell": {
+                "type": "string",
+                "title": "Type Well",
+                "description": "Proposed values : Mining, Petroleum, Scientific, Geothermal, Storage, Surface Coring, Water well"
+              },
+              "LicenceName": {
+                "type": "string",
+                "title": "Licence Name",
+                "description": "Legal name of the well as described within the Licence"
+              },
+              "LicenceNumber": {
+                "type": "string",
+                "title": "Licence Number",
+                "description": "License number of the well"
+              },
+              "IssueDateTime": {
+                "type": "number",
+                "title": "Issue Date-Time",
+                "description": "Date and time license was issued",
+                "x-osdu-frame-of-reference": "DateTime"
+              },
+              "BlockID": {
+                "type": "string",
+                "title": "Block ID",
+                "description": "Identifier of the Geopolitical Entity that describes the Block associated to the Licence",
+                "pattern": "^[\\w\\-\\.]+:master-data\\-\\-GeoPoliticalEntity:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "master-data",
+                    "EntityType": "GeoPoliticalEntity"
+                  }
+                ]
+              },
+              "OperatorPercentInterest": {
+                "type": "number",
+                "title": "Operator Percent Interest",
+                "description": "Interest for Operator, Commonly in percent"
+              },
               "Name": {
                 "type": "string",
                 "title": "Name",
-                "description": "The name of the Reservoir."
+                "description": "Name of Well Planning well. Derived from the record identified by WellID.",
+                "x-osdu-is-derived": {
+                  "RelationshipPropertyName": "WellID",
+                  "TargetPropertyName": "FacilityName"
+                }
               }
             },
             "title": "IndividualProperties"
@@ -140,16 +202,8 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-virtual-properties": {
-      "data.VirtualProperties.DefaultName": {
-        "type": "string",
-        "priority": [
-          {
-            "path": "data.Name"
-          }
-        ]
-      },
       "data.VirtualProperties.DefaultLocation": {
         "type": "object",
         "priority": [
@@ -157,8 +211,23 @@
             "path": "data.SpatialLocation"
           }
         ]
+      },
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.Name"
+          }
+        ]
       }
     },
+    "x-osdu-side-car-type-to": [
+      {
+        "GroupType": "master-data",
+        "EntityType": "Well",
+        "SideCarToPropertyName": "WellID"
+      }
+    ],
     "x-osdu-inheriting-from-kind": []
   }
 }

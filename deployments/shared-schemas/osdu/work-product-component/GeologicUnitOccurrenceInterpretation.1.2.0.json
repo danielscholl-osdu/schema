@@ -3,38 +3,38 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Reservoir",
-      "schemaVersionMajor": 0,
-      "schemaVersionMinor": 0,
+      "entityType": "work-product-component--GeologicUnitOccurrenceInterpretation",
+      "schemaVersionMajor": 1,
+      "schemaVersionMinor": 2,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Reservoir:0.0.0"
+      "id": "{{schema-authority}}:wks:work-product-component--GeologicUnitOccurrenceInterpretation:1.2.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2023, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Reservoir.0.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/work-product-component/GeologicUnitOccurrenceInterpretation.1.2.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Reservoir:0.0.0",
-    "title": "Reservoir",
-    "description": "Preliminary placeholder for the Reservoir schema.",
+    "x-osdu-schema-source": "osdu:wks:work-product-component--GeologicUnitOccurrenceInterpretation:1.2.0",
+    "title": "GeologicUnitOccurrenceInterpretation",
+    "description": "Interpretation of a sequence of geologic units actually observed (interpreted)  along or inside a representation, the representation can be \n\u2022\t1D such as a well or an arbitrary line\n\u2022\t2D like a cross section\n\u2022\t3D like a entire model or a group of fault blocks\nIt is typically based on a stratigraphic column rank but can include more units (example intrusive bodies), duplicated units (repeated sequence along a well or lines), or less units (Eroded or non-deposited).\nAn ordering criteria indicates the reason for the order (age, apparent depth or measured depth).",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Reservoir:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Reservoir:19200196-dee7-54c2-b3d0-9c726dd7246c"
+        "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-GeologicUnitOccurrenceInterpretation:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:work-product-component--GeologicUnitOccurrenceInterpretation:54381245-4f08-51cc-bc19-8e06c7e101b1"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Reservoir:0.0.0"
+        "example": "osdu:wks:work-product-component--GeologicUnitOccurrenceInterpretation:1.2.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -109,15 +109,66 @@
             "$ref": "{{schema-authority}}:wks:AbstractCommonResources:1.0.0"
           },
           {
-            "$ref": "{{schema-authority}}:wks:AbstractMaster:1.2.0"
+            "$ref": "{{schema-authority}}:wks:AbstractWPCGroupType:1.2.0"
+          },
+          {
+            "$ref": "{{schema-authority}}:wks:AbstractWorkProductComponent:1.1.0"
+          },
+          {
+            "$ref": "{{schema-authority}}:wks:AbstractInterpretation:1.1.0"
           },
           {
             "type": "object",
             "properties": {
-              "Name": {
+              "StratigraphicColumnRankInterpretationID": {
                 "type": "string",
-                "title": "Name",
-                "description": "The name of the Reservoir."
+                "title": "Stratigraphic Rank Interpretation ID",
+                "description": "Stratigraphic Rank Interpretation on which the organization is based on",
+                "example": "namespace:work-product-component--StratigraphicColumnRankInterpretation:85348741-3433-406B-9189-22B298C3E2D2:",
+                "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-StratigraphicColumnRankInterpretation:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "work-product-component",
+                    "EntityType": "StratigraphicColumnRankInterpretation"
+                  }
+                ]
+              },
+              "OrderingCriteriaTypeID": {
+                "type": "string",
+                "title": "Ordering Criteria Type ID",
+                "description": "Define the criteria used for ordering (age, apparent depth, measured depth)",
+                "format": "uri-reference",
+                "example": "namespace:reference-data--OrderingCriteriaType:Age:",
+                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-OrderingCriteriaType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "reference-data",
+                    "EntityType": "OrderingCriteriaType"
+                  }
+                ]
+              },
+              "GeologicUnitInterpretationIDs": {
+                "type": "array",
+                "title": "Geologic Unit Interpretation IDs",
+                "description": "Lists the units observed",
+                "example": [
+                  "namespace:work-product-component--StratigraphicUnitInterpretation:90008741-3433-406B-9189-22B298C3E2D2:",
+                  "namespace:work-product-component--StratigraphicUnitInterpretation:11008888-3433-406B-9189-33B298F3E2D4:"
+                ],
+                "items": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:(work-product-component\\-\\-RockFluidUnitInterpretation|work-product-component\\-\\-StratigraphicUnitInterpretation):[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "work-product-component",
+                      "EntityType": "RockFluidUnitInterpretation"
+                    },
+                    {
+                      "GroupType": "work-product-component",
+                      "EntityType": "StratigraphicUnitInterpretation"
+                    }
+                  ]
+                }
               }
             },
             "title": "IndividualProperties"
@@ -140,8 +191,19 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-virtual-properties": {
+      "data.VirtualProperties.DefaultLocation": {
+        "type": "object",
+        "priority": [
+          {
+            "path": "data.SpatialArea"
+          },
+          {
+            "path": "data.SpatialPoint"
+          }
+        ]
+      },
       "data.VirtualProperties.DefaultName": {
         "type": "string",
         "priority": [
@@ -149,16 +211,13 @@
             "path": "data.Name"
           }
         ]
-      },
-      "data.VirtualProperties.DefaultLocation": {
-        "type": "object",
-        "priority": [
-          {
-            "path": "data.SpatialLocation"
-          }
-        ]
       }
     },
-    "x-osdu-inheriting-from-kind": []
+    "x-osdu-inheriting-from-kind": [
+      {
+        "name": "WorkProductComponent",
+        "kind": "osdu:wks:AbstractWPCGroupType:1.2.0"
+      }
+    ]
   }
 }

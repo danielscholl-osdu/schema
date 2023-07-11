@@ -3,38 +3,38 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Reservoir",
-      "schemaVersionMajor": 0,
-      "schemaVersionMinor": 0,
+      "entityType": "master-data--SeismicProcessingProject",
+      "schemaVersionMajor": 1,
+      "schemaVersionMinor": 3,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Reservoir:0.0.0"
+      "id": "{{schema-authority}}:wks:master-data--SeismicProcessingProject:1.3.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2023, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Reservoir.0.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/master-data/SeismicProcessingProject.1.3.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Reservoir:0.0.0",
-    "title": "Reservoir",
-    "description": "Preliminary placeholder for the Reservoir schema.",
+    "x-osdu-schema-source": "osdu:wks:master-data--SeismicProcessingProject:1.3.0",
+    "title": "SeismicProcessingProject",
+    "description": "A seismic processing project is a type of business project which manages the creation of processed seismic work products. It is not the same as the geometry of the processed traces (binning or bin grid), which is a work product component, although it typically defines a single binning.  A processing project may merge data from multiple field surveys, so it is not required to be equated to a single field survey.  Original processing and re-processing activities generate separate and independent processing projects.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Reservoir:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Reservoir:19200196-dee7-54c2-b3d0-9c726dd7246c"
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-SeismicProcessingProject:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:master-data--SeismicProcessingProject:ba156735-48b0-5171-ab61-ed69360eaa2d"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Reservoir:0.0.0"
+        "example": "osdu:wks:master-data--SeismicProcessingProject:1.3.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -112,12 +112,38 @@
             "$ref": "{{schema-authority}}:wks:AbstractMaster:1.2.0"
           },
           {
+            "$ref": "{{schema-authority}}:wks:AbstractProject:1.0.0"
+          },
+          {
+            "$ref": "{{schema-authority}}:wks:AbstractProjectActivity:1.2.0"
+          },
+          {
             "type": "object",
             "properties": {
-              "Name": {
+              "SeismicAcquisitionSurveys": {
+                "type": "array",
+                "description": "List of seismic acquisition projects (surveys) that originated the underlying data used in Processing Project.  Trace data work product components have an explicit child relationship.  Other affiliated objects may use Lineage.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:master-data\\-\\-SeismicAcquisitionSurvey:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "master-data",
+                      "EntityType": "SeismicAcquisitionSurvey"
+                    }
+                  ]
+                }
+              },
+              "BinGridID": {
                 "type": "string",
-                "title": "Name",
-                "description": "The name of the Reservoir."
+                "description": "For 3D projects, BinGridID relates to the primary bin grid geometry for the processing; for 3D merge projects, it relates to the final (re-)projection and re-binning geometry.",
+                "pattern": "^[\\w\\-\\.]+:work-product-component\\-\\-SeismicBinGrid:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "work-product-component",
+                    "EntityType": "SeismicBinGrid"
+                  }
+                ]
               }
             },
             "title": "IndividualProperties"
@@ -140,16 +166,8 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-virtual-properties": {
-      "data.VirtualProperties.DefaultName": {
-        "type": "string",
-        "priority": [
-          {
-            "path": "data.Name"
-          }
-        ]
-      },
       "data.VirtualProperties.DefaultLocation": {
         "type": "object",
         "priority": [
@@ -157,8 +175,25 @@
             "path": "data.SpatialLocation"
           }
         ]
+      },
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.ProjectName"
+          }
+        ]
       }
     },
-    "x-osdu-inheriting-from-kind": []
+    "x-osdu-inheriting-from-kind": [
+      {
+        "name": "Project",
+        "kind": "osdu:wks:AbstractProject:1.0.0"
+      },
+      {
+        "name": "Activity",
+        "kind": "osdu:wks:AbstractProjectActivity:1.2.0"
+      }
+    ]
   }
 }
