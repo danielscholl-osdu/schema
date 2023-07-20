@@ -524,7 +524,6 @@ The following software have components provided under the terms of this license:
 - documentdb-bulkexecutor (from http://azure.microsoft.com/en-us/services/documentdb/)
 - error-prone annotations (from https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations)
 - gapic-google-cloud-storage-v2 (from https://repo1.maven.org/maven2/com/google/api/grpc/gapic-google-cloud-storage-v2)
-- google-auth (from https://github.com/GoogleCloudPlatform/google-auth-library-python, https://github.com/googleapis/google-auth-library-python)
 - grpc-google-cloud-datastore-admin-v1 (from https://github.com/googleapis/java-datastore/grpc-google-cloud-datastore-admin-v1)
 - grpc-google-cloud-storage-v2 (from https://repo1.maven.org/maven2/com/google/api/grpc/grpc-google-cloud-storage-v2)
 - io.grpc:grpc-alts (from https://github.com/grpc/grpc-java)
