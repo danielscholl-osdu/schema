@@ -22,14 +22,17 @@
 	<packaging>jar</packaging>
 
 	<properties>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
 		<azure.version>2.1.7</azure.version>
 		<osdu.corelibazure.version>0.14.0-rc2</osdu.corelibazure.version>
 		<osdu.oscorecommon.version>0.19.0-rc6</osdu.oscorecommon.version>
 		<osdu.os-schema-core.version>0.23.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
-		<cucumber.version>5.4.0</cucumber.version>
+		<cucumber.version>5.7.0</cucumber.version>
 		<nimbus-jose-jwt-azure.version>8.20.2</nimbus-jose-jwt-azure.version>
 		<spring-webmvc.version>5.3.26</spring-webmvc.version>
+
 	</properties>
 
 	<dependencyManagement>
@@ -178,7 +181,7 @@
 
 		<dependency>
 			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java8</artifactId>
+			<artifactId>cucumber-java</artifactId>
 			<version>${cucumber.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -305,6 +308,14 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>5.8.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.26</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -337,7 +348,7 @@
 						<exclude>**/*org/opengroup/osdu/schema/security/**</exclude>
 					</excludes>
 				</configuration>
-				<version>0.8.3</version>
+				<version>0.8.10</version>
 				<executions>
 					<execution>
 						<goals>

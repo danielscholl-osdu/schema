@@ -114,22 +114,22 @@
 
 		<dependency>
 			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java8</artifactId>
-			<version>5.4.0</version>
+			<artifactId>cucumber-java</artifactId>
+			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-junit</artifactId>
-			<version>5.4.0</version>
+			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-guice</artifactId>
-			<version>5.4.0</version>
+			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -182,7 +182,7 @@
             <plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.7.201606060606</version>
+				<version>0.8.10</version>
 				<executions>
 					<execution>
 						<goals>
