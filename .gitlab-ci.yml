@@ -87,7 +87,7 @@ include:
   - local: "/devops/ibm/bootstrap.yaml"
 
 .maven:
-  image: maven:3.8.3-openjdk-17-slim
+  image: maven:3.9.3-eclipse-temurin-17
   tags: ['osdu-medium']
   variables:
     MAVEN_REPO_PATH: "$CI_PROJECT_DIR/.m2/repository"
