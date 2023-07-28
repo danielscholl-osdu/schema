@@ -156,6 +156,13 @@
 			<version>0.22.0</version>
 		</dependency>
 
+		<dependency>
+			<!-- Required for JUnit 4 tests to run -->
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
