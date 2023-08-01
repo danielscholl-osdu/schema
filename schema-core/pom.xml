@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -103,6 +103,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.26</version>
 		</dependency>
 
 		<dependency>
@@ -314,7 +315,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.3</version>
+				<version>0.8.10</version>
 				<executions>
 					<execution>
 						<goals>
@@ -334,7 +335,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M7</version>
+				<version>3.0.0</version>
 				<configuration>
 					<includes>
 						<include>*Test.java</include>
@@ -342,13 +343,12 @@
 					<skipTests>${skipUnitTests}</skipTests>
 					<forkCount>3</forkCount>
 					<reuseForks>true</reuseForks>
-					<argLine>@{argLine} -Xmx1024m -XX:MaxPermSize=256m</argLine>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-junit47</artifactId>
-						<version>3.0.0-M7</version>
+						<version>3.0.0</version>
 					</dependency>
 				</dependencies>
 			</plugin>
