@@ -11,8 +11,8 @@ These instructions will get you a copy of the project up and running on your loc
 Pre-requisites
 
 * GCloud SDK with java (latest version)
-* JDK 8
-* Lombok 1.16 or later
+* JDK 17
+* Lombok 1.18.26 or later
 * Maven
 
 ### Installation
@@ -33,9 +33,9 @@ Check that maven is installed:
 
 ```bash
 $ mvn --version
-Apache Maven 3.6.0
+Apache Maven 3.8.7
 Maven home: /usr/share/maven
-Java version: 1.8.0_212, vendor: AdoptOpenJDK, runtime: /usr/lib/jvm/jdk8u212-b04/jre
+Java 17.0.7
 ...
 ```
 
@@ -101,7 +101,7 @@ Once the above Prerequisite are done, we can follow the below steps to run the s
 
     ```bash
     # Running Google Cloud : 
-    java -jar  provider\schema-gc\target\os-schema-gc-0.0.1-spring-boot.jar
+    java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED -jar provider\schema-gc\target\os-schema-gc-0.0.1-spring-boot.jar 
 3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used:
 
     ```bash

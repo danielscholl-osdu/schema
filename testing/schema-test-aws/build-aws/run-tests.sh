@@ -24,7 +24,9 @@ export HOST=$SCHEMA_URL
 
 
 #### RUN INTEGRATION TEST #########################################################################
-mvn verify -f "$SCRIPT_SOURCE_DIR"/../pom.xml -Dcucumber.options="--plugin junit:target/junit-report.xml --tags @SchemaService"
+JAVA_HOME=$JAVA17_HOME
+
+mvn verify --no-transfer-progress -f "$SCRIPT_SOURCE_DIR"/../pom.xml -Dcucumber.options="--plugin junit:target/junit-report.xml --tags @SchemaService"
 TEST_EXIT_CODE=$?
 
 #### COPY TEST REPORTS #########################################################################

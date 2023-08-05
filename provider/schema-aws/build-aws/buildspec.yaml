@@ -30,13 +30,9 @@ env:
 phases:
   install:
     runtime-versions:
-      java: corretto8
+      java: corretto17
     commands:
-      # fix error noted here: https://github.com/yarnpkg/yarn/issues/7866
-      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
       - if [ $(echo $CODEBUILD_SOURCE_VERSION | grep -c  ^refs/heads.*) -eq 1 ]; then echo "Branch name found"; else echo "This build only supports branch builds" && exit 1; fi
-      - apt-get update -y
-      - apt-get install -y maven
       - java -version
       - mvn -version
       - mkdir -p /root/.m2
@@ -45,9 +41,6 @@ phases:
       - export AWS_ACCOUNT_ID=`aws sts get-caller-identity | grep Account | cut -d':' -f 2 | cut -d'"' -f 2`
       - export AWS_OSDU_DEV_MAVEN_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain $AWS_OSDU_DEV_MAVEN_DOMAIN --domain-owner $AWS_ACCOUNT_ID --query authorizationToken --output text`
       # Install git secrets
-      #TODO temporarily adding hotfix, due to https://github.com/awslabs/git-secrets/issues/220
-      - export SAY_LOCATION=`ln -s "$(which echo)" say`
-      - export PATH="$PATH:$SAY_LOCATION"
 
       - git clone https://github.com/awslabs/git-secrets.git
       - cd git-secrets && make install && cd ..
@@ -55,7 +48,9 @@ phases:
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
-      - $(aws ecr get-login --no-include-email --region $AWS_REGION) # authenticate with ECR via the AWS CLI
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+      - echo "Logging into Docker Hub..."
+      - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
   build:
     commands:
       - export REPO_NAME=${PWD##*/}
@@ -77,8 +72,8 @@ phases:
       - if [ "$GIT_SECRETS_SCAN_RESULT" = "FAILED" ]; then echo "Secrets detected!" && exit 1; fi
 
       - echo "Building primary service assemblies..."
-      - mvn install -N # required for this service to install the parent pom so that the integration tests will find it
-      - mvn -B test install sonar:sonar -pl .,schema-core,provider/schema-aws -Ddeployment.environment=prod -Dsonar.login=${SONAR_USERNAME} -Dsonar.password=${SONAR_PASSWORD} -Dsonar.branch.name=${BRANCH_NAME} 
+      - mvn --no-transfer-progress install -N # required for this service to install the parent pom so that the integration tests will find it
+      - mvn --no-transfer-progress -B test install -pl .,schema-core,provider/schema-aws -Ddeployment.environment=prod -Dsonar.login=${SONAR_USERNAME} -Dsonar.password=${SONAR_PASSWORD} -Dsonar.branch.name=${BRANCH_NAME}
 
       - echo "Building integration testing assemblies and gathering artifacts..."
        #Needed to add this for Windows
@@ -92,9 +87,6 @@ phases:
       - sed -i "s|__CONTAINER__|$ECR_IMAGE|"  devops/aws/chart/values.yaml
       - echo "--Copying Helm Charts to ${OUTPUT_DIR:-dist}--"
       - rsync -r devops/aws/* "${OUTPUT_DIR:-dist}"
-
-      - echo "Logging into Docker Hub..."
-      - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
       - echo "Building docker image..."
       - docker build -f provider/schema-aws/build-aws/Dockerfile -t ${ECR_IMAGE} .
@@ -110,7 +102,7 @@ phases:
           --artifact ${ECR_IMAGE}
   post_build:
     commands:
-      - cp provider/schema-aws/target/dependency-check-report.html ${OUTPUT_DIR}
+      - #cp provider/schema-aws/target/dependency-check-report.html ${OUTPUT_DIR}
 reports:
   SurefireReports: # CodeBuild will create a report group called "SurefireReports".
     files: #Store all of the files

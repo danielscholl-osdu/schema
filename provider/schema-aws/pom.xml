@@ -30,6 +30,9 @@
         <aws.version>1.11.1018</aws.version>
         <jackson-databind.version>2.13.4</jackson-databind.version>
         <jackson.version>2.13.2</jackson.version>
+        <java.version>17</java.version>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
     </properties>
 
 	<dependencyManagement>
@@ -153,6 +156,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Required for JUnit 4 tests to run -->
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

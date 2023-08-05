@@ -19,7 +19,7 @@
     <module>schema-test-core</module>
     <module>schema-test-gc</module>
     <module>schema-test-azure</module>
-	  <module>schema-test-baremetal</module>
+    <module>schema-test-baremetal</module>
   </modules>
 
   <repositories>
