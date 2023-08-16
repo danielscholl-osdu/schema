@@ -39,12 +39,11 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class AwsEntityTypeStoreTest {
 
-  @InjectMocks
-  private AwsEntityTypeStore entityTypeStore;
+	@InjectMocks
+	private AwsEntityTypeStore entityTypeStore;
 
-
-  @Mock
-  private DpsHeaders headers;
+	@Mock
+	private DpsHeaders headers;
 
 	@Mock
 	private DynamoDBQueryHelperFactory queryHelperFactory;
@@ -52,70 +51,91 @@ public class AwsEntityTypeStoreTest {
 	@Mock
 	private DynamoDBQueryHelperV2 queryHelper;
 
-  @Mock
-  private JaxRsDpsLog logger;
+	@Mock
+	private JaxRsDpsLog logger;
 
-  private static final String COMMON_TENANT_ID = "common";
+	private static final String COMMON_TENANT_ID = "common";
 
-  @Before
-  public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 
-    Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
-		.thenReturn(queryHelper);
-    ReflectionTestUtils.setField(entityTypeStore, "sharedTenant", COMMON_TENANT_ID);
-    
-  }
+		Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
+				.thenReturn(queryHelper);
+		ReflectionTestUtils.setField(entityTypeStore, "sharedTenant", COMMON_TENANT_ID);
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+	}
 
-  @Test
-  public void get() throws NotFoundException, ApplicationException {
-    String entityTypeId = "id";
-    String partitionId = "partitionId";
-    EntityType expected = new EntityType();
-    EntityTypeDoc entityTypeDoc = new EntityTypeDoc("id", partitionId, expected);
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(entityTypeDoc);
-    Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
+	@Test
+	public void get() throws NotFoundException, ApplicationException {
+		String entityTypeId = "id";
+		String partitionId = "partitionId";
+		EntityType expected = new EntityType();
+		EntityTypeDoc entityTypeDoc = new EntityTypeDoc("id", partitionId, expected);
 
-    EntityType actual = entityTypeStore.get(entityTypeId);
-    Assert.assertEquals(expected, actual);
-  }
+		Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(entityTypeDoc);
+		Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
 
-  @Test
-  public void get_SystemSchemas() throws NotFoundException, ApplicationException {
-    String entityTypeId = "id";
-    EntityType expected = new EntityType();
-    EntityTypeDoc entityTypeDoc = new EntityTypeDoc("id", COMMON_TENANT_ID, expected);
+		EntityType actual = entityTypeStore.get(entityTypeId);
+		Assert.assertEquals(expected, actual);
+	}
 
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(entityTypeDoc);
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+	@Test(expected = NotFoundException.class)
+	public void getThrowsNotFoundException() throws NotFoundException, ApplicationException {
+		String entityTypeId = "id";
+		String partitionId = "partitionId";
 
-    EntityType actual = entityTypeStore.get(entityTypeId);
-    Assert.assertEquals(expected, actual);
-  }
+		Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(null);
+		Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
 
-  @Test
-  public void create() throws BadRequestException, ApplicationException {
-    String partitionId = "partitionId";
-    EntityType expected = new EntityType();
+		entityTypeStore.get(entityTypeId);
+	}
 
-    Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
-    Mockito.doNothing().when(queryHelper).save(Mockito.any());
-    Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
-    EntityType actual = entityTypeStore.create(expected);
-    assertEquals(expected, actual);
-  }
+	@Test
+	public void get_SystemSchemas() throws NotFoundException, ApplicationException {
+		String entityTypeId = "id";
+		EntityType expected = new EntityType();
+		EntityTypeDoc entityTypeDoc = new EntityTypeDoc("id", COMMON_TENANT_ID, expected);
 
-  @Test
-  public void create_SystemSchemas() throws BadRequestException, ApplicationException {
-    EntityType expected = new EntityType();
+		Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(entityTypeDoc);
+		Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
 
-    Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
-    Mockito.doNothing().when(queryHelper).save(Mockito.any());
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    EntityType actual = entityTypeStore.create(expected);
-    assertEquals(expected, actual);
-  }
+		EntityType actual = entityTypeStore.get(entityTypeId);
+		Assert.assertEquals(expected, actual);
+	}
+
+	@Test
+	public void create() throws BadRequestException, ApplicationException {
+		String partitionId = "partitionId";
+		EntityType expected = new EntityType();
+
+		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
+		Mockito.doNothing().when(queryHelper).save(Mockito.any());
+		Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
+		EntityType actual = entityTypeStore.create(expected);
+		assertEquals(expected, actual);
+	}
+
+	@Test(expected = BadRequestException.class)
+	public void createHandleskeyExistsInTable() throws BadRequestException, ApplicationException {
+		String partitionId = "partitionId";
+		EntityType expected = new EntityType();
+
+		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
+		entityTypeStore.create(expected);
+	}
+	
+	@Test
+	public void create_SystemSchemas() throws BadRequestException, ApplicationException {
+		EntityType expected = new EntityType();
+
+		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
+		Mockito.doNothing().when(queryHelper).save(Mockito.any());
+		Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+		EntityType actual = entityTypeStore.create(expected);
+		assertEquals(expected, actual);
+	}
 }
