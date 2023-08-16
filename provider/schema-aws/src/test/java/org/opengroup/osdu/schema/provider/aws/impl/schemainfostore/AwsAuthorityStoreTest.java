@@ -13,6 +13,8 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,9 +35,6 @@ import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.aws.models.AuthorityDoc;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doThrow;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AwsAuthorityStoreTest {
@@ -130,7 +129,7 @@ public class AwsAuthorityStoreTest {
 	public void create_SystemSchemas() throws BadRequestException, ApplicationException {
 		Authority expected = new Authority();
 
-		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
 		Mockito.doNothing().when(queryHelper).save(Mockito.any());
 		Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
 		Authority actual = authorityStore.createSystemAuthority(expected);
