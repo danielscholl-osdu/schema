@@ -401,6 +401,10 @@ It can be overridden by:
 
 ![Screenshot](./pics/rabbit.PNG)
 
+Schema service responsible for publishing only.
+Consumer side `schema-changed` topic configuration located in
+[Indexer Baremetal Rabbit documentation](https://community.opengroup.org/osdu/platform/system/indexer-service/-/blob/master/provider/indexer-gc/docs/baremetal/README.md#exchanges-and-queues-configuration)
+
 ## Minio configuration
 
 ### Properties set in Partition service
