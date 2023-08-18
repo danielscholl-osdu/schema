@@ -73,7 +73,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
     }
 
     @Test(expected = BadRequestException.class)
-    public void updateSchemaInfoNodFound() throws ApplicationException, BadRequestException {
+    public void updateSchemaInfoNotFound() throws ApplicationException, BadRequestException {
         //given
         SchemaRequest schemaRequest = createSchemaRequest();
 
@@ -185,6 +185,15 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         //when
         schemaInfoStore.getSchemaInfo(id);
     }
+    
+    @Test(expected = ApplicationException.class)
+    public void getSchemaInfoThrowsApplicationException() throws ApplicationException, NotFoundException {
+        //given
+        String id = null;
+
+        //when
+        schemaInfoStore.getSchemaInfo(id);
+    }
 
     @Test
     public void getSystemSchemaInfo() throws ApplicationException, NotFoundException {
@@ -219,13 +228,26 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
 
         Mockito.when(awsSchemaStore.getSchema(anyString(), anyString())).thenReturn("content:minor:minor:minor:5555.1000.10000");
 
-        mongoTemplateHelper.insert(getSchemas("other", 10), SCHEMA_INFO_PREFIX + DATA_PARTITION);
-
         //when
         String latestMinorVerSchema = schemaInfoStore.getLatestMinorVerSchema(schemas.stream().findAny().get().getData());
 
         //then
         assertEquals(contentPrefix + schemas.get(9).getId(), latestMinorVerSchema);
+    }
+    
+    @Test
+    public void getLatestMinorVerSchemaHandlesNotFoundException() throws ApplicationException, NotFoundException {
+        //given
+
+        List<SchemaInfoDto> schemas = getSchemas("minor", 10);
+        mongoTemplateHelper.insert(schemas, SCHEMA_INFO_PREFIX + DATA_PARTITION);
+        Mockito.when(awsSchemaStore.getSchema(anyString(), anyString())).thenReturn(null);
+
+        //when
+        String latestMinorVerSchema = schemaInfoStore.getLatestMinorVerSchema(schemas.stream().findAny().get().getData());
+
+        //then
+        assertEquals(null, latestMinorVerSchema);
     }
 
     @Test
@@ -369,6 +391,15 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         //then
         assertTrue(before);
         assertFalse(after);
+    }
+    
+    @Test(expected = ApplicationException.class)
+    public void isUniqueThrowsApplicationException() throws ApplicationException {
+        //given
+        SchemaInfoDto schemaInfDto = createSchemaInfDto("test", 1);
+        
+        //when
+        schemaInfoStore.isUnique(schemaInfDto.getId(), null);
     }
 
     @Test

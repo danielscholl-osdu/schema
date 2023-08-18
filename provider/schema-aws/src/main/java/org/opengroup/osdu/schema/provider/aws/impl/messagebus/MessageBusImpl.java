@@ -29,7 +29,6 @@ public class MessageBusImpl implements IMessageBus{
 	public void publishMessage(String schemaId, String eventType) {
 		// TODO Auto-generated method stub
 		logger.warning("publish message not implemented yet");
-
 	}
 
 	@Override

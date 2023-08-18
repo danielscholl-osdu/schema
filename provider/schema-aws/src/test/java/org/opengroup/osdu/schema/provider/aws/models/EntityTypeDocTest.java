@@ -13,22 +13,39 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.models;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.opengroup.osdu.schema.model.EntityType;
 
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class EntityTypeDocTest {
+	@Test
+	public void entityTypeUNConverter_Success() {
+		EntityTypeDoc.EntityTypeConverter converter = new EntityTypeDoc.EntityTypeConverter();
+		EntityType obj = new EntityType();
+		obj.setEntityTypeId("id");
+		obj.setDescription("description");
+		obj.setIcon("icon");
+		obj.setStatus("status");
+		EntityType actual = converter.unconvert(converter.convert(obj));
+		assertEquals(obj, actual);
+	}
 
-  @Test
-  public void entityTypeConverter_Success() {
-    EntityTypeDoc.EntityTypeConverter converter = new EntityTypeDoc.EntityTypeConverter();
-    EntityType obj = new EntityType();
-    obj.setEntityTypeId("id");
-    obj.setDescription("description");
-    obj.setIcon("icon");
-    obj.setStatus("status");
-    EntityType actual = converter.unconvert(converter.convert(obj));
-    assertEquals(obj, actual);
-  }
+	@Test
+	public void entityTypeConverter_Success() throws JsonProcessingException {
+	    EntityTypeDoc.EntityTypeConverter converter = new EntityTypeDoc.EntityTypeConverter();
+	    EntityType obj = new EntityType();
+	    obj.setEntityTypeId("id");
+	    obj.setDescription("description");
+	    obj.setIcon("icon");
+	    obj.setStatus("status");
+	    
+	    String expected = new ObjectMapper().writeValueAsString(obj);
+	    String actual = converter.convert(obj);
+	    assertEquals(expected, actual);
+	  }
+
 }

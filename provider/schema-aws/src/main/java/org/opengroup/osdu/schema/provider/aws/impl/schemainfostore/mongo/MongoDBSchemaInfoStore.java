@@ -193,7 +193,7 @@ public class MongoDBSchemaInfoStore implements ISchemaInfoStore {
             schemaInfoDto = mongoDBMultiClusterFactory.getHelper(dataPartitionId).getById(schemaId, SchemaInfoDto.class, getCollection(dataPartitionId));
 
         } catch (Exception ex) {
-            log.error("Unable to delete schema info", ex);
+            log.error("Unable to read schema info", ex);
             throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
         }
         if (schemaInfoDto == null) {
