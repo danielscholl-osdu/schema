@@ -101,6 +101,10 @@ It can be overridden by:
 - through the Spring Boot property `gcp.schema-changed.topic-name`
 - environment variable `GCP_SCHEMA_CHANGED_TOPIC_NAME`
 
+Schema service responsible for publishing only.
+Consumer side `schema-changed` topic configuration located in
+[Indexer Google Cloud PubSub documentation](https://community.opengroup.org/osdu/platform/system/indexer-service/-/tree/master/provider/indexer-gc/docs/gc#pubsub-configuration)
+
 ## GCS configuration <a name="ObjectStoreConfig"></a>
 
 For each private tenant:
