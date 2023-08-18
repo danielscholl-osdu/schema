@@ -25,17 +25,42 @@ import static org.junit.Assert.assertEquals;
 
 public class SchemaInfoDocTest {
 
-  @Test
-  public void schemaInfoConverter_Success() {
-    SchemaInfoDoc.SchemaInfoConverter converter = new SchemaInfoDoc.SchemaInfoConverter();
-    SchemaInfo obj = new SchemaInfo();
-    obj.setCreatedBy("createdby");
-    obj.setDateCreated(new Date());
-    obj.setScope(SchemaScope.INTERNAL);
-    obj.setSchemaIdentity(new SchemaIdentity());
-    obj.setStatus(SchemaStatus.DEVELOPMENT);
+	@Test
+	public void schemaInfoConverter_Success() {
+		SchemaInfoDoc.SchemaInfoConverter converter = new SchemaInfoDoc.SchemaInfoConverter();
+		SchemaInfo obj = new SchemaInfo();
+		obj.setCreatedBy("createdby");
+		obj.setDateCreated(new Date());
+		obj.setScope(SchemaScope.INTERNAL);
+		obj.setSchemaIdentity(new SchemaIdentity());
+		obj.setStatus(SchemaStatus.DEVELOPMENT);
 
-    SchemaInfo actual = converter.unconvert(converter.convert(obj));
-    assertEquals(obj, actual);
-  }
+		SchemaInfo actual = converter.unconvert(converter.convert(obj));
+		assertEquals(obj, actual);
+	}
+
+	@Test
+	public void mapFromMapsObject() {
+		SchemaInfo schemaInfo = new SchemaInfo(new SchemaIdentity(), "user@opendes.com", new Date(),
+				SchemaStatus.PUBLISHED, SchemaScope.INTERNAL, new SchemaIdentity());
+		String dataPartitionId = "dataPartitionId";
+		
+		SchemaIdentity schemaIdentity = schemaInfo.getSchemaIdentity();
+		SchemaStatus schemaStatus = schemaInfo.getStatus();
+		SchemaScope schemaScope = schemaInfo.getScope();
+		SchemaIdentity schemaSupersededBy = schemaInfo.getSupersededBy();
+
+		SchemaInfoDoc expected = new SchemaInfoDoc().builder().dataPartitionId(dataPartitionId).schemaInfo(schemaInfo)
+				.authority(schemaIdentity.getAuthority()).scope(schemaScope.name()).source(schemaIdentity.getSource())
+				.entityType(schemaIdentity.getEntityType()).status(schemaStatus.name())
+				.majorVersion(schemaIdentity.getSchemaVersionMajor())
+				.minorVersion(schemaIdentity.getSchemaVersionMinor())
+				.patchVersion(schemaIdentity.getSchemaVersionPatch())
+				.gsiPartitionKey(String.format("%s:%s:%s:%s", dataPartitionId, schemaIdentity.getAuthority(),
+						schemaIdentity.getSource(), schemaIdentity.getEntityType()))
+				.build();
+		
+		SchemaInfoDoc actual = SchemaInfoDoc.mapFrom(schemaInfo, dataPartitionId);
+		assertEquals(expected, actual);
+	}
 }

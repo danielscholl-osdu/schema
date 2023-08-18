@@ -14,9 +14,17 @@
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,17 +32,26 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelper;
 import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
 import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
+import org.opengroup.osdu.schema.enums.SchemaScope;
+import org.opengroup.osdu.schema.enums.SchemaStatus;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
+import org.opengroup.osdu.schema.exceptions.BadRequestException;
+import org.opengroup.osdu.schema.exceptions.NotFoundException;
+import org.opengroup.osdu.schema.model.QueryParams;
+import org.opengroup.osdu.schema.model.SchemaIdentity;
+import org.opengroup.osdu.schema.model.SchemaInfo;
+import org.opengroup.osdu.schema.model.SchemaRequest;
+import org.opengroup.osdu.schema.provider.aws.models.SchemaInfoDoc;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Collection;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AwsSchemaInfoStoreTest {
@@ -65,8 +82,10 @@ public class AwsSchemaInfoStoreTest {
 		ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", COMMON_TENANT_ID);
 
 		when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(String.class), Mockito.any()))
-		.thenReturn(queryHelper);
+				.thenReturn(queryHelper);
 
+		when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
+				.thenReturn(queryHelper);
 	}
 
 	@Test
@@ -116,9 +135,129 @@ public class AwsSchemaInfoStoreTest {
 		tenant2.setDataPartitionId("partitionId");
 		Collection<TenantInfo> tenants = Lists.newArrayList(tenant1, tenant2);
 		when(this.tenantFactory.listTenantInfo()).thenReturn(tenants);
-		
+
 		when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(true);
 		Boolean actual = schemaInfoStore.isUniqueSystemSchema(schemaId);
 		assertEquals(false, actual);
+	}
+
+	@Test
+	public void getSchemaInfo_GetsSchemaInfro() throws ApplicationException, NotFoundException {
+		String schemaId = "schemaId";
+		SchemaInfo schemaInfo = new SchemaInfo();
+		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(null, null, null, null, null, null, null, null, null, null,
+				null, schemaInfo);
+
+		when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(schemaInfoDoc);
+		SchemaInfo actual = schemaInfoStore.getSchemaInfo(schemaId);
+		assertEquals(schemaInfo, actual);
+	}
+
+	@Test(expected = NotFoundException.class)
+	public void getSchemaInfo_ThrowsException() throws ApplicationException, NotFoundException {
+		String schemaId = "schemaId";
+
+		when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(null);
+		schemaInfoStore.getSchemaInfo(schemaId);
+	}
+
+	@Test
+	public void getSystemSchemaInfo_GetsSystemSchemaInfo() throws ApplicationException, NotFoundException {
+		String schemaId = "schemaId";
+		SchemaInfo schemaInfo = new SchemaInfo();
+		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(null, null, null, null, null, null, null, null, null, null,
+				null, schemaInfo);
+
+		when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(schemaInfoDoc);
+		SchemaInfo actual = schemaInfoStore.getSystemSchemaInfo(schemaId);
+		assertEquals(schemaInfo, actual);
+	}
+
+	/*
+	@Test
+	public void updateSchemaInfo_UpdatesSchemaInfo() throws ApplicationException, NotFoundException {
+		String partitionId = "partitionId";
+		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
+		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT, SchemaScope.INTERNAL,
+				new SchemaIdentity());
+		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
+
+		when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
+	//	doNothing().when(queryHelper).save(SchemaRequest.class);
+		SchemaInfo actual = schemaInfoStore.updateSchemaInfo(schemaRequest);
+		assertEquals(schemaInfo, actual);
+	}
+	
+	/*
+	 * @Test(expected = NotFoundException.class) public void
+	 * updateSchemaInfo_ThrowsException() throws ApplicationException,
+	 * NotFoundException { String schemaId = "schemaId";
+	 * 
+	 * when(queryHelper.loadByPrimaryKey(Mockito.any(),
+	 * Mockito.any())).thenReturn(null); schemaInfoStore.getSchemaInfo(schemaId); }
+	 */
+	
+	public void getLatestMinorVerSchema() throws ApplicationException{
+		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, 1001L, null, "schema_id");
+		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, "user@opendes.com", new Date(),
+				SchemaStatus.PUBLISHED, SchemaScope.INTERNAL, new SchemaIdentity());
+		
+		
+	    String dataPartitionId = headers.getPartitionId();
+	    SchemaInfoDoc fullSchemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, headers.getPartitionId());
+
+	    SchemaInfoDoc gsiQuery = new SchemaInfoDoc();
+	    gsiQuery.setGsiPartitionKey(fullSchemaInfoDoc.getGsiPartitionKey());
+	  //  PaginatedQueryList<Object> results = new PaginatedQueryList<SchemaInfoDoc>(SchemaInfoDoc.class, gsiQuery, "MajorVersion", fullSchemaInfoDoc.getMajorVersion());
+
+		TreeMap<Long, SchemaInfoDoc> sortedMap = new TreeMap<>(Collections.reverseOrder());
+	//	sortedMap.put(results.get(0).getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(), results.get(0));
+		
+	//	SchemaInfoDoc item = sortedMap.firstEntry().getValue();
+	//    String schemaId = item.getSchemaInfo().getSchemaIdentity().getId();
+		
+		//String expected = schemaStore.getSchema(dataPartitionId, schemaId);
+		
+		when(queryHelper.queryByGSI(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(null);
+		String actual = schemaInfoStore.getLatestMinorVerSchema(schemaInfo);
+		assertEquals(new String(), actual);
+	}
+	
+	public void getSchemaInfoList() throws ApplicationException {
+		String tenantId = "tenantId";
+		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", false);
+		List<SchemaInfo> expected = new ArrayList<SchemaInfo>();
+
+		List<SchemaInfo> actual = schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+		assertEquals(expected, actual);
+	}
+	
+	public void getSystemSchemaInfoList() throws ApplicationException, BadRequestException{
+		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", false);
+		List<SchemaInfo> expected = new ArrayList<SchemaInfo>();
+
+		List<SchemaInfo> actual = schemaInfoStore.getSystemSchemaInfoList(queryParams);
+		assertEquals(expected, actual);
+	}
+
+	public void cleanSchema() throws ApplicationException {
+		String schemaId = "schemaId";
+		doNothing().when(queryHelper).deleteByPrimaryKey(SchemaRequest.class, new SchemaInfoDoc());
+		boolean actual = schemaInfoStore.cleanSchema(schemaId);
+		assertEquals(true, actual);
+	}
+	
+	public void cleanSchema_OnException() throws ApplicationException {
+		String schemaId = "schemaId";
+		doThrow(new ApplicationException()).when(queryHelper).deleteByPrimaryKey(SchemaRequest.class, new SchemaInfoDoc());
+		boolean actual = schemaInfoStore.cleanSchema(schemaId);
+		assertEquals(false, actual);
+	}
+	
+	public void cleanSystemSchema() throws ApplicationException {
+		String schemaId = "schemaId";
+		doNothing().when(queryHelper).deleteByPrimaryKey(SchemaRequest.class, new SchemaInfoDoc());
+		boolean actual = schemaInfoStore.cleanSystemSchema(schemaId);
+		assertEquals(true, actual);
 	}
 }
