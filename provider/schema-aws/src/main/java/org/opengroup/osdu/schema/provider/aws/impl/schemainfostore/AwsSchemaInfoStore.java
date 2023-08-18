@@ -128,12 +128,11 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, partitionId);
     schemaInfoDoc.setId(id);
 
-    validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
-
-
     try {
+      validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
       queryHelper.save(schemaInfoDoc);
-
+    } catch (BadRequestException ex) {
+      throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
     } catch (Exception ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
@@ -168,11 +167,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) == true) {
       throw new BadRequestException("Schema " + id + " already exist. Can't create again.");
     }
-    validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
-
 
     try {
+      validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
       queryHelper.save(schemaInfoDoc);
+    } catch (BadRequestException ex) {
+      throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
     } catch (Exception ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
