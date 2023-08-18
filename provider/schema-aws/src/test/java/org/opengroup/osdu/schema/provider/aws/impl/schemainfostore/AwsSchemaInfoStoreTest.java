@@ -197,6 +197,7 @@ public class AwsSchemaInfoStoreTest {
 	 * Mockito.any())).thenReturn(null); schemaInfoStore.getSchemaInfo(schemaId); }
 	 */
 	
+	@Test
 	public void getLatestMinorVerSchema() throws ApplicationException{
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, 1001L, null, "schema_id");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, "user@opendes.com", new Date(),
@@ -223,6 +224,7 @@ public class AwsSchemaInfoStoreTest {
 		assertEquals(new String(), actual);
 	}
 	
+	@Test
 	public void getSchemaInfoList() throws ApplicationException {
 		String tenantId = "tenantId";
 		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", false);
@@ -232,6 +234,7 @@ public class AwsSchemaInfoStoreTest {
 		assertEquals(expected, actual);
 	}
 	
+	@Test
 	public void getSystemSchemaInfoList() throws ApplicationException, BadRequestException{
 		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", false);
 		List<SchemaInfo> expected = new ArrayList<SchemaInfo>();
@@ -240,6 +243,7 @@ public class AwsSchemaInfoStoreTest {
 		assertEquals(expected, actual);
 	}
 
+	@Test
 	public void cleanSchema() throws ApplicationException {
 		String schemaId = "schemaId";
 		doNothing().when(queryHelper).deleteByPrimaryKey(SchemaRequest.class, new SchemaInfoDoc());
@@ -247,6 +251,7 @@ public class AwsSchemaInfoStoreTest {
 		assertEquals(true, actual);
 	}
 	
+	@Test
 	public void cleanSchema_OnException() throws ApplicationException {
 		String schemaId = "schemaId";
 		doThrow(new ApplicationException()).when(queryHelper).deleteByPrimaryKey(SchemaRequest.class, new SchemaInfoDoc());
@@ -254,6 +259,7 @@ public class AwsSchemaInfoStoreTest {
 		assertEquals(false, actual);
 	}
 	
+	@Test
 	public void cleanSystemSchema() throws ApplicationException {
 		String schemaId = "schemaId";
 		doNothing().when(queryHelper).deleteByPrimaryKey(SchemaRequest.class, new SchemaInfoDoc());
