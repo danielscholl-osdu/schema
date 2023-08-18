@@ -235,7 +235,7 @@ public class AwsSchemaInfoStoreTest {
 	public void getSchemaInfoList() throws ApplicationException {
 		String tenantId = "tenantId";
 		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status",
-				"scope", false);
+				"scope", true);
 		List<SchemaInfo> expected = new ArrayList<SchemaInfo>();
 		List<SchemaInfo> actual = schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
 		assertEquals(expected, actual);
