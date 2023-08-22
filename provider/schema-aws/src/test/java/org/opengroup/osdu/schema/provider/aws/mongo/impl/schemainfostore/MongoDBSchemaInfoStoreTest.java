@@ -47,6 +47,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
 
     @Autowired
     private MongoDBSchemaInfoStore schemaInfoStore;
+    
     @Autowired
     private ISchemaStore awsSchemaStore;
 
@@ -72,6 +73,33 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertEquals(SchemaScope.SHARED, fromDb.getData().getScope());
     }
 
+    @Test
+    public void updateSchemaInfo_WithSupersededBy() throws ApplicationException, BadRequestException {
+        //given
+        SchemaRequest schemaRequest = createSchemaRequest();
+        SchemaInfoDto schemaInfoDto = new SchemaInfoDto();
+        SchemaInfo requestSchemaInfo = schemaRequest.getSchemaInfo();
+        
+        SchemaIdentity schemaIdentity = new SchemaIdentity();
+        schemaIdentity.setId(createSchemaId(schemaIdentity));
+        requestSchemaInfo.setSupersededBy(schemaIdentity);
+        String id = requestSchemaInfo.getSchemaIdentity().getId();
+        schemaInfoDto.setId(id);
+        schemaInfoDto.setData(requestSchemaInfo);
+        SchemaInfoDto inDb = (SchemaInfoDto) mongoTemplateHelper.insert(schemaInfoDto, SCHEMA_INFO_PREFIX + DATA_PARTITION);
+        assertNotNull(inDb);
+
+        requestSchemaInfo.setScope(SchemaScope.SHARED);
+        //when
+        schemaInfoStore.updateSchemaInfo(schemaRequest);
+
+        //then
+        SchemaInfoDto fromDb = (SchemaInfoDto) mongoTemplateHelper.findById(id, SchemaInfoDto.class, SCHEMA_INFO_PREFIX + DATA_PARTITION);
+        assertNotNull(fromDb);
+        assertEquals(SchemaScope.SHARED, fromDb.getData().getScope());
+    }
+    
+   
     @Test(expected = BadRequestException.class)
     public void updateSchemaInfoNotFound() throws ApplicationException, BadRequestException {
         //given

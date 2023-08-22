@@ -183,8 +183,7 @@ public class AwsSchemaInfoStoreTest {
 				SchemaScope.INTERNAL, new SchemaIdentity());
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
 
-		SchemaInfo actual = schemaInfoStore.updateSchemaInfo(schemaRequest);
-		assertEquals(schemaInfo, actual);
+		schemaInfoStore.updateSchemaInfo(schemaRequest);
 	}
 
 	@Test(expected = ApplicationException.class)
@@ -194,8 +193,7 @@ public class AwsSchemaInfoStoreTest {
 				SchemaScope.INTERNAL, new SchemaIdentity());
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
 
-		SchemaInfo actual = schemaInfoStore.updateSystemSchemaInfo(schemaRequest);
-		assertEquals(schemaInfo, actual);
+		schemaInfoStore.updateSystemSchemaInfo(schemaRequest);
 	}
 
 	@Test(expected = BadRequestException.class)
@@ -232,6 +230,18 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
+	public void getLatestMinorVerSchema() throws ApplicationException{
+ 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, 1001L, null, "schema_id");
+ 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, "user@opendes.com", new Date(),
+ 				SchemaStatus.PUBLISHED, SchemaScope.INTERNAL, new SchemaIdentity());
+ 	    SchemaInfoDoc fullSchemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, headers.getPartitionId());
+ 	    
+ 		when(queryHelper.queryByGSI(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(null);
+ 		String actual = schemaInfoStore.getLatestMinorVerSchema(schemaInfo);
+ 		assertEquals(new String(), actual);
+ 	}
+	
+	@Test
 	public void getSchemaInfoList() throws ApplicationException {
 		String tenantId = "tenantId";
 		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status",
@@ -252,11 +262,20 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void cleanSchema() throws ApplicationException {
+	public void cleanSchema_ReturnsTrue() throws ApplicationException {
 		String schemaId = "schemaId";
 		doNothing().when(queryHelper).deleteByPrimaryKey(Mockito.any(), Mockito.any());
 		boolean actual = schemaInfoStore.cleanSchema(schemaId);
 		assertEquals(true, actual);
+	}
+	
+	@Test
+	public void cleanSchema_ReturnsFalseOnException() throws ApplicationException {
+		String schemaId = "schemaId";
+		doThrow(new RuntimeException()).when(queryHelper).deleteByPrimaryKey(Mockito.any(), Mockito.any());
+		
+		boolean actual = schemaInfoStore.cleanSchema(schemaId);
+		assertEquals(false, actual);
 	}
 
 	@Test

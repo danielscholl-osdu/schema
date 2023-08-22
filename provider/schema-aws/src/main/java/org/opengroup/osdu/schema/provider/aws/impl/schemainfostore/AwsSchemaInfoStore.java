@@ -203,7 +203,8 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
     TreeMap<Long, SchemaInfoDoc> sortedMap = new TreeMap<>(Collections.reverseOrder());
 
-    results.forEach(item -> sortedMap.put(item.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(), item));
+    if(results != null && !results.isEmpty())
+    	results.forEach(item -> sortedMap.put(item.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(), item));
 
     if (sortedMap.size() != 0) {
       SchemaInfoDoc item = sortedMap.firstEntry().getValue();

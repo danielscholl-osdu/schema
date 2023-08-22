@@ -14,20 +14,19 @@
 
 package org.opengroup.osdu.schema.provider.aws.security;
 
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
 import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
 import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
-import org.opengroup.osdu.core.aws.ssm.SSMUtil;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.provider.interfaces.authorization.IAuthorizationServiceForServiceAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
 
 @Component
 public class AuthorizationServiceForServiceAdminImpl implements IAuthorizationServiceForServiceAdmin {
