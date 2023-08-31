@@ -12,11 +12,13 @@ import org.mockito.Mock;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.common.partition.PartitionPropertyResolver;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.obm.driver.Driver;
 import org.opengroup.osdu.core.gcp.obm.driver.ObmDriverRuntimeException;
 import org.opengroup.osdu.core.gcp.obm.model.Blob;
 import org.opengroup.osdu.core.gcp.obm.persistence.ObmDestination;
+import org.opengroup.osdu.schema.configuration.PartitionPropertyNames;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.impl.ObmDestinationProvider;
@@ -37,27 +39,24 @@ public class ObmSchemaStoreTest {
 
     @Mock
     private Driver driver;
-
     @Mock
     private Blob blob;
-
     @Mock
     private ObmDestinationProvider destinationProvider;
-
     @Mock
     DpsHeaders headers;
-
     @Mock
     ITenantFactory tenantFactory;
-
     @Mock
     TenantInfo TenantInfo;
-
     @Mock
     JaxRsDpsLog log;
-
     @Mock
     PropertiesConfiguration configuration;
+    @Mock
+    PartitionPropertyNames partitionPropertyNames;
+    @Mock
+    PartitionPropertyResolver partitionPropertyResolver;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

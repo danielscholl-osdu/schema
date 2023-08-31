@@ -13,16 +13,18 @@ Must have:
 
 Defined in default application property file but possible to override:
 
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `LOG_PREFIX` | `schema` | Logging prefix | no | - |
-| `LOG_LEVEL` | `DEBUG` | Logging level | no | - |
-| `SERVER_SERVLET_CONTEXPATH` | `/api/schema-service/v1` | Servlet context path | no | - |
-| `AUTHORIZE_API` | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint | no | output of infrastructure deployment |
-| `PARTITION_API` | ex `http://localhost:8081/api/partition/v1` | Partition service endpoint | no | - |
-| `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
-| `GCP_SCHEMA_CHANGED_MESSAGING_ENABLED` | `true` OR `false` | Allows to configure message publishing about schemas changes to Pub/Sub | no | - |
-| `GCP_SCHEMA_CHANGED_TOPIC_NAME` | `schema-changed` | Topic for schema changes events | no | - |
+| name                                             | value                                         | description                                                             | sensitive? | source                                                       |
+|--------------------------------------------------|-----------------------------------------------|-------------------------------------------------------------------------|------------|--------------------------------------------------------------|
+| `LOG_PREFIX`                                     | `schema`                                      | Logging prefix                                                          | no         | -                                                            |
+| `LOG_LEVEL`                                      | `DEBUG`                                       | Logging level                                                           | no         | -                                                            |
+| `SERVER_SERVLET_CONTEXPATH`                      | `/api/schema-service/v1`                      | Servlet context path                                                    | no         | -                                                            |
+| `AUTHORIZE_API`                                  | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint                                               | no         | output of infrastructure deployment                          |
+| `PARTITION_API`                                  | ex `http://localhost:8081/api/partition/v1`   | Partition service endpoint                                              | no         | -                                                            |
+| `GOOGLE_APPLICATION_CREDENTIALS`                 | ex `/path/to/directory/service-key.json`      | Service account credentials, you only need this if running locally      | yes        | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
+| `GCP_SCHEMA_CHANGED_MESSAGING_ENABLED`           | `true` OR `false`                             | Allows to configure message publishing about schemas changes to Pub/Sub | no         | -                                                            |
+| `GCP_SCHEMA_CHANGED_TOPIC_NAME`                  | `schema-changed`                              | Topic for schema changes events                                         | no         | -                                                            |
+| `PARTITION_PROPERTIES_SCHEMA_BUCKET_NAME`        | ex `schema.bucket.name`                       | name of partition property for schema bucket name value                 | yes        | -                                                            |
+| `PARTITION_PROPERTIES_SYSTEM_SCHEMA_BUCKET_NAME` | ex `system.schema.bucket.name`                | name of partition property for system schema bucket name value          | yes        | -                                                            |
 
 These variables define service behavior, and are used to switch between `Reference` or `Google Cloud` environments, their overriding
 and usage in mixed mode was not tested. Usage of spring profiles is preferred.
@@ -34,6 +36,14 @@ and usage in mixed mode was not tested. Usage of spring profiles is preferred.
 | `OSMDRIVER` | `datastore` or `postgres` | Osm driver mode that defines which KV storage will be used | no | - |
 | `OBMDRIVER` | `gcs` or `minio` | Obm driver mode that defines which object storage will be used | no | - |
 | `SERVICE_TOKEN_PROVIDER` | `GCP` or `OPENID` |Service account token provider, `GCP` means use Google service account `OPEIND` means use OpenId provider like `Keycloak` | no | - |
+
+## Partition level config
+
+### Non-sensitive partition properties
+| name                                        | value                          | description                          | sensitive? | source                                           |
+|---------------------------------------------|--------------------------------|--------------------------------------|------------|--------------------------------------------------|
+| `<SCHEMA_BUCKET_NAME_PROPERTY_NAME>`        | ex `schema.bucket.name`        | schema address in OBM storage        | no         | `PARTITION_PROPERTIES_SCHEMA_BUCKET_NAME`        |
+| `<SYSTEM_SCHEMA_BUCKET_NAME_PROPERTY_NAME>` | ex `system.schema.bucket.name` | system schema address in OBM storage | no         | `PARTITION_PROPERTIES_SYSTEM_SCHEMA_BUCKET_NAME` |
 
 ## Testing
 
