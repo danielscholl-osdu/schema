@@ -9,6 +9,7 @@
 	<artifactId>os-schema-ibm</artifactId>
 	<description>IBM cloud related implementation staff.</description>
 	<packaging>jar</packaging>
+	<version>0.24.0-SNAPSHOT</version>
 	
 	<properties>
 		<start-class>org.opengroup.osdu.schema.provider.ibm.app.SchemaIBMApplication</start-class>
