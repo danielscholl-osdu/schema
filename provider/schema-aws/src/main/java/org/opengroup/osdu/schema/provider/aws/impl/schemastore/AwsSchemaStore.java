@@ -1,16 +1,18 @@
-// Copyright © 2020 Amazon Web Services
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/* Copyright © 2020 Amazon Web Services
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ */
 package org.opengroup.osdu.schema.provider.aws.impl.schemastore;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -36,7 +38,7 @@ import java.nio.charset.StandardCharsets;
 
 @Repository
 public class AwsSchemaStore implements ISchemaStore {
-
+  private  static String serviceName = "AwsSchemaStore";
   @Inject
   private DpsHeaders headers;
 
@@ -111,14 +113,14 @@ public class AwsSchemaStore implements ISchemaStore {
       content = s3.getObjectAsString(s3ClientWithBucket.getBucketName(), path);
     } catch (AmazonS3Exception ex) {
       if (ex.getErrorCode().equals("NoSuchKey")) {  // or could be ex.getStatusCode == 404 (depends)
-        logger.error("AwsSchemaStore", String.format(SchemaConstants.SCHEMA_NOT_PRESENT, ex.getErrorMessage()));
+        logger.error(serviceName, String.format(SchemaConstants.SCHEMA_NOT_PRESENT, ex.getErrorMessage()));
         throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
       } else {
-        logger.error("AwsSchemaStore", String.format("Get Schema for %s failed: ", ex.getErrorMessage()));
+        logger.error(serviceName, String.format("Get Schema for %s failed: ", ex.getErrorMessage()));
         throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
       }
     } catch (Exception ex) {
-      logger.error("AwsSchemaStore", String.format("Get Schema for %s failed: ", ex.toString()));
+      logger.error(serviceName, String.format("Get Schema for %s failed: ", ex.toString()));
       throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
     }
 
