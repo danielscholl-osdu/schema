@@ -75,8 +75,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Inject
   private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
-
-  @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}")
+   @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}")
   String schemaInfoTableParameterRelativePath;
 
   @Value("${shared.tenant.name:common}")
@@ -85,12 +84,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper() {
     return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, schemaInfoTableParameterRelativePath);
   }
-
   private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper(String dataPartitionId) {
     return dynamoDBQueryHelperFactory.getQueryHelperForPartition(dataPartitionId, schemaInfoTableParameterRelativePath);
   }
-
-
   @Override
   public SchemaInfo getSchemaInfo(String schemaId) throws NotFoundException {
 
@@ -110,6 +106,20 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     return this.getSchemaInfo(schemaId);
   }
 
+  private SchemaInfoDoc insertSchemaRecord(SchemaInfo schemaInfo, SchemaInfoDoc schemaInfoDoc, String partitionId) throws ApplicationException, BadRequestException{
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+    try {
+      validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
+      queryHelper.save(schemaInfoDoc);
+    } catch (BadRequestException ex) {
+      throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+    } catch (Exception ex) {
+      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+      throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+    }
+    return schemaInfoDoc;
+  }
+
   @Override
   public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
     // The SchemaService calls the getSchemaInfo method and verifies the entity is updatable, however,
@@ -117,7 +127,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     // createdBy and createdOn.  This causes the need to query the entity twice which is inefficient.
     // This should be fixed
 
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+
 
     String partitionId = headers.getPartitionId();
     String userEmail = headers.getUserEmail();
@@ -129,17 +139,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     schemaInfo.setDateCreated(DateTime.now().toDate());
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, partitionId);
     schemaInfoDoc.setId(id);
-
-    try {
-      validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
-      queryHelper.save(schemaInfoDoc);
-    } catch (BadRequestException ex) {
-      throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
-    } catch (Exception ex) {
-      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-      throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
-    }
-
+    schemaInfoDoc = insertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
     return schemaInfoDoc.getSchemaInfo();
   }
 
@@ -169,17 +169,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     if (queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) ){
       throw new BadRequestException("Schema " + id + " already exist. Can't create again.");
     }
-
-    try {
-      validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
-      queryHelper.save(schemaInfoDoc);
-    } catch (BadRequestException ex) {
-      throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
-    } catch (Exception ex) {
-      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-      throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
-    }
-
+    schemaInfoDoc = insertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
     return schemaInfoDoc.getSchemaInfo();
   }
 

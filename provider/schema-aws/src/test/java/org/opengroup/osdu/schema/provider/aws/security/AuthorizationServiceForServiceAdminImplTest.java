@@ -14,9 +14,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
-
+import org.opengroup.osdu.schema.exceptions.ApplicationException;
+import org.springframework.test.context.TestPropertySource;
 
 @RunWith(MockitoJUnitRunner.class)
+@TestPropertySource(locations="classpath:application.properties")
 public class AuthorizationServiceForServiceAdminImplTest {
 
 	@InjectMocks
@@ -25,12 +27,12 @@ public class AuthorizationServiceForServiceAdminImplTest {
 	@Mock
 	private DpsHeaders headers;
 
-	@Test(expected = AppException.class)
+	@Test(expected =  AppException.class)
 	public void isDomainAdminServiceAccount_NoJWTtoken() {
 		authorizationServiceForServiceAdminImpl.isDomainAdminServiceAccount();
 	}
 	
-	@Test(expected = AppException.class)
+	@Test(expected =  AppException.class)
 	public void isDomainAdminServiceAccount_UnauthorizedUser() {
 		Map<String, String> header = new HashMap<>();
 		header.put(RequestKeys.AUTHORIZATION_HEADER_KEY, "AUTHORIZATION_HEADER_KEY");

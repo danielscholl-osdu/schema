@@ -33,6 +33,7 @@
         <java.version>17</java.version>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
+        <sonar.exclusions> **/mongo/**.java</sonar.exclusions>
     </properties>
 
 	<dependencyManagement>
@@ -155,7 +156,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
