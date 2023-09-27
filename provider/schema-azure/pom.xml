@@ -32,11 +32,24 @@
 		<cucumber.version>5.7.0</cucumber.version>
 		<nimbus-jose-jwt-azure.version>8.20.2</nimbus-jose-jwt-azure.version>
 		<spring-webmvc.version>5.3.26</spring-webmvc.version>
-
+		<netty.version>4.1.98.Final</netty.version>
+		<guava.version>32.1.2-jre</guava.version>
+		<woodstox-core.version>6.4.0</woodstox-core.version>
+		<reactor-netty.version>1.1.10</reactor-netty.version>
+		<reactor-core.version>3.4.19</reactor-core.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- netty-bom dependency to be declared before spring-boot-dependencies,
+     to pull all netty-transitive dependencies with same version -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-bom</artifactId>
+				<version>${netty.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.nimbusds</groupId>
 				<artifactId>nimbus-jose-jwt</artifactId>
@@ -106,7 +119,6 @@
 	</dependencyManagement>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-core-common</artifactId>
@@ -135,6 +147,10 @@
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.microsoft.azure</groupId>
+					<artifactId>documentdb-bulkexecutor</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -315,6 +331,38 @@
 			<version>1.18.26</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.woodstox</groupId>
+			<artifactId>woodstox-core</artifactId>
+			<version>${woodstox-core.version}</version>
+		</dependency>
+		<!-- reactor-netty related dependencies -->
+		<dependency>
+			<groupId>io.projectreactor.netty</groupId>
+			<artifactId>reactor-netty-http</artifactId>
+			<version>${reactor-netty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.netty</groupId>
+			<artifactId>reactor-netty-core</artifactId>
+			<version>${reactor-netty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.netty</groupId>
+			<artifactId>reactor-netty-http-brave</artifactId>
+			<version>${reactor-netty.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+			<version>${reactor-core.version}</version>
+		</dependency>
 
 		<dependency>
 			<!-- Required for JUnit 4 tests to run -->
@@ -322,7 +370,6 @@
 			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>
