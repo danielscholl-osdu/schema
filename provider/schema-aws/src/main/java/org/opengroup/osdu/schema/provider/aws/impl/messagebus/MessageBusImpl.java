@@ -27,13 +27,13 @@ public class MessageBusImpl implements IMessageBus{
 
 	@Override
 	public void publishMessage(String schemaId, String eventType) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		logger.warning("publish message not implemented yet");
 	}
 
 	@Override
 	public void publishMessageForSystemSchema(String schemaId, String eventType) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		logger.warning("publish message not implemented yet");
 	}
 
