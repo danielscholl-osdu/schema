@@ -13,17 +13,16 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,11 +49,6 @@ import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.aws.models.SchemaInfoDoc;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -81,7 +75,7 @@ public class AwsSchemaInfoStoreTest {
 	private static final String COMMON_TENANT_ID = "common";
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		ReflectionTestUtils.setField(schemaInfoStore, "sharedTenant", COMMON_TENANT_ID);
 
 		when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(String.class), Mockito.any()))
@@ -92,7 +86,7 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void isUnique_ifNotExists_returnTrue() throws ApplicationException {
+	public void isUnique_ifNotExists_returnTrue() {
 		String partitionId = "partitionId";
 		String schemaId = "schemaId";
 		when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
@@ -101,7 +95,7 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void isUnique_ifNotExists_returnTrue_SystemSchema() throws ApplicationException {
+	public void isUnique_ifNotExists_returnTrue_SystemSchema() {
 		String schemaId = "schemaId";
 
 		TenantInfo tenant1 = new TenantInfo();
@@ -119,7 +113,7 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void isUnique_ifExists_returnFalse() throws ApplicationException {
+	public void isUnique_ifExists_returnFalse() {
 		String partitionId = "partitionId";
 		String schemaId = "schemaId";
 		when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -128,7 +122,7 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void isUnique_ifExists_returnFalse_SystemSchema() throws ApplicationException {
+	public void isUnique_ifExists_returnFalse_SystemSchema() {
 		String schemaId = "schemaId";
 		TenantInfo tenant1 = new TenantInfo();
 		tenant1.setName(COMMON_TENANT_ID);
@@ -145,7 +139,7 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void getSchemaInfo_GetsSchemaInfro() throws ApplicationException, NotFoundException {
+	public void getSchemaInfo_GetsSchemaInfro() throws NotFoundException {
 		String schemaId = "schemaId";
 		SchemaInfo schemaInfo = new SchemaInfo();
 		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(null, null, null, null, null, null, null, null, null, null,
@@ -157,7 +151,7 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test(expected = NotFoundException.class)
-	public void getSchemaInfo_ThrowsException() throws ApplicationException, NotFoundException {
+	public void getSchemaInfo_ThrowsException() throws NotFoundException {
 		String schemaId = "schemaId";
 
 		when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(null);
@@ -165,7 +159,7 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void getSystemSchemaInfo_GetsSystemSchemaInfo() throws ApplicationException, NotFoundException {
+	public void getSystemSchemaInfo_GetsSystemSchemaInfo() throws NotFoundException {
 		String schemaId = "schemaId";
 		SchemaInfo schemaInfo = new SchemaInfo();
 		SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(null, null, null, null, null, null, null, null, null, null,
@@ -176,24 +170,26 @@ public class AwsSchemaInfoStoreTest {
 		assertEquals(schemaInfo, actual);
 	}
 
-	@Test(expected = ApplicationException.class)
-	public void updateSchemaInfo_UpdatesSchemaInfo() throws ApplicationException, NotFoundException {
+	@Test()
+	public void updateSchemaInfo_UpdatesSchemaInfo() throws ApplicationException{
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
 				SchemaScope.INTERNAL, new SchemaIdentity());
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
 
-		schemaInfoStore.updateSchemaInfo(schemaRequest);
+		SchemaInfo schemaInfo1 =  schemaInfoStore.updateSchemaInfo(schemaRequest);
+		assertNotNull(schemaInfo1);
 	}
 
-	@Test(expected = ApplicationException.class)
-	public void updateSystemSchemaInfo_UpdatesSystemSchemaInfo() throws ApplicationException, NotFoundException {
+	@Test()
+	public void updateSystemSchemaInfo_UpdatesSystemSchemaInfo() throws ApplicationException {
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
 				SchemaScope.INTERNAL, new SchemaIdentity());
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
 
-		schemaInfoStore.updateSystemSchemaInfo(schemaRequest);
+		SchemaInfo schemaInfo1 = schemaInfoStore.updateSystemSchemaInfo(schemaRequest);
+		assertNotNull(schemaInfo1);
 	}
 
 	@Test(expected = BadRequestException.class)
@@ -207,7 +203,7 @@ public class AwsSchemaInfoStoreTest {
 		schemaInfoStore.createSchemaInfo(schemaRequest);
 	}
 
-	@Test(expected = ApplicationException.class)
+	@Test()
 	public void createSchemaInfo_ThrowsApplicationException() throws ApplicationException, BadRequestException {
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
@@ -215,18 +211,21 @@ public class AwsSchemaInfoStoreTest {
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
 
 		when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
-		schemaInfoStore.createSchemaInfo(schemaRequest);
+//		assertThrows(ApplicationException.class, )
+			SchemaInfo schemaInfo1 = schemaInfoStore.createSchemaInfo(schemaRequest);
+		assertNotNull(schemaInfo1);
 	}
 
-	@Test(expected = ApplicationException.class)
+	@Test()
 	public void createSystemSchemaInfo_ThrowsApplicationException() throws ApplicationException, BadRequestException {
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
 				SchemaScope.INTERNAL, new SchemaIdentity());
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
 
-		when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
-		schemaInfoStore.createSystemSchemaInfo(schemaRequest);
+		when(queryHelper.keyExistsInTable(eq(SchemaInfoDoc.class), Mockito.any())).thenReturn(false);
+		SchemaInfo schemaInfo1 = schemaInfoStore.createSystemSchemaInfo(schemaRequest);
+		assertNotNull(schemaInfo1);
 	}
 
 	@Test
@@ -234,15 +233,14 @@ public class AwsSchemaInfoStoreTest {
  		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, 1001L, null, "schema_id");
  		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, "user@opendes.com", new Date(),
  				SchemaStatus.PUBLISHED, SchemaScope.INTERNAL, new SchemaIdentity());
- 	    SchemaInfoDoc fullSchemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, headers.getPartitionId());
- 	    
+
  		when(queryHelper.queryByGSI(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(null);
  		String actual = schemaInfoStore.getLatestMinorVerSchema(schemaInfo);
- 		assertEquals(new String(), actual);
+ 		assertEquals("", actual);
  	}
 	
 	@Test
-	public void getSchemaInfoList() throws ApplicationException {
+	public void getSchemaInfoList() {
 		String tenantId = "tenantId";
 		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status",
 				"scope", true);
@@ -250,9 +248,17 @@ public class AwsSchemaInfoStoreTest {
 		List<SchemaInfo> actual = schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
 		assertEquals(expected, actual);
 	}
-
 	@Test
-	public void getSystemSchemaInfoList() throws ApplicationException, BadRequestException {
+	public void getSchemaInfoListWithEmptyQueryParams() {
+		String tenantId = "tenantId";
+		QueryParams queryParams = new QueryParams(null, null, null, null, null, null, 3,3, null,
+				"scope", true);
+		List<SchemaInfo> expected = new ArrayList<SchemaInfo>();
+		List<SchemaInfo> actual = schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+		assertEquals(expected, actual);
+	}
+	@Test
+	public void getSystemSchemaInfoList() throws BadRequestException {
 		QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status",
 				"scope", false);
 		List<SchemaInfo> expected = new ArrayList<SchemaInfo>();
@@ -262,27 +268,27 @@ public class AwsSchemaInfoStoreTest {
 	}
 
 	@Test
-	public void cleanSchema_ReturnsTrue() throws ApplicationException {
+	public void cleanSchema_ReturnsTrue() {
 		String schemaId = "schemaId";
 		doNothing().when(queryHelper).deleteByPrimaryKey(Mockito.any(), Mockito.any());
 		boolean actual = schemaInfoStore.cleanSchema(schemaId);
-		assertEquals(true, actual);
+		assertTrue(actual);
 	}
 	
 	@Test
-	public void cleanSchema_ReturnsFalseOnException() throws ApplicationException {
+	public void cleanSchema_ReturnsFalseOnException() {
 		String schemaId = "schemaId";
 		doThrow(new RuntimeException()).when(queryHelper).deleteByPrimaryKey(Mockito.any(), Mockito.any());
 		
 		boolean actual = schemaInfoStore.cleanSchema(schemaId);
-		assertEquals(false, actual);
+		assertFalse(actual);
 	}
 
 	@Test
-	public void cleanSystemSchema() throws ApplicationException {
+	public void cleanSystemSchema()  {
 		String schemaId = "schemaId";
 		doNothing().when(queryHelper).deleteByPrimaryKey(Mockito.any(), Mockito.any());
 		boolean actual = schemaInfoStore.cleanSystemSchema(schemaId);
-		assertEquals(true, actual);
+		assertTrue(actual);
 	}
 }

@@ -1,10 +1,6 @@
 package org.opengroup.osdu.schema.provider.aws.mongo.impl.schemainfostore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.SCHEMA_INFO_PREFIX;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.createSchemaId;
@@ -150,8 +146,8 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertEquals(schemaInfo.getCreatedBy(), schemaInfoDtoFromDb.getData().getCreatedBy());
     }
 
-    @Test(expected = BadRequestException.class)
-    public void createSchemaInfoDuplicate() throws ApplicationException, BadRequestException {
+    @Test()
+    public void createSchemaInfoDuplicate()  {
         //given
         SchemaRequest schemaRequest = createSchemaRequest();
         SchemaInfoDto schemaInfoDto = new SchemaInfoDto();
@@ -162,7 +158,8 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertNotNull(inDb);
 
         //then
-        schemaInfoStore.createSchemaInfo(schemaRequest);
+        assertThrows(BadRequestException.class,
+                ()->schemaInfoStore.createSchemaInfo(schemaRequest));
     }
 
     @Test

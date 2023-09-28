@@ -60,9 +60,7 @@ public class AuthorizationServiceForServiceAdminImpl implements IAuthorizationSe
 
 
             memberEmail = headers.getUserId();
-            if(memberEmail == null){
-                throw  AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
-            } else if(memberEmail.equals(spuEmail)){
+            if(memberEmail.equals(spuEmail)){
                 return true;
             }
             else{

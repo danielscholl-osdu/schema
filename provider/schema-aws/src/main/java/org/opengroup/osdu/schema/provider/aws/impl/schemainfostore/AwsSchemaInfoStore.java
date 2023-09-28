@@ -106,18 +106,24 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     return this.getSchemaInfo(schemaId);
   }
 
-  private SchemaInfoDoc insertSchemaRecord(SchemaInfo schemaInfo, SchemaInfoDoc schemaInfoDoc, String partitionId) throws ApplicationException, BadRequestException{
+  private void upsertSchemaRecord(SchemaInfo schemaInfo, SchemaInfoDoc schemaInfoDoc, String partitionId) throws ApplicationException, BadRequestException{
     DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+    SchemaIdentity supersedingSchema = schemaInfo.getSupersededBy();
+    if (supersedingSchema != null) {
+      String id = partitionId + ":" + supersedingSchema.getId();
+      SchemaInfoDoc supersedingSchemaInfoDoc = new SchemaInfoDoc();
+      supersedingSchemaInfoDoc.setId(id);
+      if (queryHelper.keyExistsInTable(SchemaInfoDoc.class, supersedingSchemaInfoDoc)) // superseding schema does ot exist in the db
+      {
+        throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+      }
+    }
     try {
-      validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
       queryHelper.save(schemaInfoDoc);
-    } catch (BadRequestException ex) {
-      throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
     } catch (Exception ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
     }
-    return schemaInfoDoc;
   }
 
   @Override
@@ -126,8 +132,6 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     // it doesn't pass that entity into this method or update properties in the request that shouldn't change, like
     // createdBy and createdOn.  This causes the need to query the entity twice which is inefficient.
     // This should be fixed
-
-
 
     String partitionId = headers.getPartitionId();
     String userEmail = headers.getUserEmail();
@@ -139,7 +143,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     schemaInfo.setDateCreated(DateTime.now().toDate());
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, partitionId);
     schemaInfoDoc.setId(id);
-    schemaInfoDoc = insertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
+    upsertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
     return schemaInfoDoc.getSchemaInfo();
   }
 
@@ -169,7 +173,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     if (queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) ){
       throw new BadRequestException("Schema " + id + " already exist. Can't create again.");
     }
-    schemaInfoDoc = insertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
+    upsertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
     return schemaInfoDoc.getSchemaInfo();
   }
 
@@ -262,7 +266,6 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
       filters.add("SchemaScope = :SchemaScope");
       valueMap.put(":SchemaScope", new AttributeValue().withS(queryParams.getScope()));
     }
-
     if (queryParams.getStatus() != null) {
       filters.add("SchemaStatus = :SchemaStatus");
       valueMap.put(":SchemaStatus", new AttributeValue().withS(queryParams.getStatus()));
@@ -339,22 +342,6 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   public boolean cleanSystemSchema(String schemaId) {
     this.updateDataPartitionId();
     return this.cleanSchema(schemaId);
-  }
-
-  private void validateSupersededById(SchemaIdentity supersedingSchema, String tenantId) throws BadRequestException {
-
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenantId);
-
-    if (supersedingSchema != null) {
-      String id = tenantId + ":" + supersedingSchema.getId();
-      SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
-      schemaInfoDoc.setId(id);
-      if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc)) // superseding schema does ot exist in the db
-      {
-         throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
-      }
-
-    }
   }
 
   private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {

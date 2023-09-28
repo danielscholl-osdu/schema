@@ -20,9 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBAuthorityStore.AUTHORITY_PREFIX;
 
 
@@ -50,15 +48,17 @@ public class MongoDBAuthorityStoreTest extends ParentUtil {
         assertEquals(authority.getId(), authorityFromStore.getAuthorityId());
     }
 
-    @Test(expected = NotFoundException.class)
-    public void getNotFound() throws ApplicationException, NotFoundException {
+    @Test()
+    public void getNotFound()  {
         //given
         String id = "authorityId";
-        AuthorityDto byId = (AuthorityDto) mongoTemplateHelper.findById(id, AuthorityDto.class, AUTHORITY_PREFIX + DATA_PARTITION);
+        AuthorityDto byId;
+        byId = (AuthorityDto) mongoTemplateHelper.findById(id, AuthorityDto.class, AUTHORITY_PREFIX + DATA_PARTITION);
         assertNull(byId);
 
+        assertThrows(NotFoundException.class, ()->authorityStore.get(id));
         //then
-        authorityStore.get(id);
+
     }
 
     @Test
