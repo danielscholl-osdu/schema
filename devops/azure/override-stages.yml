@@ -1,0 +1,9 @@
+azure_test:
+  image: community.opengroup.org:5555/osdu/platform/deployment-and-operations/base-containers-azure/azure-maven17:v0.0.1
+  script:
+  - $MAVEN_BUILD . test-results.log verify -q -f $AZURE_TEST_SUBDIR/pom.xml
+  artifacts:
+    when: always
+    paths:
+      - test-results.log
+    expire_in: 3 days
