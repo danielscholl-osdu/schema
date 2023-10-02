@@ -3,19 +3,20 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
-		<version>0.23.0-SNAPSHOT</version>
+		<version>0.24.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<properties>
 		<jackson-databind.version>2.15.0</jackson-databind.version>
 		<jackson.version>2.15.0</jackson.version>
-		<os-core-common.version>0.22.0</os-core-common.version>
+		<os-core-common.version>0.23.1</os-core-common.version>
 	</properties>
 
 	<artifactId>os-schema-gc</artifactId>
 	<description>Google cloud related implementation staff.</description>
 	<packaging>jar</packaging>
+	<version>0.24.0-SNAPSHOT</version>
 
 	<dependencyManagement>
 		<dependencies>
@@ -58,7 +59,7 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
-			<version>0.23.0-SNAPSHOT</version>
+			<version>0.24.0-SNAPSHOT</version>
 			<!-- excluded due to runtime conflict with latest core-lib-gc transient dependencies -->
 			<exclusions>
 				<exclusion>
@@ -104,7 +105,7 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>core-lib-gc</artifactId>
-			<version>0.22.1</version>
+			<version>0.23.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback.contrib</groupId>
@@ -143,17 +144,17 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>oqm</artifactId>
-			<version>0.22.0</version>
+			<version>0.23.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>osm</artifactId>
-			<version>0.22.0</version>
+			<version>0.23.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>obm</artifactId>
-			<version>0.22.0</version>
+			<version>0.23.0</version>
 		</dependency>
 
 		<dependency>

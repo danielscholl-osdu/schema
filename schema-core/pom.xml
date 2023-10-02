@@ -3,13 +3,14 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
-		<version>0.23.0-SNAPSHOT</version>
+		<version>0.24.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>os-schema-core</artifactId>
 	<description>Core project for the schema service</description>
 	<packaging>jar</packaging>
+	<version>0.24.0-SNAPSHOT</version>
 
 	<properties>
 		<jackson-databind.version>2.13.4</jackson-databind.version>

@@ -24,11 +24,13 @@ import java.nio.charset.StandardCharsets;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
+import org.opengroup.osdu.core.common.partition.PartitionPropertyResolver;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.core.gcp.obm.driver.Driver;
 import org.opengroup.osdu.core.gcp.obm.driver.ObmDriverRuntimeException;
 import org.opengroup.osdu.core.gcp.obm.model.Blob;
 import org.opengroup.osdu.core.gcp.obm.persistence.ObmDestination;
+import org.opengroup.osdu.schema.configuration.PartitionPropertyNames;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.destination.provider.DestinationProvider;
@@ -51,17 +53,22 @@ public class ObmSchemaStore implements ISchemaStore {
   private final JaxRsDpsLog log;
   private final PropertiesConfiguration configuration;
   private final Driver driver;
+  private final PartitionPropertyNames partitionPropertyNames;
+  private final PartitionPropertyResolver partitionPropertyResolver;
 
   public ObmSchemaStore(ITenantFactory tenantFactory, DpsHeaders headers,
       DestinationProvider<ObmDestination> destinationProvider, JaxRsDpsLog log,
       PropertiesConfiguration configuration,
-      Driver driver) {
+      Driver driver, PartitionPropertyNames partitionPropertyNames,
+      PartitionPropertyResolver partitionPropertyResolver) {
     this.tenantFactory = tenantFactory;
     this.headers = headers;
     this.destinationProvider = destinationProvider;
     this.log = log;
     this.configuration = configuration;
     this.driver = driver;
+    this.partitionPropertyNames = partitionPropertyNames;
+    this.partitionPropertyResolver = partitionPropertyResolver;
   }
 
   /**
@@ -231,15 +238,17 @@ public class ObmSchemaStore implements ISchemaStore {
   }
 
   private String getSchemaBucketName(String dataPartitionId) {
-    TenantInfo tenantInfo = tenantFactory.getTenantInfo(dataPartitionId);
-    return String.format("%s-%s%s", tenantInfo.getProjectId(), tenantInfo.getName(),
-        SchemaConstants.SCHEMA_BUCKET_EXTENSION);
+    return partitionPropertyResolver.getOptionalPropertyValue(partitionPropertyNames.getSchemaBucketName(), dataPartitionId).orElseGet(() -> {
+      TenantInfo tenantInfo = tenantFactory.getTenantInfo(dataPartitionId);
+      return String.format("%s-%s%s", tenantInfo.getProjectId(), tenantInfo.getName(), SchemaConstants.SCHEMA_BUCKET_EXTENSION);
+    });
   }
 
   private String getSystemSchemaBucketName() {
-    TenantInfo tenantInfo = tenantFactory.getTenantInfo(configuration.getSharedTenantName());
-    return String.format("%s-%s%s", tenantInfo.getProjectId(), tenantInfo.getName(),
-        SCHEMA_BUCKET_EXTENSION);
+    return partitionPropertyResolver.getOptionalPropertyValue(partitionPropertyNames.getSystemSchemaBucketName(), configuration.getSharedTenantName()).orElseGet(() -> {
+      TenantInfo tenantInfo = tenantFactory.getTenantInfo(configuration.getSharedTenantName());
+      return String.format("%s-%s%s", tenantInfo.getProjectId(), tenantInfo.getName(), SCHEMA_BUCKET_EXTENSION);
+    });
   }
 
   private ObmDestination getDestination(String partitionId) {
