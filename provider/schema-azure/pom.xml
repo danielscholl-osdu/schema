@@ -37,6 +37,7 @@
 		<woodstox-core.version>6.4.0</woodstox-core.version>
 		<reactor-netty.version>1.1.10</reactor-netty.version>
 		<reactor-core.version>3.4.19</reactor-core.version>
+		<jackson.version>2.15.2</jackson.version>
 	</properties>
 
 	<dependencyManagement>
@@ -236,7 +237,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-cbor</artifactId>
-			<version>2.12.3</version>
+			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -291,7 +292,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.13.4</version>
+			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -312,12 +313,12 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.13.2</version>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.13.2</version>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
