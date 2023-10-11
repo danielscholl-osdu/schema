@@ -18,6 +18,7 @@ package org.opengroup.osdu.schema.azure.impl.messagebus;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.opengroup.osdu.azure.publisherFacade.MessagePublisher;
@@ -132,7 +133,7 @@ public class MessageBusImpl implements IMessageBus {
 				.serviceBusTopicName(pubSubConfig.getServiceBusTopic())
 				.build();
 		logger.info("Schema event created.");
-		messagePublisher.publishMessage(headers, publisherInfo);
+		messagePublisher.publishMessage(headers, publisherInfo, Optional.empty());
 		logger.info("Schema event triggered successfully");
 
 	}
