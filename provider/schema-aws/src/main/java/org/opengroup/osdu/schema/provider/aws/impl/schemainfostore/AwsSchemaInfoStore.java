@@ -1,16 +1,18 @@
-// Copyright © 2020 Amazon Web Services
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/* Copyright © 2020 Amazon Web Services
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+ */
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
 import java.text.MessageFormat;
@@ -73,8 +75,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Inject
   private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
-
-  @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}")
+   @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}")
   String schemaInfoTableParameterRelativePath;
 
   @Value("${shared.tenant.name:common}")
@@ -83,14 +84,11 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper() {
     return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, schemaInfoTableParameterRelativePath);
   }
-
   private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper(String dataPartitionId) {
     return dynamoDBQueryHelperFactory.getQueryHelperForPartition(dataPartitionId, schemaInfoTableParameterRelativePath);
   }
-
-
   @Override
-  public SchemaInfo getSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+  public SchemaInfo getSchemaInfo(String schemaId) throws NotFoundException {
 
     DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
 
@@ -103,19 +101,37 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   @Override
-  public SchemaInfo getSystemSchemaInfo(String schemaId) throws ApplicationException, NotFoundException {
+  public SchemaInfo getSystemSchemaInfo(String schemaId) throws NotFoundException {
     this.updateDataPartitionId();
     return this.getSchemaInfo(schemaId);
   }
 
+  private void upsertSchemaRecord(SchemaInfo schemaInfo, SchemaInfoDoc schemaInfoDoc, String partitionId) throws ApplicationException, BadRequestException{
+    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+    SchemaIdentity supersedingSchema = schemaInfo.getSupersededBy();
+    if (supersedingSchema != null) {
+      String id = partitionId + ":" + supersedingSchema.getId();
+      SchemaInfoDoc supersedingSchemaInfoDoc = new SchemaInfoDoc();
+      supersedingSchemaInfoDoc.setId(id);
+      if (queryHelper.keyExistsInTable(SchemaInfoDoc.class, supersedingSchemaInfoDoc)) // superseding schema does ot exist in the db
+      {
+        throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+      }
+    }
+    try {
+      queryHelper.save(schemaInfoDoc);
+    } catch (Exception ex) {
+      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+      throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
+    }
+  }
+
   @Override
   public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
-    // The SchemaService calls the getSchemaInfo method and verifies the entity is updateable, however,
+    // The SchemaService calls the getSchemaInfo method and verifies the entity is updatable, however,
     // it doesn't pass that entity into this method or update properties in the request that shouldn't change, like
     // createdBy and createdOn.  This causes the need to query the entity twice which is inefficient.
     // This should be fixed
-
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
 
     String partitionId = headers.getPartitionId();
     String userEmail = headers.getUserEmail();
@@ -127,18 +143,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     schemaInfo.setDateCreated(DateTime.now().toDate());
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, partitionId);
     schemaInfoDoc.setId(id);
-
-    validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
-
-
-    try {
-      queryHelper.save(schemaInfoDoc);
-
-    } catch (Exception ex) {
-      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-      throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
-    }
-
+    upsertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
     return schemaInfoDoc.getSchemaInfo();
   }
 
@@ -165,19 +170,10 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schema.getSchemaInfo(), partitionId);
     schemaInfoDoc.setId(id);
 
-    if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) == true) {
+    if (queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) ){
       throw new BadRequestException("Schema " + id + " already exist. Can't create again.");
     }
-    validateSupersededById(schemaInfo.getSupersededBy(), partitionId);
-
-
-    try {
-      queryHelper.save(schemaInfoDoc);
-    } catch (Exception ex) {
-      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-      throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
-    }
-
+    upsertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
     return schemaInfoDoc.getSchemaInfo();
   }
 
@@ -203,7 +199,8 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
     TreeMap<Long, SchemaInfoDoc> sortedMap = new TreeMap<>(Collections.reverseOrder());
 
-    results.forEach(item -> sortedMap.put(item.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(), item));
+    if(results != null && !results.isEmpty())
+    	results.forEach(item -> sortedMap.put(item.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(), item));
 
     if (sortedMap.size() != 0) {
       SchemaInfoDoc item = sortedMap.firstEntry().getValue();
@@ -213,18 +210,17 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
       } catch (NotFoundException ex) {
         // probably should log something here.  Maybe the getSchema method logs, not sure.
         // and not sure if returning empty string (allow process to continue
-        return new String();
       }
     }
-    return new String();
+    return "";
 
   }
 
   @Override
-  public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) throws ApplicationException {
+  public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId)  {
     // This function is called twice.  Once for tenant `common` and once for the requested tenant.
 
-    // TODO: how should the system handle empty query params i.e. &scope=
+    // Undefined behavior-- how should the system handle empty query params i.e. &scope=
     // is it equal to empty string or should the qualifier be removed?
 
 
@@ -270,7 +266,6 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
       filters.add("SchemaScope = :SchemaScope");
       valueMap.put(":SchemaScope", new AttributeValue().withS(queryParams.getScope()));
     }
-
     if (queryParams.getStatus() != null) {
       filters.add("SchemaStatus = :SchemaStatus");
       valueMap.put(":SchemaStatus", new AttributeValue().withS(queryParams.getStatus()));
@@ -280,7 +275,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     log.info(String.format("SchemaInfo query filter expression: %s", filterExpression));
 
     List<SchemaInfoDoc> results = queryHelper.scanTable(SchemaInfoDoc.class, filterExpression, valueMap);
-    List<SchemaInfo> toReturn = results.stream().map(item -> item.getSchemaInfo()).collect(Collectors.toList());
+    List<SchemaInfo> toReturn = results.stream().map(SchemaInfoDoc::getSchemaInfo).collect(Collectors.toList());
 
     if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
       toReturn = getLatestVersionSchemaList(toReturn);
@@ -290,12 +285,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   @Override
-  public List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) throws ApplicationException {
+  public List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) {
     return this.getSchemaInfoList(queryParams, sharedTenant);
   }
 
  @Override
-  public boolean isUnique(String schemaId, String tenantId) throws ApplicationException {
+  public boolean isUnique(String schemaId, String tenantId) {
 
    Set<String> tenantList = new HashSet<>();
    tenantList.add(sharedTenant);
@@ -314,7 +309,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
      String id = tenant + ":" + schemaId;
      SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
      schemaInfoDoc.setId(id);
-     if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) == true){ // the schemaId exists and hence is not unique
+     if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc)){ // the schemaId exists and hence is not unique
        return false;
      }
    }
@@ -322,12 +317,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   @Override
-  public boolean isUniqueSystemSchema(String schemaId) throws ApplicationException {
+  public boolean isUniqueSystemSchema(String schemaId) {
     return this.isUnique(schemaId, sharedTenant);
   }
 
   @Override
-  public boolean cleanSchema(String schemaId) throws ApplicationException {
+  public boolean cleanSchema(String schemaId) {
 
     DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
 
@@ -344,25 +339,9 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
   }
 
   @Override
-  public boolean cleanSystemSchema(String schemaId) throws ApplicationException {
+  public boolean cleanSystemSchema(String schemaId) {
     this.updateDataPartitionId();
     return this.cleanSchema(schemaId);
-  }
-
-  private void validateSupersededById(SchemaIdentity superseding_schema, String tenantId) throws ApplicationException, BadRequestException {
-
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenantId);
-
-    if (superseding_schema != null) {
-      String id = tenantId + ":" + superseding_schema.getId();
-      SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
-      schemaInfoDoc.setId(id);
-      if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) == false) // superseding schema does ot exist in the db
-      {
-         throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
-      }
-
-    }
   }
 
   private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {

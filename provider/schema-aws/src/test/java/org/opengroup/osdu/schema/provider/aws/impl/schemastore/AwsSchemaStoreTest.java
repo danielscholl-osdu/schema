@@ -64,7 +64,7 @@ public class AwsSchemaStoreTest {
   @Mock
   private S3ClientWithBucket s3ClientWithBucket;
 
-  private String schemaBucketName="bucket";
+  private final String schemaBucketName="bucket";
 
   private static final String COMMON_TENANT_ID = "common";
 
@@ -98,7 +98,7 @@ public class AwsSchemaStoreTest {
     URL file = new URL("http", "localhost", "file" );    
     Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
     doReturn(null).when(s3).putObject(Mockito.any());
-    Mockito.when(s3.getUrl(Mockito.eq(schemaBucketName), Mockito.eq("schema/partitionid/file/path")))
+    Mockito.when(s3.getUrl(schemaBucketName, "schema/partitionid/file/path"))
       .thenReturn(new URL("http", "localhost", "file" ));
     String result = schemaStore.createSchema(filePath, content);
     Assert.assertEquals(file.toString(), result);
@@ -111,7 +111,7 @@ public class AwsSchemaStoreTest {
     URL file = new URL("http", "localhost", "file" );
     lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
     lenient().doReturn(null).when(s3).putObject(Mockito.any());
-    Mockito.when(s3.getUrl(Mockito.eq(schemaBucketName), Mockito.eq("schema/" + COMMON_TENANT_ID + "/file/path")))
+    Mockito.when(s3.getUrl(schemaBucketName, "schema/" + COMMON_TENANT_ID + "/file/path"))
             .thenReturn(new URL("http", "localhost", "file" ));
     String result = schemaStore.createSystemSchema(filePath, content);
     Assert.assertEquals(file.toString(), result);
@@ -186,7 +186,7 @@ public class AwsSchemaStoreTest {
     String schemaId = "file";
     String dataPartitionId = "partitionid";
     Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
-    doNothing().when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/partitionid/file"));
+    doNothing().when(s3).deleteObject(schemaBucketName, "schema/partitionid/file");
     Boolean result = schemaStore.cleanSchemaProject(schemaId);
     Assert.assertEquals(true, result);
   }
@@ -195,7 +195,7 @@ public class AwsSchemaStoreTest {
   public void cleanSchemaProject_SystemSchemas() throws ApplicationException {
     String schemaId = "file";
     Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    doNothing().when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/" + COMMON_TENANT_ID + "/file"));
+    doNothing().when(s3).deleteObject(schemaBucketName, "schema/" + COMMON_TENANT_ID + "/file");
     Boolean result = schemaStore.cleanSystemSchemaProject(schemaId);
     Assert.assertEquals(true, result);
   }
@@ -205,7 +205,7 @@ public class AwsSchemaStoreTest {
     String schemaId = "file";
     String dataPartitionId = "partitionid";
     Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
-    doThrow(SdkClientException.class).when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/partitionid/file"));
+    doThrow(SdkClientException.class).when(s3).deleteObject(schemaBucketName, "schema/partitionid/file");
     Boolean result = schemaStore.cleanSchemaProject(schemaId);
     Assert.assertEquals(false, result);
   }
@@ -214,7 +214,7 @@ public class AwsSchemaStoreTest {
   public void cleanSchemaProject_S3Exception_SystemSchemas() throws ApplicationException {
     String schemaId = "file";
     Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    doThrow(SdkClientException.class).when(s3).deleteObject(Mockito.eq(schemaBucketName), Mockito.eq("schema/" + COMMON_TENANT_ID + "/file"));
+    doThrow(SdkClientException.class).when(s3).deleteObject(schemaBucketName, "schema/" + COMMON_TENANT_ID + "/file");
     Boolean result = schemaStore.cleanSystemSchemaProject(schemaId);
     Assert.assertEquals(false, result);
   }

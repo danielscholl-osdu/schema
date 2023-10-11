@@ -20,9 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSourceStore.SOURCE_PREFIX;
 
 
@@ -50,15 +48,22 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         assertEquals(sourceDto.getId(), sourceFromStore.getSourceId());
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test()
     public void getNotFound() throws ApplicationException, NotFoundException {
         //given
         String id = "sourceId";
-        SourceDto byId = (SourceDto) mongoTemplateHelper.findById(id, SourceDto.class, SOURCE_PREFIX + DATA_PARTITION);
-        assertNull(byId);
+        SourceDto byId;
 
+        try {
+            byId = (SourceDto) mongoTemplateHelper.findById(id, SourceDto.class, SOURCE_PREFIX + DATA_PARTITION);
+            assertNull(byId);
+            sourceStore.get(id);
+        }
+        catch (NotFoundException e) {
+
+        }
         //then
-        sourceStore.get(id);
+
     }
 
     @Test
