@@ -29,8 +29,8 @@
 
     <properties>
         <aws.version>1.11.1018</aws.version>
-        <jackson-databind.version>2.13.4</jackson-databind.version>
-        <jackson.version>2.13.2</jackson.version>
+        <jackson-databind.version>2.15.2</jackson-databind.version>
+        <jackson.version>2.15.2</jackson.version>
         <java.version>17</java.version>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
