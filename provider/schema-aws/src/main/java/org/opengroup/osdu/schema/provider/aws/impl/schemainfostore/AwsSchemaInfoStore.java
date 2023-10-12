@@ -113,7 +113,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
       String id = partitionId + ":" + supersedingSchema.getId();
       SchemaInfoDoc supersedingSchemaInfoDoc = new SchemaInfoDoc();
       supersedingSchemaInfoDoc.setId(id);
-      if (queryHelper.keyExistsInTable(SchemaInfoDoc.class, supersedingSchemaInfoDoc)) // superseding schema does ot exist in the db
+      if (!queryHelper.keyExistsInTable(SchemaInfoDoc.class, supersedingSchemaInfoDoc)) // superseding schema does not exist in the db
       {
         throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
       }
