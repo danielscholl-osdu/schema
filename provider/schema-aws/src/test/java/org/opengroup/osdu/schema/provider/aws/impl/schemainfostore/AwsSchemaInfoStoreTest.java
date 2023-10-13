@@ -170,7 +170,7 @@ public class AwsSchemaInfoStoreTest {
 		assertEquals(schemaInfo, actual);
 	}
 
-	@Test()
+	@Test(expected = BadRequestException.class)
 	public void updateSchemaInfo_UpdatesSchemaInfo() throws ApplicationException{
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
@@ -181,7 +181,7 @@ public class AwsSchemaInfoStoreTest {
 		assertNotNull(schemaInfo1);
 	}
 
-	@Test()
+	@Test(expected = BadRequestException.class)
 	public void updateSystemSchemaInfo_UpdatesSystemSchemaInfo() throws ApplicationException {
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
@@ -203,7 +203,7 @@ public class AwsSchemaInfoStoreTest {
 		schemaInfoStore.createSchemaInfo(schemaRequest);
 	}
 
-	@Test()
+	@Test(expected =  BadRequestException.class)
 	public void createSchemaInfo_ThrowsApplicationException() throws ApplicationException, BadRequestException {
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
@@ -211,12 +211,12 @@ public class AwsSchemaInfoStoreTest {
 		SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
 
 		when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
-//		assertThrows(ApplicationException.class, )
-			SchemaInfo schemaInfo1 = schemaInfoStore.createSchemaInfo(schemaRequest);
+
+		SchemaInfo schemaInfo1 = schemaInfoStore.createSchemaInfo(schemaRequest);
 		assertNotNull(schemaInfo1);
 	}
 
-	@Test()
+	@Test(expected = BadRequestException.class)
 	public void createSystemSchemaInfo_ThrowsApplicationException() throws ApplicationException, BadRequestException {
 		SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, null, null, null, "schemaId");
 		SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT,
