@@ -1,3 +1,5 @@
+curl -H 'Content-Type: application/json' -X DELETE -u $IBM_QA_DB_USER:$IBM_QA_DB_PASSWORD $IBM_QA_DB_URL/oc-cpd-dataecosystem-opendes-schema2
+curl -H 'Content-Type: application/json' -X DELETE -u $IBM_QA_DB_USER:$IBM_QA_DB_PASSWORD $IBM_QA_DB_URL/oc-cpd-dataecosystem-common-schema2
 echo $IBM_SCHEMA_HOST
 export IBM_SCHEMA_SERVICE_URL=$IBM_SCHEMA_HOST/api/schema-service/v1/schemas/system
 
