@@ -11,13 +11,13 @@
 	<parent>
 		<artifactId>os-schema</artifactId>
 		<groupId>org.opengroup.osdu</groupId>
-		<version>0.24.0-SNAPSHOT</version>
+		<version>0.25.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>os-schema-azure</artifactId>
-	<version>0.24.0-SNAPSHOT</version>
+	<version>0.25.0-SNAPSHOT</version>
 	<description>Azure related implementation staff.</description>
 	<packaging>jar</packaging>
 
@@ -27,7 +27,7 @@
 		<azure.version>2.1.7</azure.version>
 		<osdu.corelibazure.version>0.23.2</osdu.corelibazure.version>
 		<osdu.oscorecommon.version>0.23.3</osdu.oscorecommon.version>
-		<osdu.os-schema-core.version>0.24.0-SNAPSHOT</osdu.os-schema-core.version>
+		<osdu.os-schema-core.version>0.25.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
 		<cucumber.version>5.7.0</cucumber.version>
 		<nimbus-jose-jwt-azure.version>8.20.2</nimbus-jose-jwt-azure.version>
@@ -37,6 +37,7 @@
 		<woodstox-core.version>6.4.0</woodstox-core.version>
 		<reactor-netty.version>1.1.10</reactor-netty.version>
 		<reactor-core.version>3.4.19</reactor-core.version>
+		<jackson.version>2.15.2</jackson.version>
 	</properties>
 
 	<dependencyManagement>
@@ -236,7 +237,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-cbor</artifactId>
-			<version>2.12.3</version>
+			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -291,7 +292,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.13.4</version>
+			<version>${jackson.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -312,12 +313,12 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.13.2</version>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.13.2</version>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>

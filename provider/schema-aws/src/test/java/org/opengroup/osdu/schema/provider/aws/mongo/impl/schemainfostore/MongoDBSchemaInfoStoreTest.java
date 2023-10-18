@@ -1,10 +1,6 @@
 package org.opengroup.osdu.schema.provider.aws.mongo.impl.schemainfostore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.SCHEMA_INFO_PREFIX;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.createSchemaId;
@@ -47,6 +43,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
 
     @Autowired
     private MongoDBSchemaInfoStore schemaInfoStore;
+    
     @Autowired
     private ISchemaStore awsSchemaStore;
 
@@ -72,6 +69,33 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertEquals(SchemaScope.SHARED, fromDb.getData().getScope());
     }
 
+    @Test
+    public void updateSchemaInfo_WithSupersededBy() throws ApplicationException, BadRequestException {
+        //given
+        SchemaRequest schemaRequest = createSchemaRequest();
+        SchemaInfoDto schemaInfoDto = new SchemaInfoDto();
+        SchemaInfo requestSchemaInfo = schemaRequest.getSchemaInfo();
+        
+        SchemaIdentity schemaIdentity = new SchemaIdentity();
+        schemaIdentity.setId(createSchemaId(schemaIdentity));
+        requestSchemaInfo.setSupersededBy(schemaIdentity);
+        String id = requestSchemaInfo.getSchemaIdentity().getId();
+        schemaInfoDto.setId(id);
+        schemaInfoDto.setData(requestSchemaInfo);
+        SchemaInfoDto inDb = (SchemaInfoDto) mongoTemplateHelper.insert(schemaInfoDto, SCHEMA_INFO_PREFIX + DATA_PARTITION);
+        assertNotNull(inDb);
+
+        requestSchemaInfo.setScope(SchemaScope.SHARED);
+        //when
+        schemaInfoStore.updateSchemaInfo(schemaRequest);
+
+        //then
+        SchemaInfoDto fromDb = (SchemaInfoDto) mongoTemplateHelper.findById(id, SchemaInfoDto.class, SCHEMA_INFO_PREFIX + DATA_PARTITION);
+        assertNotNull(fromDb);
+        assertEquals(SchemaScope.SHARED, fromDb.getData().getScope());
+    }
+    
+   
     @Test(expected = BadRequestException.class)
     public void updateSchemaInfoNotFound() throws ApplicationException, BadRequestException {
         //given
@@ -122,8 +146,8 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertEquals(schemaInfo.getCreatedBy(), schemaInfoDtoFromDb.getData().getCreatedBy());
     }
 
-    @Test(expected = BadRequestException.class)
-    public void createSchemaInfoDuplicate() throws ApplicationException, BadRequestException {
+    @Test()
+    public void createSchemaInfoDuplicate()  {
         //given
         SchemaRequest schemaRequest = createSchemaRequest();
         SchemaInfoDto schemaInfoDto = new SchemaInfoDto();
@@ -134,7 +158,8 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertNotNull(inDb);
 
         //then
-        schemaInfoStore.createSchemaInfo(schemaRequest);
+        assertThrows(BadRequestException.class,
+                ()->schemaInfoStore.createSchemaInfo(schemaRequest));
     }
 
     @Test
