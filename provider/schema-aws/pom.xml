@@ -101,11 +101,10 @@
             <artifactId>aws-java-sdk-cognitoidentity</artifactId>
             <version>${aws.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.opengroup.osdu.core.aws</groupId>
             <artifactId>os-core-lib-aws</artifactId>
-            <version>0.23.0</version>
+            <version>0.24.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
