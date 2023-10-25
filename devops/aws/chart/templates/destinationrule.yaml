@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{- template "common.destinationrule" (list . "os-schema.destinationrule") -}}
+{{ template "common.destinationrule" (list . "os-schema.destinationrule") -}}
 {{- define "os-schema.destinationrule" -}}
 ## Define overrides for the service destination rule resource here
 {{- end -}}
