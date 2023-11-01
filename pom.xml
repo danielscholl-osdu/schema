@@ -7,7 +7,7 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<os-core-common.version>0.23.1</os-core-common.version>
+		<os-core-common.version>0.24.0</os-core-common.version>
 		<log4j2.version>2.17.1</log4j2.version>
 		<json-smart.version>2.4.9</json-smart.version>
 		<openapi.version>1.6.14</openapi.version>
@@ -70,7 +70,7 @@
 	
 	<groupId>org.opengroup.osdu</groupId>
 	<artifactId>os-schema</artifactId>
-	<version>0.24.0-SNAPSHOT</version>
+	<version>0.25.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>os-schema</name>
 	<description>os schema service </description>

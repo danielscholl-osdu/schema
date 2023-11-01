@@ -109,7 +109,7 @@ public class MessageBusImplTest {
         //Call publish Message
         messageBusImpl.publishMessage("dummy", "dummy");
         //Assert that eventGridTopicStore is not called even once
-        verify(this.messagePublisher, times(0)).publishMessage(any(), any());
+        verify(this.messagePublisher, times(0)).publishMessage(any(), any(), any());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class MessageBusImplTest {
         messageBusImpl.publishMessageForSystemSchema("dummy", "dummy");
         messageBusImpl.publishMessage("dummy", "dummy");
         //Assert that eventGridTopicStore is not called even once
-        verify(this.messagePublisher, times(0)).publishMessage(any(), any());
+        verify(this.messagePublisher, times(0)).publishMessage(any(), any(), any());
     }
     
     @Test
@@ -141,13 +141,13 @@ public class MessageBusImplTest {
 		schemaPubSubMsgs[0]=new SchemaPubSubInfo("dummy","schema_create");
     	
 		//The schema-notification is turned off
-    	doNothing().when(this.messagePublisher).publishMessage(any(), any());
+    	doNothing().when(this.messagePublisher).publishMessage(any(), any(), any());
 		
 		//Call publish Message
     	messageBusImpl.publishMessage("dummy", "schema_create");
         
     	//Assert that eventGridTopicStore is called once
-        verify(this.messagePublisher, times(1)).publishMessage(any(), captorArg.capture());
+        verify(this.messagePublisher, times(1)).publishMessage(any(), captorArg.capture(), any());
         PublisherInfo publisherInfoCaptured = captorArg.getValue();
         assertNotNull(publisherInfoCaptured);
         
@@ -173,13 +173,13 @@ public class MessageBusImplTest {
 		schemaPubSubMsgs[0]=new SchemaPubSubInfo("dummy","schema_create");
     	
 		//The schema-notification is turned off
-    	doNothing().when(this.messagePublisher).publishMessage(any(), any());
+    	doNothing().when(this.messagePublisher).publishMessage(any(), any(), any());
 		
 		//Call publish Message
     	messageBusImpl.publishMessage("dummy", "schema_create");
         
     	//Assert that eventGridTopicStore is called once
-        verify(this.messagePublisher, times(1)).publishMessage(any(), captorArg.capture());
+        verify(this.messagePublisher, times(1)).publishMessage(any(), captorArg.capture(), any());
         PublisherInfo publisherInfoCaptured = captorArg.getValue();
         assertNotNull(publisherInfoCaptured);
         

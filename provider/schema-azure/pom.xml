@@ -11,13 +11,13 @@
 	<parent>
 		<artifactId>os-schema</artifactId>
 		<groupId>org.opengroup.osdu</groupId>
-		<version>0.24.0-SNAPSHOT</version>
+		<version>0.25.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>os-schema-azure</artifactId>
-	<version>0.24.0-SNAPSHOT</version>
+	<version>0.25.0-SNAPSHOT</version>
 	<description>Azure related implementation staff.</description>
 	<packaging>jar</packaging>
 
@@ -25,9 +25,9 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
 		<azure.version>2.1.7</azure.version>
-		<osdu.corelibazure.version>0.14.0-rc2</osdu.corelibazure.version>
-		<osdu.oscorecommon.version>0.19.0-rc6</osdu.oscorecommon.version>
-		<osdu.os-schema-core.version>0.24.0-SNAPSHOT</osdu.os-schema-core.version>
+		<osdu.corelibazure.version>0.24.0</osdu.corelibazure.version>
+		<osdu.oscorecommon.version>0.24.0</osdu.oscorecommon.version>
+		<osdu.os-schema-core.version>0.25.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
 		<cucumber.version>5.7.0</cucumber.version>
 		<nimbus-jose-jwt-azure.version>8.20.2</nimbus-jose-jwt-azure.version>
