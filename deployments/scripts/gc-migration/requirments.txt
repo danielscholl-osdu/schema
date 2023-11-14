@@ -1,5 +1,0 @@
-google.cloud
-minio
-datetime
-psycopg2
-requests
