@@ -61,7 +61,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SchemaService implements ISchemaService {
 
-	private final AuditLogger auditLogger;
+    private final AuditLogger auditLogger;
 
     private final ISchemaInfoStore schemaInfoStore;
 
@@ -74,22 +74,22 @@ public class SchemaService implements ISchemaService {
     private final IEntityTypeService entityTypeService;
 
     private final SchemaUtil schemaUtil;
-    
+
     private SchemaResolver schemaResolver;
-    
+
     private final SchemaVersionValidatorFactory versionValidatorFactory;
 
     final JaxRsDpsLog log;
-    
+
     private final IMessageBus messageBus;
 
     @Autowired
-	public void setSchemaResolver(SchemaResolver schemaResolver) {
-		this.schemaResolver = schemaResolver;
-	}
+    public void setSchemaResolver(SchemaResolver schemaResolver) {
+        this.schemaResolver = schemaResolver;
+    }
 
     final DpsHeaders headers;
-    
+
     /**
      * Method to get schema
      *
@@ -106,16 +106,16 @@ public class SchemaService implements ISchemaService {
         try {
             schema = schemaStore.getSchema(dataPartitionId, schemaId);
         } catch (NotFoundException e) {
-                schema = schemaStore.getSystemSchema(schemaId);
+            schema = schemaStore.getSystemSchema(schemaId);
         }
 
-		auditLogger.schemaRetrievedSuccess(Collections.singletonList(schema.toString()));
+        auditLogger.schemaRetrievedSuccess(Collections.singletonList(schema.toString()));
         return schema;
     }
 
     private void validateSchemaId(String schemaId) throws BadRequestException {
         if (StringUtils.isEmpty(schemaId)) {
-        	auditLogger.schemaRetrievedFailure(Collections.singletonList(schemaId));
+            auditLogger.schemaRetrievedFailure(Collections.singletonList(schemaId));
             log.error(SchemaConstants.EMPTY_ID);
             throw new BadRequestException(SchemaConstants.EMPTY_ID);
         }
@@ -207,7 +207,7 @@ public class SchemaService implements ISchemaService {
         String createdSchemaId = createAndSetSchemaId(schemaRequest);
         SchemaInfo schemaInfo = null;
         try {
-                schemaInfo = this.getSchemaInfo(createdSchemaId, isSystemSchema);
+            schemaInfo = this.getSchemaInfo(createdSchemaId, isSystemSchema);
         } catch (NotFoundException e) {
             log.error(SchemaConstants.INVALID_SCHEMA_UPDATE);
             if (!SchemaStatus.DEVELOPMENT.equals(schemaRequest.getSchemaInfo().getStatus()) && !isSystemSchema)
@@ -258,15 +258,15 @@ public class SchemaService implements ISchemaService {
         schemaRequest.getSchemaInfo().getSchemaIdentity().setId(schemaId);
         return schemaId;
     }
-    
+
     private String resolveAndCheckBreakingChanges(SchemaRequest schemaRequest, Boolean isSystemSchema) throws ApplicationException, BadRequestException {
 
-		Gson gson = new Gson();
-		String schemaInRequestPayload = gson.toJson(schemaRequest.getSchema());
-		String fullyResolvedInputSchema = schemaResolver.resolveSchema(schemaInRequestPayload);
-		compareFullyResolvedSchema(schemaRequest.getSchemaInfo(), fullyResolvedInputSchema, isSystemSchema);
-		return fullyResolvedInputSchema;
-	}
+        Gson gson = new Gson();
+        String schemaInRequestPayload = gson.toJson(schemaRequest.getSchema());
+        String fullyResolvedInputSchema = schemaResolver.resolveSchema(schemaInRequestPayload);
+        compareFullyResolvedSchema(schemaRequest.getSchemaInfo(), fullyResolvedInputSchema, isSystemSchema);
+        return fullyResolvedInputSchema;
+    }
 
     @Override
     public SchemaInfoResponse getSchemaInfoList(QueryParams queryParams)
@@ -293,34 +293,34 @@ public class SchemaService implements ISchemaService {
             // to the list of system schemas.
             getSchemaInfos(queryParams, schemaList, false);
         }
-        
+
         if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
-        	schemaList = getLatestVersionSchemaList(schemaList);
+            schemaList = getLatestVersionSchemaList(schemaList);
         }
-        
+
         Comparator<SchemaInfo> compareByCreatedDate = (s1,s2) -> s1.getDateCreated().compareTo(s2.getDateCreated());
 
         List<SchemaInfo> schemaFinalList = schemaList.stream().sorted(compareByCreatedDate)
-        		.skip(queryParams.getOffset())
+                .skip(queryParams.getOffset())
                 .limit(queryParams.getLimit()).collect(Collectors.toList());
 
         if (schemaFinalList.isEmpty()){
-			auditLogger.searchSchemaFailure(Collections.singletonList(queryParams.toString()));
+            auditLogger.searchSchemaFailure(Collections.singletonList(queryParams.toString()));
         } else {
-			auditLogger.searchSchemaSuccess(schemaFinalList.stream()
-					.map(SchemaInfo::toString)
-					.collect(Collectors.toList()));
+            auditLogger.searchSchemaSuccess(schemaFinalList.stream()
+                    .map(SchemaInfo::toString)
+                    .collect(Collectors.toList()));
         }
         return SchemaInfoResponse.builder().schemaInfos(schemaFinalList).count(schemaFinalList.size())
                 .offset(queryParams.getOffset()).totalCount(schemaList.size()).build();
     }
-    
-    @Override
-	public SchemaUpsertResponse upsertSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException {
-		return upsertSchemaInternal(schemaRequest, false);
-	}
 
-	private SchemaUpsertResponse upsertSchemaInternal(SchemaRequest schemaRequest, Boolean isSystemSchema) throws ApplicationException, BadRequestException {
+    @Override
+    public SchemaUpsertResponse upsertSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException {
+        return upsertSchemaInternal(schemaRequest, false);
+    }
+
+    private SchemaUpsertResponse upsertSchemaInternal(SchemaRequest schemaRequest, Boolean isSystemSchema) throws ApplicationException, BadRequestException {
         SchemaInfo response = null;
         HttpStatus httpCode = HttpStatus.BAD_REQUEST;
         SchemaUpsertResponse.SchemaUpsertResponseBuilder upsertBuilder = SchemaUpsertResponse.builder();
@@ -358,7 +358,7 @@ public class SchemaService implements ISchemaService {
 
     private void getSchemaInfos(QueryParams queryParams, List<SchemaInfo> schemaList, Boolean isSystemSchema)
             throws ApplicationException {
-    	if (isSystemSchema) {
+        if (isSystemSchema) {
             schemaInfoStore.getSystemSchemaInfoList(queryParams).forEach(schemaList::add);
         } else {
             String tenant = headers.getPartitionId();
@@ -380,7 +380,7 @@ public class SchemaService implements ISchemaService {
 
     /**
      * Method to set the scope of the schema according to the tenant
-     * 
+     *
      * @param schemaRequest
      * @param isSystemSchema
      */
@@ -391,50 +391,50 @@ public class SchemaService implements ISchemaService {
             schemaRequest.getSchemaInfo().setScope(SchemaScope.INTERNAL);
         }
     }
-    
-    
+
+
     private List<SchemaInfo> getLatestVersionSchemaList(List<SchemaInfo> filteredSchemaList) {
-    	
-		List<SchemaInfo> latestSchemaList = new ArrayList<>();
-		Map<String, SchemaInfo> latestSchemaMap = new HashMap<>();
-		SchemaComparatorByVersion schemaComparatorByVersion = new SchemaComparatorByVersion();
 
-		for(SchemaInfo schemaInfo :filteredSchemaList) {
-			
-			String key = getGroupingKey(schemaInfo);
-			latestSchemaMap.computeIfAbsent(key, k -> schemaInfo);
+        List<SchemaInfo> latestSchemaList = new ArrayList<>();
+        Map<String, SchemaInfo> latestSchemaMap = new HashMap<>();
+        SchemaComparatorByVersion schemaComparatorByVersion = new SchemaComparatorByVersion();
 
-			SchemaInfo value = latestSchemaMap.get(key);
-			
-			if(schemaComparatorByVersion.compare(schemaInfo, value) >= 0) 
-				latestSchemaMap.put(key, schemaInfo);
-			
-		}
+        for(SchemaInfo schemaInfo :filteredSchemaList) {
 
-		latestSchemaList.addAll(latestSchemaMap.values());
-		
-		return latestSchemaList;
+            String key = getGroupingKey(schemaInfo);
+            latestSchemaMap.computeIfAbsent(key, k -> schemaInfo);
+
+            SchemaInfo value = latestSchemaMap.get(key);
+
+            if(schemaComparatorByVersion.compare(schemaInfo, value) >= 0)
+                latestSchemaMap.put(key, schemaInfo);
+
+        }
+
+        latestSchemaList.addAll(latestSchemaMap.values());
+
+        return latestSchemaList;
     }
-    
-    /***
-	 * This method creates a key based on Athority:Source:EntityType
-	 * 
-	 * @param schemaInfo SchemaInfo whose key is to be formed
-	 * @return String based key formed using Athority:Source:EntityType
-	 */
-	private String getGroupingKey(SchemaInfo schemaInfo){
-		return String.join(":", schemaInfo.getSchemaIdentity().getAuthority(),
-				schemaInfo.getSchemaIdentity().getSource(), 
-				schemaInfo.getSchemaIdentity().getEntityType());
-	}
-	
-	private void compareFullyResolvedSchema(SchemaInfo inputSchemaInfo, String resolvedInputSchema, Boolean isSystemSchema) throws BadRequestException, ApplicationException {
-		try {
-			SchemaInfo[] schemaInfoToCompareWith = schemaUtil.findSchemaToCompare(inputSchemaInfo, isSystemSchema);
 
-			for(SchemaInfo existingSchemaInfo : schemaInfoToCompareWith) {
-				if(null == existingSchemaInfo)
-					continue;
+    /***
+     * This method creates a key based on Athority:Source:EntityType
+     *
+     * @param schemaInfo SchemaInfo whose key is to be formed
+     * @return String based key formed using Athority:Source:EntityType
+     */
+    private String getGroupingKey(SchemaInfo schemaInfo){
+        return String.join(":", schemaInfo.getSchemaIdentity().getAuthority(),
+                schemaInfo.getSchemaIdentity().getSource(),
+                schemaInfo.getSchemaIdentity().getEntityType());
+    }
+
+    private void compareFullyResolvedSchema(SchemaInfo inputSchemaInfo, String resolvedInputSchema, Boolean isSystemSchema) throws BadRequestException, ApplicationException {
+        try {
+            SchemaInfo[] schemaInfoToCompareWith = schemaUtil.findSchemaToCompare(inputSchemaInfo, isSystemSchema);
+
+            for(SchemaInfo existingSchemaInfo : schemaInfoToCompareWith) {
+                if(null == existingSchemaInfo)
+                    continue;
 
                 String existingSchemaInStore;
 
@@ -444,36 +444,36 @@ public class SchemaService implements ISchemaService {
                     existingSchemaInStore = getSchema(existingSchemaInfo.getSchemaIdentity().getId()).toString();
                 }
 
-				try {
-					//Compare Major version of the schemas are different
-					if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMajor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMajor()) != 0) {
-						continue;
-						//Compare Minor version is greater or smaller
-					}else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) < 0){
-						versionValidatorFactory.getVersionValidator(SchemaValidationType.MINOR).validateVersionChange(resolvedInputSchema, existingSchemaInStore);
-					}else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) > 0) {
-						versionValidatorFactory.getVersionValidator(SchemaValidationType.MINOR).validateVersionChange(existingSchemaInStore, resolvedInputSchema);
-					}else {
-						versionValidatorFactory.getVersionValidator(SchemaValidationType.PATCH).validateVersionChange(existingSchemaInStore, resolvedInputSchema);
-					}
-				}catch (SchemaVersionException exc) {
-					log.error("Failed to resolve the schema and find breaking changes. Reason :" + exc.getMessage());
+                try {
+                    //Compare Major version of the schemas are different
+                    if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMajor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMajor()) != 0) {
+                        continue;
+                        //Compare Minor version is greater or smaller
+                    }else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) < 0){
+                        versionValidatorFactory.getVersionValidator(SchemaValidationType.MINOR).validateVersionChange(resolvedInputSchema, existingSchemaInStore);
+                    }else if(inputSchemaInfo.getSchemaIdentity().getSchemaVersionMinor().compareTo(existingSchemaInfo.getSchemaIdentity().getSchemaVersionMinor()) > 0) {
+                        versionValidatorFactory.getVersionValidator(SchemaValidationType.MINOR).validateVersionChange(existingSchemaInStore, resolvedInputSchema);
+                    }else {
+                        versionValidatorFactory.getVersionValidator(SchemaValidationType.PATCH).validateVersionChange(existingSchemaInStore, resolvedInputSchema);
+                    }
+                }catch (SchemaVersionException exc) {
+                    log.error("Failed to resolve the schema and find breaking changes. Reason :" + exc.getMessage());
 
-					String message = MessageFormat.format(exc.getMessage(), StringUtils.substringAfterLast(inputSchemaInfo.getSchemaIdentity().getId(), SchemaConstants.SCHEMA_KIND_DELIMITER),
-							StringUtils.substringAfterLast(existingSchemaInfo.getSchemaIdentity().getId(), SchemaConstants.SCHEMA_KIND_DELIMITER));
-					throw new BadRequestException(message);
-				}
-			}
+                    String message = MessageFormat.format(exc.getMessage(), StringUtils.substringAfterLast(inputSchemaInfo.getSchemaIdentity().getId(), SchemaConstants.SCHEMA_KIND_DELIMITER),
+                            StringUtils.substringAfterLast(existingSchemaInfo.getSchemaIdentity().getId(), SchemaConstants.SCHEMA_KIND_DELIMITER));
+                    throw new BadRequestException(message);
+                }
+            }
 
 
-		}  catch ( NotFoundException e) {
-			throw new ApplicationException("Schema not found to evaluate breaking changes.");
-		}catch (JSONException exc) {
-			log.error("Failed to resolve the schema and find breaking changes. Reason :"+exc.getMessage());
-			throw new BadRequestException("Bad Input, invalid json");
-		}
+        }  catch ( NotFoundException e) {
+            throw new ApplicationException("Schema not found to evaluate breaking changes.");
+        }catch (JSONException exc) {
+            log.error("Failed to resolve the schema and find breaking changes. Reason :"+exc.getMessage());
+            throw new BadRequestException("Bad Input, invalid json");
+        }
 
-	}
+    }
 
     private SchemaInfo createSchemaInfo(SchemaRequest schemaRequest, Boolean isSystemSchema) throws ApplicationException, BadRequestException {
         if (isSystemSchema) {

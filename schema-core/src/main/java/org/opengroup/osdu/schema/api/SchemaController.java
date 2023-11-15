@@ -20,6 +20,7 @@ import org.opengroup.osdu.schema.model.SchemaInfoResponse;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.model.SchemaUpsertResponse;
 import org.opengroup.osdu.schema.service.ISchemaService;
+import org.opengroup.osdu.schema.validation.request.SchemaInfoRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 
 import static org.opengroup.osdu.schema.constants.SchemaConstants.GET_SCHEMA_200_RESPONSE;
@@ -44,6 +44,8 @@ public class SchemaController {
 
     @Autowired
     ISchemaService schemaService;
+    @Autowired
+    SchemaInfoRequestValidator schemaInfoRequestValidator;
 
     @Operation(summary = "${schemaApi.createSchema.summary}", description = "${schemaApi.createSchema.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "schema-api" })
@@ -122,6 +124,7 @@ public class SchemaController {
             @Parameter(description = "number of records to skip for pagination", example = "0", schema = @Schema(minimum = "0"))
             @RequestParam(required = false, name = "offset", defaultValue = "0") int offset)
             throws ApplicationException, BadRequestException {
+        schemaInfoRequestValidator.validateRequest(schemaInfoRequestValidator.extractQueryParamsFromRequest());
         QueryParams queryParams = QueryParams.builder().authority(authority).source(source).entityType(entityType)
                 .schemaVersionMajor(schemaVersionMajor).schemaVersionMinor(schemaVersionMinor)
                 .schemaVersionPatch(schemaVersionPatch).limit(limit).offset(offset).scope(scope).status(status)
@@ -151,5 +154,4 @@ public class SchemaController {
         ResponseEntity<SchemaInfo> response = new ResponseEntity<>(upsertResp.getSchemaInfo(), upsertResp.getHttpCode());
         return response;
     }
-
 }
