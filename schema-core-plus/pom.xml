@@ -4,10 +4,16 @@
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
 		<version>0.25.0-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>os-schema-gc</artifactId>
+	<properties>
+		<jackson-databind.version>2.15.0</jackson-databind.version>
+		<jackson.version>2.15.0</jackson.version>
+		<os-core-common.version>0.24.0</os-core-common.version>
+	</properties>
+
+	<artifactId>schema-core-plus</artifactId>
 	<description>Google cloud related implementation staff.</description>
 	<packaging>jar</packaging>
 	<version>0.25.0-SNAPSHOT</version>
@@ -33,14 +39,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>com.google.cloud</groupId>
-				<artifactId>libraries-bom</artifactId>
-				<version>26.15.0</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -54,17 +52,15 @@
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
 			<version>0.25.0-SNAPSHOT</version>
-			<!-- excluded due to runtime conflict with latest core-lib-gc transient dependencies -->
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.api-client</groupId>
-					<artifactId>google-api-client</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.http-client</groupId>
-					<artifactId>google-http-client</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>core-plus-common-lib</artifactId>
+			<version>0.24.0-rc2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -80,11 +76,6 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>core-lib-gc</artifactId>
-			<version>0.24.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback.contrib</groupId>
@@ -122,18 +113,18 @@
 
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>oqm</artifactId>
-			<version>0.24.0</version>
+			<artifactId>os-oqm-core</artifactId>
+			<version>0.25.0-rc1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>osm</artifactId>
-			<version>0.24.0</version>
+			<artifactId>os-osm-core</artifactId>
+			<version>0.25.0-rc2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>obm</artifactId>
-			<version>0.24.0</version>
+			<artifactId>os-obm-core</artifactId>
+			<version>0.25.0-rc1</version>
 		</dependency>
 
 		<dependency>
@@ -142,12 +133,16 @@
 			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+			<!--TODO used for a couple of models in TypeMapper.class, which should be removed later when clean dev env is created.-->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-datastore</artifactId>
+			<version>2.17.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -160,7 +155,7 @@
 						<configuration>
 							<classifier>spring-boot</classifier>
 							<mainClass>
-								org.opengroup.osdu.schema.SchemaApplication
+								org.springframework.boot.loader.PropertiesLauncher
 							</mainClass>
 						</configuration>
 					</execution>

@@ -81,6 +81,7 @@
 
 	<modules>
 		<module>schema-core</module>
+		<module>schema-core-plus</module>
 		<module>provider/schema-aws</module>
 		<module>provider/schema-gc</module>
 		<module>provider/schema-ibm</module>
