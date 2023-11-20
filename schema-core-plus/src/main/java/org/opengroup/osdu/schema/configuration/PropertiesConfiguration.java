@@ -18,25 +18,15 @@
 package org.opengroup.osdu.schema.configuration;
 
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix = "schema-changed")
+@Configuration
+@ConfigurationProperties
 @Getter
-@ConstructorBinding
-public class EventMessagingPropertiesConfig {
+@Setter
+public class PropertiesConfiguration {
 
-  private final boolean messagingEnabled;
-  private final String topicName;
-
-  public EventMessagingPropertiesConfig(boolean messagingEnabled, String topicName) {
-    if (messagingEnabled && StringUtils.isEmpty(topicName)) {
-      throw new RuntimeException("Missing event messaging configuration.");
-    }
-
-    this.messagingEnabled = messagingEnabled;
-    this.topicName = topicName;
-  }
-
+  private String sharedTenantName;
 }

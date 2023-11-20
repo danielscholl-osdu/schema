@@ -1,4 +1,4 @@
-## Service Configuration for Anthos
+## Service Configuration for Baremetal
 
 ## Environment variables
 
@@ -6,14 +6,14 @@ Define the following environment variables.
 
 Must have:
 
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `SPRING_PROFILES_ACTIVE` | ex `anthos` | Spring profile that activate default configuration for Google Cloud environment | false | - |
-| `SHARED_TENANT_NAME` | ex `anthos` | Shared account id | no | - |
-| `<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | Potgres user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service)  | yes | - |
-| `<MINIO_SECRETKEY_ENV_VARIABLE_NAME>` | ex `password` | Minio password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service) | yes | - |
-| `<AMQP_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service) | yes | - |
-| `<AMQP_ADMIN_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ Admin password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service) | yes | - |
+| name                                      | value         | description                                                                                                                                                                                                                                                                                                | sensitive? | source |
+|-------------------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|--------|
+| `SPRING_PROFILES_ACTIVE`                  | ex `anthos`   | Spring profile that activate default configuration for Google Cloud environment                                                                                                                                                                                                                            | false      | -      |
+| `SHARED_TENANT_NAME`                      | ex `anthos`   | Shared account id                                                                                                                                                                                                                                                                                          | no         | -      |
+| `<POSTGRES_PASSWORD_ENV_VARIABLE_NAME>`   | ex `password` | Potgres user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service)            | yes        | -      |
+| `<MINIO_SECRETKEY_ENV_VARIABLE_NAME>`     | ex `password` | Minio password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service)          | yes        | -      |
+| `<AMQP_PASSWORD_ENV_VARIABLE_NAME>`       | ex `password` | RabbitMQ password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service)       | yes        | -      |
+| `<AMQP_ADMIN_PASSWORD_ENV_VARIABLE_NAME>` | ex `password` | RabbitMQ Admin password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service, see [Partition properties set](#properties-set-in-partition-service) | yes        | -      |
 
 Defined in default application property file but possible to override:
 
@@ -33,13 +33,9 @@ Defined in default application property file but possible to override:
 These variables define service behavior, and are used to switch between `reference` or `Google Cloud` environments, their overriding
 and usage in mixed mode was not tested. Usage of spring profiles is preferred.
 
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `PARTITION_AUTH_ENABLED` | ex `true` or `false` | Disable or enable auth token provisioning for requests to Partition service | no | - |
-| `OQMDRIVER` | `rabbitmq` or `pubsub` | Oqm driver mode that defines which message broker will be used | no | - |
-| `OSMDRIVER` | `datastore` or `postgres` | Osm driver mode that defines which KV storage will be used | no | - |
-| `OBMDRIVER` | `gcs` or `minio` | Obm driver mode that defines which object storage will be used | no | - |
-| `SERVICE_TOKEN_PROVIDER` | `GCP` or `OPENID` |Service account token provider, `GCP` means use Google service account `OPENID` means use OpenId provider like `Keycloak` | no | - |
+| name                     | value                     | description                                                                                                               | sensitive? | source |
+|--------------------------|---------------------------|---------------------------------------------------------------------------------------------------------------------------|------------|--------|
+| `PARTITION_AUTH_ENABLED` | ex `true` or `false`      | Disable or enable auth token provisioning for requests to Partition service                                               | no         | -      |
 
 ## Partition level config
 
@@ -57,21 +53,21 @@ This section describes how to run cloud OSDU E2E tests (testing/schema-test-core
 
 You will need to have the following environment variables defined.
 
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `VENDOR` | `anthos` | Use value 'gcp' to run Google Cloud tests | no | - |
-| `HOST` | ex`http://localhost:8080` | Schema service host | no | - |
-| `PRIVATE_TENANT2` | ex`opendes` | OSDU tenant used for testing | no | - |
-| `PRIVATE_TENANT1` | ex`osdu` | OSDU tenant used for testing | no | - |
-| `SHARED_TENANT` | ex`common` | OSDU tenant used for testing | no | - |
-| `TEST_OPENID_PROVIDER_CLIENT_ID` | `********` | Client Id for `$INTEGRATION_TESTER` | yes | -- |
-| `TEST_OPENID_PROVIDER_CLIENT_SECRET` | `********` |  | Client secret for `$INTEGRATION_TESTER` | -- |
-| `TEST_OPENID_PROVIDER_URL` | `https://keycloak.com/auth/realms/osdu` | OpenID provider url | yes | -- |
+| name                                 | value                                   | description                               | sensitive?                              | source |
+|--------------------------------------|-----------------------------------------|-------------------------------------------|-----------------------------------------|--------|
+| `VENDOR`                             | `anthos`                                | Use value 'gcp' to run Google Cloud tests | no                                      | -      |
+| `HOST`                               | ex`http://localhost:8080`               | Schema service host                       | no                                      | -      |
+| `PRIVATE_TENANT2`                    | ex`opendes`                             | OSDU tenant used for testing              | no                                      | -      |
+| `PRIVATE_TENANT1`                    | ex`osdu`                                | OSDU tenant used for testing              | no                                      | -      |
+| `SHARED_TENANT`                      | ex`common`                              | OSDU tenant used for testing              | no                                      | -      |
+| `TEST_OPENID_PROVIDER_CLIENT_ID`     | `********`                              | Client Id for `$INTEGRATION_TESTER`       | yes                                     | --     |
+| `TEST_OPENID_PROVIDER_CLIENT_SECRET` | `********`                              |                                           | Client secret for `$INTEGRATION_TESTER` | --     |
+| `TEST_OPENID_PROVIDER_URL`           | `https://keycloak.com/auth/realms/osdu` | OpenID provider url                       | yes                                     | --     |
 
 **Entitlements configuration for integration accounts**
 
-| INTEGRATION_TESTER |
-| ---  |
+| INTEGRATION_TESTER                                                                                                                                                                         |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 |
 
 Execute following command to build code and run all the integration tests:
@@ -114,11 +110,11 @@ It can be overridden by:
 
 **Propertyset:**
 
-| Property | Description |
-| --- | --- |
-| osm.postgres.datasource.url | server URL |
-| osm.postgres.datasource.username | username |
-| osm.postgres.datasource.password | password |
+| Property                         | Description |
+|----------------------------------|-------------|
+| osm.postgres.datasource.url      | server URL  |
+| osm.postgres.datasource.username | username    |
+| osm.postgres.datasource.password | password    |
 
 <details><summary>Example of a definition for a single tenant</summary>
 
@@ -326,19 +322,19 @@ It can be overridden by:
 
 **Property Set** (for two types of connection: messaging and admin operations):
 
-| Property | Description |
-| --- | --- |
-| oqm.rabbitmq.amqp.host | messaging hostname or IP |
-| oqm.rabbitmq.amqp.port | - port |
-| oqm.rabbitmq.amqp.path | - path |
-| oqm.rabbitmq.amqp.username | - username |
-| oqm.rabbitmq.amqp.password | - password |
-| oqm.rabbitmq.admin.schema | admin host schema |
-| oqm.rabbitmq.admin.host | - host name |
-| oqm.rabbitmq.admin.port | - port |
-| oqm.rabbitmq.admin.path | - path |
-| oqm.rabbitmq.admin.username | - username |
-| oqm.rabbitmq.admin.password | - password |
+| Property                    | Description              |
+|-----------------------------|--------------------------|
+| oqm.rabbitmq.amqp.host      | messaging hostname or IP |
+| oqm.rabbitmq.amqp.port      | - port                   |
+| oqm.rabbitmq.amqp.path      | - path                   |
+| oqm.rabbitmq.amqp.username  | - username               |
+| oqm.rabbitmq.amqp.password  | - password               |
+| oqm.rabbitmq.admin.schema   | admin host schema        |
+| oqm.rabbitmq.admin.host     | - host name              |
+| oqm.rabbitmq.admin.port     | - port                   |
+| oqm.rabbitmq.admin.path     | - path                   |
+| oqm.rabbitmq.admin.username | - username               |
+| oqm.rabbitmq.admin.password | - password               |
 
 <details><summary>Example of a single tenant definition</summary>
 
@@ -406,8 +402,9 @@ At RabbitMq should be created exchange with name:
 
 It can be overridden by:
 
-- through the Spring Boot property `gcp.schema-changed.topic-name`
-- environment variable `GCP_SCHEMA_CHANGED_TOPIC_NAME`
+- through the Spring Boot property `schema-changed.topic-name`
+- environment variable `
+- SCHEMA_CHANGED_TOPIC_NAME`
 
 ![Screenshot](./pics/rabbit.PNG)
 
@@ -428,11 +425,11 @@ It can be overridden by:
 
 **Propertyset** (for two types of connection: messaging and admin operations):
 
-| Property | Description |
-| --- | --- |
-| obm.minio.endpoint | - url |
-| obm.minio.accessKey | - username |
-| obm.minio.secretKey | - password |
+| Property            | Description |
+|---------------------|-------------|
+| obm.minio.endpoint  | - url       |
+| obm.minio.accessKey | - username  |
+| obm.minio.secretKey | - password  |
 
 <details><summary>Example of a single tenant definition</summary>
 

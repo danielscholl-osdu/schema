@@ -16,6 +16,10 @@ analyze:
       type: mvn
       target: schema-core/pom.xml
       path: .
+    - name: schema-core-plus
+      type: mvn
+      target: schema-core-plus/pom.xml
+      path: .
     - name: os-schema-aws
       type: mvn
       target: provider/schema-aws/pom.xml
