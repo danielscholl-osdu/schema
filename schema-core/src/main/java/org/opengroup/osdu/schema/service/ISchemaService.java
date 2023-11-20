@@ -11,13 +11,13 @@ import org.opengroup.osdu.schema.model.SchemaUpsertResponse;
 
 public interface ISchemaService {
 
-    public Object getSchema(String schemaId) throws BadRequestException, NotFoundException, ApplicationException;
+	public Object getSchema(String schemaId) throws BadRequestException, NotFoundException, ApplicationException;
 
-    SchemaInfo createSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
+	SchemaInfo createSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
 
-    SchemaInfo updateSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
-    
-    /**
+	SchemaInfo updateSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
+
+	/**
 	 * This method first tries to update the schema with the given schema-id. If there is no schema found,
 	 * it tries to create the new schema for the given tenant.
 	 *
@@ -26,9 +26,9 @@ public interface ISchemaService {
 	 * @throws ApplicationException
 	 * @throws BadRequestException
 	 */
-    SchemaUpsertResponse upsertSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
-    
-    SchemaInfoResponse getSchemaInfoList(QueryParams queryParams) throws BadRequestException, ApplicationException;
+	SchemaUpsertResponse upsertSchema(SchemaRequest schemaRequest) throws ApplicationException, BadRequestException;
+
+	SchemaInfoResponse getSchemaInfoList(QueryParams queryParams) throws BadRequestException, ApplicationException;
 
 	/**
 	 * This method first tries to update the System schema with the given schema-id. If there is no schema found,

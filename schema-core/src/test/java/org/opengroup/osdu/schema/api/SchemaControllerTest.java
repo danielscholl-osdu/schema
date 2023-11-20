@@ -21,16 +21,25 @@ import org.opengroup.osdu.schema.model.SchemaInfoResponse;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.model.SchemaUpsertResponse;
 import org.opengroup.osdu.schema.service.ISchemaService;
+import org.opengroup.osdu.schema.validation.request.SchemaInfoRequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SchemaControllerTest {
 
     @Mock
     ISchemaService schemaService;
-
+    @Mock
+    HttpServletRequest httpServletRequest;
+    @Mock
+    SchemaInfoRequestValidator schemaInfoRequestValidator;
     @InjectMocks
     SchemaController schemaController;
 
@@ -136,7 +145,11 @@ public class SchemaControllerTest {
     }
 
     @Test
-    public void testGetSchemaInfoList() throws ApplicationException, NotFoundException, BadRequestException {
+    public void testGetSchemaInfoList() throws ApplicationException, BadRequestException {
+        // Create a custom HttpServletRequestWrapper to encapsulate the mock request
+        HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(httpServletRequest);
+        // Set the request attributes for the current thread
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(requestWrapper));
         schemaRequest = getSchemaRequestObject();
 
         when(schemaService.getSchemaInfoList(QueryParams.builder().authority("test").build()))
@@ -144,11 +157,9 @@ public class SchemaControllerTest {
 
         assertNotNull(
                 schemaController.getSchemaInfoList("test", null, null, null, null, null, null, null, null, 100, 0));
-
+        RequestContextHolder.resetRequestAttributes();
     }
 
-    
-    
     private SchemaRequest getSchemaRequestObject() {
         return SchemaRequest.builder().schema(null).schemaInfo(SchemaInfo.builder().createdBy("creator")
                 .dateCreated(new Date(System.currentTimeMillis()))
