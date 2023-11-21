@@ -39,7 +39,7 @@ public class InfoStepDef_GET {
 
   private VersionInfoUtils versionInfoUtil = new VersionInfoUtils();
 
-	@Given("I send get request to version info endpoint")
+	@Given("I send get request without a token to version info endpoint")
 	public void i_send_get_request_to_version_info_endpoint() {
 		HttpRequest httpRequest = HttpRequest.builder()
 	.url(TestConstants.HOST + TestConstants.GET_INFO_ENDPOINT)
