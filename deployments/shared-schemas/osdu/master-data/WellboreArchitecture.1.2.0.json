@@ -3,38 +3,38 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "master-data--Sample",
+      "entityType": "master-data--WellboreArchitecture",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
+      "schemaVersionMinor": 2,
       "schemaVersionPatch": 0,
-      "id": "{{schema-authority}}:wks:master-data--Sample:1.0.0"
+      "id": "{{schema-authority}}:wks:master-data--WellboreArchitecture:1.2.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
-    "status": "DEVELOPMENT"
+    "status": "PUBLISHED"
   },
   "schema": {
     "x-osdu-license": "Copyright 2023, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/master-data/Sample.1.0.0.json",
+    "$id": "https://schema.osdu.opengroup.org/json/master-data/WellboreArchitecture.1.2.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:master-data--Sample:1.0.0",
-    "title": "Sample",
-    "description": "DEPRECATED: Empty placeholder schema superseded by osdu:wks:master-data--Sample:2.0.0.",
+    "x-osdu-schema-source": "osdu:wks:master-data--WellboreArchitecture:1.2.0",
+    "title": "WellboreArchitecture",
+    "description": "Describes the physical structures for a borehole",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Sample:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:master-data--Sample:65c972cf-c10a-595f-820d-c7944c8d655c"
+        "pattern": "^[\\w\\-\\.]+:master-data\\-\\-WellboreArchitecture:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:master-data--WellboreArchitecture:ce60cf36-6401-5758-8833-fb2eefc2ffa7"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:master-data--Sample:1.0.0"
+        "example": "osdu:wks:master-data--WellboreArchitecture:1.2.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -113,7 +113,101 @@
           },
           {
             "type": "object",
-            "properties": {},
+            "properties": {
+              "WellboreID": {
+                "type": "string",
+                "title": "Wellbore ID",
+                "description": "A reference to the wellbore that is the subject of this activity plan",
+                "pattern": "^[\\w\\-\\.]+:master-data\\-\\-Wellbore:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                "x-osdu-relationship": [
+                  {
+                    "GroupType": "master-data",
+                    "EntityType": "Wellbore"
+                  }
+                ]
+              },
+              "HoleSectionIDs": {
+                "type": "array",
+                "title": "Hole Section IDs",
+                "description": "Description of the Hole Sections for this architecture",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[\\w\\-\\.]+:master-data\\-\\-HoleSection:[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                  "x-osdu-relationship": [
+                    {
+                      "GroupType": "master-data",
+                      "EntityType": "HoleSection"
+                    }
+                  ]
+                }
+              },
+              "InstalledTubulars": {
+                "type": "array",
+                "title": "Installed Tubulars",
+                "description": "Description of the Installed tubular associated to this architecture",
+                "items": {
+                  "type": "object",
+                  "title": "Installed Tubular",
+                  "description": "Geometrical Description of tubular assembly as installed in the wellbore",
+                  "properties": {
+                    "MeasuredDepthTop": {
+                      "type": "number",
+                      "title": "Measured Depth Tubular Top",
+                      "description": "The measured depth at the top of the tubular",
+                      "x-osdu-frame-of-reference": "UOM:length"
+                    },
+                    "MeasuredDepthBase": {
+                      "type": "number",
+                      "title": "Measured Depth Tubular Base",
+                      "description": "The measured depth at the base of the tubular",
+                      "x-osdu-frame-of-reference": "UOM:length"
+                    },
+                    "MeasuredDepthErrorTop": {
+                      "type": "number",
+                      "title": "Measured Depth Tubular Top Error",
+                      "description": "The error associated with the measured depth at the top of the tubular",
+                      "x-osdu-frame-of-reference": "UOM:length"
+                    },
+                    "MeasuredDepthErrorBase": {
+                      "type": "number",
+                      "title": "Measured Depth Tubular Base Error",
+                      "description": "The  error associated with the measured depth at the base of the tubular",
+                      "x-osdu-frame-of-reference": "UOM:length"
+                    },
+                    "TubularAssemblyID": {
+                      "type": "string",
+                      "title": "Tubular Assembly Identifier",
+                      "description": "Identifier of the tubular assembly actually installed or to be installed",
+                      "example": "namespace:master-data--TubularAssembly:9_58ProdCasing:",
+                      "pattern": "^[\\w\\-\\.]+:(master-data\\-\\-TubularAssembly|work-product-component\\-\\-TubularAssembly):[\\w\\-\\.\\:\\%]+:[0-9]*$",
+                      "x-osdu-relationship": [
+                        {
+                          "GroupType": "master-data",
+                          "EntityType": "TubularAssembly"
+                        },
+                        {
+                          "GroupType": "work-product-component",
+                          "EntityType": "TubularAssembly"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "TubularAssemblyID"
+                  ]
+                }
+              },
+              "Name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Name of Wellbore Architecture"
+              }
+            },
+            "required": [
+              "WellboreID",
+              "HoleSectionIDs",
+              "InstalledTubulars"
+            ],
             "title": "IndividualProperties"
           },
           {
@@ -134,21 +228,21 @@
       "legal"
     ],
     "additionalProperties": false,
-    "x-osdu-review-status": "Pending",
+    "x-osdu-review-status": "Accepted",
     "x-osdu-virtual-properties": {
-      "data.VirtualProperties.DefaultName": {
-        "type": "string",
-        "priority": [
-          {
-            "path": "data.Name"
-          }
-        ]
-      },
       "data.VirtualProperties.DefaultLocation": {
         "type": "object",
         "priority": [
           {
             "path": "data.SpatialLocation"
+          }
+        ]
+      },
+      "data.VirtualProperties.DefaultName": {
+        "type": "string",
+        "priority": [
+          {
+            "path": "data.Name"
           }
         ]
       }
