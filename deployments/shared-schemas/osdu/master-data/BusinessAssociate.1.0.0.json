@@ -388,7 +388,7 @@
                       "x-osdu-attribution-revision": "3.9"
                     },
                     "PrimaryContact": {
-                      "type": "object",
+                      "$ref": "{{schema-authority}}:wks:AbstractContactUserProfile:1.0.0",
                       "title": "Primary Contact",
                       "description": "The primary contact for this address."
                     }
