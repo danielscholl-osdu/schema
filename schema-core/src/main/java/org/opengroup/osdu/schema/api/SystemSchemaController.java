@@ -37,7 +37,7 @@ public class SystemSchemaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Schema updated", content = { @Content(schema = @Schema(implementation = SchemaInfo.class)) }),
             @ApiResponse(responseCode = "201", description = "Schema created", content = { @Content(schema = @Schema(implementation = SchemaInfo.class)) }),
-            @ApiResponse(responseCode = "400", description = "Bad user input. Mandatory fields missing or unacceptable value passed to API",  content = {@Content(schema = @Schema(implementation = AppError.class ))}),
+            @ApiResponse(responseCode = "400", description = "Bad user input. Mandatory fields missing or unacceptable value passed to API",  content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AppError.class ))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized",  content = {@Content(schema = @Schema(implementation = AppError.class ))}),
             @ApiResponse(responseCode = "403", description = "User not authorized to perform the action.",  content = {@Content(schema = @Schema(implementation = AppError.class ))}),
             @ApiResponse(responseCode = "404", description = "Not Found",  content = {@Content(schema = @Schema(implementation = AppError.class ))}),
