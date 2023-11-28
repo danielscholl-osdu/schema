@@ -38,7 +38,7 @@ import javax.validation.Valid;
 import static org.opengroup.osdu.schema.constants.SchemaConstants.GET_SCHEMA_200_RESPONSE;
 
 @RestController
-@RequestMapping("schema")
+@RequestMapping(value = "schema", produces = "application/json")
 @Tag(name = "schema-api", description = "Schema API - Core Schema related endpoints")
 public class SchemaController {
 
