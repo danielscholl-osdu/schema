@@ -861,7 +861,8 @@
               "JobTypeID",
               "NameCementedString",
               "TubularAssemblyID",
-              "WellboreArchitectureID"
+              "WellboreArchitectureID",
+              "CementToolTubularComponentID"
             ],
             "title": "IndividualProperties"
           },
