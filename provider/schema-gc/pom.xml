@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>core-lib-gc</artifactId>
-			<version>0.24.0</version>
+			<version>0.25.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback.contrib</groupId>
@@ -123,17 +123,17 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>oqm</artifactId>
-			<version>0.24.0</version>
+			<version>0.25.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>osm</artifactId>
-			<version>0.24.0</version>
+			<version>0.25.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>obm</artifactId>
-			<version>0.24.0</version>
+			<version>0.25.0</version>
 		</dependency>
 
 		<dependency>
