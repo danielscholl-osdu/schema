@@ -14,6 +14,7 @@ class DeploySharedSchemas:
                               'Only schema in developement stage can be updated']
     ALREADY_PUBLISHED = 'AlreadyPublished'
     SUCCESS = 'Success'
+    TRY_AGAIN='Internal server error'
 
     def __init__(self):
         parser = argparse.ArgumentParser(
@@ -126,6 +127,9 @@ class DeploySharedSchemas:
                     method = 'PUT'  # try PUT, it might have been DEVELOPMENT, than we can overwrite
                 elif message in self.PUBLISHED_SCHEMA_ERROR:  # already PUBLISHED, no bootstrap required
                     method = self.ALREADY_PUBLISHED
+                    error = False  # this is not considered an error
+                elif message in self.TRY_AGAIN:  #try again
+                    method = 'PUT'
                     error = False  # this is not considered an error
                 # everything else is an error
             except Exception as e:
