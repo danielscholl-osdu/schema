@@ -83,7 +83,7 @@ gc-baremetal-deploy:
       --set data.bootstrapServiceAccountName=$GC_BOOTSTRAP_SA
       --set data.logLevel=INFO
       --set data.springProfilesActive=$GC_SPRING_PROFILES_ACTIVE
-      --set data.dataPartitionId=$GC_TENANT
+      --set global.dataPartitionId=$GC_TENANT
     - !reference [.gc_verify_deploy, script]
     - !reference [.gc_verify_bootstrap, script]
   rules:

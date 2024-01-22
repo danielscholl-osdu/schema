@@ -6,7 +6,11 @@ metadata:
   name: {{ printf "%s-bootstrap" .Values.conf.configmap | quote }}
   namespace: {{ .Release.Namespace | quote }}
 data:
-  DATA_PARTITION: {{ .Values.data.dataPartitionId | quote }}
+  DATA_PARTITION: {{- if not .Values.global.onPremEnabled }}
+    {{ "system" }}
+  {{- else }}
+    {{ .Values.global.dataPartitionId | quote }}
+  {{- end }}
   ONPREM_ENABLED: {{ .Values.global.onPremEnabled | quote }}
   ENABLE_CLEANUP: {{ .Values.data.enableCleanup | quote }}
   SCHEMA_URL: {{ .Values.data.schemaHost | quote }}

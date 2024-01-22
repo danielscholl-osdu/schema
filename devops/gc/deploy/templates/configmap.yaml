@@ -6,11 +6,15 @@ metadata:
   name: {{ .Values.conf.configmap | quote }}
   namespace: {{ .Release.Namespace | quote }}
 data:
+  SHARED_TENANT_NAME: {{- if not .Values.global.onPremEnabled }}
+    {{ "system" }}
+  {{- else }}
+    {{ .Values.global.dataPartitionId | quote }}
+  {{- end }}
   LOG_LEVEL: {{ .Values.data.logLevel | quote }}
   ENTITLEMENTS_HOST: {{ .Values.data.entitlementsHost | quote }}
   SCHEMA_CHANGED_TOPIC_NAME: {{ .Values.data.schemaTopicName | quote }}
   SCHEMA_CHANGED_MESSAGING_ENABLED: {{ .Values.data.schemaChangedMessagingEnabled | quote }}
   PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
-  SHARED_TENANT_NAME: {{ .Values.data.dataPartitionId | quote }}
   SPRING_PROFILES_ACTIVE: {{ .Values.data.springProfilesActive | quote }}
   _JAVA_OPTIONS: {{ .Values.data.javaOptions | quote }}
