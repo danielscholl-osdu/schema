@@ -2,10 +2,10 @@ global:
   domain: ""
   onPremEnabled: false
   limitsEnabled: true
+  dataPartitionId: ""
 
 data:
   #Configmaps
-  dataPartitionId: ""
   entitlementsHost: "http://entitlements"
   javaOptions: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
   logLevel: "ERROR"
