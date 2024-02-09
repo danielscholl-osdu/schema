@@ -1,3 +1,4 @@
+import http
 import json
 import os
 import time
@@ -22,11 +23,14 @@ class DeploySharedSchemas:
                         "listed in the load sequence file.")
         parser.add_argument('-u', help='The complete URL to the Schema Service.',
                             default=None)
+        parser.add_argument('-e', '--early-exit', action='store_true', 
+                            help='Exit from the script as soon as an unexpected error occurs. E.g., 401 response status', default=False)
         arguments = parser.parse_args()
         if arguments.u is not None:
             RunEnv.SCHEMA_SERVICE_URL = arguments.u
         if RunEnv.SCHEMA_SERVICE_URL is None:
             exit('The schema service URL is not specified')
+        self._early_exit = arguments.early_exit
         self.url = RunEnv.SCHEMA_SERVICE_URL
         self.schema_registered = None
         self.schema_info_registered = None
@@ -131,9 +135,13 @@ class DeploySharedSchemas:
                 elif message in self.TRY_AGAIN:  #try again
                     method = 'PUT'
                     error = False  # this is not considered an error
+                    if self._early_exit:
+                        response.raise_for_status()
                 # everything else is an error
             except Exception as e:
                 message = str(e)
+                if self._early_exit:
+                    raise e
         else:
             method = self.SUCCESS
         return error, message, method
