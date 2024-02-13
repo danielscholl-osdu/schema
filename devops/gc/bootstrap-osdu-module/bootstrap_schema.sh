@@ -65,7 +65,7 @@ bootstrap_schema_prechek_env() {
 }
 
 bootstrap_schema_deploy_shared_schemas() {
-  python3 ./scripts/DeploySharedSchemas.py -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
+  python3 ./scripts/DeploySharedSchemas.py -e -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
 }
 
 if [ "${ONPREM_ENABLED}" == "true" ]
