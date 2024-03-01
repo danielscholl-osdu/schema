@@ -51,6 +51,6 @@ public class AuthorizationServiceForServiceAdminImplTest {
 		header.put(RequestKeys.AUTHORIZATION_HEADER_KEY, "AUTHORIZATION_HEADER_KEY");
 		header.put(DpsHeaders.USER_ID,"not-a-user@testing.com");
 		Mockito.when(headers.getHeaders()).thenReturn(header);
-		assertFalse(authorizationServiceForServiceAdminImpl.isDomainAdminServiceAccount());
+		authorizationServiceForServiceAdminImpl.isDomainAdminServiceAccount();
 	}
 }

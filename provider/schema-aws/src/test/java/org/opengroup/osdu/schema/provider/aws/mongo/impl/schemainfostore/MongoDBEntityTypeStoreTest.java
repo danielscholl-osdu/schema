@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +37,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBEntityTypeStore.ENTITY_TYPE_PREFIX;
 
 @DataMongoTest
@@ -50,7 +51,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
 
     @Test
     public void get() throws ApplicationException, NotFoundException {
-        //given
+        // given
         String id = "entityTypeId";
         EntityTypeDto entityTypeDto = new EntityTypeDto();
         entityTypeDto.setId(id);
@@ -59,28 +60,31 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         entityTypeDto.setData(entityType);
         mongoTemplateHelper.insert(entityTypeDto, ENTITY_TYPE_PREFIX + DATA_PARTITION);
 
-        //when
+        // when
         EntityType authorityfromstore = entityTypeStore.get(entityTypeDto.getId());
 
-        //then
+        // then
         assertNotNull(authorityfromstore);
         assertEquals(id, authorityfromstore.getEntityTypeId());
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getNotFound() throws ApplicationException, NotFoundException {
-        //given
+        // given
         String id = "entityTypeId";
         EntityTypeDto byId = (EntityTypeDto) mongoTemplateHelper.findById(id, EntityTypeDto.class, ENTITY_TYPE_PREFIX + DATA_PARTITION);
         assertNull(byId);
 
-        //then
-        entityTypeStore.get(id);
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            entityTypeStore.get(id);
+        });
+
+        assertNotNull(exception);
     }
 
     @Test
     public void getSystemEntityType() throws ApplicationException, NotFoundException {
-        //given
+        // given
         String id = "entityTypeId";
         EntityTypeDto entityTypeDto = new EntityTypeDto();
         entityTypeDto.setId(id);
@@ -92,24 +96,24 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         ReflectionTestUtils.setField(entityTypeStore, "sharedTenant", "common");
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
-        //when
+        // when
         EntityType systemEntity = entityTypeStore.getSystemEntity(id);
-        //then
+        // then
         assertNotNull(systemEntity);
         assertEquals(id, systemEntity.getEntityTypeId());
     }
 
     @Test
     public void create() throws ApplicationException, BadRequestException {
-        //given
+        // given
         String id = "entityTypeId";
         EntityType entityType = new EntityType();
         entityType.setEntityTypeId(id);
 
-        //when
+        // when
         EntityType entityTypeFromStore = entityTypeStore.create(entityType);
 
-        //then
+        // then
         assertNotNull(entityTypeFromStore);
         assertEquals(id, entityTypeFromStore.getEntityTypeId());
         EntityTypeDto entityTypeDto = (EntityTypeDto) mongoTemplateHelper.findById(id, EntityTypeDto.class, ENTITY_TYPE_PREFIX + DATA_PARTITION);
@@ -120,7 +124,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
 
     @Test(expected = BadRequestException.class)
     public void createDuplicate() throws ApplicationException, BadRequestException {
-        //given
+        // given
         String id = "entityTypeId";
         EntityTypeDto entityTypeDto = new EntityTypeDto();
         entityTypeDto.setId(id);
@@ -129,13 +133,13 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         entityTypeDto.setData(entityType);
         mongoTemplateHelper.insert(entityTypeDto, ENTITY_TYPE_PREFIX + DATA_PARTITION);
 
-        //then
+        // then
         entityTypeStore.create(entityType);
     }
 
     @Test
     public void createSystemEntityType() throws ApplicationException, BadRequestException {
-        //given
+        // given
         String id = "entityTypeId";
         EntityType entityType = new EntityType();
         entityType.setEntityTypeId(id);
@@ -145,10 +149,10 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         ReflectionTestUtils.setField(entityTypeStore, "sharedTenant", common);
         Mockito.when(headers.getPartitionId()).thenReturn("common");
 
-        //when
+        // when
         EntityType systemEntity = entityTypeStore.createSystemEntity(entityType);
 
-        //then
+        // then
         assertNotNull(systemEntity);
         assertEquals(id, systemEntity.getEntityTypeId());
         EntityTypeDto fromDb = (EntityTypeDto) mongoTemplateHelper.findById(id, EntityTypeDto.class, ENTITY_TYPE_PREFIX + common);
