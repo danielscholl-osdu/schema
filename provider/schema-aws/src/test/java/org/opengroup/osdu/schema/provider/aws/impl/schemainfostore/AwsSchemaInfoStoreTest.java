@@ -13,17 +13,19 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +51,6 @@ import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
 import org.opengroup.osdu.schema.provider.aws.models.SchemaInfoDoc;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import com.google.common.collect.Lists;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -250,7 +251,7 @@ public class AwsSchemaInfoStoreTest {
     }
 
     @Test
-    public void getSchemaInfoList() {
+    public void getSchemaInfoListReturnsEmptyList() {
         String tenantId = "tenantId";
         QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", true);
         List<SchemaInfo> expected = new ArrayList<SchemaInfo>();
@@ -258,6 +259,25 @@ public class AwsSchemaInfoStoreTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void getSchemaInfoList() {
+        String tenantId = "tenantId";
+        QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", true);
+        SchemaIdentity schemaIdentity = new SchemaIdentity(null, null, null, 1L, 2L, 3L, "schemaId");
+        SchemaInfo schemaInfo = new SchemaInfo(schemaIdentity, null, null, SchemaStatus.DEVELOPMENT, SchemaScope.INTERNAL, new SchemaIdentity());
+        SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc(null, null, null, null, null, null, null, null, null, null, null, schemaInfo);
+
+        List<Object> schemaInfoDocList = new ArrayList<Object>();
+        schemaInfoDocList.add(schemaInfoDoc);
+        
+        List<SchemaInfo> expected = new LinkedList<SchemaInfo>();
+        expected.add(schemaInfo);
+        
+        when(queryHelper.scanTable(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn((ArrayList<Object>) schemaInfoDocList);
+        List<SchemaInfo> actual = schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        assertEquals(expected, actual);
+    }
+    
     @Test
     public void getSchemaInfoListWithEmptyQueryParams() {
         String tenantId = "tenantId";
