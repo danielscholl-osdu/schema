@@ -23,7 +23,6 @@
 
 set -e
 
-source ./validate-env.sh "DATA_PARTITION"
 source ./validate-env.sh "SCHEMA_URL"
 source ./validate-env.sh "ENTITLEMENTS_HOST"
 source ./validate-env.sh "ENABLE_CLEANUP"
@@ -70,6 +69,7 @@ bootstrap_schema_deploy_shared_schemas() {
 
 if [ "${ONPREM_ENABLED}" == "true" ]
 then
+  source ./validate-env.sh "DATA_PARTITION"
   source ./validate-env.sh "OPENID_PROVIDER_URL"
   source ./validate-env.sh "OPENID_PROVIDER_CLIENT_ID"
   source ./validate-env.sh "OPENID_PROVIDER_CLIENT_SECRET"
@@ -78,6 +78,9 @@ then
   bootstrap_schema_gettoken_onprem
 
 else
+  # Specifying "system" partition for GC installation 
+  export DATA_PARTITION="system"
+
   if [ "${ENABLE_CLEANUP}" == "true" ]
   then
     source ./validate-env.sh "SCHEMA_BUCKET"
