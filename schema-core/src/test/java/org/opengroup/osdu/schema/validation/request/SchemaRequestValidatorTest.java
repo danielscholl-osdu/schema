@@ -2,7 +2,7 @@ package org.opengroup.osdu.schema.validation.request;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

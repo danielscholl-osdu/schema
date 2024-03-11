@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.opengroup.osdu</groupId>
+	<artifactId>os-schema</artifactId>
+	<version>0.26.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>os-schema</name>
+	<description>os schema service </description>
 
 	<properties>
 		<java.version>17</java.version>
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<os-core-common.version>0.25.0</os-core-common.version>
-		<log4j2.version>2.17.1</log4j2.version>
+		<os-core-common.version>0.26.0-SNAPSHOT</os-core-common.version>
 		<json-smart.version>2.5.0</json-smart.version>
-		<openapi.version>1.6.14</openapi.version>
-		<spring-boot-maven-plugin.version>2.7.6</spring-boot-maven-plugin.version>
+		<spring-boot-maven-plugin.version>3.2.2</spring-boot-maven-plugin.version>
+		<openapi.version>2.3.0</openapi.version>
 	</properties>
 
 	<licenses>
@@ -25,13 +30,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>2.7.17</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
 				<groupId>net.minidev</groupId>
 				<artifactId>json-smart</artifactId>
 				<version>${json-smart.version}</version>
@@ -40,44 +38,22 @@
 	</dependencyManagement>
 
 	<dependencies>
+		
+		<dependency>
+             <groupId>org.opengroup.osdu</groupId>
+             <artifactId>os-core-common-spring6</artifactId>
+             <version>${os-core-common.version}</version>
+             <type>pom</type>
+             <scope>import</scope>
+        </dependency>
+		
 		<!--Swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${openapi.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-autoconfigure</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.yaml</groupId>
-					<artifactId>snakeyaml</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-autoconfigure</artifactId>
-		</dependency>
-        <dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-web</artifactId>
-		    <version>5.7.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>2.0</version>
 		</dependency>
 	</dependencies>
-	
-	<groupId>org.opengroup.osdu</groupId>
-	<artifactId>os-schema</artifactId>
-	<version>0.26.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>os-schema</name>
-	<description>os schema service </description>
 
 	<modules>
 		<module>schema-core</module>
@@ -128,10 +104,10 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot-maven-plugin.version}</version>
-				<executions>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>3.2.2</version>
+                    <executions>
 					<execution>
 						<id>build-info</id>
 						<goals>
@@ -139,7 +115,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+            </plugin>        
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>

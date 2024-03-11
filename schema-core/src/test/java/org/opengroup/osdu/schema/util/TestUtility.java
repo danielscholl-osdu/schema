@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonPatch;
-import javax.json.JsonValue;
+import jakarta.json.Json;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonValue;
 
 import org.opengroup.osdu.schema.validation.version.model.SchemaPatch;
 

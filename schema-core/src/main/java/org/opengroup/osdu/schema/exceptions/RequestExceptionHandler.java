@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -48,7 +48,6 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when a 'required' request parameter is missing.
      */
-    @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
         String errorMessage = ex.getParameterName() + " parameter is missing";
@@ -66,7 +65,6 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when a 'required' request header is missing.
      */
-    @Override
     protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
         String missingHeader = extractMissingHeaderName(ex.getMessage());
@@ -86,7 +84,6 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
      * Triggered when unsupported media type is passed or passed JSON is invalid.
      */
 
-    @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
         StringBuilder builder = new StringBuilder();
@@ -108,7 +105,6 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when an object fails validation.
      */
-    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
         String errorMessage = "Parameter validation error :" + ex.getBindingResult().getFieldErrors().toString();
@@ -129,7 +125,6 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
      * application.properties
      * 
      */
-    @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
             HttpStatus status, WebRequest request) {
         String errorMessage = "Resource not found";
@@ -147,7 +142,6 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when a response message not available in case of error/exception.
      */
-    @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
         String errorMessage = "Bad Request. Invalid Input.";

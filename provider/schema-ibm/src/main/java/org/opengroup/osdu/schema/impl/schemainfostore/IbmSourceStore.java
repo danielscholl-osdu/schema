@@ -6,7 +6,7 @@ package org.opengroup.osdu.schema.impl.schemainfostore;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 //import org.opengroup.osdu.schema.credentials.DatastoreFactory;
