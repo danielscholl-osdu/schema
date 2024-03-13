@@ -20,11 +20,9 @@ package org.opengroup.osdu.schema.configuration;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "schema-changed")
 @Getter
-@ConstructorBinding
 public class EventMessagingPropertiesConfig {
 
   private final boolean messagingEnabled;
