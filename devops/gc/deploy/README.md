@@ -44,7 +44,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.logLevel** | logging level | string | INFO | yes
 **data.partitionHost** | partition host | string | "http://partition" | yes
 **data.schemaTopicName** | topic for schema changes events | string | "schema-changed" | yes
-**data.springProfilesActive** | active spring profile | string | gcp | yes
 
 ### Deployment variables
 
