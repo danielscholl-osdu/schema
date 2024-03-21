@@ -14,11 +14,17 @@ limitations under the License.*/
 
 package org.opengroup.osdu.schema.swagger;
 
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.springdoc.core.customizers.OperationCustomizer;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
@@ -34,7 +40,6 @@ import java.util.List;
 
 @Configuration
 public class SwaggerDocumentationConfig {
-
         @Autowired
         private SwaggerConfigurationProperties configurationProperties;
 
@@ -62,6 +67,25 @@ public class SwaggerDocumentationConfig {
                 return openAPI
                         .servers(Arrays.asList(new Server().url(configurationProperties.getApiServerUrl())));
         }
+        
+        @Bean
+        public OperationCustomizer customize() {
+            return (operation, handlerMethod) -> {
+                if (operation.getTags().contains("schema-api"))
+                {
+                        Parameter dataPartitionId = new Parameter()
+                                .name(DpsHeaders.DATA_PARTITION_ID)
+                                .description("Tenant Id")
+                                .in("header")
+                                .required(true)
+                                .schema(new StringSchema());
+                        return operation.addParametersItem(dataPartitionId);
+                }
+                
+                return operation;
+            };
+        }
+
 
         private List<Tag> tags() {
                 List<Tag> tags = new ArrayList<>();
