@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app: {{ .Values.conf.appName | quote }}
-    type: core
-    source: java
   name: {{ .Values.conf.appName | quote }}
   namespace: {{ .Release.Namespace | quote }}
 spec:
@@ -30,26 +28,24 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ .Values.conf.configmap | quote }}
-          {{- if .Values.global.onPremEnabled }}
           - secretRef:
               name: {{ .Values.conf.minioSecretName | quote }}
           - secretRef:
               name: {{ .Values.conf.postgresSecretName | quote }}
           - secretRef:
               name: {{ .Values.conf.rabbitmqSecretName | quote }}
-          {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
           ports:
             - containerPort: 8080
           livenessProbe:
-              failureThreshold: 3
-              httpGet:
-                path: /api/schema-service/v1/liveness_check
-                port: 8080
-              initialDelaySeconds: 120
-              periodSeconds: 10
+            failureThreshold: 3
+            httpGet:
+              path: /api/schema-service/v1/liveness_check
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
           resources:
             requests:
               cpu: {{ .Values.data.requestsCpu | quote }}

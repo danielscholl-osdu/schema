@@ -6,19 +6,11 @@ metadata:
   name: {{ .Values.conf.configmap | quote }}
   namespace: {{ .Release.Namespace | quote }}
 data:
-  SHARED_TENANT_NAME: {{- if not .Values.global.onPremEnabled }}
-    {{ "system" }}
-  {{- else }}
-    {{ .Values.global.dataPartitionId | quote }}
-  {{- end }}
+  SHARED_TENANT_NAME: {{ .Values.global.dataPartitionId | quote }}
   LOG_LEVEL: {{ .Values.data.logLevel | quote }}
   ENTITLEMENTS_HOST: {{ .Values.data.entitlementsHost | quote }}
   SCHEMA_CHANGED_TOPIC_NAME: {{ .Values.data.schemaTopicName | quote }}
   SCHEMA_CHANGED_MESSAGING_ENABLED: {{ .Values.data.schemaChangedMessagingEnabled | quote }}
   PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
-  {{- if .Values.global.onPremEnabled }}
   SPRING_PROFILES_ACTIVE: "anthos"
-  {{- else }}
-  SPRING_PROFILES_ACTIVE: "gcp"
-  {{- end }}
   _JAVA_OPTIONS: {{ .Values.data.javaOptions | quote }}

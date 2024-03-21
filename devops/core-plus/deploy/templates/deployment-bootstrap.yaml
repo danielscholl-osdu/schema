@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   labels:
     app: {{ printf "%s-bootstrap" .Values.conf.appName | quote }}
-    type: bootstrap
   name: {{ printf "%s-bootstrap" .Values.conf.appName | quote }}
   namespace: {{ .Release.Namespace | quote }}
 spec:
@@ -25,19 +24,17 @@ spec:
       containers:
         - name: {{ printf "%s-bootstrap" .Values.conf.appName | quote }}
           image: {{ .Values.data.bootstrapImage | quote }}
-          readinessProbe:
-            exec:
-              command:
-              - cat
-              - /tmp/bootstrap_ready
           imagePullPolicy: {{ .Values.data.imagePullPolicy | quote }}
           envFrom:
           - configMapRef:
               name: {{ printf "%s-bootstrap" .Values.conf.configmap | quote }}
-          {{- if .Values.global.onPremEnabled }}
           - secretRef:
               name: {{ .Values.conf.bootstrapSecretName | quote }}
-          {{- end }}
+          readinessProbe:
+            exec:
+              command:
+                - cat
+                - /tmp/bootstrap_ready
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true

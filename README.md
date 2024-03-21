@@ -43,6 +43,12 @@ Instructions for running and testing this service can be found [here](./provider
 
 All the Swagger and OpenAPI related common properties are managed here [swagger.properties](./schema-core/src/main/resources/swagger.properties)
 
+#### Server Url(full path vs relative path) configuration
+- `api.server.fullUrl.enabled=true` It will generate full server url in the OpenAPI swagger
+- `api.server.fullUrl.enabled=false` It will generate only the contextPath only
+- default value is false (Currently only in Azure it is enabled)
+[Reference]:(https://springdoc.org/faq.html#_how_is_server_url_generated)
+
 ## License
 
 Copyright 2017-2020, Schlumberger

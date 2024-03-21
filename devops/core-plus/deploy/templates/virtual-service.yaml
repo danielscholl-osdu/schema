@@ -23,9 +23,3 @@ spec:
             port:
               number: 80
             host: "{{ .Values.conf.appName }}.{{ .Release.Namespace }}.svc.cluster.local"
-          {{- if not .Values.global.onPremEnabled }}
-          headers:
-            request:
-              remove:
-              - x-envoy-peer-metadata
-          {{- end }}

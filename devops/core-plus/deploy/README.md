@@ -31,14 +31,12 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **global.domain** | your domain for the external endpoint, ex `example.com` | string | - | yes
-**global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | true | yes
 
 ### Configmap variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**data.dataPartitionId** | data partition id | string | - | yes
 **data.entitlementsHost** | entitlements host | string | "http://entitlements" | yes
 **data.javaOptions** | java options | string | "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45" | yes
 **data.logLevel** | logging level | string | INFO | yes
@@ -70,7 +68,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **conf.postgresSecretName** | secret for postgres | string | `schema-postgres-secret` | yes
 **conf.rabbitmqSecretName** | secret for rabbitmq | string | `rabbitmq-secret` | yes
 
-### Datastore cleanup and bootstrap schemas variables
+<!-- ### Datastore cleanup and bootstrap schemas variables
 
 > Datastore cleanup is used for cleaning Datastore Schema Entities if they are not present in Schema bucket
 
@@ -80,7 +78,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.datastoreNamespace** | Datastore Namespace for Schema | string | "dataecosystem" | yes
 **data.enableCleanup** | whether cleanup is enabled | boolean | false | yes
 **data.schemaBucket** | name of the bucket with schemas | string | - | yes
-**data.schemaHost** | schema host | string | "http://schema" | yes
+**data.schemaHost** | schema host | string | "http://schema" | yes -->
 
 ### Istio variables
 
@@ -98,7 +96,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 Run this command from within this directory:
 
 ```console
-helm install gc-schema-deploy .
+helm install core-plus-schema-deploy .
 ```
 
 ## Uninstalling the Chart
@@ -106,7 +104,7 @@ helm install gc-schema-deploy .
 To uninstall the helm deployment:
 
 ```console
-helm uninstall gc-schema-deploy
+helm uninstall core-plus-schema-deploy
 ```
 
 [Move-to-Top](#deploy-helm-chart)

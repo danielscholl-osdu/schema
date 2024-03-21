@@ -80,13 +80,17 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/gc-global.yml"
 
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/core-global.yml"
+
   - local: "devops/gc/pipeline/override-stages.yml"
+  - local: "devops/core-plus/pipeline/override-stages.yml"
 
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/azure/override-stages.yml"
+
   - local: "/devops/aws/bootstrap.yaml"
   - local: "/devops/ibm/bootstrap.yaml"
-  - local: "/devops/core-plus/pipeline/override-stages.yml"
 
 .maven:
   image: maven:3.9.3-eclipse-temurin-17

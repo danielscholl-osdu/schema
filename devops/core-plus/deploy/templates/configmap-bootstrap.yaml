@@ -6,15 +6,8 @@ metadata:
   name: {{ printf "%s-bootstrap" .Values.conf.configmap | quote }}
   namespace: {{ .Release.Namespace | quote }}
 data:
-  {{- if .Values.global.onPremEnabled }}
   DATA_PARTITION: {{ .Values.global.dataPartitionId | quote }}
-  {{- end }}
-  ONPREM_ENABLED: {{ .Values.global.onPremEnabled | quote }}
+  ONPREM_ENABLED: "true"
   ENABLE_CLEANUP: {{ .Values.data.enableCleanup | quote }}
   SCHEMA_URL: {{ .Values.data.schemaHost | quote }}
   ENTITLEMENTS_HOST: {{ .Values.data.entitlementsHost | quote }}
-  {{- if .Values.data.enableCleanup }}
-  SCHEMA_BUCKET: {{ .Values.data.schemaBucket | quote }}
-  DATASTORE_NAMESPACE: {{ .Values.data.datastoreNamespace | quote }}
-  DATASTORE_KIND: {{ .Values.data.datastoreKind | quote }}
-  {{- end }}  
