@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "{{schema-authority}}:wks:AbstractReferenceValueUpgrade:2.0.0",
+    "relativePath": "shared-schemas/osdu/abstract/AbstractReferenceValueUpgrade.2.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--CementJob:1.2.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/CementJob.1.2.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceDataJob:1.5.0",
+    "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceDataJob.1.5.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceRegistryEntry:1.4.0",
+    "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceRegistryEntry.1.4.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--ReferenceValueUpgradeLookUp:2.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/ReferenceValueUpgradeLookUp.2.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--WellboreOpeningType:1.0.1",
+    "relativePath": "shared-schemas/osdu/reference-data/WellboreOpeningType.1.0.1.json"
+  }
+]
