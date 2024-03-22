@@ -91,6 +91,7 @@ include:
 
   - local: "/devops/aws/bootstrap.yaml"
   - local: "/devops/ibm/bootstrap.yaml"
+  - local: "/publish.yml"
 
 .maven:
   image: maven:3.9.3-eclipse-temurin-17
