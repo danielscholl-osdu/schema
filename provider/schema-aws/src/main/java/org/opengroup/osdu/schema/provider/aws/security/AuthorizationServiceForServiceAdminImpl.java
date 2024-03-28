@@ -16,7 +16,7 @@ package org.opengroup.osdu.schema.provider.aws.security;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
 import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
