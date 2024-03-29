@@ -16,6 +16,7 @@ package org.opengroup.osdu.schema.azure.impl.schemainfostore;
 
 import java.text.MessageFormat;
 
+
 import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -24,7 +25,7 @@ import org.opengroup.osdu.schema.azure.definitions.AuthorityDoc;
 import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 
-import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
+
 import org.opengroup.osdu.schema.azure.definitions.AuthorityDoc;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;

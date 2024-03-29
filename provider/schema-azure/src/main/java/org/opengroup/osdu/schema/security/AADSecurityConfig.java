@@ -15,19 +15,31 @@
 package org.opengroup.osdu.schema.security;
 
 import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.IOException;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @ConditionalOnProperty(value = "azure.istio.auth.enabled", havingValue = "false", matchIfMissing = false)
-public class AADSecurityConfig extends WebSecurityConfigurerAdapter {
+public class AADSecurityConfig implements AccessDeniedHandler, AuthenticationEntryPoint {
     @Autowired
     private AADAppRoleStatelessAuthenticationFilter appRoleAuthFilter;
 
@@ -41,16 +53,25 @@ public class AADSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-ui/**"
     };
 
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                .and()
+                .authorizeRequests()
+                .requestMatchers(AUTH_ALLOWLIST).permitAll()
+                .and()
+                .addFilterBefore((Filter) appRoleAuthFilter, (Class<? extends Filter>) UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
-            .and()
-            .authorizeRequests()
-                .antMatchers(AUTH_ALLOWLIST).permitAll()
-                .anyRequest().authenticated()
-            .and()
-            .addFilterBefore(appRoleAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+
+    }
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+
     }
 }

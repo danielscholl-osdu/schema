@@ -59,10 +59,9 @@
 			<dependency>
 				<groupId>org.opengroup.osdu</groupId>
 				<artifactId>core-lib-azure-spring6</artifactId>
-				<version>${osdu.corelibazure.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
+				<version>0.26.0-rc6</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-actuator</artifactId>
@@ -104,40 +103,27 @@
 <!--			</exclusions>-->
 <!--		</dependency>-->
 
-<!--		<dependency>
-			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>core-lib-azure</artifactId>
-			<version>${osdu.corelibazure.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
+
 		<dependency>
 			<groupId>com.azure</groupId>
 			<artifactId>azure-spring-data-cosmos</artifactId>
 			<version>${azure-spring-data-cosmos.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>6.0.7</version>
+		</dependency>
+		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
 			<version>${osdu.os-schema-core.version}</version>
-<!--			<exclusions>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
+		<exclusions>
 				<exclusion>
 					<groupId>org.springframework.security</groupId>
-					<artifactId>spring-security-web</artifactId>
+					<artifactId>spring-security-config</artifactId>
 				</exclusion>
-			</exclusions>-->
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -211,6 +197,10 @@
 			<artifactId>spring-cloud-azure-starter-active-directory</artifactId>
 			<version>5.10.0</version>
 			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-config</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-web</artifactId>
@@ -300,9 +290,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.azure</groupId>
-			<artifactId>azure-core</artifactId>
-			<version>${azure-core.version}</version>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>core-lib-azure</artifactId>
+			<version>0.25.0</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

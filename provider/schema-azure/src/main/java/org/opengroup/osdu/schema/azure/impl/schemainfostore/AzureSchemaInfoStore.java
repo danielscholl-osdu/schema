@@ -23,7 +23,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opengroup.osdu.azure.CosmosStore;
+
+import org.opengroup.osdu.azure.cosmosdb.CosmosStore;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
