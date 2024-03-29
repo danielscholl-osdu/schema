@@ -1,12 +1,15 @@
+## Documentation
+Official documentation [https://osdu.pages.opengroup.org/platform/system/schema-service/](https://osdu.pages.opengroup.org/platform/system/schema-service/)
+
 ## Running the schema service locally
 
 The Schema Service is a Maven multi-module project with each cloud implemention placed in its submodule. To build or run Schema Service locally, follow the below steps :
 
-### 1. Google Cloud deployment
+## 1. Google Cloud deployment
 
 Instructions for running the Google Cloud implementation in the cloud can be found [here](./provider/schema-gc/README.md).
 
-### 2. Azure deployment
+## 2. Azure deployment
 
 Instructions for running the Azure implementation in the cloud can be found [here](https://community.opengroup.org/osdu/platform/system/schema-service/-/blob/master/provider/schema-azure/README.md).
 
