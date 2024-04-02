@@ -1,19 +1,11 @@
 # Schema Service
 
-- [Introduction](#introduction)
-- [Concepts](#concepts)
-- [How to use this service?](#using_this_service)
-- [Current limitation](#limitation)
-- [Schema Validation](#schema-validation)
-- [Version info endpoint](#version-info-endpoint)
-
-
-## Introduction <a name="introduction"></a>
+## Introduction
 Schema Service enables a centralized governance and management of schema in the Data Ecosystem. It offers an implementation of the schema standard. 
 Schema Service provides all necessary APIs to Fetch, create, update and mark a schema obsolete.
 
 
-## Concepts <a name="concepts"></a>
+## Concepts
 * Schema - A data model definition. Schema Service allows data models to be defined in rich JSON objects (as per JSON schema specifications JSON Schema [draft #07](https://json-schema.org/understanding-json-schema/index.html)).
 * Schema Resolution - Schema definitions could include references to other schema definitions or fragments. During Schema creation, Schema Service resolves all the referred schema fragments and creates a completely resolved schema. A sample entity-relationship diagram below demonstrates the associations between various domain entities and how schema fragment references can be helpful in defining models for these entities.
 ![](drilling_e_r.png)
@@ -38,7 +30,7 @@ Schema Service provides all necessary APIs to Fetch, create, update and mark a s
 
 
 
-## How to use this service? <a name="using_this_service"></a>
+## How to use this service?
 
 The Schema Service promotes re-use and composition via the JSON schema draft 07 features. Typically one would start
 with the registration of reusable schema fragments or schema elements, which are used e.g. by API specifications or
@@ -247,12 +239,13 @@ The following parameters are required to create a schema:
 | schema             | Schema definition                                 | JSON object. Please refer example above. | Object   | No                |
 
 
-## Schema Validation <a name="schema-validation"></a>
+## Schema Validation
 
 Schema service does multiple checks on different levels to make sure the inserted schema fits into validations on major, minor and patch version levels.
 Following is the list of all validations that is performed while creating/updating any schema into the system.
 
 Schema version constitutes three parts, MAJOR, MINOR, and PATCH. Depending upon the nature of changes done to the structure of schema, the application may force the user to update the version number. At a high level, the upgrading versions would be required when:
+
   * PATCH version when you make backwards compatible bug fixes or documentation/decoration changes
   * MINOR version when you add functionality or contents in a backwards compatible manner, and
   * MAJOR version when you make incompatible schema changes. e.g.Whenever an attribute is removed or `type` of an attribute is updated
@@ -260,6 +253,7 @@ Schema version constitutes three parts, MAJOR, MINOR, and PATCH. Depending upon 
 ##### Permitted Changes for PATCH Version Increments:
 
 Changes in the values of following attributes is permitted at patch version increment. They are non-mandatory attributes so addition or removal of any of these attributes is permitted.
+
   * title
   * description
   * example/examples
@@ -271,6 +265,7 @@ Changes in the values of following attributes is permitted at patch version incr
 ##### Permitted Changes for MINOR Version Increments: 
 
 In addition to all permitted changes in PATCH versions, the following actions are permitted:
+
 1. Adding properties to existing data and nested structures
 2. Adding object structures to below arrays:
   * [allOf](https://json-schema.org/understanding-json-schema/reference/combining.html#allof) : To validate against `allOf`, the given data must be valid against all of the given subschemas
@@ -292,7 +287,8 @@ It is permitted to declare existing properties as deprecated, preferable with in
 
 ##### Permitted Changes for MAJOR Version Increments:
 	
-Any changes are permitted, specifically
+Any changes are permitted, specifically:
+
 1. Removal of properties
 2. Removal of structures in `allOf`, `oneOf`, `anyOf`
 3. Changing the list of required properties
@@ -310,41 +306,6 @@ Following table gives you error message when breaking change is introduced at an
 | 400        | When breaking change not allowed at patch version level |Patch version validation failed. Changes requiring a minor or major version increment were found; analysed version: 2.2.15 and 2.2.14. Updating the schema version to a higher minor or major version is required.|
 | 400        | When breaking change not allowed at minor version level |  Minor version validation failed. Breaking changes were found; analysed versions 1013.2.0 and 1013.1.0. Updating the schema version to a higher major version is required.|
 
-Note: The above array message would contain given schema version and existing schema in the system
+!!! note 
+    The above array message would contain given schema version and existing schema in the system
 
-
-## Version info endpoint
-For deployment available public `/info` endpoint, which provides build and git related information.
-#### Example response:
-```json
-{
-    "groupId": "org.opengroup.osdu",
-    "artifactId": "storage-gc",
-    "version": "0.10.0-SNAPSHOT",
-    "buildTime": "2021-07-09T14:29:51.584Z",
-    "branch": "feature/GONRG-2681_Build_info",
-    "commitId": "7777",
-    "commitMessage": "Added copyright to version info properties file",
-    "connectedOuterServices": [
-      {
-        "name": "elasticSearch",
-        "version":"..."
-      },
-      {
-        "name": "postgresSql",
-        "version":"..."
-      },
-      {
-        "name": "redis",
-        "version":"..."
-      }
-    ]
-}
-```
-This endpoint takes information from files, generated by `spring-boot-maven-plugin`,
-`git-commit-id-plugin` plugins. Need to specify paths for generated files to matching
-properties:
-- `version.info.buildPropertiesPath`
-- `version.info.gitPropertiesPath`
-
-[Back to table of contents](#TOC)

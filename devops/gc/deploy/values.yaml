@@ -12,11 +12,6 @@ data:
   partitionHost: "http://partition"
   schemaTopicName: "schema-changed"
   schemaChangedMessagingEnabled: true
-  springProfilesActive: "gcp"
-  datastoreKind: "system_schema_osm"
-  datastoreNamespace: "dataecosystem"
-  enableCleanup: false
-  schemaBucket: ""
   schemaHost: "http://schema"
   #Deployments
   requestsCpu: "220m"

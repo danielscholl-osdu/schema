@@ -14,19 +14,11 @@
 # - OPENID_PROVIDER_URL
 # - OPENID_PROVIDER_CLIENT_ID
 # - OPENID_PROVIDER_CLIENT_SECRET
-# (with datastore cleanup)
-# - SCHEMA_BUCKET
-# - DATASTORE_NAMESPACE
-# - DATASTORE_KIND
-# - ENABLE_CLEANUP
-#
 
 set -e
 
-source ./validate-env.sh "DATA_PARTITION"
 source ./validate-env.sh "SCHEMA_URL"
 source ./validate-env.sh "ENTITLEMENTS_HOST"
-source ./validate-env.sh "ENABLE_CLEANUP"
 
 bootstrap_schema_gettoken_onprem() {
 
@@ -70,6 +62,7 @@ bootstrap_schema_deploy_shared_schemas() {
 
 if [ "${ONPREM_ENABLED}" == "true" ]
 then
+  source ./validate-env.sh "DATA_PARTITION"
   source ./validate-env.sh "OPENID_PROVIDER_URL"
   source ./validate-env.sh "OPENID_PROVIDER_CLIENT_ID"
   source ./validate-env.sh "OPENID_PROVIDER_CLIENT_SECRET"
@@ -78,19 +71,11 @@ then
   bootstrap_schema_gettoken_onprem
 
 else
-  if [ "${ENABLE_CLEANUP}" == "true" ]
-  then
-    source ./validate-env.sh "SCHEMA_BUCKET"
-    source ./validate-env.sh "DATASTORE_NAMESPACE"
-    source ./validate-env.sh "DATASTORE_KIND"
-    echo "Started schema cleanup"
-    python3 ./scripts/schema-cleaner/main.py -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
-    echo "Finished schema cleanup"
-  fi
+  # Specifying "system" partition for GC installation 
+  export DATA_PARTITION="system"
 
   # Get credentials for Google Cloud
   bootstrap_schema_gettoken_gc
-
 fi
 
 # Precheck entitlements

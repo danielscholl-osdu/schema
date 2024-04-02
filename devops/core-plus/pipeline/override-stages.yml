@@ -5,19 +5,13 @@ variables:
   CORE_ENABLE_BOOTSTRAP: "true"
   CORE_SERVICE: schema
   CORE_HELM_TIMEOUT: "--timeout 15m"
-
-core-test:
-  variables:
-    CORE_TEST_SUBDIR: testing/schema-test-core
-    HOST: https://osdu.core-dev.gcp.gnrg-osdu.projects.epam.com
-    PRIVATE_TENANT1: osdu
-    PRIVATE_TENANT2: osdu
-    SHARED_TENANT: osdu
-    VENDOR: anthos
-  script:
-    - $MAVEN_BUILD . test-results.log verify -q -f $CORE_TEST_SUBDIR/pom.xml
+  CORE_TEST_SUBDIR: testing/schema-test-core
 
 core-containerize-bootstrap-gitlab:
-  variables:
-    IMAGE_BOOTSTRAP_NAME: "core-plus-bootstrap-schema"
   tags: ["osdu-medium"]
+  variables:
+    CORE_IMAGE_BOOTSTRAP_NAME: "core-plus-bootstrap-schema"
+
+core-test:
+  script:
+    - $MAVEN_BUILD . test-results.log verify -q -f $CORE_TEST_SUBDIR/pom.xml
