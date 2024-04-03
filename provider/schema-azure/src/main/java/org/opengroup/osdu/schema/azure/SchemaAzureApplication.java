@@ -28,11 +28,11 @@ import org.springframework.context.annotation.PropertySource;
         org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class})
 @ComponentScan({ "org.opengroup" })
 @PropertySource("classpath:swagger.properties")
-public class SchemaApplication {
+public class SchemaAzureApplication {
     public static void main(String[] args)
     {
         Class<?>[] sources = new Class<?>[]{
-                SchemaApplication.class,
+                SchemaAzureApplication.class,
                 AzureBootstrapConfig.class,
                 AzureOSDUConfig.class,
                 CosmosContainerConfig.class,
