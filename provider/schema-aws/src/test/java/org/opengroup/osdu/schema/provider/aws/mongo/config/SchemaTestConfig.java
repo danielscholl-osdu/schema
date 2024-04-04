@@ -42,7 +42,6 @@ public class SchemaTestConfig {
 
     @Bean
     public MongoTemplate createMongoTemplate(MongoDBSimpleFactory dbSimpleFactory) {
-
         return dbSimpleFactory.mongoTemplate(properties);
     }
 }

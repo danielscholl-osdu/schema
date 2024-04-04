@@ -70,6 +70,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -78,35 +79,35 @@
 			<version>2.0</version>
 		</dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <!-- Required for JUnit 4 tests to run -->
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
-		<dependency>
-		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-core</artifactId>
-		    <version>5.4.0</version>
-		    <scope>test</scope>
-		</dependency>
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>3.4.1</version>
+            <artifactId>de.flapdoodle.embed.mongo.spring31x</artifactId>
+            <version>4.11.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
+                <!-- Avoid errors like ` Mapping Parameter org.springframework.data.mapping.Parameter@8efd4ab3 does not have a name`-->
+                <!-- note that `spring-boot-starter-parent` (not used here) set also that option by default, see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/#using-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot-maven-plugin.version}</version>
+                <version>3.2.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -120,6 +121,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <threadCount>1</threadCount>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.owasp</groupId>
