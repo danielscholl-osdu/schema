@@ -14,8 +14,8 @@
 
 package org.opengroup.osdu.schema.provider.aws.mongo.util;
 
-import org.junit.Rule;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.opengroup.osdu.core.aws.partition.PartitionInfoAws;
 import org.opengroup.osdu.core.aws.partition.PartitionServiceClientWithCache;
@@ -28,11 +28,9 @@ import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.mockito.ArgumentMatchers.anyString;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class ParentUtil {
     public static final String DATA_PARTITION = "osdu_schema";
 
@@ -49,27 +47,26 @@ public abstract class ParentUtil {
     @MockBean
     private IAuthorizationServiceForServiceAdmin IAuthorizationServiceForServiceAdmin;
 
-    @Rule
-    public ExternalResource resource = new ExternalResource() {
-        @Override
-        protected void before() {
-            ParentUtil.this.mongoTemplateHelper.dropCollections();
-            Mockito.when(headers.getPartitionId()).thenReturn(DATA_PARTITION);
-            PartitionInfoAws partitionInfoAws = new PartitionInfoAws();
-            Property tenantIdProperty = new Property();
-            tenantIdProperty.setValue(DATA_PARTITION);
-            partitionInfoAws.setTenantIdProperty(tenantIdProperty);
-            Mockito.when(partitionServiceClient.getPartition(anyString())).thenReturn(partitionInfoAws);
 
-        }
+    @BeforeEach
+    void setUpMocks() {
+        Mockito.when(this.headers.getPartitionId()).thenReturn(DATA_PARTITION);
 
-        @Override
-        protected void after() {
-            ParentUtil.this.mongoTemplateHelper.dropCollections();
-            ParentUtil.this.headers.put(SchemaConstants.DATA_PARTITION_ID, null);
-            ParentUtil.this.headers.put("user", null);
-        }
-    };
+        this.mongoTemplateHelper.dropCollections();
+
+        PartitionInfoAws partitionInfoAws = new PartitionInfoAws();
+        Property tenantIdProperty = new Property();
+        tenantIdProperty.setValue(DATA_PARTITION);
+        partitionInfoAws.setTenantIdProperty(tenantIdProperty);
+
+        Mockito.when(partitionServiceClient.getPartition(anyString())).thenReturn(partitionInfoAws);
+    }
+    @AfterEach
+    public void tearDown() {
+        this.mongoTemplateHelper.dropCollections();
+        ParentUtil.this.headers.put(SchemaConstants.DATA_PARTITION_ID, null);
+        ParentUtil.this.headers.put("user", null);
+    }
 
     @Autowired
     public void set(MongoTemplate mongoTemplate) {

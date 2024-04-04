@@ -14,24 +14,19 @@
 
 package org.opengroup.osdu.schema.provider.aws.mongo.impl.schemainfostore;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.EntityType;
-import org.opengroup.osdu.schema.provider.aws.SchemaAwsApplication;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBEntityTypeStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.EntityTypeDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
 import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -41,9 +36,7 @@ import static org.junit.Assert.assertThrows;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBEntityTypeStore.ENTITY_TYPE_PREFIX;
 
 @DataMongoTest
-@RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {SchemaTestConfig.class})
-@ContextConfiguration(classes = {SchemaAwsApplication.class, MockServletContext.class})
 public class MongoDBEntityTypeStoreTest extends ParentUtil {
 
     @Autowired
@@ -122,7 +115,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         assertEquals(id, entityTypeDto.getData().getEntityTypeId());
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void createDuplicate() throws ApplicationException, BadRequestException {
         // given
         String id = "entityTypeId";
@@ -133,8 +126,7 @@ public class MongoDBEntityTypeStoreTest extends ParentUtil {
         entityTypeDto.setData(entityType);
         mongoTemplateHelper.insert(entityTypeDto, ENTITY_TYPE_PREFIX + DATA_PARTITION);
 
-        // then
-        entityTypeStore.create(entityType);
+        assertThrows(BadRequestException.class, () -> entityTypeStore.create(entityType));
     }
 
     @Test
