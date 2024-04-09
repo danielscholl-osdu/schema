@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
-		<version>0.26.0-SNAPSHOT</version>
+		<version>0.27.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>os-schema-ibm</artifactId>
 	<description>IBM cloud related implementation staff.</description>
 	<packaging>jar</packaging>
-	<version>0.26.0-SNAPSHOT</version>
+	<version>0.27.0-SNAPSHOT</version>
 	
 	<properties>
 		<start-class>org.opengroup.osdu.schema.provider.ibm.app.SchemaIBMApplication</start-class>
@@ -33,7 +33,21 @@
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
-			<version>0.26.0-SNAPSHOT</version>
+			<version>0.27.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>netty-codec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tomcat.embed</groupId>
+					<artifactId>tomcat-embed-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-actuator-autoconfigure</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
