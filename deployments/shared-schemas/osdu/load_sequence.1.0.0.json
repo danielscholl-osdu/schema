@@ -1372,8 +1372,8 @@
     "relativePath": "shared-schemas/osdu/dataset/File.CompressedVectorHeaders.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.EML:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.EML.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.EML:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.EML.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.EML:1.0.0",
