@@ -1380,104 +1380,104 @@
     "relativePath": "shared-schemas/osdu/dataset/File.EML.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.Generic:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.Generic.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.Generic:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.Generic.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.Generic:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.Generic.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.GeoJSON:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.GeoJSON.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.GeoJSON:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.GeoJSON.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.GeoJSON:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.GeoJSON.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.HDF5:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.HDF5.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.HDF5:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.HDF5.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.HDF5:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.HDF5.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.Image.JPEG:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.Image.JPEG.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.Image.JPEG:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.Image.JPEG.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.Image.JPEG:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.Image.JPEG.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.Image.PNG:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.Image.PNG.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.Image.PNG:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.Image.PNG.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.Image.PNG:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.Image.PNG.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.Image.TIFF:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.Image.TIFF.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.Image.TIFF:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.Image.TIFF.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.Image.TIFF:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.Image.TIFF.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.Image.WorldFile:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.Image.WorldFile.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.Image.WorldFile:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.Image.WorldFile.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.Image.WorldFile:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.Image.WorldFile.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.OGC.GeoTIFF:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.OGC.GeoTIFF.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.OGC.GeoTIFF:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.OGC.GeoTIFF.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.OGC.GeoTIFF:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.OGC.GeoTIFF.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.PRODML:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.PRODML.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.PRODML:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.PRODML.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.PRODML:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.PRODML.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.SeismicHistogram:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.SeismicHistogram.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.SeismicHistogram:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.SeismicHistogram.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.SeismicHistogram:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.SeismicHistogram.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.SeismicLineGeometry:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.SeismicLineGeometry.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.SeismicLineGeometry:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.SeismicLineGeometry.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.SeismicLineGeometry:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.SeismicLineGeometry.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--File.WITSML:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/File.WITSML.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--File.WITSML:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/File.WITSML.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--File.WITSML:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/File.WITSML.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Bluware.OpenVDS:1.1.1",
-    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Bluware.OpenVDS.1.1.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Bluware.OpenVDS:1.2.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Bluware.OpenVDS.1.2.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--FileCollection.Bluware.OpenVDS:1.1.0",
@@ -1496,16 +1496,16 @@
     "relativePath": "shared-schemas/osdu/dataset/FileCollection.EPC.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Esri.Shape:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Esri.Shape.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Esri.Shape:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Esri.Shape.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--FileCollection.Esri.Shape:1.0.0",
     "relativePath": "shared-schemas/osdu/dataset/FileCollection.Esri.Shape.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Generic:1.0.1",
-    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Generic.1.0.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Generic:1.1.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Generic.1.1.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--FileCollection.Generic:1.0.0",
@@ -1540,8 +1540,8 @@
     "relativePath": "shared-schemas/osdu/dataset/FileCollection.SEGD.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--FileCollection.SEGY:1.2.1",
-    "relativePath": "shared-schemas/osdu/dataset/FileCollection.SEGY.1.2.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.SEGY:1.3.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.SEGY.1.3.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--FileCollection.SEGY:1.2.0",
@@ -1556,8 +1556,8 @@
     "relativePath": "shared-schemas/osdu/dataset/FileCollection.SEGY.1.0.0.json"
   },
   {
-    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Slb.OpenZGY:1.1.1",
-    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Slb.OpenZGY.1.1.1.json"
+    "kind": "{{schema-authority}}:wks:dataset--FileCollection.Slb.OpenZGY:1.2.0",
+    "relativePath": "shared-schemas/osdu/dataset/FileCollection.Slb.OpenZGY.1.2.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:dataset--FileCollection.Slb.OpenZGY:1.1.0",

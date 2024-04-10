@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "dataset--File.SeismicHistogram",
+      "entityType": "dataset--File.PRODML",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
-      "schemaVersionPatch": 1,
-      "id": "{{schema-authority}}:wks:dataset--File.SeismicHistogram:1.0.1"
+      "schemaVersionMinor": 1,
+      "schemaVersionPatch": 0,
+      "id": "{{schema-authority}}:wks:dataset--File.PRODML:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2024, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/dataset/File.SeismicHistogram.1.0.1.json",
+    "$id": "https://schema.osdu.opengroup.org/json/dataset/File.PRODML.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:dataset--File.SeismicHistogram:1.0.1",
-    "title": "File.SeismicHistogram",
-    "description": "Typically an artefact of a SeismicTraceData or SeismicFieldTraceData record containing a statistical summary and one or more histograms.",
+    "x-osdu-schema-source": "osdu:wks:dataset--File.PRODML:1.1.0",
+    "title": "File.PRODML",
+    "description": "A PRODML file is the expression of a PRODML Entity (Energistics industry-specific standard). PRODML is a set of standards for optimizing producing oil and gas wells, with a focus on data from the reservoir-wellbore boundary to the custody transfer point. PRODML files follow xml conventions.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:dataset\\-\\-File.SeismicHistogram:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:dataset--File.SeismicHistogram:11eb0d5c-a6bd-5d74-8e32-ac8c429ee9f9"
+        "pattern": "^[\\w\\-\\.]+:dataset\\-\\-File.PRODML:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:dataset--File.PRODML:96943325-b836-55fd-83e9-3ec61c45dfea"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:dataset--File.SeismicHistogram:1.0.1"
+        "example": "osdu:wks:dataset--File.PRODML:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -116,15 +116,7 @@
           },
           {
             "type": "object",
-            "properties": {
-              "ContentSchemaKind": {
-                "type": "string",
-                "title": "Content Schema Kind",
-                "description": "The schema kind used for the content in the associated file.",
-                "example": "osdu:wks:content--SeismicHistogram:1.0.0",
-                "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$"
-              }
-            },
+            "properties": {},
             "title": "IndividualProperties"
           },
           {
@@ -146,6 +138,9 @@
     ],
     "additionalProperties": false,
     "x-osdu-review-status": "Accepted",
+    "x-osdu-governance-authorities": [
+      "Energistics"
+    ],
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
         "type": "string",

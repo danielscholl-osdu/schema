@@ -5,9 +5,9 @@
       "source": "wks",
       "entityType": "dataset--FileCollection.Esri.Shape",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
-      "schemaVersionPatch": 1,
-      "id": "{{schema-authority}}:wks:dataset--FileCollection.Esri.Shape:1.0.1"
+      "schemaVersionMinor": 1,
+      "schemaVersionPatch": 0,
+      "id": "{{schema-authority}}:wks:dataset--FileCollection.Esri.Shape:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,9 +15,9 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2024, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/dataset/FileCollection.Esri.Shape.1.0.1.json",
+    "$id": "https://schema.osdu.opengroup.org/json/dataset/FileCollection.Esri.Shape.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:dataset--FileCollection.Esri.Shape:1.0.1",
+    "x-osdu-schema-source": "osdu:wks:dataset--FileCollection.Esri.Shape:1.1.0",
     "title": "FileCollection.Esri.Shape",
     "description": "A dataset representing a shapefile format, i.e. a collection of files with specific extensions. A shapefile is a geospatial vector data format for geographic information system (GIS) software. It is developed and regulated by Esri as a mostly open specification for data interoperability among Esri and other GIS software products. The shapefile format can spatially describe vector features: points, lines, and polygons, representing, for example, water wells, rivers, and lakes. Each item usually has attributes that describe it, such as name or properties. The role of the files in the collection is identified by the standard file extension, e.g. '.dbf', '.shp', '.shx', etc.",
     "type": "object",
@@ -34,7 +34,7 @@
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:dataset--FileCollection.Esri.Shape:1.0.1"
+        "example": "osdu:wks:dataset--FileCollection.Esri.Shape:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",

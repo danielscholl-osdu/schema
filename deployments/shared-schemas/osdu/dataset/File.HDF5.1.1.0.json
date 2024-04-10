@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "dataset--File.Image.JPEG",
+      "entityType": "dataset--File.HDF5",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
-      "schemaVersionPatch": 1,
-      "id": "{{schema-authority}}:wks:dataset--File.Image.JPEG:1.0.1"
+      "schemaVersionMinor": 1,
+      "schemaVersionPatch": 0,
+      "id": "{{schema-authority}}:wks:dataset--File.HDF5:1.1.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2024, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/dataset/File.Image.JPEG.1.0.1.json",
+    "$id": "https://schema.osdu.opengroup.org/json/dataset/File.HDF5.1.1.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:dataset--File.Image.JPEG:1.0.1",
-    "title": "File.Image.JPEG",
-    "description": "An image file in JPEG format, https://en.wikipedia.org/wiki/JPEG.",
+    "x-osdu-schema-source": "osdu:wks:dataset--File.HDF5:1.1.0",
+    "title": "File.HDF5",
+    "description": "The Hierarchical Data Format version 5 (HDF5), is an open source file format that supports large, complex, heterogeneous data. HDF5 uses a \"file directory\" like structure that allows you to organize data within the file in many different structured ways, as you might do with files on your computer. The HDF5 format also allows for embedding of metadata making it self-describing. If this File.HDF5 file is part of an EPC+HDF5 combo, this dataset should **not** be used but the FileCollection.EPC must be used instead.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:dataset\\-\\-File.Image.JPEG:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:dataset--File.Image.JPEG:52712fff-5789-5084-b765-7aef2336773e"
+        "pattern": "^[\\w\\-\\.]+:dataset\\-\\-File.HDF5:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:dataset--File.HDF5:25f7a663-9db4-51d1-bb5a-5fff54097670"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:dataset--File.Image.JPEG:1.0.1"
+        "example": "osdu:wks:dataset--File.HDF5:1.1.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -138,6 +138,9 @@
     ],
     "additionalProperties": false,
     "x-osdu-review-status": "Accepted",
+    "x-osdu-governance-authorities": [
+      "HDF Group"
+    ],
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
         "type": "string",

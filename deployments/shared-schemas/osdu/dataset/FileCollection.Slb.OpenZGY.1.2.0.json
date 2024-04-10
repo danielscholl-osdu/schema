@@ -3,11 +3,11 @@
     "schemaIdentity": {
       "authority": "{{schema-authority}}",
       "source": "wks",
-      "entityType": "dataset--File.PRODML",
+      "entityType": "dataset--FileCollection.Slb.OpenZGY",
       "schemaVersionMajor": 1,
-      "schemaVersionMinor": 0,
-      "schemaVersionPatch": 1,
-      "id": "{{schema-authority}}:wks:dataset--File.PRODML:1.0.1"
+      "schemaVersionMinor": 2,
+      "schemaVersionPatch": 0,
+      "id": "{{schema-authority}}:wks:dataset--FileCollection.Slb.OpenZGY:1.2.0"
     },
     "createdBy": "OSDU Data Definition Group",
     "scope": "SHARED",
@@ -15,26 +15,26 @@
   },
   "schema": {
     "x-osdu-license": "Copyright 2024, The Open Group \\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-    "$id": "https://schema.osdu.opengroup.org/json/dataset/File.PRODML.1.0.1.json",
+    "$id": "https://schema.osdu.opengroup.org/json/dataset/FileCollection.Slb.OpenZGY.1.2.0.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "x-osdu-schema-source": "osdu:wks:dataset--File.PRODML:1.0.1",
-    "title": "File.PRODML",
-    "description": "A PRODML file is the expression of a PRODML Entity (Energistics industry-specific standard). PRODML is a set of standards for optimizing producing oil and gas wells, with a focus on data from the reservoir-wellbore boundary to the custody transfer point. PRODML files follow xml conventions.",
+    "x-osdu-schema-source": "osdu:wks:dataset--FileCollection.Slb.OpenZGY:1.2.0",
+    "title": "FileCollection.Slb.OpenZGY",
+    "description": "The dataset representation for optimized seismic access to the OpenZGY framework developed by Schlumberger, storing seismic 3D data for seismic interpretation.",
     "type": "object",
     "properties": {
       "id": {
         "description": "Previously called ResourceID or SRN which identifies this OSDU resource object without version.",
         "title": "Entity ID",
         "type": "string",
-        "pattern": "^[\\w\\-\\.]+:dataset\\-\\-File.PRODML:[\\w\\-\\.\\:\\%]+$",
-        "example": "namespace:dataset--File.PRODML:96943325-b836-55fd-83e9-3ec61c45dfea"
+        "pattern": "^[\\w\\-\\.]+:dataset\\-\\-FileCollection.Slb.OpenZGY:[\\w\\-\\.\\:\\%]+$",
+        "example": "namespace:dataset--FileCollection.Slb.OpenZGY:5771c352-dc52-5d26-9351-2b8dbc9eb474"
       },
       "kind": {
         "description": "The schema identification for the OSDU resource object following the pattern {Namespace}:{Source}:{Type}:{VersionMajor}.{VersionMinor}.{VersionPatch}. The versioning scheme follows the semantic versioning, https://semver.org/.",
         "title": "Entity Kind",
         "type": "string",
         "pattern": "^[\\w\\-\\.]+:[\\w\\-\\.]+:[\\w\\-\\.]+:[0-9]+.[0-9]+.[0-9]+$",
-        "example": "osdu:wks:dataset--File.PRODML:1.0.1"
+        "example": "osdu:wks:dataset--FileCollection.Slb.OpenZGY:1.2.0"
       },
       "version": {
         "description": "The version number of this OSDU resource; set by the framework.",
@@ -112,11 +112,21 @@
             "$ref": "{{schema-authority}}:wks:AbstractDataset:1.0.1"
           },
           {
-            "$ref": "{{schema-authority}}:wks:AbstractFile:1.0.1"
+            "$ref": "{{schema-authority}}:wks:AbstractFileCollection:1.0.1"
           },
           {
             "type": "object",
-            "properties": {},
+            "properties": {
+              "Compression": {
+                "$ref": "{{schema-authority}}:wks:AbstractCompressionInfo:1.1.0",
+                "description": "Optional compression information."
+              },
+              "Precision": {
+                "$ref": "{{schema-authority}}:wks:AbstractSeismicPrecision:1.0.0",
+                "title": "Precision",
+                "description": "The numeric precision of the dataset."
+              }
+            },
             "title": "IndividualProperties"
           },
           {
@@ -138,8 +148,11 @@
     ],
     "additionalProperties": false,
     "x-osdu-review-status": "Accepted",
+    "x-osdu-supported-file-formats": [
+      "OpenZGY"
+    ],
     "x-osdu-governance-authorities": [
-      "Energistics"
+      "Schlumberger"
     ],
     "x-osdu-virtual-properties": {
       "data.VirtualProperties.DefaultName": {
@@ -157,8 +170,8 @@
         "kind": "osdu:wks:AbstractDataset:1.0.1"
       },
       {
-        "name": "File",
-        "kind": "osdu:wks:AbstractFile:1.0.1"
+        "name": "FileCollection",
+        "kind": "osdu:wks:AbstractFileCollection:1.0.1"
       }
     ]
   }
