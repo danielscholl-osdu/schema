@@ -10,9 +10,9 @@
 
 	<artifactId>schema-test-core</artifactId>
 	<properties>
-		<os-core-lib-ibm.version>0.25.0</os-core-lib-ibm.version>
-		<os-core-lib-azure.version>0.26.0-rc5</os-core-lib-azure.version>
-		<os-core-lib-aws.version>0.26.0-rc2</os-core-lib-aws.version>
+		<os-core-lib-ibm.version>0.26.0-rc8</os-core-lib-ibm.version>
+		<os-core-lib-azure.version>0.26.0-rc7</os-core-lib-azure.version>
+		<os-core-lib-aws.version>0.26.0-spring6-rc1</os-core-lib-aws.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jackson-databind.version>2.14.2</jackson-databind.version>
 		<jackson.version>2.14.2</jackson.version>
@@ -104,7 +104,7 @@
 
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>core-lib-azure</artifactId>
+			<artifactId>core-lib-azure-spring6</artifactId>
 			<version>${os-core-lib-azure.version}</version>
 		</dependency>
 
@@ -132,7 +132,7 @@
 			<!-- Inherit managed dependencies from core-lib-azure -->
 			<dependency>
 				<groupId>org.opengroup.osdu</groupId>
-				<artifactId>core-lib-azure</artifactId>
+				<artifactId>core-lib-azure-spring6</artifactId>
 				<version>${os-core-lib-azure.version}</version>
 				<type>pom</type>
 				<scope>import</scope>

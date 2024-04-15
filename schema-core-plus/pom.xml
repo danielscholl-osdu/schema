@@ -191,7 +191,7 @@
 						<configuration>
 							<classifier>spring-boot</classifier>
 							<mainClass>
-								org.springframework.boot.loader.PropertiesLauncher
+								org.springframework.boot.loader.launch.PropertiesLauncher
 							</mainClass>
 						</configuration>
 					</execution>
