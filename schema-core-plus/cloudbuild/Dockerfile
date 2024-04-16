@@ -21,6 +21,6 @@ CMD java --add-opens java.base/java.lang=ALL-UNNAMED \
          -Djava.security.egd=file:/dev/./urandom \
          -Dserver.port=${PORT} \
          -Dlog4j.formatMsgNoLookups=true \
-         -Dloader.path=plugins/
+         -Dloader.path=plugins/ \
          -Dloader.main=org.opengroup.osdu.schema.CorePlusSchemaApplication \
          -jar /app/schema.jar
