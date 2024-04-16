@@ -17,24 +17,25 @@
 
 package org.opengroup.osdu.schema.configuration;
 
+import javax.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "schema-changed")
+@ConfigurationProperties(prefix = "schema.changed")
 @Getter
+@Setter
 public class EventMessagingPropertiesConfig {
 
-  private final boolean messagingEnabled;
-  private final String topicName;
+  private boolean messagingEnabled;
+  private String topicName;
 
-  public EventMessagingPropertiesConfig(boolean messagingEnabled, String topicName) {
-    if (messagingEnabled && StringUtils.isEmpty(topicName)) {
-      throw new RuntimeException("Missing event messaging configuration.");
+  @PostConstruct
+  public void setUp() {
+    if (this.messagingEnabled && StringUtils.isEmpty(this.topicName)) {
+      throw new RuntimeException("Missing event messaging configuration. Topic name is empty but messaging is enabled.");
     }
-
-    this.messagingEnabled = messagingEnabled;
-    this.topicName = topicName;
   }
 
 }
