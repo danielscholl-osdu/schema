@@ -21,7 +21,7 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "schema-changed")
+@ConfigurationProperties(prefix = "schema.changed")
 @Getter
 public class EventMessagingPropertiesConfig {
 
