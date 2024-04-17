@@ -8,7 +8,7 @@ data:
   #Configmaps
   entitlementsHost: "http://entitlements"
   javaOptions: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
-  logLevel: "ERROR"
+  logLevel: "DEBUG"
   partitionHost: "http://partition"
   schemaTopicName: "schema-changed"
   schemaChangedMessagingEnabled: true
