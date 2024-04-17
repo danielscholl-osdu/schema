@@ -22,16 +22,30 @@ public class AADSecurityConfigWithIstioEnabled {
     @Autowired
     private AzureIstioSecurityFilter azureIstioSecurityFilter;
 
+    private static final String[] AUTH_ALLOWLIST = {"/", "/index.html",
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources/**",
+            "/configuration/security",
+            "/swagger",
+            "/swagger-ui.html",
+            "/info",
+            "/schema",
+            "/schema/**",
+            "/webjars/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(request -> request.requestMatchers(AUTH_ALLOWLIST).permitAll())
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .addFilterBefore(azureIstioSecurityFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(withDefaults());
         return http.build();
-        }
+    }
 
 }
