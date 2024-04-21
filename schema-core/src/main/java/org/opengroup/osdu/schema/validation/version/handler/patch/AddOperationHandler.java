@@ -35,14 +35,14 @@ public class AddOperationHandler implements SchemaValidationHandler{
 	@Override
 	public void compare(SchemaHandlerVO schemaDiff, SchemaPatch patch, List<SchemaBreakingChanges> schemaBreakingChanges, Set<String> processedArrayPath) throws ApplicationException {
 
-		if(schemaDiff.getValidationType() == getValidationType() 
+		if(schemaDiff.getValidationType() == getValidationType()
 				&& SchemaConstants.OP_ADD.equals(patch.getOp())) {
 
 			String attribut = patch.getPath().charAt(0) == '/' ? patch.getPath().substring(1) : patch.getPath();
 
 			if(isRefIdPresent(schemaDiff, attribut))
 				return;
-			else if (isPresentInTarget(schemaDiff, patch))
+			else if (isPresentInSource(schemaDiff, patch))
 				return;
 			schemaBreakingChanges.add(new SchemaBreakingChanges(patch, "Adding attributes at Patch level is not permitted."));
 		}else if(null != nextHandler){
@@ -62,14 +62,14 @@ public class AddOperationHandler implements SchemaValidationHandler{
 		return schemaDiff.getChangedRefIds().containsValue(attributeName);
 	}
 
-	private boolean isPresentInTarget(SchemaHandlerVO schemaDiff, SchemaPatch patch) {
+	private boolean isPresentInSource(SchemaHandlerVO schemaDiff, SchemaPatch patch) {
 		Pattern pattern = Pattern.compile(SchemaConstants.SCHEMA_KIND_REGEX);
 		String path =  patch.getPath();
 		String sourceField = StringUtils.substringAfterLast(path, "/");
 		if(!pattern.matcher(path).matches() || !isAtRoot(path))
 			return false;
 
-		Iterator<String> fieldNameItr = schemaDiff.getTargetSchema().fieldNames();
+		Iterator<String> fieldNameItr = schemaDiff.getSourceSchema().fieldNames();
 		while(fieldNameItr.hasNext()) {
 			String fieldName = fieldNameItr.next();
 			if(pattern.matcher(fieldName).matches()) {
