@@ -25,7 +25,7 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
 		<azure.version>2.1.7</azure.version>
-		<osdu.corelibazure.version>0.26.0-rc5</osdu.corelibazure.version>
+		<osdu.corelibazure.version>0.26.0</osdu.corelibazure.version>
 		<osdu.os-schema-core.version>0.27.0-SNAPSHOT</osdu.os-schema-core.version>
 		<mockito.version>1.10.19</mockito.version>
 		<cucumber.version>5.7.0</cucumber.version>
