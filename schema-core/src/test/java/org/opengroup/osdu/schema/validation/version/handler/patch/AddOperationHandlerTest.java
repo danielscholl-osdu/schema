@@ -10,7 +10,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
+import org.opengroup.osdu.schema.util.SchemaUtil;
 import org.opengroup.osdu.schema.util.TestUtility;
 import org.opengroup.osdu.schema.validation.version.SchemaValidationType;
 import org.opengroup.osdu.schema.validation.version.model.SchemaBreakingChanges;
@@ -25,7 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AddOperationHandlerTest {
 	@InjectMocks
 	AddOperationHandler addOperationHandler;
-	
+
+	@Mock
+	SchemaUtil schemaUtil;
+
 	@Test
 	public void testCompare_AddNewAttr_NotAllowed() throws IOException, ApplicationException {
 
@@ -41,7 +47,23 @@ public class AddOperationHandlerTest {
 		}
 
 	}
-	
+
+	@Test
+	public void testCompare_AddNewAttr_AllowedForAVersionUpgrade() throws IOException, ApplicationException {
+
+		List<SchemaBreakingChanges> schemaBreakingChanges = new ArrayList<>();
+		Set<String> processedArrayPath = new HashSet<>();
+		SchemaHandlerVO schemaHandlerVO = getMockSchemaHandlerVO("/schema_compare/add_operation/base-schema-2.json"
+				,"/schema_compare/add_operation/addattr-version-upgrade-patch.json");
+		Mockito.when(schemaUtil.isValidSchemaVersionChange("osdu:wks:AbstractCommonResources:2.0.0", "osdu:wks:AbstractCommonResources:2.0.1", SchemaValidationType.PATCH)).thenReturn(true);
+		List<SchemaPatch> schemaPatchList = TestUtility.findSchemaPatch(schemaHandlerVO.getSourceSchema(), schemaHandlerVO.getTargetSchema());
+		for(SchemaPatch patch : schemaPatchList) {
+			addOperationHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
+		}
+		Assert.assertTrue(schemaBreakingChanges.size() == 0);
+
+	}
+
 	@Test
 	public void testCompare_NoChange() throws IOException, ApplicationException {
 
@@ -57,7 +79,7 @@ public class AddOperationHandlerTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testCompare_AddAttr_Minor() throws IOException, ApplicationException {
 
@@ -66,7 +88,7 @@ public class AddOperationHandlerTest {
 		SchemaHandlerVO schemaHandlerVO = getMockSchemaHandlerVO("/schema_compare/add_operation/base-schema.json"
 				,"/schema_compare/add_operation/base-schema.json");
 		List<SchemaPatch> schemaPatchList = TestUtility.findSchemaPatch(schemaHandlerVO.getSourceSchema(), schemaHandlerVO.getTargetSchema());
-		
+
 		schemaHandlerVO.setValidationType(SchemaValidationType.MINOR);
 		for(SchemaPatch patch : schemaPatchList) {
 			addOperationHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
@@ -75,7 +97,7 @@ public class AddOperationHandlerTest {
 		}
 
 	}
-	
+
 	private SchemaHandlerVO getMockSchemaHandlerVO(String baseSchemaPath, String newSchemaPath) throws IOException {
 		JsonNode baseSchema = TestUtility.getJsonNodeFromFile(baseSchemaPath);
 		JsonNode newSchema = TestUtility.getJsonNodeFromFile(newSchemaPath);
