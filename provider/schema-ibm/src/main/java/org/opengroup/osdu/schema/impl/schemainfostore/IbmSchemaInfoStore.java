@@ -104,7 +104,7 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 		tenantList.add(tenantId);
 
 		// code to call check uniqueness
-		if (tenantId.equalsIgnoreCase(sharedTenant)) {
+		if (tenantFactory.listTenantInfo()!=null && tenantFactory.listTenantInfo().size()>0 && tenantId.equalsIgnoreCase(sharedTenant)) {
 			List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
 					.collect(Collectors.toList());
 			tenantList.addAll(privateTenantList);
