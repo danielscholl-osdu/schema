@@ -29,6 +29,8 @@ Defined in default application property file but possible to override:
 | `SCHEMA_CHANGED_TOPIC_NAME`                      | `schema-changed`                              | Topic for schema changes events                                         | no         | -                                                            |
 | `PARTITION_PROPERTIES_SCHEMA_BUCKET_NAME`        | ex `schema.bucket.name`                       | name of partition property for schema bucket name value                 | yes        | -                                                            |
 | `PARTITION_PROPERTIES_SYSTEM_SCHEMA_BUCKET_NAME` | ex `system.schema.bucket.name`                | name of partition property for system schema bucket name value          | yes        | -                                                            |
+| `MANAGEMENT_ENDPOINTS_WEB_BASE`                  | ex `/`                                        | Web base for Actuator                                                   | no         | -                                                            |
+| `MANAGEMENT_SERVER_PORT`                         | ex `8081`                                     | Port for Actuator                                                       | no         | -                                                            |
 
 These variables define service behavior, and are used to switch between `reference` or `Google Cloud` environments, their overriding
 and usage in mixed mode was not tested. Usage of spring profiles is preferred.
