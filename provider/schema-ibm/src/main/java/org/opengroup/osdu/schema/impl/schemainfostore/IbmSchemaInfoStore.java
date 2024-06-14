@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
-//import org.opengroup.osdu.core.ibm.multitenancy.TenantFactory;
+import org.opengroup.osdu.core.ibm.multitenancy.TenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -49,7 +49,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
+
 import com.cloudant.client.api.Database;
 import com.cloudant.client.api.query.Expression;
 import com.cloudant.client.api.query.QueryBuilder;
@@ -72,11 +72,11 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 	private final static String SCHEMA_VERSION_PATCH = "schemaIdentity.schemaVersionPatch";
 	private final static String SCOPE = "scope";
 	private final static String STATUS = "status";
-
-	@Autowired
-	private ITenantFactory tenantFactory;
-
-	@Autowired
+	
+	@Inject
+	private TenantFactory tenantFactory;
+	
+	@Inject
 	private TenantInfo tenant;
 	
 	@Autowired
@@ -104,7 +104,7 @@ public class IbmSchemaInfoStore extends IbmDocumentStore implements ISchemaInfoS
 		tenantList.add(tenantId);
 
 		// code to call check uniqueness
-		if (tenantId.equalsIgnoreCase(sharedTenant)) {
+		if (tenantFactory.listTenantInfo()!=null && tenantFactory.listTenantInfo().size()>0 && tenantId.equalsIgnoreCase(sharedTenant)) {
 			List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
 					.collect(Collectors.toList());
 			tenantList.addAll(privateTenantList);
