@@ -18,8 +18,10 @@ import org.mockito.Mockito;
 import org.opengroup.osdu.core.aws.mongodb.MongoDBSimpleFactory;
 import org.opengroup.osdu.core.aws.mongodb.MultiClusteredConfigReader;
 import org.opengroup.osdu.core.aws.mongodb.config.MongoProperties;
+import org.opengroup.osdu.schema.provider.aws.impl.messagebus.MessageBusImpl;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.config.MultiClusteredConfigReaderSchema;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -44,4 +46,7 @@ public class SchemaTestConfig {
     public MongoTemplate createMongoTemplate(MongoDBSimpleFactory dbSimpleFactory) {
         return dbSimpleFactory.mongoTemplate(properties);
     }
+    
+    @MockBean
+    public MessageBusImpl messageBus;
 }
