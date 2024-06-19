@@ -16,7 +16,7 @@ package org.opengroup.osdu.schema.provider.aws.impl.messagebus;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.opengroup.osdu.core.aws.sns.AmazonSNSConfig;
 import org.opengroup.osdu.core.aws.sns.PublishRequestBuilder;
 import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
