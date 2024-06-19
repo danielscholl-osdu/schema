@@ -31,14 +31,15 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
+public class RequestExceptionHandler{
 
     @Autowired
     private JaxRsDpsLog log;
@@ -48,8 +49,9 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when a 'required' request parameter is missing.
      */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+           WebRequest request) {
         String errorMessage = ex.getParameterName() + " parameter is missing";
         Error error = new Error(HttpStatus.BAD_REQUEST);
         error.setCode(400);
@@ -65,8 +67,9 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when a 'required' request header is missing.
      */
+    @ExceptionHandler(ServletRequestBindingException.class)
     protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+             WebRequest request) {
         String missingHeader = extractMissingHeaderName(ex.getMessage());
         String errorMessage = "Missing " + missingHeader + " header";
         Error error = new Error(HttpStatus.BAD_REQUEST);
@@ -83,9 +86,9 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when unsupported media type is passed or passed JSON is invalid.
      */
-
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+          WebRequest request) {
         StringBuilder builder = new StringBuilder();
         builder.append(ex.getContentType());
         builder.append(" media type is not supported.");
@@ -105,8 +108,8 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when an object fails validation.
      */
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,WebRequest request) {
         String errorMessage = "Parameter validation error :" + ex.getBindingResult().getFieldErrors().toString();
         Error error = new Error(HttpStatus.BAD_REQUEST);
         error.setCode(400);
@@ -125,8 +128,8 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
      * application.properties
      * 
      */
-    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
+    @ExceptionHandler(NoHandlerFoundException.class)
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, WebRequest request) {
         String errorMessage = "Resource not found";
         Error error = new Error(HttpStatus.NOT_FOUND);
         error.setCode(404);
@@ -142,8 +145,9 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Triggered when a response message not available in case of error/exception.
      */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+             WebRequest request) {
         String errorMessage = "Bad Request. Invalid Input.";
         Error error = new Error(HttpStatus.BAD_REQUEST);
         error.setCode(400);
