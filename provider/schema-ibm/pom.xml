@@ -95,6 +95,17 @@
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-core-lib-ibm</artifactId>
 			<version>${os-core-lib-ibm.version}</version>
+			<exclusions>
+				<exclusion>
+						<groupId>com.cloudant</groupId>
+						<artifactId>cloudant-client</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.cloudant</groupId>
+			<artifactId>cloudant-client</artifactId>
+			<version>2.20.1</version>
 		</dependency>
 
 		<dependency>
