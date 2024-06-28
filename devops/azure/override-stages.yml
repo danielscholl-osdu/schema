@@ -12,7 +12,6 @@ azure-clean-test-schemas:
   tags: ["osdu-medium"]
   image: curlimages/curl
   stage: clean
-  needs: ["azure_test"]
   script:
   - echo "deleting test schemas.."
   - curl -v --location --request POST 'https://osdu-glab.msft-osdu-test.org/api/schema-cleanup-service/v1/schemas' 
