@@ -16,13 +16,14 @@ package org.opengroup.osdu.schema.provider.aws.impl.messagebus;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
+
 import org.opengroup.osdu.core.aws.sns.AmazonSNSConfig;
 import org.opengroup.osdu.core.aws.sns.PublishRequestBuilder;
 import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
 import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
-import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
@@ -32,6 +33,7 @@ import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.PublishRequest;
 
@@ -82,17 +84,21 @@ public class MessageBusImpl implements IMessageBus {
             List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getName).collect(Collectors.toList());
 
             for (String tenant : privateTenantList) {
-                HashMap<String, String> headersMap = new HashMap<>();
-                headersMap.put(DpsHeaders.ACCOUNT_ID, tenant);
-                headersMap.put(DpsHeaders.DATA_PARTITION_ID, tenant);
-                headersMap.put(DpsHeaders.CORRELATION_ID, headers.getCorrelationId());
-                DpsHeaders headers = DpsHeaders.createFromMap(headersMap);
-                publishSchemaEvent(schemaId, eventType, headers);
+                DpsHeaders newHeaders = createTenantHeaders(tenant);
+                publishSchemaEvent(schemaId, eventType, newHeaders);
             }
 
         } catch (Exception ex) {
             logger.warning(SchemaConstants.SYSTEM_SCHEMA_NOTIFICATION_FAILED, ex);
         }
+    }
+
+    private DpsHeaders createTenantHeaders(String tenant) {
+        HashMap<String, String> headersMap = new HashMap<>();
+        headersMap.put(DpsHeaders.ACCOUNT_ID, tenant);
+        headersMap.put(DpsHeaders.DATA_PARTITION_ID, tenant);
+        headersMap.put(DpsHeaders.CORRELATION_ID, headers.getCorrelationId());
+        return DpsHeaders.createFromMap(headersMap);
     }
 
     private void publishSchemaEvent(String schemaId, String eventType, DpsHeaders headers) {
