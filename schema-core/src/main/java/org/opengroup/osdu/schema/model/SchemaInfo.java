@@ -2,8 +2,8 @@ package org.opengroup.osdu.schema.model;
 
 import java.util.Date;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.opengroup.osdu.schema.enums.SchemaScope;

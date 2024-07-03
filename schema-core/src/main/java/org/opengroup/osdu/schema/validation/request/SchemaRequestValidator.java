@@ -1,7 +1,7 @@
 package org.opengroup.osdu.schema.validation.request;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -31,7 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.text.MessageFormat;
 
 /**

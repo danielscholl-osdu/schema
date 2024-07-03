@@ -14,24 +14,19 @@
 
 package org.opengroup.osdu.schema.provider.aws.mongo.impl.schemainfostore;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Source;
-import org.opengroup.osdu.schema.provider.aws.SchemaAwsApplication;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSourceStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.SourceDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
 import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.*;
@@ -39,9 +34,7 @@ import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.
 
 
 @DataMongoTest
-@RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {SchemaTestConfig.class})
-@ContextConfiguration(classes = {SchemaAwsApplication.class, MockServletContext.class})
 public class MongoDBSourceStoreTest extends ParentUtil {
 
     @Autowired
@@ -115,7 +108,7 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         assertEquals(id, fromDb.getId());
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void createDuplicate() throws ApplicationException, BadRequestException {
         //given
         String id = "sourceId";
@@ -123,8 +116,7 @@ public class MongoDBSourceStoreTest extends ParentUtil {
         Source source = new Source();
         source.setSourceId(id);
 
-        //then
-        sourceStore.create(source);
+        assertThrows(BadRequestException.class, () -> sourceStore.create(source));
     }
 
     @Test

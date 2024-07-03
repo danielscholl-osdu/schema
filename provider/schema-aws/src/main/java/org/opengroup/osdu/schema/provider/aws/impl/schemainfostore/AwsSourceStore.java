@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.text.MessageFormat;
 
 @ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb",

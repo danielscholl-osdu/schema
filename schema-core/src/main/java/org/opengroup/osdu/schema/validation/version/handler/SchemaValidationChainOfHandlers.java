@@ -2,7 +2,7 @@ package org.opengroup.osdu.schema.validation.version.handler;
 
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Service;

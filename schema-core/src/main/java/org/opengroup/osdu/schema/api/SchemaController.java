@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import static org.opengroup.osdu.schema.constants.SchemaConstants.GET_SCHEMA_200_RESPONSE;
 

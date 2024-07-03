@@ -14,7 +14,7 @@
 
 package org.opengroup.osdu.schema.azure.di;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

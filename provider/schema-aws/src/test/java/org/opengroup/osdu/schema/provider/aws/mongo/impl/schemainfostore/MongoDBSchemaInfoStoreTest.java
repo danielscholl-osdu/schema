@@ -19,8 +19,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.SCHEMA_INFO_PREFIX;
 import static org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore.createSchemaId;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
@@ -31,7 +30,6 @@ import org.opengroup.osdu.schema.model.QueryParams;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
 import org.opengroup.osdu.schema.model.SchemaRequest;
-import org.opengroup.osdu.schema.provider.aws.SchemaAwsApplication;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.MongoDBSchemaInfoStore;
 import org.opengroup.osdu.schema.provider.aws.impl.schemainfostore.mongo.models.SchemaInfoDto;
 import org.opengroup.osdu.schema.provider.aws.mongo.config.SchemaTestConfig;
@@ -39,10 +37,7 @@ import org.opengroup.osdu.schema.provider.aws.mongo.util.ParentUtil;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -50,14 +45,12 @@ import java.util.Date;
 import java.util.List;
 
 @DataMongoTest
-@RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {SchemaTestConfig.class})
-@ContextConfiguration(classes = {SchemaAwsApplication.class, MockServletContext.class})
 public class MongoDBSchemaInfoStoreTest extends ParentUtil {
 
     @Autowired
     private MongoDBSchemaInfoStore schemaInfoStore;
-    
+
     @Autowired
     private ISchemaStore awsSchemaStore;
 
@@ -89,7 +82,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         SchemaRequest schemaRequest = createSchemaRequest();
         SchemaInfoDto schemaInfoDto = new SchemaInfoDto();
         SchemaInfo requestSchemaInfo = schemaRequest.getSchemaInfo();
-        
+
         SchemaIdentity schemaIdentity = new SchemaIdentity();
         schemaIdentity.setId(createSchemaId(schemaIdentity));
         requestSchemaInfo.setSupersededBy(schemaIdentity);
@@ -108,15 +101,13 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertNotNull(fromDb);
         assertEquals(SchemaScope.SHARED, fromDb.getData().getScope());
     }
-    
-   
-    @Test(expected = BadRequestException.class)
+
+
+    @Test
     public void updateSchemaInfoNotFound() throws ApplicationException, BadRequestException {
         //given
         SchemaRequest schemaRequest = createSchemaRequest();
-
-        //then
-        schemaInfoStore.updateSchemaInfo(schemaRequest);
+        assertThrows(BadRequestException.class, () -> schemaInfoStore.updateSchemaInfo(schemaRequest));
     }
 
     @Test
@@ -160,7 +151,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertEquals(schemaInfo.getCreatedBy(), schemaInfoDtoFromDb.getData().getCreatedBy());
     }
 
-    @Test()
+    @Test
     public void createSchemaInfoDuplicate()  {
         //given
         SchemaRequest schemaRequest = createSchemaRequest();
@@ -216,22 +207,18 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertEquals(requestSchemaInfo.getDateCreated(), schemaInfo.getDateCreated());
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getSchemaInfoNotFound() throws ApplicationException, NotFoundException {
         //given
         String id = "schemaInfoId";
-
-        //when
-        schemaInfoStore.getSchemaInfo(id);
+        assertThrows(NotFoundException.class, () -> schemaInfoStore.getSchemaInfo(id));
     }
-    
-    @Test(expected = ApplicationException.class)
+
+    @Test
     public void getSchemaInfoThrowsApplicationException() throws ApplicationException, NotFoundException {
         //given
         String id = null;
-
-        //when
-        schemaInfoStore.getSchemaInfo(id);
+        assertThrows(ApplicationException.class, () -> schemaInfoStore.getSchemaInfo(id));
     }
 
     @Test
@@ -273,7 +260,7 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         //then
         assertEquals(contentPrefix + schemas.get(9).getId(), latestMinorVerSchema);
     }
-    
+
     @Test
     public void getLatestMinorVerSchemaHandlesNotFoundException() throws ApplicationException, NotFoundException {
         //given
@@ -431,14 +418,12 @@ public class MongoDBSchemaInfoStoreTest extends ParentUtil {
         assertTrue(before);
         assertFalse(after);
     }
-    
-    @Test(expected = ApplicationException.class)
+
+    @Test
     public void isUniqueThrowsApplicationException() throws ApplicationException {
         //given
         SchemaInfoDto schemaInfDto = createSchemaInfDto("test", 1);
-        
-        //when
-        schemaInfoStore.isUnique(schemaInfDto.getId(), null);
+        assertThrows(ApplicationException.class, () -> schemaInfoStore.isUnique(schemaInfDto.getId(), null));
     }
 
     @Test

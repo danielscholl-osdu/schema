@@ -6,7 +6,7 @@ package org.opengroup.osdu.schema.impl.schemainfostore.util;
 import java.net.MalformedURLException;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;

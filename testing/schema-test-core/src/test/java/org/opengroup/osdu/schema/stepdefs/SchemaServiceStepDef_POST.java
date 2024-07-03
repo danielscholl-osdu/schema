@@ -800,11 +800,11 @@ public class SchemaServiceStepDef_POST {
 		JsonObject root = gsn.fromJson(response, JsonObject.class);
 		JsonObject schemaIdentity_ForEachSchemaIdentity = (JsonObject) root.get("schemaIdentity");
 		this.context
-				.setSchemaVersionMajor(schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMajor").getAsString());
+				.setSchemaVersionMajor(schemaIdentity_ForEachSchemaIdentity!=null && schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMajor").getAsString()!=null?schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMajor").getAsString():null);
 		this.context
-				.setSchemaVersionMinor(schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMinor").getAsString());
+				.setSchemaVersionMinor(schemaIdentity_ForEachSchemaIdentity!=null && schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMinor").getAsString()!=null?schemaIdentity_ForEachSchemaIdentity.get("schemaVersionMinor").getAsString():null);
 		this.context
-				.setSchemaVersionPatch(schemaIdentity_ForEachSchemaIdentity.get("schemaVersionPatch").getAsString());
+				.setSchemaVersionPatch(schemaIdentity_ForEachSchemaIdentity!=null && schemaIdentity_ForEachSchemaIdentity.get("schemaVersionPatch").getAsString()!=null?schemaIdentity_ForEachSchemaIdentity.get("schemaVersionPatch").getAsString():null);
 	}
 
 	private String selectTenant(String tenant) {
