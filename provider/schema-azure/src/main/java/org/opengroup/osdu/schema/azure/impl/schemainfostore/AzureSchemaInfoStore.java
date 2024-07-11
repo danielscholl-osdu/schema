@@ -54,13 +54,11 @@ import com.azure.cosmos.models.SqlParameter;
 import com.azure.cosmos.models.SqlQuerySpec;
 import com.google.gson.Gson;
 
-import lombok.extern.java.Log;
 
 /**
- * Repository class to to register Schema in Azure store.
+ * Repository class to register Schema in Azure store.
  *
  */
-@Log
 @Repository
 public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	@Autowired
@@ -477,9 +475,9 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 			SchemaIdentity schemaIdentity = schemaKindToSchemaIdentity(flattenedSchemaInfo.getSupersededBy());
 			String partitionKey = createSchemaInfoPartitionKey(schemaIdentity);
 			try {
-				SchemaInfoDoc doc = findItemInCosmosStore(dataPartitionId, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).get();
+				SchemaInfoDoc doc = findItemInCosmosStore(dataPartitionId, cosmosDBName, schemaInfoContainer, id, partitionKey, SchemaInfoDoc.class).orElseThrow(()-> new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT));
 				superSededBy = getSchemaIdentity(doc.getFlattenedSchemaInfo());
-			} catch (AppException ex) {
+			} catch (AppException | NotFoundException ex) {
 				log.error(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
 				throw new ApplicationException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
 			}
@@ -625,15 +623,13 @@ public class AzureSchemaInfoStore implements ISchemaInfoStore {
 	private SchemaIdentity schemaKindToSchemaIdentity(String kind) {
 		String[] schemaAttr = kind.split(":");
 		String[] version = schemaAttr[3].split("\\.");
-		SchemaIdentity schemaIdentity =  SchemaIdentity.builder()
+		return SchemaIdentity.builder()
 				.authority(schemaAttr[0])
 				.source(schemaAttr[1])
 				.entityType(schemaAttr[2])
-				.schemaVersionMajor(new Long(version[0]))
-				.schemaVersionMinor(new Long(version[1]))
-				.schemaVersionPatch(new Long(version[2])).build();
-
-		return schemaIdentity;
+				.schemaVersionMajor(Long.valueOf(version[0]))
+				.schemaVersionMinor(Long.valueOf(version[1]))
+				.schemaVersionPatch(Long.valueOf(version[2])).build();
 	}
 
 	private String createSchemaInfoPartitionKey(SchemaIdentity schemaIdentity) {
