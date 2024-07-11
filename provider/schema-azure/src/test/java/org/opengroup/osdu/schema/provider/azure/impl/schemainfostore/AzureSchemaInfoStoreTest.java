@@ -17,6 +17,7 @@ package org.opengroup.osdu.schema.provider.azure.impl.schemainfostore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,6 +25,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.opengroup.osdu.schema.constants.SchemaConstants.INTERNAL_SERVER_ERROR;
+import static org.opengroup.osdu.schema.constants.SchemaConstants.INVALID_SUPERSEDEDBY_ID;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -523,7 +526,7 @@ public class AzureSchemaInfoStoreTest {
 
         SchemaRequest schemaRequest = getMockSchemaObject_SuperSededByWithoutId();
         expectedException.expect(BadRequestException.class);
-        expectedException.expectMessage(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
+        expectedException.expectMessage(INVALID_SUPERSEDEDBY_ID);
         schemaInfoStore.updateSchemaInfo(schemaRequest);
     }
 
@@ -659,6 +662,25 @@ public class AzureSchemaInfoStoreTest {
                         eq(partitionKey),
                         any());
         assertEquals(false, schemaInfoStore.cleanSchema(schemaId));
+    }
+
+    @Test
+    public void getSchemaInfo_throwsAppException_whenSupersededBySchemaIsMissing() throws ApplicationException, NotFoundException {
+        Optional<SchemaInfoDoc> cosmosItem = Optional.of(schemaInfoDoc);
+        doReturn(cosmosItem)
+                .when(cosmosStore)
+                .findItem(
+                        eq(dataPartitionId),
+                        any(),
+                        any(),
+                        eq(dataPartitionId + ":" + schemaId),
+                        eq(partitionKey),
+                        any());
+
+        doReturn(getFlattenedSchemaInfo_SupersededBy()).when(schemaInfoDoc).getFlattenedSchemaInfo();
+        ApplicationException exception = assertThrows(ApplicationException.class, ()-> schemaInfoStore.getSchemaInfo(schemaId));
+        assertEquals(exception.getStatus().value(), 500);
+        assertEquals(exception.getMessage(), INVALID_SUPERSEDEDBY_ID);
     }
 
     private SchemaInfo getMockSchemaInfo() {
