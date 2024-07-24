@@ -31,7 +31,7 @@
         <java.version>17</java.version>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
-        <sonar.exclusions> **/mongo/**.java, **/SchemaAwsApplication.java, **/Security/**.java</sonar.exclusions>
+        <sonar.exclusions> **/SchemaAwsApplication.java, **/Security/**.java</sonar.exclusions>
     </properties>
 
 	<dependencyManagement>
@@ -103,12 +103,6 @@
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
             <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo.spring31x</artifactId>
-            <version>4.11.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
