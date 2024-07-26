@@ -34,18 +34,6 @@
         <sonar.exclusions> **/mongo/**.java, **/SchemaAwsApplication.java, **/Security/**.java</sonar.exclusions>
     </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.opengroup.osdu</groupId>
-				<artifactId>os-core-common-spring6</artifactId>
-				<version>${os-core-common.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
@@ -80,7 +68,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>

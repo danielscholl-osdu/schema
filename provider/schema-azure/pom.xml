@@ -25,20 +25,20 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
 		<azure.version>2.1.7</azure.version>
-		<osdu.corelibazure.version>0.27.0-rc2</osdu.corelibazure.version>
+		<core-lib-azure-spring6.version>0.27.0-rc3</core-lib-azure-spring6.version>
 		<osdu.os-schema-core.version>0.27.0-SNAPSHOT</osdu.os-schema-core.version>
 		<azure-spring-data-cosmos.version>5.9.1</azure-spring-data-cosmos.version>
 		<mockito.version>1.10.19</mockito.version>
 		<cucumber.version>5.7.0</cucumber.version>
 		<nimbus-jose-jwt-azure.version>9.30.2</nimbus-jose-jwt-azure.version>
-		<netty.version>4.1.107.Final</netty.version>
+		<netty.version>4.1.112.Final</netty.version>
 		<guava.version>32.1.2-jre</guava.version>
 		<woodstox-core.version>6.4.0</woodstox-core.version>
 		<reactor-netty.version>1.1.17</reactor-netty.version>
 		<reactor-core.version>3.6.4</reactor-core.version>
-		<jackson.version>2.15.4</jackson.version>
 		<log4j.version>2.21.1</log4j.version>
-		<spring-boot.version>3.2.4</spring-boot.version>
+		<spring-cloud.version>2023.0.2</spring-cloud.version>
+		<spring-cloud-azure.version>5.14.0</spring-cloud-azure.version>
 	</properties>
 
 	<dependencyManagement>
@@ -57,33 +57,19 @@
 				<artifactId>nimbus-jose-jwt</artifactId>
 				<version>${nimbus-jose-jwt-azure.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<!-- Inherit managed dependencies from core-lib-azure -->
-			<dependency>
-				<groupId>org.opengroup.osdu</groupId>
-				<artifactId>core-lib-azure-spring6</artifactId>
-				<version>${osdu.corelibazure.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-actuator</artifactId>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
-		<groupId>org.opengroup.osdu</groupId>
-		<artifactId>core-lib-azure-spring6</artifactId>
-		<version>${osdu.corelibazure.version}</version>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>os-schema-core</artifactId>
+			<version>${osdu.os-schema-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opengroup.osdu</groupId>
+			<artifactId>core-lib-azure-spring6</artifactId>
+			<version>${core-lib-azure-spring6.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.azure</groupId>
@@ -95,11 +81,6 @@
 			<artifactId>spring-security-config</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.opengroup.osdu</groupId>
-			<artifactId>os-schema-core</artifactId>
-			<version>${osdu.os-schema-core.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<exclusions>
@@ -109,6 +90,25 @@
 				</exclusion>
 			</exclusions>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies</artifactId>
+			<version>${spring-cloud.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.azure.spring</groupId>
+			<artifactId>spring-cloud-azure-dependencies</artifactId>
+			<version>${spring-cloud-azure.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.azure.spring</groupId>
+			<artifactId>spring-cloud-azure-starter-active-directory</artifactId>
+			<version>${spring-cloud-azure.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -150,27 +150,10 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-cbor</artifactId>
-			<version>${jackson.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.azure.spring</groupId>
-			<artifactId>spring-cloud-azure-starter-active-directory</artifactId>
-			<version>5.10.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
