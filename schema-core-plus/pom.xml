@@ -8,7 +8,7 @@
 	</parent>
 
 	<properties>
-		<os-core-common.version>0.26.0-SNAPSHOT</os-core-common.version>
+		<os-core-common.version>0.26.0</os-core-common.version>
 	</properties>
 
 	<artifactId>schema-core-plus</artifactId>
