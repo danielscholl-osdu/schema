@@ -15,6 +15,3 @@ azure-clean-test-schemas:
   script:
   - echo "deleting test schemas.."
   - curl -v --location --request POST 'https://osdu-glab.msft-osdu-test.org/api/schema-cleanup-service/v1/schemas' 
-  only:
-    variables:
-      - $AZURE == '1'
