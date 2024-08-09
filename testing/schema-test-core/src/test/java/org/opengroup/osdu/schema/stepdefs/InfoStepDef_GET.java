@@ -64,4 +64,27 @@ public class InfoStepDef_GET {
 		assertNotNull(responseObject.commitId);
 		assertNotNull(responseObject.commitMessage);
 	}
+
+	@Then("service should respond back with trailing slash")
+	public void should_returnInfo_withTrailingSlash() throws Exception {
+		HttpRequest httpRequest = HttpRequest.builder()
+				.url(TestConstants.HOST + TestConstants.GET_INFO_ENDPOINT+"/")
+				.httpMethod(HttpRequest.GET)
+				.build();
+		HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
+
+		assertEquals(200, response.getCode());
+
+		VersionInfoUtils.VersionInfo responseObject = this.versionInfoUtil
+				.getVersionInfoFromResponse(response);
+
+		assertNotNull(responseObject.groupId);
+		assertNotNull(responseObject.artifactId);
+		assertNotNull(responseObject.version);
+		assertNotNull(responseObject.buildTime);
+		assertNotNull(responseObject.branch);
+		assertNotNull(responseObject.commitId);
+		assertNotNull(responseObject.commitMessage);
+	}
+
 }
