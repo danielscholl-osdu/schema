@@ -11,7 +11,7 @@ data:
   {{- else }}
     {{ .Values.global.dataPartitionId | quote }}
   {{- end }}
-  LOG_LEVEL: {{ .Values.data.logLevel | quote }}
+  LOG_LEVEL: {{ .Values.data.logLevel | default .Values.global.logLevel | quote }}
   ENTITLEMENTS_HOST: {{ .Values.data.entitlementsHost | quote }}
   SCHEMA_CHANGED_TOPIC_NAME: {{ .Values.data.schemaTopicName | quote }}
   SCHEMA_CHANGED_MESSAGING_ENABLED: {{ .Values.data.schemaChangedMessagingEnabled | quote }}
