@@ -31,33 +31,34 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **global.domain** | your domain for the external endpoint, ex `example.com` | string | - | yes
-**global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
-**global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | true | yes
+**global.onPremEnabled** | whether on-prem is enabled | boolean | `false` | yes
+**global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | `true` | yes
+**global.logLevel** | severity of logging level | string | `ERROR` | yes
 
 ### Configmap variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
+**data.logLevel** | logging severity level for this service only  | string | - | yes, only if differs from the `global.logLevel`
 **data.dataPartitionId** | data partition id | string | - | yes
-**data.entitlementsHost** | entitlements host | string | "http://entitlements" | yes
-**data.javaOptions** | java options | string | "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45" | yes
-**data.logLevel** | logging level | string | INFO | yes
-**data.partitionHost** | partition host | string | "http://partition" | yes
-**data.schemaTopicName** | topic for schema changes events | string | "schema-changed" | yes
+**data.entitlementsHost** | entitlements host | string | `http://entitlements` | yes
+**data.javaOptions** | java options | string | `-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45` | yes
+**data.partitionHost** | partition host | string | `http://partition` | yes
+**data.schemaTopicName** | topic for schema changes events | string | `schema-changed` | yes
 
 ### Deployment variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**data.requestsCpu** | amount of requested CPU | string | 220m | yes
-**data.requestsMemory** | amount of requested memory| string | 1.7G | yes
-**data.limitsCpu** | CPU limit | string | 1 | only if `global.limitsEnabled` is true
-**data.limitsMemory** | memory limit | string | 1.5G | only if `global.limitsEnabled` is true
+**data.requestsCpu** | amount of requested CPU | string | `220m` | yes
+**data.requestsMemory** | amount of requested memory| string | `1.7G` | yes
+**data.limitsCpu** | CPU limit | string | `1` | only if `global.limitsEnabled` is true
+**data.limitsMemory** | memory limit | string | `1.5G` | only if `global.limitsEnabled` is true
 **data.bootstrapImage** | bootstrap image | string | - | yes
 **data.bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
 **data.image** | service image | string | - | yes
-**data.imagePullPolicy** | when to pull image | string | IfNotPresent | yes
-**data.serviceAccountName** | name of your service account | string | schema | yes
+**data.imagePullPolicy** | when to pull image | string | `IfNotPresent` | yes
+**data.serviceAccountName** | name of your service account | string | `schema` | yes
 
 ### Configuration variables
 
@@ -76,11 +77,11 @@ First you need to set variables in **values.yaml** file using any code editor. S
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**data.datastoreKind** | Datastore Kind for Schema | string | "system_schema_osm" | yes
-**data.datastoreNamespace** | Datastore Namespace for Schema | string | "dataecosystem" | yes
-**data.enableCleanup** | whether cleanup is enabled | boolean | false | yes
+**data.datastoreKind** | Datastore Kind for Schema | string | `system_schema_osm` | yes
+**data.datastoreNamespace** | Datastore Namespace for Schema | string | `dataecosystem` | yes
+**data.enableCleanup** | whether cleanup is enabled | boolean | `false` | yes
 **data.schemaBucket** | name of the bucket with schemas | string | - | yes
-**data.schemaHost** | schema host | string | "http://schema" | yes
+**data.schemaHost** | schema host | string | `http://schema` | yes
 
 ### Istio variables
 
