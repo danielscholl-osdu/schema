@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-cli
+FROM mcr.microsoft.com/azure-cli:2.62.0
 
 RUN apk add ca-certificates bash curl wget gettext jq bind-tools \
     && wget -q https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl \
