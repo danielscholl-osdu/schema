@@ -27,9 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -41,16 +41,13 @@ import org.apache.http.util.EntityUtils;
 
 public class GoogleServiceAccount {
 
+  private final static Predicate<String> contentAcceptanceTester = s -> s.trim().startsWith("{");
   private static final String DEFAULT_TARGET_AUDIENCE = "osdu";
   final ServiceAccountCredentials serviceAccount;
 
-  public GoogleServiceAccount(String serviceAccountEncoded) throws IOException {
-    this(Base64.getDecoder().decode(serviceAccountEncoded));
-  }
-
-  public GoogleServiceAccount(byte[] serviceAccountJson) throws IOException {
-    try (InputStream inputStream = new ByteArrayInputStream(serviceAccountJson)) {
-
+  public GoogleServiceAccount(String serviceAccountValue) throws IOException {
+    serviceAccountValue = new DecodedContentExtractor(serviceAccountValue, contentAcceptanceTester).getContent();
+    try (InputStream inputStream = new ByteArrayInputStream(serviceAccountValue.getBytes())) {
       this.serviceAccount = ServiceAccountCredentials.fromStream(inputStream);
     }
   }
