@@ -17,8 +17,8 @@
 		<json-smart.version>2.5.0</json-smart.version>
 		<spring-boot-maven-plugin.version>3.2.2</spring-boot-maven-plugin.version>
 		<openapi.version>2.5.0</openapi.version>
-		<spring-framework-version>6.1.10</spring-framework-version>
-		<spring-security.version>6.3.1</spring-security.version>
+		<spring-framework-version>6.1.13</spring-framework-version>
+		<spring-security.version>6.3.3</spring-security.version>
 		<spring-boot.version>3.3.1</spring-boot.version>
 	</properties>
 
