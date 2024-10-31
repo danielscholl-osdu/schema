@@ -146,7 +146,7 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
 
       SchemaRequest entityFromDb;
       try {
-        entityFromDb = context.createAndGet(schema, tenantDestination);
+        entityFromDb = context.createAndGet(tenantDestination, schema);
 
         log.info(SchemaConstants.SCHEMA_INFO_CREATED);
         return entityFromDb.getSchemaInfo();
@@ -178,7 +178,7 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
 
       SchemaRequest entityFromDb;
       try {
-        entityFromDb = context.createAndGet(schema, systemDestination);
+        entityFromDb = context.createAndGet(systemDestination, schema);
       } catch (TranslatorRuntimeException ex) {
         log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()), ex);
         throw new ApplicationException(SchemaConstants.INVALID_INPUT, ex);
@@ -204,9 +204,9 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
     Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
     enrichSchemaInfo(schema.getSchemaInfo(), tenantDestination);
 
-    SchemaRequest entityFromDb = null;
+    SchemaRequest entityFromDb;
     try {
-      entityFromDb = context.upsertAndGet(schema, tenantDestination);
+      entityFromDb = context.upsertAndGet(tenantDestination, schema);
     } catch (TranslatorRuntimeException ex) {
       log.error(SchemaConstants.OBJECT_INVALID);
       throw new ApplicationException("Invalid object, update failed", ex);
@@ -229,9 +229,9 @@ public class OsmSchemaInfoStore implements ISchemaInfoStore {
     Destination systemDestination = getSystemDestination();
     enrichSchemaInfo(schema.getSchemaInfo(), systemDestination);
 
-    SchemaRequest entityFromDb = null;
+    SchemaRequest entityFromDb;
     try {
-      entityFromDb = context.upsertAndGet(schema, systemDestination);
+      entityFromDb = context.upsertAndGet(systemDestination, schema);
     } catch (TranslatorRuntimeException ex) {
       log.error(SchemaConstants.OBJECT_INVALID);
       throw new ApplicationException("Invalid object, update failed", ex);

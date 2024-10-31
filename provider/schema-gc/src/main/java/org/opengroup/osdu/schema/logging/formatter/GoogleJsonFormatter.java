@@ -1,6 +1,6 @@
 /*
- *  Copyright 2020-2023 Google LLC
- *  Copyright 2020-2023 EPAM Systems, Inc
+ *  Copyright 2020-2024 Google LLC
+ *  Copyright 2020-2024 EPAM Systems, Inc
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.opengroup.osdu.schema.logging.formatter;
 
-package org.opengroup.osdu.schema.configuration;
+import ch.qos.logback.contrib.jackson.JacksonJsonFormatter;
+import java.io.IOException;
+import java.util.Map;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
-@Setter
-@Getter
-@Configuration
-@ConfigurationProperties(prefix = "partition.properties")
-public class PartitionPropertyNames {
-
-  private String schemaBucketName;
-  private String systemSchemaBucketName;
+public class GoogleJsonFormatter extends JacksonJsonFormatter {
+  @Override
+  public String toJsonString(Map map) throws IOException {
+    map.put("severity", map.remove("level"));
+    return super.toJsonString(map);
+  }
 }

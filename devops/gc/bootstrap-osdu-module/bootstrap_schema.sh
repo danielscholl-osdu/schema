@@ -20,18 +20,6 @@ set -e
 source ./validate-env.sh "SCHEMA_URL"
 source ./validate-env.sh "ENTITLEMENTS_HOST"
 
-bootstrap_schema_gettoken_onprem() {
-
-  ID_TOKEN="$(curl --location --request POST "${OPENID_PROVIDER_URL}/protocol/openid-connect/token" \
-  --header "Content-Type: application/x-www-form-urlencoded" \
-  --data-urlencode "grant_type=client_credentials" \
-  --data-urlencode "scope=openid" \
-  --data-urlencode "client_id=${OPENID_PROVIDER_CLIENT_ID}" \
-  --data-urlencode "client_secret=${OPENID_PROVIDER_CLIENT_SECRET}" | jq -r ".id_token")"
-
-  export BEARER_TOKEN="Bearer ${ID_TOKEN}"
-}
-
 bootstrap_schema_gettoken_gc() {
 
   BEARER_TOKEN=$(gcloud auth print-identity-token)
@@ -60,23 +48,11 @@ bootstrap_schema_deploy_shared_schemas() {
   python3 ./scripts/DeploySharedSchemas.py -e -u "${SCHEMA_URL}"/api/schema-service/v1/schemas/system
 }
 
-if [ "${ONPREM_ENABLED}" == "true" ]
-then
-  source ./validate-env.sh "DATA_PARTITION"
-  source ./validate-env.sh "OPENID_PROVIDER_URL"
-  source ./validate-env.sh "OPENID_PROVIDER_CLIENT_ID"
-  source ./validate-env.sh "OPENID_PROVIDER_CLIENT_SECRET"
+# Specifying "system" partition for GC installation 
+export DATA_PARTITION="system"
 
-  # Get credentials for onprem
-  bootstrap_schema_gettoken_onprem
-
-else
-  # Specifying "system" partition for GC installation 
-  export DATA_PARTITION="system"
-
-  # Get credentials for Google Cloud
-  bootstrap_schema_gettoken_gc
-fi
+# Get credentials for Google Cloud
+bootstrap_schema_gettoken_gc
 
 # Precheck entitlements
 bootstrap_schema_prechek_env

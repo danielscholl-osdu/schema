@@ -1,6 +1,5 @@
 global:
   domain: ""
-  onPremEnabled: false
   limitsEnabled: true
   dataPartitionId: ""
   logLevel: "ERROR"
@@ -29,11 +28,7 @@ data:
 
 conf:
   appName: "schema"
-  bootstrapSecretName: "datafier-secret"
   configmap: "schema-config"
-  minioSecretName: "schema-minio-secret"
-  postgresSecretName: "schema-postgres-secret"
-  rabbitmqSecretName: "rabbitmq-secret"
   replicas: 2
 
 istio:

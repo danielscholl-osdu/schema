@@ -21,10 +21,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
-@ComponentScan({"org.opengroup.osdu"})
+@ComponentScan(
+    value = {"org.opengroup.osdu"},
+    excludeFilters = {
+      @ComponentScan.Filter(
+          type = FilterType.ASSIGNABLE_TYPE,
+          value = {CorePlusSchemaApplication.class, SchemaApplication.class})
+    })
 @ConfigurationPropertiesScan
 @PropertySource("classpath:swagger.properties")
 public class GcpSchemaApplication {

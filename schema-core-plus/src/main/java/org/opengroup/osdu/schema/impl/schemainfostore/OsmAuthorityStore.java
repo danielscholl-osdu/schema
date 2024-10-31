@@ -91,7 +91,7 @@ public class OsmAuthorityStore implements IAuthorityStore {
 
     Authority entityFromDb;
     try {
-      entityFromDb = context.createAndGet(authority, tenantDestination);
+      entityFromDb = context.createAndGet(tenantDestination, authority);
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
@@ -108,7 +108,7 @@ public class OsmAuthorityStore implements IAuthorityStore {
 
     Authority entityFromDb;
     try {
-      entityFromDb = context.createAndGet(authority, systemDestination);
+      entityFromDb = context.createAndGet(systemDestination, authority);
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);

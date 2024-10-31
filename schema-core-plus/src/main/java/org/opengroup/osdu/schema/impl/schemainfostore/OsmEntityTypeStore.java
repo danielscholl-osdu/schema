@@ -99,8 +99,7 @@ public class OsmEntityTypeStore implements IEntityTypeStore {
 
     EntityType entityFromDb;
     try {
-      entityFromDb = context.createAndGet(entityType,
-          getPrivateTenantDestination(this.headers.getPartitionId()));
+      entityFromDb = context.createAndGet(getPrivateTenantDestination(this.headers.getPartitionId()), entityType);
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
@@ -125,7 +124,7 @@ public class OsmEntityTypeStore implements IEntityTypeStore {
 
     EntityType entityFromDb;
     try {
-      entityFromDb = context.createAndGet(entityType, systemDestination);
+      entityFromDb = context.createAndGet(systemDestination, entityType);
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
