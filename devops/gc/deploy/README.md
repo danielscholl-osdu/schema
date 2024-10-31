@@ -31,7 +31,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **global.domain** | your domain for the external endpoint, ex `example.com` | string | - | yes
-**global.onPremEnabled** | whether on-prem is enabled | boolean | `false` | yes
 **global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | `true` | yes
 **global.logLevel** | severity of logging level | string | `ERROR` | yes
 **global.tier** | Only PROD must be used to enable autoscaling | string | - | no
@@ -67,11 +66,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **conf.appName** | name of the app | string | `schema` | yes
-**conf.bootstrapSecretName** | secret for bootstrap | string | `datafier-secret` | yes
 **conf.configmap** | configmap to be used | string | `schema-config` | yes
-**conf.minioSecretName** | secret for minio | string | `schema-minio-secret` | yes
-**conf.postgresSecretName** | secret for postgres | string | `schema-postgres-secret` | yes
-**conf.rabbitmqSecretName** | secret for rabbitmq | string | `rabbitmq-secret` | yes
 
 ### Datastore cleanup and bootstrap schemas variables
 

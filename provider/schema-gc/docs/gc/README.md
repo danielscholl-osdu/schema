@@ -6,10 +6,9 @@ Define the following environment variables.
 
 Must have:
 
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `SPRING_PROFILES_ACTIVE` | ex `gcp` | Spring profile that activate default configuration for Google Cloud environment | false | - |
-| `SHARED_TENANT_NAME` | ex `osdu` | Shared account id | no | - |
+| name                     | value     | description                                                                     | sensitive? | source |
+|--------------------------|-----------|---------------------------------------------------------------------------------|------------|--------|
+| `SHARED_TENANT_NAME`     | ex `osdu` | Shared account id                                                               | no         | -      |
 
 Defined in default application property file but possible to override:
 
@@ -27,17 +26,6 @@ Defined in default application property file but possible to override:
 | `PARTITION_PROPERTIES_SYSTEM_SCHEMA_BUCKET_NAME` | ex `system.schema.bucket.name`                | name of partition property for system schema bucket name value          | yes        | -                                                            |
 | `MANAGEMENT_ENDPOINTS_WEB_BASE`                  | ex `/`                                        | Web base for Actuator                                                   | no         | -                                                            |
 | `MANAGEMENT_SERVER_PORT`                         | ex `8081`                                     | Port for Actuator                                                       | no         | -                                                            |
-
-These variables define service behavior, and are used to switch between `Reference` or `Google Cloud` environments, their overriding
-and usage in mixed mode was not tested. Usage of spring profiles is preferred.
-
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `PARTITION_AUTH_ENABLED` | ex `true` or `false` | Disable or enable auth token provisioning for requests to Partition service | no | - |
-| `OQMDRIVER` | `rabbitmq` or `pubsub` | Oqm driver mode that defines which message broker will be used | no | - |
-| `OSMDRIVER` | `datastore` or `postgres` | Osm driver mode that defines which KV storage will be used | no | - |
-| `OBMDRIVER` | `gcs` or `minio` | Obm driver mode that defines which object storage will be used | no | - |
-| `SERVICE_TOKEN_PROVIDER` | `GCP` or `OPENID` |Service account token provider, `GCP` means use Google service account `OPEIND` means use OpenId provider like `Keycloak` | no | - |
 
 ## Partition level config
 
@@ -66,8 +54,8 @@ You will need to have the following environment variables defined.
 
 **Entitlements configuration for integration accounts**
 
-| INTEGRATION_TESTER |
-| ---  |
+| INTEGRATION_TESTER                                                                                                                                                                         |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | users<br/>service.schema-service.system-admin<br/>service.entitlements.user<br/>service.schema-service.viewers<br/>service.schema-service.editors<br/>data.integration.test<br/>data.test1 |
 
 Execute following command to build code and run all the integration tests:
@@ -102,9 +90,9 @@ Example:
 
 Kind `system_schema_osm` `system_authority` `system_entityType` `system_source` will be created by service if it does not exist.
 
-## Pubsub configuration
+## Pub/Sub configuration
 
-At Pubsub should be created topic with name:
+At Pub/Sub should be created topic with name:
 
 **name:** `schema-changed`
 
@@ -162,5 +150,24 @@ At Google cloud storage should be created bucket:
 TBD
 
 | Required roles |
-| ---    |
-| - |
+|----------------|
+| -              |
+
+## License
+
+Copyright © Google LLC
+
+Copyright © EPAM Systems
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+

@@ -97,7 +97,7 @@ public class OsmSourceStore implements ISourceStore {
 
     Source entityFromDb;
     try {
-      entityFromDb = context.createAndGet(source, tenantDestination);
+      entityFromDb = context.createAndGet(tenantDestination, source);
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
@@ -121,7 +121,7 @@ public class OsmSourceStore implements ISourceStore {
 
     Source entityFromDb;
     try {
-      entityFromDb = context.createAndGet(source, systemDestination);
+      entityFromDb = context.createAndGet(systemDestination, source);
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);

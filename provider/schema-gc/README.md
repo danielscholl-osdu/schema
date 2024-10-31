@@ -19,10 +19,6 @@ Pre-requisites
 
 ### Service Configuration
 
-#### Baremetal
-
-[Baremetal service configuration](docs/baremetal/README.md)
-
 #### Google Cloud
 
 [Google Cloud service configuration](docs/gc/README.md)
@@ -91,30 +87,25 @@ Once the above Prerequisite are done, we can follow the below steps to run the s
     mvn clean install
     ```
 
-    This will build the core project as well as all the underlying projects. If we want  to build projects for specific cloud vendor, we can use mvn --projects command. For example, if we want to build only for Google Cloud, we can use below command :
+2. This will build the core project as well as all the underlying projects. If we want  to build projects for specific cloud vendor, we can use mvn --projects command. For example, if we want to build only for Google Cloud, we can use below command :
 
     ```bash
     mvn --projects schema-core,provider/schema-gc clean install
     ```
 
-2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Google Cloud, run the below command :
+3. After configuring your environment as specified above, you can follow these steps to build and run the application. These steps should be invoked from the *repository root.*
 
-    ```bash
-    # Running Google Cloud : 
-    java --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED -jar provider\schema-gc\target\os-schema-gc-0.0.1-spring-boot.jar 
-3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used:
 
-    ```bash
-    server.servlet.contextPath=/api/schema-service/v1/
-    server.port=8080
+```bash
+CMD java --add-opens java.base/java.lang=ALL-UNNAMED \
+         --add-opens java.base/java.lang.reflect=ALL-UNNAMED \
+         -Dloader.main=org.opengroup.osdu.schema.GcpSchemaApplication \
+         -jar /provider/schema-gc/target/os-schema-gc-${PROVIDER}-spring-boot.jar
+```
 
 You can access the service APIs by following the service contract in [schema.yaml](docs/api/schema.yaml)
 
 ## Testing
-
-#### Baremetal
-
-[Baremetal Testing](docs/baremetal/README.md)
 
 #### Google Cloud
 
