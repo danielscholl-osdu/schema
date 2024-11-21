@@ -62,7 +62,7 @@
         <dependency>
             <groupId>org.opengroup.osdu.core.aws</groupId>
             <artifactId>os-core-lib-aws</artifactId>
-            <version>3.0.1</version>
+            <version>3.0.2</version>
         </dependency>
 
         <dependency>
@@ -75,6 +75,16 @@
 			<artifactId>snakeyaml</artifactId>
 			<version>2.0</version>
 		</dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>4.1.115.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>6.3.4</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.json</groupId>
             <artifactId>jakarta.json-api</artifactId>
