@@ -2,7 +2,6 @@ package org.opengroup.osdu.schema.stepdefs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,20 +10,16 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.opengroup.osdu.schema.constants.TestConstants;
 import org.opengroup.osdu.schema.stepdefs.model.HttpRequest;
 import org.opengroup.osdu.schema.stepdefs.model.HttpResponse;
 import org.opengroup.osdu.schema.stepdefs.model.SchemaServiceScope;
-import org.opengroup.osdu.schema.util.AuthUtil;
 import org.opengroup.osdu.schema.util.HttpClientFactory;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.opengroup.osdu.schema.util.TestAuthUtils;

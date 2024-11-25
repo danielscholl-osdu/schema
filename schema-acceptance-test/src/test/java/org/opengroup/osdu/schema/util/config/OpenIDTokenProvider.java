@@ -54,16 +54,21 @@ public class OpenIDTokenProvider {
 
   public String getToken() {
     try {
-      return requestToken();
+      TokenRequest request =
+              new TokenRequest(
+                this.tokenEndpointURI,
+                this.clientAuthentication,
+                this.clientGrant,
+                this.scope
+              );
+      return requestToken(request);
     } catch (ParseException | IOException e) {
       throw new RuntimeException("Unable get credentials from INTEGRATION_TESTER variables", e);
     }
   }
 
-  private String requestToken() throws ParseException, IOException {
-    TokenRequest request = new TokenRequest(this.tokenEndpointURI, this.clientAuthentication,
-        this.clientGrant, this.scope);
-    TokenResponse parse = OIDCTokenResponseParser.parse(request.toHTTPRequest().send());
+  private String requestToken(TokenRequest tokenRequest) throws ParseException, IOException {
+    TokenResponse parse = OIDCTokenResponseParser.parse(tokenRequest.toHTTPRequest().send());
 
     if (!parse.indicatesSuccess()) {
       throw new RuntimeException("Unable get credentials from INTEGRATION_TESTER variables");
