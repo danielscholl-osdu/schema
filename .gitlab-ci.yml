@@ -46,6 +46,8 @@ variables:
   MONGODB_AWS_EKS_DEPLOYMENT_NAME: os-schema
   MONGODB_AWS_DEPLOY_TARGET: TF
 
+  ACCEPTANCE_TEST_DIR: "schema-acceptance-test"
+
 include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "standard-setup.yml"
