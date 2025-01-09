@@ -27,7 +27,7 @@ variables:
   DATA_PARTITION: opendes
   AZURE_AD_APP_RESOURCE_ID: $AZURE_APP_ID
   AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
-  AZURE_COVERAGE_THRESHOLD: $AZURE_CODE_COVERAGE_THRESHOLD 
+  AZURE_COVERAGE_THRESHOLD: $AZURE_CODE_COVERAGE_THRESHOLD
 
   AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
   AWS_TEST_SUBDIR: testing/schema-test-core
@@ -241,7 +241,7 @@ gemnasium-maven-dependency_scanning:
 
 azure_containerize:
   variables:
-    AZURE_CONTAINERIZE_REPOSITORY: "-b jdk-17 https://gitlab-ci-token:${CI_JOB_TOKEN}@community.opengroup.org/osdu/platform/deployment-and-operations/base-containers-azure/service-base-image"
+    AZURE_CONTAINERIZE_REPOSITORY: "https://gitlab-ci-token:${CI_JOB_TOKEN}@community.opengroup.org/osdu/platform/deployment-and-operations/base-containers-azure/service-base-image"
 
 
 aws-test-java:

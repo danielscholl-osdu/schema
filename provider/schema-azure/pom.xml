@@ -1,256 +1,164 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ~ Copyright © Microsoft Corporation ~ ~ Licensed under the Apache License, 
-	Version 2.0 (the "License"); ~ you may not use this file except in compliance 
-	with the License. ~ You may obtain a copy of the License at ~ ~ http://www.apache.org/licenses/LICENSE-2.0 
-	~ ~ Unless required by applicable law or agreed to in writing, software ~ 
-	distributed under the License is distributed on an "AS IS" BASIS, ~ WITHOUT 
-	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ~ See the 
-	License for the specific language governing permissions and ~ limitations 
-	under the License. -->
+<!--
+  ~ Copyright © Microsoft Corporation
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>os-schema-azure</artifactId>
+	<description>Schema Service on Azure</description>
+	<packaging>jar</packaging>
+
 	<parent>
 		<artifactId>os-schema</artifactId>
 		<groupId>org.opengroup.osdu</groupId>
 		<version>0.28.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
-
-	<artifactId>os-schema-azure</artifactId>
-	<version>0.28.0-SNAPSHOT</version>
-	<description>Azure related implementation staff.</description>
-	<packaging>jar</packaging>
 
 	<properties>
-		<maven.compiler.target>17</maven.compiler.target>
-		<maven.compiler.source>17</maven.compiler.source>
-		<azure.version>2.1.7</azure.version>
-		<core-lib-azure.version>1.0.0</core-lib-azure.version>
-		<osdu.os-schema-core.version>0.28.0-SNAPSHOT</osdu.os-schema-core.version>
-		<azure-spring-data-cosmos.version>5.9.1</azure-spring-data-cosmos.version>
-		<mockito.version>1.10.19</mockito.version>
-		<cucumber.version>5.7.0</cucumber.version>
-		<nimbus-jose-jwt-azure.version>9.30.2</nimbus-jose-jwt-azure.version>
-		<netty.version>4.1.112.Final</netty.version>
-		<guava.version>32.1.2-jre</guava.version>
-		<woodstox-core.version>6.4.0</woodstox-core.version>
-		<reactor-netty.version>1.1.17</reactor-netty.version>
-		<reactor-core.version>3.6.4</reactor-core.version>
-		<log4j.version>2.21.1</log4j.version>
-		<spring-cloud.version>2023.0.2</spring-cloud.version>
-		<spring-cloud-azure.version>5.14.0</spring-cloud-azure.version>
+		<core-lib-azure.version>2.0.2</core-lib-azure.version>
+    <jakarta.json.version>2.1.3</jakarta.json.version>
+    <jakarta.json.glassfish.version>2.0.1</jakarta.json.glassfish.version>
+    <parsson.version>1.1.7</parsson.version>
+		<!-- Test Dependencies -->
+		<cucumber.version>7.20.1</cucumber.version>
+    <!-- Plugin Versions -->
+    <surefire-plugin.version>3.2.2</surefire-plugin.version>
+    <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- netty-bom dependency to be declared before spring-boot-dependencies,
-     to pull all netty-transitive dependencies with same version -->
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-bom</artifactId>
-				<version>${netty.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.nimbusds</groupId>
-				<artifactId>nimbus-jose-jwt</artifactId>
-				<version>${nimbus-jose-jwt-azure.version}</version>
-			</dependency>
+    <!-- Core Azure Library -->
+      <dependency>
+        <groupId>org.opengroup.osdu</groupId>
+        <artifactId>core-lib-azure</artifactId>
+        <version>${core-lib-azure.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
+		<!-- OSDU Dependencies -->
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>os-schema-core</artifactId>
-			<version>${osdu.os-schema-core.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>core-lib-azure</artifactId>
 			<version>${core-lib-azure.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.azure</groupId>
-			<artifactId>azure-spring-data-cosmos</artifactId>
-			<version>${azure-spring-data-cosmos.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-		</dependency>
+
+    <!-- Spring Dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+      <version>${spring-boot.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-to-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
+      <exclusions>
+          <exclusion>
+              <groupId>org.apache.logging.log4j</groupId>
+              <artifactId>log4j-to-slf4j</artifactId>
+          </exclusion>
+      </exclusions>
+    </dependency>
+	<dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    </dependency>
+
+    <!-- Azure Dependencies -->
+    <!-- Versions managed by azure core library -->
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-spring-data-cosmos</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.azure.spring</groupId>
+      <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
+    </dependency>
+
+    <!-- Project Dependencies -->
+    <dependency>
+        <groupId>jakarta.json</groupId>
+        <artifactId>jakarta.json-api</artifactId>
+        <version>${jakarta.json.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>jakarta.json</artifactId>
+        <version>${jakarta.json.glassfish.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.eclipse.parsson</groupId>
+        <artifactId>parsson</artifactId>
+        <version>${parsson.version}</version>
+    </dependency>
+
+		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
-			</exclusions>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>${spring-cloud.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.azure.spring</groupId>
-			<artifactId>spring-cloud-azure-dependencies</artifactId>
-			<version>${spring-cloud-azure.version}</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.azure.spring</groupId>
-			<artifactId>spring-cloud-azure-starter-active-directory</artifactId>
-			<version>${spring-cloud-azure.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java</artifactId>
-			<version>${cucumber.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-junit</artifactId>
-			<version>${cucumber.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-guice</artifactId>
-			<version>${cucumber.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.okio</groupId>
-			<artifactId>okio</artifactId>
-			<version>3.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.minidev</groupId>
-			<artifactId>json-smart</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-cbor</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.28</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.woodstox</groupId>
-			<artifactId>woodstox-core</artifactId>
-			<version>${woodstox-core.version}</version>
-		</dependency>
-		<!-- reactor-netty related dependencies -->
-		<dependency>
-			<groupId>io.projectreactor.netty</groupId>
-			<artifactId>reactor-netty-http</artifactId>
-			<version>${reactor-netty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor.netty</groupId>
-			<artifactId>reactor-netty-core</artifactId>
-			<version>${reactor-netty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor.netty</groupId>
-			<artifactId>reactor-netty-http-brave</artifactId>
-			<version>${reactor-netty.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-core</artifactId>
-			<version>${reactor-core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-jul</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.36</version>
-		</dependency>
-		<dependency>
-			<!-- Required for JUnit 4 tests to run -->
+    <dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>jakarta.json</artifactId>
-			<version>2.0.1</version>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<scope>test</scope>
+      <version>${cucumber.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>jakarta.json</groupId>
-			<artifactId>jakarta.json-api</artifactId>
-			<version>2.1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.parsson</groupId>
-			<artifactId>parsson</artifactId>
-			<version>1.1.6</version>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<scope>test</scope>
+      <version>${cucumber.version}</version>
 		</dependency>
 	</dependencies>
 
+	<!-- Build Configuration -->
 	<build>
 		<plugins>
+			<!-- Spring Boot Maven Plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>3.2.2</version>
+				<version>${surefire-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -263,10 +171,14 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- JaCoCo Plugin -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-plugin.version}</version>
 				<configuration>
+					<outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
 					<excludes>
 						<exclude>**/*org/opengroup/osdu/schema/azure/definitions/**</exclude>
 						<exclude>**/*org/opengroup/osdu/schema/azure/di/**Config.class</exclude>
@@ -275,7 +187,6 @@
 						<exclude>**/*org/opengroup/osdu/schema/security/**</exclude>
 					</excludes>
 				</configuration>
-				<version>0.8.10</version>
 				<executions>
 					<execution>
 						<goals>
@@ -293,5 +204,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
