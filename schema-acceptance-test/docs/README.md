@@ -23,6 +23,18 @@ Or tokens can be used directly from env variables:
 |-------------------------|------------|-----------------------|------------|--------|
 | `PRIVILEGED_USER_TOKEN` | `********` | PRIVILEGED_USER Token | yes        | -      |
 
+#### Entitlements configuration for Integration Accounts
+
+| INTEGRATION_TESTER |
+|--------------------|
+| users |
+| service.schema-service.system-admin |
+| service.entitlements.user |
+| service.schema-service.viewers |
+| service.schema-service.editors |
+| data.integration.test |
+| data.test1 |
+
 Execute following command to build code and run all the integration tests:
 
  ```bash
