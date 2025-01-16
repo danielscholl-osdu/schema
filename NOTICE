@@ -470,7 +470,6 @@ MIT
 The following software have components provided under the terms of this license:
 
 - Animal Sniffer Annotations (from https://repo1.maven.org/maven2/org/codehaus/mojo/animal-sniffer-annotations)
-- Apache HttpClient Cache (from http://hc.apache.org/httpcomponents-client, http://hc.apache.org/httpcomponents-client-ga)
 - Azure Java Client Authentication Library for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Java Client Runtime for ARM (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Java Client Runtime for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
