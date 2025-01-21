@@ -366,7 +366,6 @@
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
                       "x-osdu-existing-standard": "N",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullLocationCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -382,7 +381,6 @@
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
                       "x-osdu-existing-standard": "N",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullBearingCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -398,7 +396,6 @@
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
                       "x-osdu-existing-standard": "N",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullGaugeCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -413,7 +410,6 @@
                       "x-osdu-attribution-authority": "The Open Group",
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -476,7 +472,6 @@
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
                       "x-osdu-existing-standard": "N",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullLocationCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -492,7 +487,6 @@
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
                       "x-osdu-existing-standard": "N",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullBearingCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -508,7 +502,6 @@
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
                       "x-osdu-existing-standard": "N",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullGaugeCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",
@@ -523,7 +516,6 @@
                       "x-osdu-attribution-authority": "The Open Group",
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
                       "x-osdu-attribution-revision": "evergreen",
-                      "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-BitDullCode:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                       "x-osdu-relationship": [
                         {
                           "GroupType": "reference-data",

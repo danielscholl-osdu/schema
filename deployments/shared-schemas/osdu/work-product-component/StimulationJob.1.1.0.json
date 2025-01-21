@@ -194,7 +194,6 @@
                 "x-osdu-attribution-authority": "Energistics",
                 "x-osdu-attribution-publication": "WITSML StimJob.Kind",
                 "x-osdu-attribution-revision": "v2.0",
-                "pattern": "^[\\w\\-\\.]+:reference-data\\-\\-StimJobType:[\\w\\-\\.\\:\\%]+:[0-9]*$",
                 "x-osdu-relationship": [
                   {
                     "GroupType": "reference-data",
