@@ -193,13 +193,7 @@
                 "example": "namespace:reference-data--StimJobType:Fracture.Slickwater:",
                 "x-osdu-attribution-authority": "Energistics",
                 "x-osdu-attribution-publication": "WITSML StimJob.Kind",
-                "x-osdu-attribution-revision": "v2.0",
-                "x-osdu-relationship": [
-                  {
-                    "GroupType": "reference-data",
-                    "EntityType": "StimJobType"
-                  }
-                ]
+                "x-osdu-attribution-revision": "v2.0"
               },
               "JobStartDateTime": {
                 "type": "string",
