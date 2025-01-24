@@ -524,8 +524,8 @@
               }
             },
             "required": [
-              "WellboreID",
-              "JobTypeID"
+              "JobTypeID",
+              "WellboreID"
             ],
             "title": "IndividualProperties"
           },
