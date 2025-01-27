@@ -3507,9 +3507,9 @@
               }
             },
             "required": [
-              "WellboreID",
               "StartDateTime",
-              "EndDateTime"
+              "EndDateTime",
+              "WellboreID"
             ],
             "title": "IndividualProperties"
           },
