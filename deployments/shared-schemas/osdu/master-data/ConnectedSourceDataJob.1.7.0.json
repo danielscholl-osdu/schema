@@ -414,9 +414,9 @@
                   "title": "External Process",
                   "description": "A workflow configuration in the context of a scheduled job.",
                   "properties": {
-                    "SecuritySchemaName": {
+                    "SecuritySchemeName": {
                       "type": "string",
-                      "title": "Security Schema Name",
+                      "title": "Security Scheme Name",
                       "description": "Reference name for the security scheme in the ConnectedSourceRegistryEntry document this external process belongs to.",
                       "x-osdu-attribution-authority": "The Open Group",
                       "x-osdu-attribution-publication": "The OSDU Data Platform",
@@ -447,7 +447,7 @@
                     }
                   },
                   "required": [
-                    "SecuritySchemaName",
+                    "SecuritySchemeName",
                     "Url",
                     "EdsExternalProcessTypeID"
                   ]
