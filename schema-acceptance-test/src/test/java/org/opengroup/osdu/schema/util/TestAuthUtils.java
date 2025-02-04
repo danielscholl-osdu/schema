@@ -5,7 +5,7 @@ import org.opengroup.osdu.schema.util.config.OpenIDTokenProvider;
 
 public class TestAuthUtils extends AuthUtil {
 
-    public static final String INTEGRATION_TESTER_TOKEN = "PRIVILEGED_USER_TOKEN";
+    public static final String INTEGRATION_TESTER_TOKEN = "ROOT_USER_TOKEN";
     private OpenIDTokenProvider openIDTokenProvider;
 
     public TestAuthUtils() {

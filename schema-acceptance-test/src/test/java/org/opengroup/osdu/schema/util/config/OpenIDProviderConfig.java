@@ -25,8 +25,8 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 public class OpenIDProviderConfig {
 
-  public static final String TEST_OPENID_PROVIDER_CLIENT_ID = "PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_ID";
-  public static final String TEST_OPENID_PROVIDER_CLIENT_SECRET = "PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_SECRET";
+  public static final String TEST_OPENID_PROVIDER_CLIENT_ID = "ROOT_USER_OPENID_PROVIDER_CLIENT_ID";
+  public static final String TEST_OPENID_PROVIDER_CLIENT_SECRET = "ROOT_USER_OPENID_PROVIDER_CLIENT_SECRET";
   public static final String TEST_OPENID_PROVIDER_URL = "TEST_OPENID_PROVIDER_URL";
   public static final String INTEGRATION_TESTER_EMAIL = "INTEGRATION_TESTER_EMAIL";
 
