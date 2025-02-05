@@ -15,3 +15,8 @@ core-containerize-bootstrap-gitlab:
 core-test:
   script:
     - $MAVEN_BUILD . test-results.log verify -q -f $CORE_TEST_SUBDIR/pom.xml
+
+core-acceptance-test:
+  variables:
+    ROOT_USER_OPENID_PROVIDER_CLIENT_ID: $PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_ID
+    ROOT_USER_OPENID_PROVIDER_CLIENT_SECRET: $PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_SECRET
