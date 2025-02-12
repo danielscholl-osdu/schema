@@ -32,13 +32,10 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - if [ $(echo $CODEBUILD_SOURCE_VERSION | grep -c  ^refs/heads.*) -eq 1 ]; then echo "Branch name found"; else echo "This build only supports branch builds" && exit 1; fi
       - java -version
       - mvn -version
       - mkdir -p /root/.m2
       - cp ./.mvn/community-maven.settings.xml /root/.m2/settings.xml
-      # Install git secrets
-
       - git clone https://github.com/awslabs/git-secrets.git
       - cd git-secrets && make install && cd ..
       - git secrets --install && git secrets --register-aws
@@ -48,7 +45,7 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REGISTRY}
       - echo "Logging into Docker Hub..."
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
-      
+
       # Temporary fix for AWS Unit tests using Embedded MongoDB that requires libcrypto.so.1.1
       - export REPO_DIR=${PWD}
       - apt-get install -y build-essential wget
@@ -63,13 +60,12 @@ phases:
       - mv $HOME/opt/openssl-1.1.1w/libssl.so.1.1 $HOME/opt/lib/
       - export LD_LIBRARY_PATH=$HOME/opt/lib:$LD_LIBRARY_PATH
       - cd $REPO_DIR
-  
+
   build:
     commands:
-      - export REPO_NAME=${PWD##*/}
       - export OUTPUT_DIR="dist"
-      - export BRANCH_NAME=`echo ${CODEBUILD_SOURCE_VERSION} | awk '{gsub("refs/heads/","");gsub("\\.","-");gsub("[[:space:]]","-")}1' | sed 's/\//-/g' | awk '{print tolower($0)}'`
-      - export ECR_TAG=`echo build.${BRANCH_NAME}.${CODEBUILD_BUILD_NUMBER}.${CODEBUILD_RESOLVED_SOURCE_VERSION} | cut -c 1-120`
+      - export BRANCH_NAME=`echo ${BRANCH_NAME} | awk '{gsub("refs/heads/","");gsub("\\.","-");gsub("[[:space:]]","-")}1' | sed 's/\//-/g' | awk '{print tolower($0)}'`
+      - export ECR_TAG=`echo build.${BRANCH_NAME}.${CODEBUILD_BUILD_NUMBER}.${COMMIT_ID} | cut -c 1-120`
       - export ECR_IMAGE=${ECR_REGISTRY}:${ECR_TAG}
       - export ECR_IMAGE_BRANCH_LATEST=${ECR_REGISTRY}:${BRANCH_NAME}
       - export INTEGRATION_TEST_OUTPUT=${OUTPUT_DIR}/testing/integration
@@ -86,7 +82,7 @@ phases:
 
       - echo "Building primary service assemblies..."
       - mvn --no-transfer-progress install -N # required for this service to install the parent pom so that the integration tests will find it
-      - mvn -ntp -B test install -pl .,schema-core,provider/schema-aws -Ddeployment.environment=prod  
+      - mvn -ntp -B test install -pl .,schema-core,provider/schema-aws -Ddeployment.environment=prod
       - mvn sonar:sonar -pl .,provider/schema-aws -Dsonar.login=${SONAR_USERNAME} -Dsonar.password=${SONAR_PASSWORD} -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.host.url=${SONAR_URL}
       - echo "Building integration testing assemblies and gathering artifacts..."
        #Needed to add this for Windows
@@ -104,7 +100,8 @@ phases:
 
       - echo "Generate build-info.json"
       - |
-        python provider/schema-aws/build-aws/build-info.py --branch ${CODEBUILD_SOURCE_VERSION} --commit ${CODEBUILD_RESOLVED_SOURCE_VERSION} \
+        python provider/schema-aws/build-aws/build-info.py --branch ${BRANCH_NAME} --commitId ${COMMIT_ID} \
+         --commitMessage "\"${COMMIT_MESSAGE}\"" --commitAuthor "\"${COMMIT_AUTHOR}\"" --commitDate "\"${COMMIT_DATE}\"" \
           --buildid ${CODEBUILD_BUILD_ID} --buildnumber ${CODEBUILD_BUILD_NUMBER} --reponame ${REPO_NAME} --outdir ${OUTPUT_DIR} \
           --artifact ${ECR_IMAGE}
 
@@ -118,7 +115,7 @@ artifacts:
   files:
     - "**/*"
   base-directory: "dist"
-  name: ${REPO_NAME}_${BRANCH_NAME}_$(date +%F)_${CODEBUILD_BUILD_NUMBER}.zip
+  name: ${BRANCH_NAME}/${PACKAGE_NAME}.zip
 cache:
   paths:
     - "/root/.m2/**/*"
