@@ -31,15 +31,6 @@
 		</license>
 	</licenses>
 
-  <modules>
-		<module>schema-core</module>
-		<module>schema-core-plus</module>
-		<module>provider/schema-aws</module>
-		<module>provider/schema-gc</module>
-		<module>provider/schema-ibm</module>
-		<module>provider/schema-azure</module>
-  </modules>
-
 	<properties>
 		<java.version>17</java.version>
 		<maven.compiler.target>17</maven.compiler.target>
@@ -176,6 +167,40 @@
 				<publish.releases.url>https://community.opengroup.org/api/v4/projects/26/packages/maven</publish.releases.url>
 			</properties>
 		</profile>
+	  <profile>
+		  <id>core</id>
+		  <activation>
+			  <activeByDefault>true</activeByDefault>
+		  </activation>
+		  <modules>
+			  <module>schema-core</module>
+			  <module>schema-core-plus</module>
+		  </modules>
+	  </profile>
+	  <profile>
+		  <id>aws</id>
+		  <modules>
+			  <module>provider/schema-aws</module>
+		  </modules>
+	  </profile>
+	  <profile>
+		  <id>azure</id>
+		  <modules>
+			  <module>provider/schema-azure</module>
+		  </modules>
+	  </profile>
+	  <profile>
+		  <id>ibm</id>
+		  <modules>
+			  <module>provider/schema-ibm</module>
+		  </modules>
+	  </profile>
+	  <profile>
+		  <id>gc</id>
+		  <modules>
+			  <module>provider/schema-gc</module>
+		  </modules>
+	  </profile>
 	</profiles>
 
   <repositories>
