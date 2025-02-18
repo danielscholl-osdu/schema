@@ -59,12 +59,14 @@ public class AuthorizationServiceForServiceAdminImplTest {
     }
 
     private DummyAuthToken createSAuthToken(final String email, final String appcode) {
-        final Map<String, Object> map = new HashMap<>();
-        map.put("email", email);
-        map.put("appcode", appcode);
-        map.put("iss", "sauth-preview.slb.com");
-        Jws<Claims> jws = new DefaultJws<>(null, new DefaultClaims(map), null);
-        return new DummyAuthToken(jws);
+        final JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                .claim("email", email)
+                .claim("appcode", appcode)
+                .issuer("sauth-preview.slb.com")
+                .build();
+        final JWSObject jwsObject = new JWSObject(new JWSHeader.Builder(JWSAlgorithm.RS256).build(),
+                new Payload(jwtClaimsSet.toString()));
+        return new DummyAuthToken(jwsObject, jwtClaimsSet);
     }
 
     private void createSAuthTokenSetSecurityContext(final String email, final String appcode) {
@@ -108,19 +110,16 @@ public class AuthorizationServiceForServiceAdminImplTest {
 
     @Getter
     public class DummyAuthToken {
+        private final JWSObject jwsObject;
+        private final JWTClaimsSet claimsSet;
 
-        private final Jws<Claims> jws;
-
-        public DummyAuthToken(Jws<Claims> jws) {
-            this.jws = jws;
-        }
-
-        public <T> T getClaim(String claim, Class<T> type) {
-            return jws.getBody().get(claim, type);
+        public DummyAuthToken(JWSObject jwsObject, JWTClaimsSet claimsSet) {
+            this.jwsObject = jwsObject;
+            this.claimsSet = claimsSet;
         }
 
         public String getIssuer() {
-            return jws.getBody().getIssuer();
+            return claimsSet.getIssuer();
         }
     }
 }

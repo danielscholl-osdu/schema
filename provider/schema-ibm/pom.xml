@@ -13,7 +13,7 @@
 	
 	<properties>
 		<start-class>org.opengroup.osdu.schema.provider.ibm.app.SchemaIBMApplication</start-class>
-		<os-core-lib-ibm.version>0.26.0-rc8</os-core-lib-ibm.version>
+		<os-core-lib-ibm.version>0.27.0-rc3</os-core-lib-ibm.version>
 	</properties>
 
 	<dependencies>
