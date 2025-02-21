@@ -1,22 +1,17 @@
 variables:
-  CORE_BUILD_BOOTSTRAP_PATH: "devops/core-plus/bootstrap-osdu-module/Dockerfile"
-  CORE_BUILD_PATH: "schema-core-plus/cloudbuild/Dockerfile"
-  CORE_HELM_PACKAGE_NAME: core-plus-schema-deploy
-  CORE_ENABLE_BOOTSTRAP: "true"
-  CORE_SERVICE: schema
-  CORE_HELM_TIMEOUT: "--timeout 15m"
-  CORE_TEST_SUBDIR: testing/schema-test-core
+  CIMPL_SERVICE: schema
+  CIMPL_BUILD_BOOTSTRAP_PATH: "devops/core-plus/bootstrap-osdu-module/Dockerfile"
+  CIMPL_BUILD_PATH: "schema-core-plus/cloudbuild/Dockerfile"
+  CIMPL_HELM_PACKAGE_NAME: core-plus-schema-deploy
+  CIMPL_ENABLE_BOOTSTRAP: "true"
+  CIMPL_HELM_TIMEOUT: "--timeout 15m"
 
-core-containerize-bootstrap-gitlab:
+cimpl-containerize-bootstrap-gitlab:
   tags: ["osdu-medium"]
   variables:
-    CORE_IMAGE_BOOTSTRAP_NAME: "core-plus-bootstrap-schema"
+    CIMPL_IMAGE_BOOTSTRAP_NAME: "core-plus-bootstrap-schema"
 
-core-test:
-  script:
-    - $MAVEN_BUILD . test-results.log verify -q -f $CORE_TEST_SUBDIR/pom.xml
-
-core-acceptance-test:
+cimpl-acceptance-test:
   variables:
     ROOT_USER_OPENID_PROVIDER_CLIENT_ID: $PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_ID
     ROOT_USER_OPENID_PROVIDER_CLIENT_SECRET: $PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_SECRET
