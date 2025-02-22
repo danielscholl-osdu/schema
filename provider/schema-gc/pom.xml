@@ -3,20 +3,20 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>os-schema</artifactId>
-		<version>0.28.0-SNAPSHOT</version>
+		<version>0.29.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>os-schema-gc</artifactId>
 	<description>Google cloud related implementation staff.</description>
 	<packaging>jar</packaging>
-	<version>0.28.0-SNAPSHOT</version>
+	<version>0.29.0-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.opengroup.osdu</groupId>
 			<artifactId>schema-core-plus</artifactId>
-			<version>0.28.0-SNAPSHOT</version>
+			<version>0.29.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
