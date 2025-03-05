@@ -10,6 +10,7 @@ In order to run this service locally, you will need the following:
 
 - [Maven 3.8.0+](https://maven.apache.org/download.cgi)
 - [Java 17](https://adoptopenjdk.net/)
+- Download the [application-insights-agent](https://github.com/microsoft/ApplicationInsights-Java/releases/tag/3.5.2) jar
 - Infrastructure dependencies, deployable through the relevant [infrastructure template](https://dev.azure.com/slb-des-ext-collaboration/open-data-ecosystem/_git/infrastructure-templates?path=%2Finfra&version=GBmaster&_a=contents)
 - While not a strict dependency, example commands in this document use [bash](https://www.gnu.org/software/bash/)
 
@@ -37,27 +38,31 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 
 **Required to run service**
 
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `LOG_PREFIX` | `schema` | Logging prefix | no | - |
-| `AUTHORIZE_API` | ex `https://foo-entitlements.azurewebsites.net` | Entitlements API endpoint | no | output of infrastructure deployment |
-| `AUTHORIZE_API_KEY` | `********` | The API key clients will need to use when calling the entitlements | yes | -- |
-| `partition_service_endpoint` |  ex `https://foo-partition.azurewebsites.net` | Partition Service API endpoint | no | output of infrastructure deployment |
-| `azure.activedirectory.app-resource-id` | `********` | AAD client application ID  | yes | output of infrastructure deployment |
-| `azure.application-insights.instrumentation-key` | `********` | API Key for App Insights | yes | output of infrastructure deployment |
-| `azure.activedirectory.client-id` | `********` | AAD client application ID | yes | output of infrastructure deployment |
-| `azure.activedirectory.AppIdUri` | `api://${azure.activedirectory.client-id}` | URI for AAD Application | no | -- |
-| `azure.activedirectory.session-stateless` | `true` | Flag run in stateless mode (needed by AAD dependency) | no | -- |
-| `azure.storage.account-name` | ex `foo-storage-account` | Storage account for storing documents | no | output of infrastructure deployment |
-| `azure.storage.enable-https` | `true` | Used by spring boot starter library | no | - |
-| `KEYVAULT_URI` | ex `https://foo-keyvault.vault.azure.net/` | URI of KeyVault that holds application secrets | no | output of infrastructure deployment |
-| `AZURE_CLIENT_ID` | `********` | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username` |
-| `AZURE_TENANT_ID` | `********` | AD tenant to authenticate users from | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-tenant-id` |
-| `AZURE_CLIENT_SECRET` | `********` | Secret for `$AZURE_CLIENT_ID` | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password` |
-| `partition_service_endpoint` | ex `https//foo-partition.azurewebsites.net/api/partition/v1` | Partition API endpoint | no | output of infrastructure deployment |
-| `azure_istioauth_enabled` | `true` | Flag to Disable AAD auth | no | -- |
-| `shared_partition` | `opendes` | Default Partition for Public Shared Schemas | no | -- |
-| `server.port` | ex `8085` | port for schema service | no | -- |
+| name                                             | value                                                               | description                                                                                                        | sensitive? | source                                                                 |
+|--------------------------------------------------|---------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|------------|------------------------------------------------------------------------|
+| `LOG_PREFIX`                                     | `schema`                                                            | Logging prefix                                                                                                     | no         | -                                                                      |
+| `entitlements_service_endpoint`                  | ex `https://foo-entitlements.azurewebsites.net/api/entitlements/v2` | Entitlements API endpoint                                                                                          | no         | output of infrastructure deployment                                    |
+| `entitlements_service_api_key`                   | `OBSOLETE`                                                          | The API key clients will need to use when calling the entitlements                                                 | yes        | --                                                                     |
+| `partition_service_endpoint`                     | ex `https//foo-partition.azurewebsites.net/api/partition/v1`        | Partition Service API endpoint                                                                                     | no         | output of infrastructure deployment                                    |
+| `azure.activedirectory.app-resource-id`          | `********`                                                          | AAD client application ID                                                                                          | yes        | keyvault secret: `$KEYVAULT_URI/secrets/aad_client_id`                 |
+| `azure.application-insights.instrumentation-key` | `********`                                                          | API Key for App Insights                                                                                           | yes        | keyvault secret: `$KEYVAULT_URI/secrets/appinsights-key`               |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING`          | `InstrumentationKey=${appinsights_key}`                             | Connection String for App Insights. Instrumentation Key value can be obtained from Azure portal or from Key Vault  | yes        | keyvault secret: `$KEYVAULT_URI/secrets/appinsights-connection-string` |
+| `azure.activedirectory.client-id`                | `********`                                                          | AAD client application ID                                                                                          | yes        | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username`           |
+| `azure.activedirectory.AppIdUri`                 | `api://${azure.activedirectory.client-id}`                          | URI for AAD Application                                                                                            | no         | --                                                                     |
+| `azure.activedirectory.session-stateless`        | `true`                                                              | Flag run in stateless mode (needed by AAD dependency)                                                              | no         | --                                                                     |
+| `azure.storage.account-name`                     | ex `foo-storage-account`                                            | Storage account for storing documents                                                                              | no         | output of infrastructure deployment                                    |
+| `cosmosdb_database`                              | `osdu-db`                                                           | Cosmos database                                                                                                    | no         | --                                                                     |
+| `event_grid_enabled`                             | ex `true`                                                           | Indicates whether event grid is enabled or not                                                                     | no         | if env is demo then value is `false`, otherwise it is `true`           |
+| `event_grid_topic`                               | `schemachangedtopic`                                                | Event grid topic name                                                                                              | no         | --                                                                     |
+| `service_bus_enabled`                            | ex `false`                                                          | Indicates whether service bus is enabled or not                                                                    | no         | if env is demo then value is `true`, otherwise it is `false`           |
+| `servicebus_topic_name`                          | `schemachangedtopic`                                                | Service bus topic name                                                                                             | no         | --                                                                     |
+| `KEYVAULT_URI`                                   | ex `https://foo-keyvault.vault.azure.net/`                          | URI of KeyVault that holds application secrets                                                                     | no         | output of infrastructure deployment (central resources kv)             |
+| `AZURE_CLIENT_ID`                                | `********`                                                          | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes        | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username`           |
+| `AZURE_TENANT_ID`                                | `********`                                                          | AD tenant to authenticate users from                                                                               | yes        | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-tenant-id`          |
+| `AZURE_CLIENT_SECRET`                            | `********`                                                          | Secret for `$AZURE_CLIENT_ID`                                                                                      | yes        | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password`           |
+| `azure_istioauth_enabled`                        | `true`                                                              | Flag to Disable AAD auth                                                                                           | no         | --                                                                     |
+| `shared_partition`                               | `opendes`                                                           | Default Partition for Public Shared Schemas                                                                        | no         | --                                                                     |
+| `server.port`                                    | ex `8085`                                                           | port for schema service                                                                                            | no         | --                                                                     |
 
 
 **Required to run integration tests**
@@ -71,7 +76,7 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 | `PRIVATE_TENANT2` | `tenant2` | OSDU tenant used for testing | no | -- |
 | `SHARED_TENANT` | `common` | OSDU tenant used for testing | no | -- |
 | `VENDOR` | `azure` | cloud provider name | no | -- |
-| `HOST` | ex: `http://localhost:8080` | OSDU tenant used for testing | no | -- |
+| `HOST` | ex: `http://localhost:8080` | local service endpoint | no | -- |
 | `TESTER_SERVICEPRINCIPAL_SECRET` | `********` | Secret for `$INTEGRATION_TESTER` | yes | -- |
 
 ### Configure Maven
@@ -118,7 +123,7 @@ After configuring your environment as specified above, you can follow these step
 2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Azure, run the below command :
     ```bash
     # Running Azure :
-    java -jar  provider/schema-azure/target/os-schema-azure-0.0.1-SNAPSHOT-spring-boot.jar
+    java -jar  provider/schema-azure/target/os-schema-azure-0.0.1-SNAPSHOT-spring-boot.jar --add-opens java.base/java.lang=ALL-UNNAMED --add-opens  java.base/java.lang.reflect=ALL-UNNAMED -javaagent:<<Absolute file path to application-insights-agent jar>> -DAPPINSIGHTS_LOGGING_ENABLED=true
 3. The port and path for the service endpoint can be configured in ```application.properties``` in the provider folder as following. If not specified, then  the web container (ex. Tomcat) default is used:
     ```bash
     server.servlet.contextPath=/api/schema-service/v1/
