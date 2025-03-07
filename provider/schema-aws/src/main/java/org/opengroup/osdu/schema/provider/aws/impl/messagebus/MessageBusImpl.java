@@ -99,6 +99,8 @@ public class MessageBusImpl implements IMessageBus {
         headersMap.put(DpsHeaders.ACCOUNT_ID, tenant);
         headersMap.put(DpsHeaders.DATA_PARTITION_ID, tenant);
         headersMap.put(DpsHeaders.CORRELATION_ID, headers.getCorrelationId());
+        headersMap.put(DpsHeaders.USER_EMAIL, headers.getUserEmail());
+        headersMap.put(DpsHeaders.AUTHORIZATION, headers.getAuthorization());
         return DpsHeaders.createFromMap(headersMap);
     }
 
