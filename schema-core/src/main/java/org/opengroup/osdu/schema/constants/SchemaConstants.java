@@ -183,4 +183,7 @@ public class SchemaConstants {
             return this.value;
         }
     }
+
+    public static final String ENTITLEMENT_SERVICE_SYSTEM_SCHEMA_EDITORS = "service.system-schema-service.editors";
+    public static final String SYSTEM_PARTITION_NAME = "system";
 }

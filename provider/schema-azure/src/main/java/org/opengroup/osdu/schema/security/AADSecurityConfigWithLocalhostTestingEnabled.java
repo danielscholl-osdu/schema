@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,14 +27,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Security configuration for the Azure Localhost Testing.
+ * <p>
+ * It is used for localhost testing purposes only and should not be used in production.
+ * This configuration is only active when the property
+ * <code>azure.localhosttesting.auth.enabled</code> is set to <code>true</code>.
+ */
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@ConditionalOnProperty(value = "azure.istio.auth.enabled", havingValue = "true", matchIfMissing = true)
-public class AADSecurityConfigWithIstioEnabled {
+@ConditionalOnProperty(value = "azure.localhosttesting.auth.enabled", havingValue = "true", matchIfMissing = false)
+public class AADSecurityConfigWithLocalhostTestingEnabled {
 
     @Autowired
-    private AzureIstioSecurityFilter azureIstioSecurityFilter;
+    private AzureLocalhostTestingSecurityFilter azureLocalhostTestingSecurityFilter;
 
     private static final String[] AUTH_ALLOWLIST = {"/", "/index.html",
             "/v2/api-docs",
@@ -58,9 +66,8 @@ public class AADSecurityConfigWithIstioEnabled {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request.requestMatchers(AUTH_ALLOWLIST).permitAll())
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
-                .addFilterBefore(azureIstioSecurityFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults());
+                .addFilterBefore(azureLocalhostTestingSecurityFilter, UsernamePasswordAuthenticationFilter.class)
+                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
-
 }
