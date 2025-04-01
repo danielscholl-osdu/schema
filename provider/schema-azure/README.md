@@ -61,6 +61,7 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 | `AZURE_TENANT_ID`                                | `********`                                                          | AD tenant to authenticate users from                                                                               | yes        | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-tenant-id`          |
 | `AZURE_CLIENT_SECRET`                            | `********`                                                          | Secret for `$AZURE_CLIENT_ID`                                                                                      | yes        | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password`           |
 | `azure_istioauth_enabled`                        | `true`                                                              | Flag to Disable AAD auth                                                                                           | no         | --                                                                     |
+| `azure_localhosttesting_auth_enabled`            | `false`                                                             | Flag to Enable AAD auth for localhost testing                                                                                        | no         | --                                                                     |
 | `shared_partition`                               | `opendes`                                                           | Default Partition for Public Shared Schemas                                                                        | no         | --                                                                     |
 | `server.port`                                    | ex `8085`                                                           | port for schema service                                                                                            | no         | --                                                                     |
 
@@ -112,13 +113,13 @@ $ cat ~/.m2/settings.xml
 ### Build and run the application
 
 After configuring your environment as specified above, you can follow these steps to build and run the application.
-1. Navigate to the root of the schema project, os-schema. For building the project using command line, run below command :
+1. Navigate to the root of the schema project, os-schema. For building the project from the command line, run the command below:
     ```bash
-    mvn clean install
+    mvn -P core,aws,azure,ibm,gc clean install
     ```
-    This will build the core project as well as all the underlying projects. If we want  to build projects for specific cloud vendor, we can use mvn --projects command. For example, if we want to build only for Azure, we can use below command :
+    This will build the core profile as well as all underlying profiles. If we want to build the profiles for a specific cloud vendor, we will build both the core profile and the cloud vendor's profile. For example, if we want to build the profiles for Azure, we can use the command below:
     ```bash
-    mvn --projects schema-core,provider/schema-azure clean install
+    mvn -P core,azure clean install
     ```
 2. Run schema service in command line. We need to select which cloud vendor specific schema-service we want to run. For example, if we want to run schema-service for Azure, run the below command :
     ```bash
