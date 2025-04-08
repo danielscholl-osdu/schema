@@ -42,7 +42,7 @@ import com.amazonaws.services.sns.model.PublishRequest;
 public class MessageBusImpl implements IMessageBus {
 
     private String amazonSNSTopic;
-    private final String schemaSNSTopic = "schema-sns-topic-arn";
+    private static final String SCHEMA_SNS_TOPIC = "schema-sns-topic-arn";
 
     private AmazonSNS snsClient;
 
@@ -66,7 +66,7 @@ public class MessageBusImpl implements IMessageBus {
         K8sLocalParameterProvider k8sLocalParameterProvider = new K8sLocalParameterProvider();
         snsClient = new AmazonSNSConfig(amazonSNSRegion).AmazonSNS();
 
-        amazonSNSTopic = k8sLocalParameterProvider.getParameterAsString(schemaSNSTopic);
+        amazonSNSTopic = k8sLocalParameterProvider.getParameterAsString(SCHEMA_SNS_TOPIC);
     }
 
     @Override
