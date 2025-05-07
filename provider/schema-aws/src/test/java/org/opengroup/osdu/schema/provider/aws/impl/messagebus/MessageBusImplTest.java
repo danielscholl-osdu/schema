@@ -17,67 +17,81 @@ package org.opengroup.osdu.schema.provider.aws.impl.messagebus;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.core.aws.sns.PublishRequestBuilder;
-import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opengroup.osdu.core.aws.v2.sns.PublishRequestBuilder;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
+import org.opengroup.osdu.schema.provider.aws.impl.messagebus.model.SchemaPubSubMessage;
 
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
 
+@ExtendWith(MockitoExtension.class)
+class MessageBusImplTest {
 
-@RunWith(MockitoJUnitRunner.class)
-public class MessageBusImplTest {
-
-    @InjectMocks
     private MessageBusImpl messageBusImpl;
 
     @Mock
     private JaxRsDpsLog logger;
 
     @Mock
-    private K8sLocalParameterProvider k8sLocalParameterProvider;
-
-    @Mock
-    private AmazonSNS snsClient;
+    private SnsClient snsClient;
 
     @Mock
     private ITenantFactory tenantFactory;
 
     @Mock
     private DpsHeaders headers;
+    
+    private final String osduSchemaTopic = "test-topic";
+    private final String amazonSNSRegion = "us-west-2";
+    private final String amazonSNSTopic = "test-topic-arn";
 
-    @Test
-    public void publishMessagePublishesMessages() {
-
-        try (MockedConstruction<PublishRequestBuilder> k8sParameterProvider =
-                        Mockito.mockConstruction(PublishRequestBuilder.class, (mock, context) -> {
-                            when(mock.generatePublishRequest(anyString(), anyString(), any())).thenReturn(new PublishRequest());
-                        })) {
-
-
-            messageBusImpl.publishMessage("schemaId", "eventType_create");
-            verify(snsClient, times(1)).publish(any());
+    @BeforeEach
+    void setup() {
+        messageBusImpl = new MessageBusImpl(osduSchemaTopic, amazonSNSRegion, tenantFactory, headers, logger);
+        // Set the mocked SNS client and topic ARN using reflection
+        try {
+            java.lang.reflect.Field snsClientField = MessageBusImpl.class.getDeclaredField("snsClient");
+            snsClientField.setAccessible(true);
+            snsClientField.set(messageBusImpl, snsClient);
+            
+            java.lang.reflect.Field topicField = MessageBusImpl.class.getDeclaredField("amazonSNSTopic");
+            topicField.setAccessible(true);
+            topicField.set(messageBusImpl, amazonSNSTopic);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set up test", e);
         }
     }
 
     @Test
-    public void publishMessageForSystemSchemaPublishesMessages() {
+    void publishMessagePublishesMessages() {
+        try (MockedConstruction<PublishRequestBuilder> publishRequestBuilder =
+                mockConstruction(PublishRequestBuilder.class, (mock, context) -> {
+                    when(mock.generatePublishRequest(anyString(), anyString(), any(SchemaPubSubMessage.class)))
+                        .thenReturn(PublishRequest.builder().build());
+                })) {
 
+            messageBusImpl.publishMessage("schemaId", "eventType_create");
+            verify(snsClient, times(1)).publish(any(PublishRequest.class));
+        }
+    }
+
+    @Test
+    void publishMessageForSystemSchemaPublishesMessages() {
         TenantInfo tenantInfo = new TenantInfo();
         tenantInfo.setName("testTenant");
         tenantInfo.setDataPartitionId("testPartition");
@@ -87,13 +101,14 @@ public class MessageBusImplTest {
         when(tenantFactory.listTenantInfo()).thenReturn(tenantInfoList);
         when(headers.getCorrelationId()).thenReturn("correlationId");
 
-        try (MockedConstruction<PublishRequestBuilder> k8sParameterProvider =
-                        Mockito.mockConstruction(PublishRequestBuilder.class, (mock, context) -> {
-                            when(mock.generatePublishRequest(anyString(), anyString(), any())).thenReturn(new PublishRequest());
-                        })) {
+        try (MockedConstruction<PublishRequestBuilder> publishRequestBuilder =
+                mockConstruction(PublishRequestBuilder.class, (mock, context) -> {
+                    when(mock.generatePublishRequest(anyString(), anyString(), any(SchemaPubSubMessage.class)))
+                        .thenReturn(PublishRequest.builder().build());
+                })) {
 
             messageBusImpl.publishMessageForSystemSchema("schemaId", "eventType_create");
-            verify(snsClient, times(1)).publish(any());
+            verify(snsClient, times(1)).publish(any(PublishRequest.class));
         }
     }
 }

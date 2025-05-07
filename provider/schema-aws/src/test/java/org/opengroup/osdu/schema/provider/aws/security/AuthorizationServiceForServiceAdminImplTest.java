@@ -17,22 +17,22 @@ package org.opengroup.osdu.schema.provider.aws.security;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opengroup.osdu.core.aws.v2.entitlements.RequestKeys;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(MockitoExtension.class)
 @TestPropertySource(locations="classpath:application.properties")
-public class AuthorizationServiceForServiceAdminImplTest {
+class AuthorizationServiceForServiceAdminImplTest {
 
 	@InjectMocks
 	private AuthorizationServiceForServiceAdminImpl authorizationServiceForServiceAdminImpl;
@@ -40,17 +40,23 @@ public class AuthorizationServiceForServiceAdminImplTest {
 	@Mock
 	private DpsHeaders headers;
 
-	@Test(expected =  AppException.class)
-	public void isDomainAdminServiceAccount_NoJWTtoken() {
-		authorizationServiceForServiceAdminImpl.isDomainAdminServiceAccount();
+	@Test
+	void isDomainAdminServiceAccount_NoJWTtoken() {
+		assertThrows(AppException.class, () -> {
+			authorizationServiceForServiceAdminImpl.isDomainAdminServiceAccount();
+		});
 	}
 	
-	@Test(expected =  AppException.class)
-	public void isDomainAdminServiceAccount_UnauthorizedUser() {
+	@Test
+	void isDomainAdminServiceAccount_UnauthorizedUser() {
 		Map<String, String> header = new HashMap<>();
 		header.put(RequestKeys.AUTHORIZATION_HEADER_KEY, "AUTHORIZATION_HEADER_KEY");
 		header.put(DpsHeaders.USER_ID,"not-a-user@testing.com");
 		Mockito.when(headers.getHeaders()).thenReturn(header);
-		authorizationServiceForServiceAdminImpl.isDomainAdminServiceAccount();
+		Mockito.when(headers.getUserId()).thenReturn("not-a-user@testing.com");
+		
+		assertThrows(AppException.class, () -> {
+			authorizationServiceForServiceAdminImpl.isDomainAdminServiceAccount();
+		});
 	}
 }

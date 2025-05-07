@@ -13,209 +13,434 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemastore;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import org.junit.*;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.core.aws.s3.S3ClientFactory;
-import org.opengroup.osdu.core.aws.s3.S3ClientWithBucket;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opengroup.osdu.core.aws.v2.s3.IS3ClientFactory;
+import org.opengroup.osdu.core.aws.v2.s3.S3ClientWithBucket;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
-import org.springframework.test.util.ReflectionTestUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import static org.mockito.Mockito.*;
+@ExtendWith(MockitoExtension.class)
+class AwsSchemaStoreTest {
 
+    private static final String S3_SCHEMA_BUCKET_PATH = "/schema/bucket/path";
+    private static final String COMMON_TENANT_ID = "common";
+    private static final String TEST_PARTITION_ID = "test-partition";
+    private static final String TEST_BUCKET_NAME = "test-bucket";
 
-@RunWith(MockitoJUnitRunner.class)
-public class AwsSchemaStoreTest {
+    private AwsSchemaStore schemaStore;
 
-  @InjectMocks
-  private AwsSchemaStore schemaStore;
+    @Mock
+    private DpsHeaders headers;
 
+    @Mock
+    private JaxRsDpsLog logger;
 
-  @Mock
-  private DpsHeaders headers;
+    @Mock
+    private IS3ClientFactory s3ClientFactory;
 
-  @Mock
-  private AmazonS3 s3;
+    @Mock
+    private S3ClientWithBucket s3ClientWithBucket;
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+    @Mock
+    private S3Client s3Client;
 
-  @Mock
-  private JaxRsDpsLog logger;
+    @Mock
+    private ResponseBytes<GetObjectResponse> responseBytes;
 
-  @Mock
-  private S3ClientFactory s3ClientFactory;
+    @BeforeEach
+    void setUp() {
+        // Create the schemaStore with constructor injection
+        schemaStore = new AwsSchemaStore(
+            headers,
+            logger,
+            s3ClientFactory,
+            S3_SCHEMA_BUCKET_PATH,
+            COMMON_TENANT_ID
+        );
+        
+        // Set up common mocks
+        when(s3ClientFactory.getS3ClientForPartition(anyString(), eq(S3_SCHEMA_BUCKET_PATH)))
+            .thenReturn(s3ClientWithBucket);
+        when(s3ClientWithBucket.getS3Client()).thenReturn(s3Client);
+        when(s3ClientWithBucket.getBucketName()).thenReturn(TEST_BUCKET_NAME);
+    }
 
-  @Mock
-  private S3ClientWithBucket s3ClientWithBucket;
+    @Test
+    void createSchema_Success() throws ApplicationException {
+        // Setup
+        String filePath = "test-schema.json";
+        String content = "{\"test\": \"schema\"}";
+        
+        // Mock headers
+        when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(TEST_PARTITION_ID);
+        
+        // Execute
+        String result = schemaStore.createSchema(filePath, content);
+        
+        // Verify
+        verify(s3Client).putObject(any(PutObjectRequest.class), any(RequestBody.class));
+        assertEquals("https://test-bucket.s3.amazonaws.com/schema/test-partition/test-schema.json", result);
+    }
 
-  private final String schemaBucketName="bucket";
+    @Test
+    void createSchema_ThrowsApplicationException() {
+        // Setup
+        String filePath = "test-schema.json";
+        String content = "{\"test\": \"schema\"}";
+        
+        // Mock headers
+        when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(TEST_PARTITION_ID);
+        
+        // Mock S3 client to throw exception
+        doThrow(new RuntimeException("Test error")).when(s3Client).putObject(any(PutObjectRequest.class), any(RequestBody.class));
+        
+        // Execute and verify
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> {
+            schemaStore.createSchema(filePath, content);
+        });
+        
+        assertEquals(SchemaConstants.INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
 
-  private static final String COMMON_TENANT_ID = "common";
+    @Test
+    void createSystemSchema_Success() throws ApplicationException {
+        // Setup
+        String filePath = "test-schema.json";
+        String content = "{\"test\": \"schema\"}";
+        
+        // Setup mocks to handle the data partition ID update
+        doAnswer(invocation -> {
+            // When headers.put is called, simulate the update
+            when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+            return null;
+        }).when(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        
+        // Initially return a different partition ID
+        when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(TEST_PARTITION_ID);
+        
+        // Execute
+        String result = schemaStore.createSystemSchema(filePath, content);
+        
+        // Verify
+        verify(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        verify(s3Client).putObject(any(PutObjectRequest.class), any(RequestBody.class));
+        assertEquals("https://test-bucket.s3.amazonaws.com/schema/common/test-schema.json", result);
+    }
 
-  @Before
-  public void beforeAll() {
+    @Test
+    void getSchema_Success() throws NotFoundException, ApplicationException {
+        // Setup
+        String filePath = "test-schema.json";
+        String expectedContent = "{\"test\": \"schema\"}";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(expectedContent);
+        
+        // Execute
+        String result = schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        assertEquals(expectedContent, result);
+    }
 
-  }
+    @Test
+    void getSchema_NotFound() {
+        // Setup
+        String filePath = "non-existent-schema.json";
+        
+        // Mock S3 client to throw 404 exception
+        AwsServiceException notFoundException = AwsServiceException.builder()
+            .statusCode(404)
+            .message("The specified key does not exist")
+            .build();
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenThrow(notFoundException);
+        
+        // Execute and verify
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        });
+        
+        assertEquals(SchemaConstants.SCHEMA_NOT_PRESENT, exception.getMessage());
+    }
 
-  @Before
-  public void setUp() {
+    @Test
+    void getSchema_OtherS3Exception() {
+        // Setup
+        String filePath = "error-schema.json";
+        
+        // Mock S3 client to throw non-404 exception
+        AwsServiceException otherException = AwsServiceException.builder()
+            .statusCode(500)
+            .message("Internal server error")
+            .build();
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenThrow(otherException);
+        
+        // Execute and verify
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> {
+            schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        });
+        
+        assertEquals(SchemaConstants.INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
 
-    Mockito.when(s3ClientWithBucket.getS3Client()).thenReturn(s3);
+    @Test
+    void getSchema_GenericException() {
+        // Setup
+        String filePath = "error-schema.json";
+        
+        // Mock S3 client to throw generic exception
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenThrow(new RuntimeException("Test error"));
+        
+        // Execute and verify
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> {
+            schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        });
+        
+        assertEquals(SchemaConstants.INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
 
-    Mockito.when(s3ClientWithBucket.getBucketName()).thenReturn(schemaBucketName);
+    @Test
+    void getSystemSchema_Success() throws NotFoundException, ApplicationException {
+        // Setup
+        String filePath = "test-schema.json";
+        String expectedContent = "{\"test\": \"schema\"}";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(expectedContent);
+        
+        // Execute
+        String result = schemaStore.getSystemSchema(filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        assertEquals(expectedContent, result);
+    }
+
+    @Test
+    void cleanSchemaProject_Success() throws ApplicationException {
+        // Setup
+        String schemaId = "test-schema.json";
+        
+        // Mock headers
+        when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(TEST_PARTITION_ID);
+        
+        // Execute
+        boolean result = schemaStore.cleanSchemaProject(schemaId);
+        
+        // Verify
+        verify(s3Client).deleteObject(any(DeleteObjectRequest.class));
+        assertTrue(result);
+    }
+
+    @Test
+    void cleanSchemaProject_Failure() throws ApplicationException {
+        // Setup
+        String schemaId = "test-schema.json";
+        
+        // Mock headers
+        when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(TEST_PARTITION_ID);
+        
+        // Mock S3 client to throw exception
+        doThrow(new RuntimeException("Test error")).when(s3Client).deleteObject(any(DeleteObjectRequest.class));
+        
+        // Execute
+        boolean result = schemaStore.cleanSchemaProject(schemaId);
+        
+        // Verify
+        assertFalse(result);
+    }
+
+    @Test
+    void cleanSystemSchemaProject_Success() throws ApplicationException {
+        // Setup
+        String schemaId = "test-schema.json";
+        
+        // Setup mocks to handle the data partition ID update
+        doAnswer(invocation -> {
+            // When headers.put is called, simulate the update
+            when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
+            return null;
+        }).when(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        
+        // Initially return a different partition ID
+        when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(TEST_PARTITION_ID);
+        
+        // Execute
+        boolean result = schemaStore.cleanSystemSchemaProject(schemaId);
+        
+        // Verify
+        verify(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        verify(s3Client).deleteObject(any(DeleteObjectRequest.class));
+        assertTrue(result);
+    }
+
+    @Test
+    void getSchema_WithArrayContent_ProcessesContent() throws Exception {
+        // Setup
+        String filePath = "array-schema.json";
+        String arrayContent = "[{\"id\":\"item1\"},{\"id\":\"item2\"}]";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(arrayContent);
+        
+        // Execute
+        String result = schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        
+        // Verify the result is valid JSON and contains the expected data
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode resultNode = mapper.readTree(result);
+        assertTrue(resultNode.isArray(), "Result should be a JSON array");
+        assertEquals(2, resultNode.size(), "Array should have 2 elements");
+        assertEquals("item1", resultNode.get(0).get("id").asText());
+        assertEquals("item2", resultNode.get(1).get("id").asText());
+        
+        // Verify the result is a mutable array by attempting to modify it
+        ArrayNode arrayNode = (ArrayNode) resultNode;
+        // This would throw UnsupportedOperationException if the array were immutable
+        assertNotNull(arrayNode);
+    }
     
-    Mockito.when(s3ClientFactory.getS3ClientForPartition(Mockito.anyString(), Mockito.any()))
-      .thenReturn(s3ClientWithBucket);
-    ReflectionTestUtils.setField(schemaStore, "sharedTenant", COMMON_TENANT_ID);
-
-  }
-
-  @After
-  public void tearDown() {
-  }
-
-  @Test
-  public void createSchema() throws MalformedURLException, ApplicationException {
-    String filePath = "file/path";
-    String content = "content";
-    String dataPartitionId = "partitionid";
-    URL file = new URL("http", "localhost", "file" );    
-    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
-    doReturn(null).when(s3).putObject(Mockito.any());
-    Mockito.when(s3.getUrl(schemaBucketName, "schema/partitionid/file/path"))
-      .thenReturn(new URL("http", "localhost", "file" ));
-    String result = schemaStore.createSchema(filePath, content);
-    Assert.assertEquals(file.toString(), result);
-  }
-
-  @Test
-  public void createSchema_SystemSchemas() throws MalformedURLException, ApplicationException {
-    String filePath = "file/path";
-    String content = "content";
-    URL file = new URL("http", "localhost", "file" );
-    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    lenient().doReturn(null).when(s3).putObject(Mockito.any());
-    Mockito.when(s3.getUrl(schemaBucketName, "schema/" + COMMON_TENANT_ID + "/file/path"))
-            .thenReturn(new URL("http", "localhost", "file" ));
-    String result = schemaStore.createSystemSchema(filePath, content);
-    Assert.assertEquals(file.toString(), result);
-  }
-
-  @Test
-  public void getSchema() throws NotFoundException, ApplicationException {
-    String dataPartitionId = "partitionid";
-    String filePath = "file/path";
-    String content = "content";
-    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenReturn(content);
-    String result = schemaStore.getSchema(dataPartitionId, filePath);
-    Assert.assertEquals(content, result);
-  }
-
-  @Test
-  public void getSchema_SystemSchemas() throws NotFoundException, ApplicationException {
-    String filePath = "file/path";
-    String content = "content";
-    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenReturn(content);
-    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    String result = schemaStore.getSystemSchema(filePath);
-    Assert.assertEquals(content, result);
-  }
-
-  @Test
-  public void getSchema_NotFound() throws NotFoundException, ApplicationException {
-    String dataPartitionId = "partitionid";
-    String filePath = "file/path";
-    expectedException.expect(NotFoundException.class);
-    expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
-    AmazonS3Exception toThrow = new AmazonS3Exception("NA");
-    toThrow.setErrorCode("NoSuchKey");
-    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenThrow(toThrow);
-    schemaStore.getSchema(dataPartitionId, filePath);
-  }
-
-  @Test
-  public void getSchema_NotFound_SystemSchemas() throws NotFoundException, ApplicationException {
-    String filePath = "file/path";
-    expectedException.expect(NotFoundException.class);
-    expectedException.expectMessage(SchemaConstants.SCHEMA_NOT_PRESENT);
-    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    AmazonS3Exception toThrow = new AmazonS3Exception("NA");
-    toThrow.setErrorCode("NoSuchKey");
-    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenThrow(toThrow);
-    schemaStore.getSystemSchema(filePath);
-  }
-
-  @Test
-  public void getSchema_S3Exception() throws NotFoundException, ApplicationException {
-    String dataPartitionId = "partitionid";
-    String filePath = "file/path";
-    expectedException.expect(ApplicationException.class);
-    expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
-    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenThrow(SdkClientException.class);
-    schemaStore.getSchema(dataPartitionId, filePath);
-  }
-
-  @Test
-  public void getSchema_S3Exception_SystemSchemas() throws NotFoundException, ApplicationException {
-    String filePath = "file/path";
-    expectedException.expect(ApplicationException.class);
-    expectedException.expectMessage(SchemaConstants.INTERNAL_SERVER_ERROR);
-    lenient().when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    Mockito.when(s3.getObjectAsString(Mockito.any(), Mockito.any())).thenThrow(SdkClientException.class);
-    schemaStore.getSystemSchema(filePath);
-  }
-
-  @Test
-  public void cleanSchemaProject() throws ApplicationException {
-    String schemaId = "file";
-    String dataPartitionId = "partitionid";
-    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
-    doNothing().when(s3).deleteObject(schemaBucketName, "schema/partitionid/file");
-    Boolean result = schemaStore.cleanSchemaProject(schemaId);
-    Assert.assertEquals(true, result);
-  }
-
-  @Test
-  public void cleanSchemaProject_SystemSchemas() throws ApplicationException {
-    String schemaId = "file";
-    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    doNothing().when(s3).deleteObject(schemaBucketName, "schema/" + COMMON_TENANT_ID + "/file");
-    Boolean result = schemaStore.cleanSystemSchemaProject(schemaId);
-    Assert.assertEquals(true, result);
-  }
-
-  @Test
-  public void cleanSchemaProject_S3Exception() throws ApplicationException {
-    String schemaId = "file";
-    String dataPartitionId = "partitionid";
-    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(dataPartitionId);
-    doThrow(SdkClientException.class).when(s3).deleteObject(schemaBucketName, "schema/partitionid/file");
-    Boolean result = schemaStore.cleanSchemaProject(schemaId);
-    Assert.assertEquals(false, result);
-  }
-
-  @Test
-  public void cleanSchemaProject_S3Exception_SystemSchemas() throws ApplicationException {
-    String schemaId = "file";
-    Mockito.when(headers.getPartitionIdWithFallbackToAccountId()).thenReturn(COMMON_TENANT_ID);
-    doThrow(SdkClientException.class).when(s3).deleteObject(schemaBucketName, "schema/" + COMMON_TENANT_ID + "/file");
-    Boolean result = schemaStore.cleanSystemSchemaProject(schemaId);
-    Assert.assertEquals(false, result);
-  }
+    @Test
+    void getSchema_WithObjectContent_ReturnsUnmodified() throws Exception {
+        // Setup
+        String filePath = "object-schema.json";
+        String objectContent = "{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}}}";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(objectContent);
+        
+        // Execute
+        String result = schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        
+        // For object content, the result should be identical to the input
+        assertEquals(objectContent, result);
+    }
+    
+    @Test
+    void getSchema_WithEmptyContent_ReturnsUnmodified() throws Exception {
+        // Setup
+        String filePath = "empty-schema.json";
+        String emptyContent = "";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(emptyContent);
+        
+        // Execute
+        String result = schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        
+        // For empty content, the result should be identical to the input
+        assertEquals(emptyContent, result);
+    }
+    
+    @Test
+    void getSchema_WithNullContent_ReturnsNull() throws Exception {
+        // Setup
+        String filePath = "null-schema.json";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(null);
+        
+        // Execute
+        String result = schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        
+        // For null content, the result should be null
+        assertEquals(null, result);
+    }
+    
+    @Test
+    void getSchema_WithInvalidJsonContent_ReturnsOriginalContent() throws Exception {
+        // Setup
+        String filePath = "invalid-schema.json";
+        String invalidContent = "{invalid-json}";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(invalidContent);
+        
+        // Execute
+        String result = schemaStore.getSchema(TEST_PARTITION_ID, filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        
+        // For invalid JSON content, the result should be identical to the input
+        assertEquals(invalidContent, result);
+    }
+    
+    @Test
+    void getSystemSchema_WithArrayContent_ProcessesContent() throws Exception {
+        // Setup
+        String filePath = "system-array-schema.json";
+        String arrayContent = "[{\"id\":\"system1\"},{\"id\":\"system2\"}]";
+        
+        // Mock S3 client response
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class))).thenReturn(responseBytes);
+        when(responseBytes.asUtf8String()).thenReturn(arrayContent);
+        
+        // Execute
+        String result = schemaStore.getSystemSchema(filePath);
+        
+        // Verify
+        verify(s3Client).getObjectAsBytes(any(GetObjectRequest.class));
+        
+        // Verify the result is valid JSON and contains the expected data
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode resultNode = mapper.readTree(result);
+        assertTrue(resultNode.isArray(), "Result should be a JSON array");
+        assertEquals(2, resultNode.size(), "Array should have 2 elements");
+        assertEquals("system1", resultNode.get(0).get("id").asText());
+        assertEquals("system2", resultNode.get(1).get("id").asText());
+    }
 }

@@ -13,126 +13,269 @@
 // limitations under the License.
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.v2.dynamodb.interfaces.IDynamoDBQueryHelperFactory;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Authority;
 import org.opengroup.osdu.schema.provider.aws.models.AuthorityDoc;
-import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AwsAuthorityStoreTest {
+@ExtendWith(MockitoExtension.class)
+class AwsAuthorityStoreTest {
 
-	@InjectMocks
-	private AwsAuthorityStore authorityStore;
+    private static final String AUTHORITY_TABLE_PATH = "/schema/authority/table";
+    private static final String COMMON_TENANT_ID = "common";
 
-	@Mock
-	private DpsHeaders headers;
+    private AwsAuthorityStore authorityStore;
 
-	@Mock
-	private DynamoDBQueryHelperV2 queryHelper;
+    @Mock
+    private DpsHeaders headers;
 
-	@Mock
-	private DynamoDBQueryHelperFactory queryHelperFactory;
+    @Mock
+    private IDynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
 
-	@Mock
-	private JaxRsDpsLog logger;
+    @Mock
+    private DynamoDBQueryHelper<AuthorityDoc> queryHelper;
 
-	private static final String COMMON_TENANT_ID = "common";
+    @Mock
+    private JaxRsDpsLog logger;
 
-	@Before
-	public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
+        // Create the authorityStore with constructor injection
+        authorityStore = new AwsAuthorityStore(
+            headers,
+            logger,
+            dynamoDBQueryHelperFactory,
+            AUTHORITY_TABLE_PATH,
+            COMMON_TENANT_ID
+        );
+        
+        // Set up the query helper factory to return our mock query helper
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                any(DpsHeaders.class),
+                eq(AUTHORITY_TABLE_PATH),
+                eq(AuthorityDoc.class))).thenReturn(queryHelper);
+    }
 
-		Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
-				.thenReturn(queryHelper);
+    @Test
+    void get_ReturnsAuthority() throws NotFoundException, ApplicationException {
+        // Setup
+        String authorityId = "test-authority";
+        String partitionId = "test-partition";
+        Authority authority = new Authority();
+        authority.setAuthorityId(authorityId);
+        
+        AuthorityDoc authorityDoc = new AuthorityDoc(
+                partitionId + ":" + authorityId,
+                partitionId,
+                authority);
 
-		ReflectionTestUtils.setField(authorityStore, "sharedTenant", COMMON_TENANT_ID);
-	}
+        // Mock headers
+        when(headers.getPartitionId()).thenReturn(partitionId);
+        
+        // Mock query helper
+        when(queryHelper.getItem(partitionId + ":" + authorityId)).thenReturn(Optional.of(authorityDoc));
+        
+        // Execute
+        Authority result = authorityStore.get(authorityId);
+        
+        // Verify
+        assertEquals(authority, result);
+    }
 
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
+    @Test
+    void get_ThrowsNotFoundException() {
+        // Setup
+        String authorityId = "non-existent-authority";
+        String partitionId = "test-partition";
 
-	@Test
-	public void get() throws NotFoundException, ApplicationException {
-		String authorityId = "source";
-		String partitionId = "partitionId";
-		Authority expected = new Authority();
-		AuthorityDoc authorityDoc = new AuthorityDoc("id", partitionId, expected);
+        // Mock headers
+        when(headers.getPartitionId()).thenReturn(partitionId);
+        
+        // Mock query helper to return empty (authority not found)
+        when(queryHelper.getItem(partitionId + ":" + authorityId)).thenReturn(Optional.empty());
 
-		Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(authorityDoc);
-		Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
+        // Execute and verify
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            authorityStore.get(authorityId);
+        });
 
-		Authority actual = authorityStore.get(authorityId);
-		Assert.assertEquals(expected, actual);
-	}
+        assertEquals(SchemaConstants.INVALID_INPUT, exception.getMessage());
+    }
 
-	@Test(expected = NotFoundException.class)
-	public void getThrowsNotFoundException() throws NotFoundException, ApplicationException {
-		String authorityId = "source";
-		authorityStore.get(authorityId);
-	}
+    @Test
+    void getSystemAuthority_ReturnsAuthority() throws NotFoundException, ApplicationException {
+        // Setup
+        String authorityId = "test-authority";
+        Authority authority = new Authority();
+        authority.setAuthorityId(authorityId);
+        
+        // Setup mocks to handle the data partition ID update
+        doAnswer(invocation -> {
+            // When headers.put is called, simulate the update by changing what getPartitionId returns
+            when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+            return null;
+        }).when(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        
+        // Initially return a different partition ID
+        when(headers.getPartitionId()).thenReturn("original-partition");
+        
+        // Mock query helper for the common tenant ID format
+        when(queryHelper.getItem(COMMON_TENANT_ID + ":" + authorityId))
+            .thenReturn(Optional.of(new AuthorityDoc(COMMON_TENANT_ID + ":" + authorityId, COMMON_TENANT_ID, authority)));
+        
+        // Execute
+        Authority result = authorityStore.getSystemAuthority(authorityId);
+        
+        // Verify
+        assertEquals(authority, result);
+        
+        // Verify that the data partition ID was updated
+        verify(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+    }
 
-	@Test
-	public void get_SystemSchemas() throws NotFoundException, ApplicationException {
-		String authorityId = "source";
-		Authority expected = new Authority();
-		AuthorityDoc authorityDoc = new AuthorityDoc("id", COMMON_TENANT_ID, expected);
+    @Test
+    void create_CreatesAuthority() throws ApplicationException, BadRequestException {
+        // Setup
+        String authorityId = "new-authority";
+        String partitionId = "test-partition";
+        Authority authority = new Authority();
+        authority.setAuthorityId(authorityId);
 
-		Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(authorityDoc);
-		Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+        // Mock headers
+        when(headers.getPartitionId()).thenReturn(partitionId);
+        
+        // Mock query helper to return empty (authority doesn't exist yet)
+        when(queryHelper.getItem(partitionId + ":" + authorityId)).thenReturn(Optional.empty());
+        
+        // Mock putItem to do nothing (successful save)
+        doNothing().when(queryHelper).putItem(any(AuthorityDoc.class));
+        
+        // Execute
+        Authority result = authorityStore.create(authority);
+        
+        // Verify
+        assertEquals(authority, result);
+        
+        // Verify that putItem was called with the correct document
+        verify(queryHelper).putItem(any(AuthorityDoc.class));
+        
+        // Verify that the logger was called
+        verify(logger).info(SchemaConstants.AUTHORITY_CREATED);
+    }
 
-		Authority actual = authorityStore.getSystemAuthority(authorityId);
-		Assert.assertEquals(expected, actual);
-	}
+    @Test
+    void create_ThrowsBadRequestException_WhenAuthorityExists() {
+        // Setup
+        String authorityId = "existing-authority";
+        String partitionId = "test-partition";
+        Authority authority = new Authority();
+        authority.setAuthorityId(authorityId);
+        
+        AuthorityDoc existingDoc = new AuthorityDoc(
+                partitionId + ":" + authorityId,
+                partitionId,
+                authority);
 
-	@Test
-	public void create() throws BadRequestException, ApplicationException {
-		String partitionId = "partitionId";
-		Authority expected = new Authority();
+        // Mock headers
+        when(headers.getPartitionId()).thenReturn(partitionId);
+        
+        // Mock query helper to return existing authority
+        when(queryHelper.getItem(partitionId + ":" + authorityId)).thenReturn(Optional.of(existingDoc));
+        
+        // Execute and verify
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            authorityStore.create(authority);
+        });
+        
+        // Verify that the logger was called
+        verify(logger).warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
+    }
 
-		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
-		Mockito.doNothing().when(queryHelper).save(Mockito.any());
-		Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
-		Authority actual = authorityStore.create(expected);
-		assertEquals(expected, actual);
-	}
+    @Test
+    void create_ThrowsApplicationException_OnGenericError() {
+        // Setup
+        String authorityId = "error-authority";
+        String partitionId = "test-partition";
+        Authority authority = new Authority();
+        authority.setAuthorityId(authorityId);
 
-	@Test()
-	public void createHandleskeyExistsInTable() throws BadRequestException, ApplicationException {
-		String partitionId = "partitionId";
-		Authority expected = new Authority();
+        // Mock headers
+        when(headers.getPartitionId()).thenReturn(partitionId);
+        
+        // Mock query helper to return empty (authority doesn't exist yet)
+        when(queryHelper.getItem(partitionId + ":" + authorityId)).thenReturn(Optional.empty());
+        
+        // Mock putItem to throw exception
+        doThrow(new RuntimeException("Test error")).when(queryHelper).putItem(any(AuthorityDoc.class));
+        
+        // Execute and verify
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> {
+            authorityStore.create(authority);
+        });
+        
+        assertEquals(SchemaConstants.INVALID_INPUT, exception.getMessage());
+        
+        // Verify that the logger was called
+        verify(logger).error(anyString());
+    }
 
-		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(true);
-		Mockito.doNothing().when(queryHelper).save(Mockito.any());
-		Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
-		Authority actual = authorityStore.create(expected);
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	public void create_SystemSchemas() throws BadRequestException, ApplicationException {
-		Authority expected = new Authority();
-
-		Mockito.when(queryHelper.keyExistsInTable(Mockito.any(), Mockito.any())).thenReturn(false);
-		Mockito.doNothing().when(queryHelper).save(Mockito.any());
-		Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-		Authority actual = authorityStore.createSystemAuthority(expected);
-		assertEquals(expected, actual);
-	}
+    @Test
+    void createSystemAuthority_CreatesAuthority() throws ApplicationException, BadRequestException {
+        // Setup
+        String authorityId = "new-system-authority";
+        Authority authority = new Authority();
+        authority.setAuthorityId(authorityId);
+        
+        // Setup mocks to handle the data partition ID update
+        doAnswer(invocation -> {
+            // When headers.put is called, simulate the update by changing what getPartitionId returns
+            when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+            return null;
+        }).when(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        
+        // Initially return a different partition ID
+        when(headers.getPartitionId()).thenReturn("original-partition");
+        
+        // Mock query helper for the common tenant ID format
+        when(queryHelper.getItem(COMMON_TENANT_ID + ":" + authorityId)).thenReturn(Optional.empty());
+        
+        // Mock putItem to do nothing (successful save)
+        doNothing().when(queryHelper).putItem(any(AuthorityDoc.class));
+        
+        // Execute
+        Authority result = authorityStore.createSystemAuthority(authority);
+        
+        // Verify
+        assertEquals(authority, result);
+        
+        // Verify that the data partition ID was updated
+        verify(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        
+        // Verify that putItem was called with the correct document
+        verify(queryHelper).putItem(any(AuthorityDoc.class));
+    }
 }
