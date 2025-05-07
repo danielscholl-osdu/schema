@@ -1,27 +1,28 @@
-// Copyright © 2020 Amazon Web Services
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright © Amazon Web Services
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import com.amazonaws.SdkClientException;
-import org.junit.*;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.v2.dynamodb.interfaces.IDynamoDBQueryHelperFactory;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -29,191 +30,213 @@ import org.opengroup.osdu.schema.exceptions.ApplicationException;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
 import org.opengroup.osdu.schema.exceptions.NotFoundException;
 import org.opengroup.osdu.schema.model.Source;
-
-import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.schema.provider.aws.models.SourceDoc;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.*;
+import java.util.Optional;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AwsSourceStoreTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-  @InjectMocks
-  private AwsSourceStore sourceStore;
+@ExtendWith(MockitoExtension.class)
+class AwsSourceStoreTest {
 
+    @InjectMocks
+    private AwsSourceStore sourceStore;
 
-  @Mock
-  private DpsHeaders headers;
+    @Mock
+    private DpsHeaders headers;
 
-  @Mock
-  private DynamoDBQueryHelperV2 queryHelper;
+    @Mock
+    private DynamoDBQueryHelper<SourceDoc> queryHelper;
 
-  @Mock
-  private DynamoDBQueryHelperFactory queryHelperFactory;
+    @Mock
+    private IDynamoDBQueryHelperFactory queryHelperFactory;
 
-  @Mock
-  private JaxRsDpsLog logger;
+    @Mock
+    private JaxRsDpsLog logger;
 
-  private static final String COMMON_TENANT_ID = "common";
+    private static final String COMMON_TENANT_ID = "common";
+    private static final String PARTITION_ID = "partitionId";
+    private static final String SOURCE_ID = "source";
+    private static final String SOURCE_TABLE_PARAM = "sourceTableParam";
 
-  @Before
-  public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
+        // Set the sourceTableParameterRelativePath field
+        ReflectionTestUtils.setField(sourceStore, "sourceTableParameterRelativePath", SOURCE_TABLE_PARAM);
+        ReflectionTestUtils.setField(sourceStore, "sharedTenant", COMMON_TENANT_ID);
+        
+        // Mock the factory to return our mock queryHelper
+        when(queryHelperFactory.createQueryHelper(any(DpsHeaders.class), eq(SOURCE_TABLE_PARAM), eq(SourceDoc.class)))
+                .thenReturn(queryHelper);
+                
+        // Default behavior for queryHelper.getItem() to avoid strict stubbing issues
+        when(queryHelper.getItem(anyString())).thenReturn(Optional.empty());
+    }
 
-    Mockito.when(queryHelperFactory.getQueryHelperForPartition(Mockito.any(DpsHeaders.class), Mockito.any()))
-    .thenReturn(queryHelper);
-    ReflectionTestUtils.setField(sourceStore, "sharedTenant", COMMON_TENANT_ID);
-  }
+    @Test
+    void get_shouldReturnSource_whenSourceExists() throws NotFoundException, ApplicationException {
+        // Arrange
+        Source expected = new Source();
+        SourceDoc sourceDoc = new SourceDoc(PARTITION_ID + ":" + SOURCE_ID, PARTITION_ID, expected);
+        when(headers.getPartitionId()).thenReturn(PARTITION_ID);
+        when(queryHelper.getItem(PARTITION_ID + ":" + SOURCE_ID)).thenReturn(Optional.of(sourceDoc));
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+        // Act
+        Source actual = sourceStore.get(SOURCE_ID);
 
-  @After
-  public void tearDown() throws Exception {
-  }
+        // Assert
+        assertEquals(expected, actual);
+        verify(queryHelper).getItem(PARTITION_ID + ":" + SOURCE_ID);
+    }
 
-  @Test
-  public void get() throws NotFoundException, ApplicationException {
-    String sourceId = "source";
-    String partitionId = "partitionId";
-    Source expected = new Source();
-    SourceDoc sourceDoc = new SourceDoc("id", partitionId, expected);
+    @Test
+    void getSystemSource_shouldReturnSource_whenSourceExists() throws NotFoundException, ApplicationException {
+        // Arrange
+        Source expected = new Source();
+        SourceDoc sourceDoc = new SourceDoc(COMMON_TENANT_ID + ":" + SOURCE_ID, COMMON_TENANT_ID, expected);
+        
+        // Use doAnswer to ensure headers.getPartitionId() returns COMMON_TENANT_ID after headers.put() is called
+        doAnswer(invocation -> COMMON_TENANT_ID).when(headers).getPartitionId();
+        
+        // Mock the queryHelper.getItem() to return the existing document
+        when(queryHelper.getItem(COMMON_TENANT_ID + ":" + SOURCE_ID)).thenReturn(Optional.of(sourceDoc));
 
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(sourceDoc);
-    Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
+        // Act
+        Source actual = sourceStore.getSystemSource(SOURCE_ID);
 
-    Source actual = sourceStore.get(sourceId);
-    Assert.assertEquals(expected, actual);
+        // Assert
+        assertEquals(expected, actual);
+        verify(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        verify(queryHelper).getItem(COMMON_TENANT_ID + ":" + SOURCE_ID);
+    }
 
-  }
+    @Test
+    void get_shouldThrowNotFoundException_whenSourceDoesNotExist() {
+        // Arrange
+        when(headers.getPartitionId()).thenReturn(PARTITION_ID);
+        // Default behavior already set in setUp()
 
-  @Test
-  public void get_SystemSchemas() throws NotFoundException, ApplicationException {
-    String sourceId = "source";
-    Source expected = new Source();
-    SourceDoc sourceDoc = new SourceDoc("id", COMMON_TENANT_ID, expected);
+        // Act & Assert
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> sourceStore.get(SOURCE_ID));
+        assertEquals(AwsSourceStore.SOURCE_NOT_FOUND, exception.getMessage());
+    }
 
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(sourceDoc);
+    @Test
+    void getSystemSource_shouldThrowNotFoundException_whenSourceDoesNotExist() {
+        // Arrange
+        when(headers.getPartitionId())
+            .thenReturn(PARTITION_ID)
+            .thenReturn(COMMON_TENANT_ID);
+        // Default behavior already set in setUp()
 
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    Source actual = sourceStore.getSystemSource(sourceId);
-    Assert.assertEquals(expected, actual);
+        // Act & Assert
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> sourceStore.getSystemSource(SOURCE_ID));
+        assertEquals(AwsSourceStore.SOURCE_NOT_FOUND, exception.getMessage());
+    }
 
-  }
+    @Test
+    void create_shouldCreateSource_whenSourceDoesNotExist() throws BadRequestException, ApplicationException {
+        // Arrange
+        Source source = new Source();
+        source.setSourceId(SOURCE_ID);
+        when(headers.getPartitionId()).thenReturn(PARTITION_ID);
+        // Default behavior already set in setUp()
+        doNothing().when(queryHelper).putItem(any(SourceDoc.class));
 
-  @Test
-  public void create() throws BadRequestException, ApplicationException {
-    String sourceId = "source";
-    String partitionId = "partitionId";
-    Source expected = new Source();
+        // Act
+        Source result = sourceStore.create(source);
 
-    Mockito.doNothing().when(queryHelper).save(Mockito.any());
-    Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
-    Source actual = sourceStore.create(expected);
-    assertEquals(expected, actual);
-  }
+        // Assert
+        assertEquals(source, result);
+        verify(queryHelper).putItem(any(SourceDoc.class));
+    }
 
-  @Test
-  public void create_SystemSchemas() throws BadRequestException, ApplicationException {
-    String sourceId = "source";
-    Source expected = new Source();
+    @Test
+    void createSystemSource_shouldCreateSource_whenSourceDoesNotExist() throws BadRequestException, ApplicationException {
+        // Arrange
+        Source source = new Source();
+        source.setSourceId(SOURCE_ID);
+        
+        when(headers.getPartitionId())
+            .thenReturn(PARTITION_ID)
+            .thenReturn(COMMON_TENANT_ID);
+        // Default behavior already set in setUp()
+        doNothing().when(queryHelper).putItem(any(SourceDoc.class));
 
-    Mockito.doNothing().when(queryHelper).save(Mockito.any());
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    Source actual = sourceStore.createSystemSource(expected);
-    assertEquals(expected, actual);
-  }
+        // Act
+        Source result = sourceStore.createSystemSource(source);
 
-  @Test
-  public void get_throwsException_whenNotFound() throws NotFoundException, ApplicationException {
-    String sourceId = "source";
-    String partitionId = "partitionId";
+        // Assert
+        assertEquals(source, result);
+        verify(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
+        verify(queryHelper).putItem(any(SourceDoc.class));
+    }
 
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(null);
-    Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
-    expectedException.expect(NotFoundException.class);
-    expectedException.expectMessage(AwsSourceStore.SOURCE_NOT_FOUND);
-    Source actual = sourceStore.get(sourceId);
+    @Test
+    void create_shouldThrowBadRequestException_whenSourceAlreadyExists() {
+        // Arrange
+        Source source = new Source();
+        source.setSourceId(SOURCE_ID);
+        SourceDoc existingDoc = new SourceDoc(PARTITION_ID + ":" + SOURCE_ID, PARTITION_ID, source);
+        when(headers.getPartitionId()).thenReturn(PARTITION_ID);
+        when(queryHelper.getItem(PARTITION_ID + ":" + SOURCE_ID)).thenReturn(Optional.of(existingDoc));
 
-  }
+        // Act & Assert
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> sourceStore.create(source));
+        assertTrue(exception.getMessage().contains("Source already registered with Id: " + SOURCE_ID));
+    }
 
-  @Test
-  public void get_throwsException_whenNotFound_SystemSchemas() throws NotFoundException, ApplicationException {
-    String sourceId = "source";
+    @Test
+    void createSystemSource_shouldThrowBadRequestException_whenSourceAlreadyExists() {
+        // Arrange
+        Source source = new Source();
+        source.setSourceId(SOURCE_ID);
+        SourceDoc existingDoc = new SourceDoc(COMMON_TENANT_ID + ":" + SOURCE_ID, COMMON_TENANT_ID, source);
+        
+        // Use doAnswer to ensure headers.getPartitionId() returns COMMON_TENANT_ID after headers.put() is called
+        doAnswer(invocation -> COMMON_TENANT_ID).when(headers).getPartitionId();
+        
+        // Mock the queryHelper.getItem() to return the existing document
+        when(queryHelper.getItem(COMMON_TENANT_ID + ":" + SOURCE_ID)).thenReturn(Optional.of(existingDoc));
 
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(null);
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    expectedException.expect(NotFoundException.class);
-    expectedException.expectMessage(AwsSourceStore.SOURCE_NOT_FOUND);
-    Source actual = sourceStore.getSystemSource(sourceId);
+        // Act & Assert
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> sourceStore.createSystemSource(source));
+        assertTrue(exception.getMessage().contains("Source already registered with Id: " + SOURCE_ID));
+    }
 
-  }
+    @Test
+    void create_shouldThrowApplicationException_whenSaveFails() {
+        // Arrange
+        Source source = new Source();
+        source.setSourceId(SOURCE_ID);
+        when(headers.getPartitionId()).thenReturn(PARTITION_ID);
+        // Default behavior already set in setUp()
+        doThrow(new RuntimeException("Test exception")).when(queryHelper).putItem(any(SourceDoc.class));
 
-  @Test
-  public void create_throwsException_whenItemExists() throws BadRequestException, ApplicationException {
-    String sourceId = "source";
-    String partitionId = "partitionId";
-    String expectedErrorMessage = "Source already registered with Id: source";
-    Source expected = new Source();
-    expected.setSourceId(sourceId);
-    SourceDoc sourceDoc = new SourceDoc("id", partitionId, expected);
+        // Act & Assert
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> sourceStore.create(source));
+        assertEquals(SchemaConstants.INVALID_INPUT, exception.getMessage());
+    }
 
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(sourceDoc);
+    @Test
+    void createSystemSource_shouldThrowApplicationException_whenSaveFails() {
+        // Arrange
+        Source source = new Source();
+        source.setSourceId(SOURCE_ID);
+        
+        when(headers.getPartitionId())
+            .thenReturn(PARTITION_ID)
+            .thenReturn(COMMON_TENANT_ID);
+        // Default behavior already set in setUp()
+        doThrow(new RuntimeException("Test exception")).when(queryHelper).putItem(any(SourceDoc.class));
 
-    Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
-    expectedException.expect(BadRequestException.class);
-    expectedException.expectMessage(expectedErrorMessage);
-    Source actual = sourceStore.create(expected);
-
-  }
-
-  @Test
-  public void create_throwsException_whenItemExists_SystemSchemas() throws BadRequestException, ApplicationException {
-    String sourceId = "source";
-    String expectedErrorMessage = "Source already registered with Id: source";
-    Source expected = new Source();
-    expected.setSourceId(sourceId);
-    SourceDoc sourceDoc = new SourceDoc("id", COMMON_TENANT_ID, expected);
-
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(sourceDoc);
-
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    expectedException.expect(BadRequestException.class);
-    expectedException.expectMessage(expectedErrorMessage);
-    Source actual = sourceStore.createSystemSource(expected);
-
-  }
-
-  @Test
-  public void create_throwsException_onSaveFailure() throws BadRequestException, ApplicationException {
-    String sourceId = "source";
-    String partitionId = "partitionId";
-    String expectedErrorMessage = "Source already registered with Id: source";
-    Source expected = new Source();
-
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(null);
-
-    Mockito.doThrow(SdkClientException.class).when(queryHelper).save(Mockito.any());
-    Mockito.when(headers.getPartitionId()).thenReturn(partitionId);
-    expectedException.expect(ApplicationException.class);
-    expectedException.expectMessage(SchemaConstants.INVALID_INPUT);
-    Source actual = sourceStore.create(expected);
-
-  }
-
-  @Test
-  public void create_throwsException_onSaveFailure_SystemSchemas() throws BadRequestException, ApplicationException {
-    String sourceId = "source";
-    String expectedErrorMessage = "Source already registered with Id: source";
-    Source expected = new Source();
-
-    Mockito.when(queryHelper.loadByPrimaryKey(Mockito.any(), Mockito.any())).thenReturn(null);
-
-    Mockito.doThrow(SdkClientException.class).when(queryHelper).save(Mockito.any());
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    expectedException.expect(ApplicationException.class);
-    expectedException.expectMessage(SchemaConstants.INVALID_INPUT);
-    Source actual = sourceStore.createSystemSource(expected);
-
-  }
+        // Act & Assert
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> sourceStore.createSystemSource(source));
+        assertEquals(SchemaConstants.INVALID_INPUT, exception.getMessage());
+    }
 }

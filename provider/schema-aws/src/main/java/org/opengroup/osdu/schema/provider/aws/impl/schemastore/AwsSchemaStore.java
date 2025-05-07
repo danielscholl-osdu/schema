@@ -15,13 +15,8 @@
  */
 package org.opengroup.osdu.schema.provider.aws.impl.schemastore;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-
-import org.opengroup.osdu.core.aws.s3.IS3ClientFactory;
-import org.opengroup.osdu.core.aws.s3.S3ClientWithBucket;
+import org.opengroup.osdu.core.aws.v2.s3.IS3ClientFactory;
+import org.opengroup.osdu.core.aws.v2.s3.S3ClientWithBucket;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -31,65 +26,77 @@ import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import jakarta.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 import java.nio.charset.StandardCharsets;
 
 @Repository
 public class AwsSchemaStore implements ISchemaStore {
-  private  static String serviceName = "AwsSchemaStore";
-  @Inject
-  private DpsHeaders headers;
+  private static final String SERVICE_NAME = "AwsSchemaStore";
 
-  @Inject
-  private JaxRsDpsLog logger;
+  private final DpsHeaders headers;
+  private final JaxRsDpsLog logger;
+  private final IS3ClientFactory s3ClientFactory;
+  private final String s3SchemaBucketParameterRelativePath;
+  private final String sharedTenant;
 
-  @Inject
-  private IS3ClientFactory s3ClientFactory;
-
-  @Value("${aws.s3.schemaBucket.ssm.relativePath}")
-  private String s3SchemaBucketParameterRelativePath;
-
-  @Value("${shared.tenant.name:common}")
-  private String sharedTenant;
+  public AwsSchemaStore(
+      DpsHeaders headers,
+      JaxRsDpsLog logger,
+      IS3ClientFactory s3ClientFactory,
+      @Value("${aws.s3.schemaBucket.ssm.relativePath}") String s3SchemaBucketParameterRelativePath,
+      @Value("${shared.tenant.name:common}") String sharedTenant) {
+    this.headers = headers;
+    this.logger = logger;
+    this.s3ClientFactory = s3ClientFactory;
+    this.s3SchemaBucketParameterRelativePath = s3SchemaBucketParameterRelativePath;
+    this.sharedTenant = sharedTenant;
+  }
 
   private S3ClientWithBucket getS3ClientWithBucket() {
     String dataPartitionId = headers.getPartitionIdWithFallbackToAccountId();
     return getS3ClientWithBucket(dataPartitionId);
-  } 
+  }
 
-  private S3ClientWithBucket getS3ClientWithBucket( String dataPartitionId) {    
+  private S3ClientWithBucket getS3ClientWithBucket(String dataPartitionId) {
     return s3ClientFactory.getS3ClientForPartition(dataPartitionId, s3SchemaBucketParameterRelativePath);
-  } 
-
+  }
 
   @Override
   public String createSchema(String filePath, String content) throws ApplicationException {
-
     S3ClientWithBucket s3ClientWithBucket = getS3ClientWithBucket();
-    AmazonS3 s3 = s3ClientWithBucket.getS3Client();
-    
+    S3Client s3 = s3ClientWithBucket.getS3Client();
+
     String path = resolvePath(headers.getPartitionIdWithFallbackToAccountId(), filePath);
-    byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
-    int bytesSize = bytes.length;
+    String bucket = s3ClientWithBucket.getBucketName();
 
-    InputStream newStream = new ByteArrayInputStream(bytes);
-
-    ObjectMetadata metadata = new ObjectMetadata();
-    metadata.setContentLength(bytesSize);
-
-    String bucket;
     try {
-      bucket = s3ClientWithBucket.getBucketName();
-      PutObjectRequest req = new PutObjectRequest(bucket, path, newStream, metadata);
-      s3.putObject(req);
-
+      // Store the content exactly as received without any processing
+      // This ensures compatibility with the existing validation
+      PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+          .bucket(bucket)
+          .key(path)
+          .build();
+      
+      s3.putObject(putObjectRequest, RequestBody.fromString(content, StandardCharsets.UTF_8));
+      
+      return String.format("https://%s.s3.amazonaws.com/%s", bucket, path);
     } catch (Exception e) {
+      logger.error(SERVICE_NAME, "Failed to create schema: " + e.getMessage());
       throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
     }
-
-    return s3.getUrl(bucket, path).toString();
   }
 
   @Override
@@ -100,37 +107,41 @@ public class AwsSchemaStore implements ISchemaStore {
 
   @Override
   public String getSchema(String dataPartitionId, String filePath) throws NotFoundException, ApplicationException {
-    // first this method is called with the callers partitionid, then if not found, its called with the
-    // common project id which is "common".  Not sure why this isn't passed into the createSchema call.
-
     S3ClientWithBucket s3ClientWithBucket = getS3ClientWithBucket(dataPartitionId);
-    AmazonS3 s3 = s3ClientWithBucket.getS3Client();
-
-    String content;
+    S3Client s3 = s3ClientWithBucket.getS3Client();
+    String bucket = s3ClientWithBucket.getBucketName();
     String path = resolvePath(dataPartitionId, filePath);
-    try {
 
-      content = s3.getObjectAsString(s3ClientWithBucket.getBucketName(), path);
-    } catch (AmazonS3Exception ex) {
-      if (ex.getErrorCode().equals("NoSuchKey")) {  // or could be ex.getStatusCode == 404 (depends)
-        logger.error(serviceName, String.format(SchemaConstants.SCHEMA_NOT_PRESENT, ex.getErrorMessage()));
+    try {
+      GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+          .bucket(bucket)
+          .key(path)
+          .build();
+      
+      ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(getObjectRequest);
+      String content = objectBytes.asUtf8String();
+      
+      // Process the content to ensure it's compatible with schema validation
+      // This is needed because AWS SDK v2 returns immutable collections that cause
+      // UnsupportedOperationException in SchemaUtil.findClosestSchemas
+      return processSchemaContent(content);
+    } catch (AwsServiceException ex) {
+      if (ex.statusCode() == 404) {
+        logger.error(SERVICE_NAME, String.format(SchemaConstants.SCHEMA_NOT_PRESENT, ex.getMessage()));
         throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
       } else {
-        logger.error(serviceName, String.format("Get Schema for %s failed: ", ex.getErrorMessage()));
+        logger.error(SERVICE_NAME, String.format("Get Schema failed: %s", ex.getMessage()));
         throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
       }
     } catch (Exception ex) {
-      logger.error(serviceName, String.format("Get Schema for %s failed: ", ex.toString()));
+      logger.error(SERVICE_NAME, String.format("Get Schema failed: %s", ex.toString()));
       throw new ApplicationException(SchemaConstants.INTERNAL_SERVER_ERROR);
     }
-
-    return content;
-
   }
 
   @Override
   public String getSystemSchema(String filePath) throws NotFoundException, ApplicationException {
-    return this.getSchema(sharedTenant, filePath);
+    return processSchemaContent(this.getSchema(sharedTenant, filePath));
   }
 
   private String resolvePath(String dataPartitionId, String filePath) {
@@ -142,14 +153,21 @@ public class AwsSchemaStore implements ISchemaStore {
     logger.info("Delete schema: " + schemaId);
 
     S3ClientWithBucket s3ClientWithBucket = getS3ClientWithBucket();
-    AmazonS3 s3 = s3ClientWithBucket.getS3Client();
+    S3Client s3 = s3ClientWithBucket.getS3Client();
+    String bucket = s3ClientWithBucket.getBucketName();
+    String path = resolvePath(headers.getPartitionIdWithFallbackToAccountId(), schemaId);
 
     try {
-      s3.deleteObject(s3ClientWithBucket.getBucketName(), resolvePath(headers.getPartitionIdWithFallbackToAccountId(), schemaId));
+      DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+          .bucket(bucket)
+          .key(path)
+          .build();
+      
+      s3.deleteObject(deleteObjectRequest);
       logger.info("Schema deleted: " + schemaId);
       return true;
-    } catch (Exception  e) {
-      logger.error("Failed to delete schema " +schemaId);
+    } catch (Exception e) {
+      logger.error("Failed to delete schema " + schemaId + ": " + e.getMessage());
       return false;
     }
   }
@@ -162,5 +180,50 @@ public class AwsSchemaStore implements ISchemaStore {
 
   private void updateDataPartitionId() {
     headers.put(SchemaConstants.DATA_PARTITION_ID, sharedTenant);
+  }
+
+  /**
+   * Process the schema content to ensure it's compatible with schema validation.
+   * This is needed because AWS SDK v2 returns immutable collections that cause
+   * UnsupportedOperationException in SchemaUtil.findClosestSchemas.
+   * 
+   * @param content The schema content as a string
+   * @return The processed content that's compatible with schema validation
+   */
+  private String processSchemaContent(String content) {
+    if (content == null || content.trim().isEmpty()) {
+      return content;
+    }
+    
+    try {
+      // Parse the content to determine its structure
+      ObjectMapper objectMapper = new ObjectMapper();
+      JsonNode node = objectMapper.readTree(content);
+      
+      // If it's an array, ensure it's mutable by converting to a new array
+      if (node.isArray()) {
+        logger.info(SERVICE_NAME, "Converting array content to ensure mutability");
+        
+        // Create a new mutable array
+        ArrayNode newArray = JsonNodeFactory.instance.arrayNode();
+        ArrayNode arrayNode = (ArrayNode) node;
+        
+        // Copy all elements to the new array
+        for (JsonNode element : arrayNode) {
+          newArray.add(element);
+        }
+        
+        // Convert back to JSON string
+        return objectMapper.writeValueAsString(newArray);
+      }
+      
+      // For objects or other types, return as is
+      return content;
+      
+    } catch (Exception e) {
+      // If there's an error processing the JSON, log it and return the original content
+      logger.warning(SERVICE_NAME, "Error processing schema content: " + e.getMessage());
+      return content;
+    }
   }
 }

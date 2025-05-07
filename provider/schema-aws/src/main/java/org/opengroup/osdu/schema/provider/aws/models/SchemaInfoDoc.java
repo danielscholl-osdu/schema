@@ -14,90 +14,110 @@
 */
 package org.opengroup.osdu.schema.provider.aws.models;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.opengroup.osdu.schema.enums.SchemaScope;
 import org.opengroup.osdu.schema.enums.SchemaStatus;
 import org.opengroup.osdu.schema.model.SchemaIdentity;
 import org.opengroup.osdu.schema.model.SchemaInfo;
+import org.opengroup.osdu.schema.provider.aws.utils.converters.SchemaInfoConverter;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@DynamoDBTable(tableName = "Schema.SchemaInfo")
+@DynamoDbBean
 public class SchemaInfoDoc {
 
-  @DynamoDBHashKey(attributeName = "Id")
   private String id;
-
-  @DynamoDBAttribute(attributeName = "DataPartitionId")
   private String dataPartitionId;
-
-  @DynamoDBAttribute(attributeName = "SchemaAuthority")
   private String authority;
-
-  // `Source` is a DynamoDB reserved word
-  @DynamoDBAttribute(attributeName = "SchemaSource")
   private String source;
-
-  @DynamoDBAttribute(attributeName = "SchemaEntityType")
   private String entityType;
-
-  @DynamoDBIndexHashKey(attributeName = "PartitionAuthoritySourceEntityType", globalSecondaryIndexName = "major-version-index")
   private String gsiPartitionKey;
-
-  @DynamoDBIndexRangeKey(attributeName = "MajorVersion",globalSecondaryIndexName = "major-version-index")
   private Long majorVersion;
-
-  @DynamoDBAttribute(attributeName = "MinorVersion")
   private Long minorVersion;
-
-  @DynamoDBAttribute(attributeName = "PatchVersion")
   private Long patchVersion;
-
-  // `Scope` is a DynamoDB reserved word
-  @DynamoDBAttribute(attributeName = "SchemaScope")
   private String scope;
-
-  // `Status` is a DynamoDB reserved word
-  @DynamoDBAttribute(attributeName = "SchemaStatus")
   private String status;
-
-  @DynamoDBTypeConverted(converter = SchemaInfoDoc.SchemaInfoConverter.class)
-  @DynamoDBAttribute(attributeName = "SchemaInfo")
   private SchemaInfo schemaInfo;
 
-  public static class SchemaInfoConverter implements DynamoDBTypeConverter<String, SchemaInfo> {
+  @DynamoDbPartitionKey
+  @DynamoDbAttribute("Id")
+  public String getId() {
+    return id;
+  }
 
-    @SneakyThrows
-    @Override
-    public String convert(SchemaInfo object) {
-      ObjectMapper mapper = new ObjectMapper();
-      return mapper.writeValueAsString(object);
-    }
+  @DynamoDbAttribute("DataPartitionId")
+  public String getDataPartitionId() {
+    return dataPartitionId;
+  }
 
-    @SneakyThrows
-    @Override
-    public SchemaInfo unconvert(String object) {
-      ObjectMapper mapper = new ObjectMapper();
-      return mapper.readValue(object, new TypeReference<SchemaInfo>(){});
-    }
+  @DynamoDbAttribute("SchemaAuthority")
+  public String getAuthority() {
+    return authority;
+  }
+
+  @DynamoDbAttribute("SchemaSource")
+  public String getSource() {
+    return source;
+  }
+
+  @DynamoDbAttribute("SchemaEntityType")
+  public String getEntityType() {
+    return entityType;
+  }
+
+  @DynamoDbSecondaryPartitionKey(indexNames = "major-version-index")
+  @DynamoDbAttribute("PartitionAuthoritySourceEntityType")
+  public String getGsiPartitionKey() {
+    return gsiPartitionKey;
+  }
+
+  @DynamoDbSecondarySortKey(indexNames = "major-version-index")
+  @DynamoDbAttribute("MajorVersion")
+  public Long getMajorVersion() {
+    return majorVersion;
+  }
+
+  @DynamoDbAttribute("MinorVersion")
+  public Long getMinorVersion() {
+    return minorVersion;
+  }
+
+  @DynamoDbAttribute("PatchVersion")
+  public Long getPatchVersion() {
+    return patchVersion;
+  }
+
+  @DynamoDbAttribute("SchemaScope")
+  public String getScope() {
+    return scope;
+  }
+
+  @DynamoDbAttribute("SchemaStatus")
+  public String getStatus() {
+    return status;
+  }
+
+  @DynamoDbConvertedBy(SchemaInfoConverter.class)
+  @DynamoDbAttribute("SchemaInfo")
+  public SchemaInfo getSchemaInfo() {
+    return schemaInfo;
   }
 
   /**
    * Maps a SchemaInfo object to a new SchemaInfoDoc
-   * @param schemaInfo
-   * @return
+   * @param schemaInfo The SchemaInfo object to map
+   * @param dataPartitionId The data partition ID
+   * @return A new SchemaInfoDoc instance
    */
   public static SchemaInfoDoc mapFrom(SchemaInfo schemaInfo, String dataPartitionId) {
     SchemaIdentity schemaIdentity = schemaInfo.getSchemaIdentity();
     SchemaStatus schemaStatus = schemaInfo.getStatus();
     SchemaScope schemaScope = schemaInfo.getScope();
 
-    SchemaInfoDocBuilder schemaInfoDocBuilder = new SchemaInfoDoc().builder()
+    return SchemaInfoDoc.builder()
             .dataPartitionId(dataPartitionId)
             .schemaInfo(schemaInfo)
             .authority(schemaIdentity.getAuthority())
@@ -108,8 +128,8 @@ public class SchemaInfoDoc {
             .majorVersion(schemaIdentity.getSchemaVersionMajor())
             .minorVersion(schemaIdentity.getSchemaVersionMinor())
             .patchVersion(schemaIdentity.getSchemaVersionPatch())
-            .gsiPartitionKey(String.format("%s:%s:%s:%s",dataPartitionId,schemaIdentity.getAuthority(),schemaIdentity.getSource(),schemaIdentity.getEntityType()));
-
-    return schemaInfoDocBuilder.build();
+            .gsiPartitionKey(String.format("%s:%s:%s:%s", dataPartitionId, schemaIdentity.getAuthority(), 
+                    schemaIdentity.getSource(), schemaIdentity.getEntityType()))
+            .build();
   }
 }

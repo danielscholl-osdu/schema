@@ -1,22 +1,22 @@
-/* Copyright © 2020 Amazon Web Services
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-
+/*
+ * Copyright © Amazon Web Services
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.v2.dynamodb.interfaces.IDynamoDBQueryHelperFactory;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -30,44 +30,47 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
-import jakarta.inject.Inject;
 import java.text.MessageFormat;
+import java.util.Optional;
 
 @ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb",
         matchIfMissing = true)
 @Repository
 public class AwsEntityTypeStore implements IEntityTypeStore {
 
-  @Inject
-  private DpsHeaders headers;
+  private final DpsHeaders headers;
+  private final JaxRsDpsLog log;
+  private final IDynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
+  private final String entityTypeTableParameterRelativePath;
+  private final String sharedTenant;
 
-  @Inject
-  private JaxRsDpsLog log;
+  public AwsEntityTypeStore(
+          DpsHeaders headers,
+          JaxRsDpsLog log,
+          IDynamoDBQueryHelperFactory dynamoDBQueryHelperFactory,
+          @Value("${aws.dynamodb.entityTypeTable.ssm.relativePath}") String entityTypeTableParameterRelativePath,
+          @Value("${shared.tenant.name:common}") String sharedTenant) {
+    this.headers = headers;
+    this.log = log;
+    this.dynamoDBQueryHelperFactory = dynamoDBQueryHelperFactory;
+    this.entityTypeTableParameterRelativePath = entityTypeTableParameterRelativePath;
+    this.sharedTenant = sharedTenant;
+  }
 
-  @Inject
-  private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
-
-  @Value("${aws.dynamodb.entityTypeTable.ssm.relativePath}")
-  String entityTypeTableParameterRelativePath;
-
-  @Value("${shared.tenant.name:common}")
-  private String sharedTenant;
-
-  private DynamoDBQueryHelperV2 getEntityTypeTableQueryHelper() {
-    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, entityTypeTableParameterRelativePath);
+  private DynamoDBQueryHelper<EntityTypeDoc> getEntityTypeTableQueryHelper() {
+    return dynamoDBQueryHelperFactory.createQueryHelper(headers, entityTypeTableParameterRelativePath, EntityTypeDoc.class);
   }
 
   @Override
   public EntityType get(String entityTypeId) throws NotFoundException, ApplicationException {
-
-    DynamoDBQueryHelperV2 queryHelper = getEntityTypeTableQueryHelper();
+    DynamoDBQueryHelper<EntityTypeDoc> queryHelper = getEntityTypeTableQueryHelper();
 
     String id = headers.getPartitionId() + ":" + entityTypeId;
-    EntityTypeDoc result = queryHelper.loadByPrimaryKey(EntityTypeDoc.class, id);
-    if (result == null) {
+    Optional<EntityTypeDoc> result = queryHelper.getItem(id);
+    if (result.isEmpty()) {
       throw new NotFoundException(SchemaConstants.INVALID_INPUT);
     }
-    return result.getEntityType();
+    return result.get().getEntityType();
   }
 
   @Override
@@ -78,26 +81,30 @@ public class AwsEntityTypeStore implements IEntityTypeStore {
 
   @Override
   public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
-
-    DynamoDBQueryHelperV2 queryHelper = getEntityTypeTableQueryHelper();
+    DynamoDBQueryHelper<EntityTypeDoc> queryHelper = getEntityTypeTableQueryHelper();
 
     String id = headers.getPartitionId() + ":" + entityType.getEntityTypeId();
 
-    EntityTypeDoc doc = new EntityTypeDoc();
-    doc.setId(id);
-    if (queryHelper.keyExistsInTable(EntityTypeDoc.class, doc)) {
-      log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
-      throw new BadRequestException(
-              MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION, entityType.getEntityTypeId()));
-    }
+    try {
+      if (queryHelper.getItem(id).isPresent()) {
+        log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
+        throw new BadRequestException(
+                MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION, entityType.getEntityTypeId()));
+      }
 
-    try{
-      doc = new EntityTypeDoc(id, headers.getPartitionId(), entityType);
-      queryHelper.save(doc);
+      EntityTypeDoc doc = new EntityTypeDoc();
+      doc.setId(id);
+      doc.setDataPartitionId(headers.getPartitionId());
+      doc.setEntityType(entityType);
+      
+      queryHelper.putItem(doc);
+    } catch (BadRequestException ex) {
+      throw ex;
     } catch (Exception ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
     }
+    
     log.info(SchemaConstants.ENTITY_TYPE_CREATED);
     return entityType;
   }

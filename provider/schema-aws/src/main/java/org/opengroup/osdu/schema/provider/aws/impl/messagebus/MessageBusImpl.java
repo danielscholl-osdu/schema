@@ -15,15 +15,13 @@ package org.opengroup.osdu.schema.provider.aws.impl.messagebus;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 import jakarta.annotation.PostConstruct;
 
-import org.opengroup.osdu.core.aws.sns.AmazonSNSConfig;
-import org.opengroup.osdu.core.aws.sns.PublishRequestBuilder;
-import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
-import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
+import org.opengroup.osdu.core.aws.v2.sns.AmazonSNSConfig;
+import org.opengroup.osdu.core.aws.v2.sns.PublishRequestBuilder;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sParameterNotFoundException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
@@ -31,41 +29,43 @@ import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.provider.aws.impl.messagebus.model.SchemaPubSubMessage;
 import org.opengroup.osdu.schema.provider.interfaces.messagebus.IMessageBus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
 
 @Component
 public class MessageBusImpl implements IMessageBus {
 
-    private String amazonSNSTopic;
     private static final String SCHEMA_SNS_TOPIC = "schema-sns-topic-arn";
 
-    private AmazonSNS snsClient;
+    private final String osduSchemaTopic;
+    private final String amazonSNSRegion;
+    private final ITenantFactory tenantFactory;
+    private final DpsHeaders headers;
+    private final JaxRsDpsLog logger;
+    
+    private SnsClient snsClient;
+    private String amazonSNSTopic;
 
-    @Value("${OSDU_TOPIC}")
-    private String osduSchemaTopic;
-
-    @Value("${AWS.REGION}")
-    private String amazonSNSRegion;
-
-    @Autowired
-    private ITenantFactory tenantFactory;
-
-    @Autowired
-    private DpsHeaders headers;
-
-    @Autowired
-    private JaxRsDpsLog logger;
+    public MessageBusImpl(
+            @Value("${OSDU_TOPIC}") String osduSchemaTopic,
+            @Value("${AWS.REGION}") String amazonSNSRegion,
+            ITenantFactory tenantFactory,
+            DpsHeaders headers,
+            JaxRsDpsLog logger) {
+        this.osduSchemaTopic = osduSchemaTopic;
+        this.amazonSNSRegion = amazonSNSRegion;
+        this.tenantFactory = tenantFactory;
+        this.headers = headers;
+        this.logger = logger;
+    }
 
     @PostConstruct
     public void init() throws K8sParameterNotFoundException {
         K8sLocalParameterProvider k8sLocalParameterProvider = new K8sLocalParameterProvider();
         snsClient = new AmazonSNSConfig(amazonSNSRegion).AmazonSNS();
-
         amazonSNSTopic = k8sLocalParameterProvider.getParameterAsString(SCHEMA_SNS_TOPIC);
     }
 
@@ -82,13 +82,14 @@ public class MessageBusImpl implements IMessageBus {
     public void publishMessageForSystemSchema(String schemaId, String eventType) {
         try {
             // Publish the event for all the tenants.
-            List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getName).collect(Collectors.toList());
+            List<String> privateTenantList = tenantFactory.listTenantInfo().stream()
+                    .map(TenantInfo::getName)
+                    .toList();
 
             for (String tenant : privateTenantList) {
                 DpsHeaders newHeaders = createTenantHeaders(tenant);
                 publishSchemaEvent(schemaId, eventType, newHeaders);
             }
-
         } catch (Exception ex) {
             logger.warning(SchemaConstants.SYSTEM_SCHEMA_NOTIFICATION_FAILED, ex);
         }
@@ -111,12 +112,13 @@ public class MessageBusImpl implements IMessageBus {
             publishRequestBuilder.setGeneralParametersFromHeaders(headers);
         }
 
-        PublishRequest publishRequest =
-                        publishRequestBuilder.generatePublishRequest(osduSchemaTopic, amazonSNSTopic, new SchemaPubSubMessage(schemaId, eventType));
+        PublishRequest publishRequest = publishRequestBuilder.generatePublishRequest(
+                osduSchemaTopic, 
+                amazonSNSTopic, 
+                new SchemaPubSubMessage(schemaId, eventType));
 
         snsClient.publish(publishRequest);
-        logger.info(String.format("Message is published to OSDU topic: %s SNS topic: %s to SNS region: %s", osduSchemaTopic, amazonSNSTopic,
-                        amazonSNSRegion));
+        logger.info(String.format("Message is published to OSDU topic: %s SNS topic: %s to SNS region: %s", 
+                osduSchemaTopic, amazonSNSTopic, amazonSNSRegion));
     }
-
 }

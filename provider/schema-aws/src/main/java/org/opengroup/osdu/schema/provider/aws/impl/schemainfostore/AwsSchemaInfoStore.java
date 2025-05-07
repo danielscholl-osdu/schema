@@ -17,21 +17,21 @@ package org.opengroup.osdu.schema.provider.aws.impl.schemainfostore;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import jakarta.inject.Inject;
-
 import org.joda.time.DateTime;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperFactory;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.v2.dynamodb.interfaces.IDynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.v2.dynamodb.model.GsiQueryRequest;
+import org.opengroup.osdu.core.aws.v2.dynamodb.util.RequestBuilderUtil;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
@@ -48,56 +48,65 @@ import org.opengroup.osdu.schema.provider.aws.models.SchemaInfoDoc;
 import org.opengroup.osdu.schema.provider.interfaces.schemainfostore.ISchemaInfoStore;
 import org.opengroup.osdu.schema.provider.interfaces.schemastore.ISchemaStore;
 import org.opengroup.osdu.schema.util.VersionHierarchyUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import software.amazon.awssdk.enhanced.dynamodb.Expression;
+import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 
-@ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb",
-        matchIfMissing = true)
+@ConditionalOnProperty(prefix = "repository", name = "implementation", havingValue = "dynamodb", matchIfMissing = true)
 @Repository
 public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
-  @Inject
-  private DpsHeaders headers;
+  private final DpsHeaders headers;
+  private final ITenantFactory tenantFactory;
+  private final JaxRsDpsLog log;
+  private final ISchemaStore schemaStore;
+  private final IDynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
+  private final String schemaInfoTableParameterRelativePath;
+  private final String sharedTenant;
 
-  @Autowired
-  private ITenantFactory tenantFactory;
-
-  @Inject
-  private JaxRsDpsLog log;
-
-  @Inject
-  private ISchemaStore schemaStore;
-
-  @Inject
-  private DynamoDBQueryHelperFactory dynamoDBQueryHelperFactory;
-   @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}")
-  String schemaInfoTableParameterRelativePath;
-
-  @Value("${shared.tenant.name:common}")
-  private String sharedTenant;
-
-  private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper() {
-    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(headers, schemaInfoTableParameterRelativePath);
+  public AwsSchemaInfoStore(
+      DpsHeaders headers,
+      ITenantFactory tenantFactory,
+      JaxRsDpsLog log,
+      ISchemaStore schemaStore,
+      IDynamoDBQueryHelperFactory dynamoDBQueryHelperFactory,
+      @Value("${aws.dynamodb.schemaInfoTable.ssm.relativePath}") String schemaInfoTableParameterRelativePath,
+      @Value("${shared.tenant.name:common}") String sharedTenant) {
+    this.headers = headers;
+    this.tenantFactory = tenantFactory;
+    this.log = log;
+    this.schemaStore = schemaStore;
+    this.dynamoDBQueryHelperFactory = dynamoDBQueryHelperFactory;
+    this.schemaInfoTableParameterRelativePath = schemaInfoTableParameterRelativePath;
+    this.sharedTenant = sharedTenant;
   }
-  private DynamoDBQueryHelperV2 getSchemaInfoTableQueryHelper(String dataPartitionId) {
-    return dynamoDBQueryHelperFactory.getQueryHelperForPartition(dataPartitionId, schemaInfoTableParameterRelativePath);
+
+  private DynamoDBQueryHelper<SchemaInfoDoc> getSchemaInfoTableQueryHelper() {
+    return dynamoDBQueryHelperFactory.createQueryHelper(headers, schemaInfoTableParameterRelativePath,
+        SchemaInfoDoc.class);
   }
+
+  private DynamoDBQueryHelper<SchemaInfoDoc> getSchemaInfoTableQueryHelper(String dataPartitionId) {
+    return dynamoDBQueryHelperFactory.createQueryHelper(dataPartitionId, schemaInfoTableParameterRelativePath,
+        SchemaInfoDoc.class);
+  }
+
   @Override
   public SchemaInfo getSchemaInfo(String schemaId) throws NotFoundException {
-
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+    DynamoDBQueryHelper<SchemaInfoDoc> queryHelper = getSchemaInfoTableQueryHelper();
 
     String id = headers.getPartitionId() + ":" + schemaId;
-    SchemaInfoDoc result = queryHelper.loadByPrimaryKey(SchemaInfoDoc.class, id);
-    if (result == null) {
+    Optional<SchemaInfoDoc> result = queryHelper.getItem(id);
+    if (result.isEmpty()) {
       throw new NotFoundException(SchemaConstants.SCHEMA_NOT_PRESENT);
     }
-    return result.getSchemaInfo();
+    return result.get().getSchemaInfo();
   }
 
   @Override
@@ -106,20 +115,20 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     return this.getSchemaInfo(schemaId);
   }
 
-  private void upsertSchemaRecord(SchemaInfo schemaInfo, SchemaInfoDoc schemaInfoDoc, String partitionId) throws ApplicationException, BadRequestException{
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+  private void upsertSchemaRecord(SchemaInfo schemaInfo, SchemaInfoDoc schemaInfoDoc, String partitionId)
+      throws ApplicationException, BadRequestException {
+    DynamoDBQueryHelper<SchemaInfoDoc> queryHelper = getSchemaInfoTableQueryHelper();
     SchemaIdentity supersedingSchema = schemaInfo.getSupersededBy();
     if (supersedingSchema != null) {
       String id = partitionId + ":" + supersedingSchema.getId();
-      SchemaInfoDoc supersedingSchemaInfoDoc = new SchemaInfoDoc();
-      supersedingSchemaInfoDoc.setId(id);
-      if (!queryHelper.keyExistsInTable(SchemaInfoDoc.class, supersedingSchemaInfoDoc)) // superseding schema does not exist in the db
-      {
+      // Check if superseding schema exists
+      Optional<SchemaInfoDoc> supersedingDoc = queryHelper.getItem(id);
+      if (supersedingDoc.isEmpty()) {
         throw new BadRequestException(SchemaConstants.INVALID_SUPERSEDEDBY_ID);
       }
     }
     try {
-      queryHelper.save(schemaInfoDoc);
+      queryHelper.putItem(schemaInfoDoc);
     } catch (Exception ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
@@ -128,19 +137,23 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Override
   public SchemaInfo updateSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
-    // The SchemaService calls the getSchemaInfo method and verifies the entity is updatable, however,
-    // it doesn't pass that entity into this method or update properties in the request that shouldn't change, like
-    // createdBy and createdOn.  This causes the need to query the entity twice which is inefficient.
-    // This should be fixed
-
     String partitionId = headers.getPartitionId();
-    String userEmail = headers.getUserEmail();
-    String id = partitionId + ":" + schema.getSchemaInfo().getSchemaIdentity().getId();
+    String schemaId = schema.getSchemaInfo().getSchemaIdentity().getId();
+    String id = partitionId + ":" + schemaId;
 
-    // Set Audit properties
+    // Retrieve the existing schema to preserve creation metadata
+    SchemaInfo existingSchema;
+    try {
+      existingSchema = getSchemaInfo(schemaId);
+    } catch (NotFoundException e) {
+      throw new BadRequestException("Cannot update schema that doesn't exist: " + schemaId);
+    }
+
+    // Update the schema while preserving creation metadata
     SchemaInfo schemaInfo = schema.getSchemaInfo();
-    schemaInfo.setCreatedBy(userEmail);
-    schemaInfo.setDateCreated(DateTime.now().toDate());
+    schemaInfo.setCreatedBy(existingSchema.getCreatedBy());
+    schemaInfo.setDateCreated(existingSchema.getDateCreated());
+
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, partitionId);
     schemaInfoDoc.setId(id);
     upsertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
@@ -155,8 +168,7 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Override
   public SchemaInfo createSchemaInfo(SchemaRequest schema) throws ApplicationException, BadRequestException {
-
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
+    DynamoDBQueryHelper<SchemaInfoDoc> queryHelper = getSchemaInfoTableQueryHelper();
 
     String partitionId = headers.getPartitionId();
     String userEmail = headers.getUserEmail();
@@ -170,10 +182,22 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.mapFrom(schema.getSchemaInfo(), partitionId);
     schemaInfoDoc.setId(id);
 
-    if (queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc) ){
+    try {
+      // Use conditional expression to ensure the item doesn't already exist
+      queryHelper.putItem(
+          PutItemEnhancedRequest.builder(SchemaInfoDoc.class)
+              .item(schemaInfoDoc)
+              .conditionExpression(Expression.builder()
+                  .expression("attribute_not_exists(Id)")
+                  .build())
+              .build());
+    } catch (ConditionalCheckFailedException e) {
       throw new BadRequestException("Schema " + id + " already exist. Can't create again.");
+    } catch (Exception ex) {
+      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
+      throw new ApplicationException(SchemaConstants.SCHEMA_CREATION_FAILED_INVALID_OBJECT);
     }
-    upsertSchemaRecord(schemaInfo, schemaInfoDoc, partitionId);
+
     return schemaInfoDoc.getSchemaInfo();
   }
 
@@ -185,97 +209,80 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Override
   public String getLatestMinorVerSchema(SchemaInfo schemaInfo) throws ApplicationException {
-
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
-
+    DynamoDBQueryHelper<SchemaInfoDoc> queryHelper = getSchemaInfoTableQueryHelper();
     String dataPartitionId = headers.getPartitionId();
-    SchemaInfoDoc fullSchemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, headers.getPartitionId());
+    SchemaInfoDoc fullSchemaInfoDoc = SchemaInfoDoc.mapFrom(schemaInfo, dataPartitionId);
+    String gsiPartitionKey = fullSchemaInfoDoc.getGsiPartitionKey();
+    
+    // Create a query document with the GSI partition key and major version
+    SchemaInfoDoc queryDoc = SchemaInfoDoc.builder()
+        .gsiPartitionKey(gsiPartitionKey)
+        .majorVersion(fullSchemaInfoDoc.getMajorVersion())
+        .build();
 
-    SchemaInfoDoc gsiQuery = new SchemaInfoDoc();
-    gsiQuery.setGsiPartitionKey(fullSchemaInfoDoc.getGsiPartitionKey());
+    // Use buildGsiRequest() to create a GsiQueryRequest object with the correct index name
+    GsiQueryRequest<SchemaInfoDoc> request = RequestBuilderUtil.QueryRequestBuilder
+        .forQuery(queryDoc, "major-version-index", SchemaInfoDoc.class)
+        .buildGsiRequest();
 
-    PaginatedQueryList<SchemaInfoDoc> results = queryHelper.queryByGSI(SchemaInfoDoc.class,gsiQuery,"MajorVersion",fullSchemaInfoDoc.getMajorVersion());
+    // Call queryByGSI with just the GsiQueryRequest
+    List<SchemaInfoDoc> results = queryHelper.queryByGSI(request);
 
+    // Use Java streams to find the maximum minor version
+    Optional<SchemaInfoDoc> latestSchema = results.stream()
+        .max((a, b) -> Long.compare(
+            a.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(),
+            b.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor()));
 
-    TreeMap<Long, SchemaInfoDoc> sortedMap = new TreeMap<>(Collections.reverseOrder());
-
-    if(results != null && !results.isEmpty())
-    	results.forEach(item -> sortedMap.put(item.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(), item));
-
-    if (sortedMap.size() != 0) {
-      SchemaInfoDoc item = sortedMap.firstEntry().getValue();
-      String schemaId = item.getSchemaInfo().getSchemaIdentity().getId();
-      try {
-        return schemaStore.getSchema(dataPartitionId, schemaId);
-      } catch (NotFoundException ex) {
-        // probably should log something here.  Maybe the getSchema method logs, not sure.
-        // and not sure if returning empty string (allow process to continue
-      }
+    if (latestSchema.isPresent()) {
+        String schemaId = latestSchema.get().getSchemaInfo().getSchemaIdentity().getId();
+        try {
+            return schemaStore.getSchema(dataPartitionId, schemaId);
+        } catch (NotFoundException ex) {
+            log.error("Schema not found for ID: " + schemaId, ex);
+        }
     }
     return "";
-
   }
 
   @Override
-  public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId)  {
-    // This function is called twice.  Once for tenant `common` and once for the requested tenant.
+  public List<SchemaInfo> getSchemaInfoList(QueryParams queryParams, String tenantId) {
+    DynamoDBQueryHelper<SchemaInfoDoc> queryHelper = getSchemaInfoTableQueryHelper(tenantId);
 
-    // Undefined behavior-- how should the system handle empty query params i.e. &scope=
-    // is it equal to empty string or should the qualifier be removed?
+    // Build filter expressions
+    Map<String, AttributeValue> expressionValues = new HashMap<>();
+    List<String> filterConditions = new ArrayList<>();
 
+    // Add data partition filter - this is required
+    filterConditions.add("DataPartitionId = :dataPartitionId");
+    expressionValues.put(":dataPartitionId", AttributeValue.builder().s(tenantId).build());
 
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenantId);
+    // Add all query parameters using helper method
+    addFilterIfNotNull(filterConditions, expressionValues, "SchemaAuthority", queryParams.getAuthority(), false);
+    addFilterIfNotNull(filterConditions, expressionValues, "SchemaSource", queryParams.getSource(), false);
+    addFilterIfNotNull(filterConditions, expressionValues, "SchemaEntityType", queryParams.getEntityType(), false);
+    addFilterIfNotNull(filterConditions, expressionValues, "SchemaScope", queryParams.getScope(), false);
+    addFilterIfNotNull(filterConditions, expressionValues, "SchemaStatus", queryParams.getStatus(), false);
+    addFilterIfNotNull(filterConditions, expressionValues, "MajorVersion", queryParams.getSchemaVersionMajor(), true);
+    addFilterIfNotNull(filterConditions, expressionValues, "MinorVersion", queryParams.getSchemaVersionMinor(), true);
+    addFilterIfNotNull(filterConditions, expressionValues, "PatchVersion", queryParams.getSchemaVersionPatch(), true);
 
-    List<String> filters = new ArrayList<>();
-    Map<String, AttributeValue> valueMap = new HashMap<>();
+    // Combine filter conditions
+    String filterExpression = String.join(" AND ", filterConditions);
+    log.info("SchemaInfo query filter expression: {}", filterExpression);
 
-    filters.add("DataPartitionId = :DataPartitionId");
-    valueMap.put(":DataPartitionId", new AttributeValue().withS(tenantId));
+    // Use RequestBuilderUtil to build the scan request
+    ScanEnhancedRequest scanRequest = RequestBuilderUtil.ScanRequestBuilder
+        .forScan(SchemaInfoDoc.class)
+        .filterExpression(filterExpression, expressionValues)
+        .build();
 
-    if (queryParams.getAuthority() != null) {
-      filters.add("SchemaAuthority = :SchemaAuthority");
-      valueMap.put(":SchemaAuthority", new AttributeValue().withS(queryParams.getAuthority()));
-    }
+    // Execute the scan
+    List<SchemaInfoDoc> results = queryHelper.scanTable(scanRequest);
 
-    if (queryParams.getSource() != null) {
-      filters.add("SchemaSource = :SchemaSource");
-      valueMap.put(":SchemaSource", new AttributeValue().withS(queryParams.getSource()));
-    }
-
-    if (queryParams.getEntityType() != null) {
-      filters.add("SchemaEntityType = :SchemaEntityType");
-      valueMap.put(":SchemaEntityType", new AttributeValue().withS(queryParams.getEntityType()));
-    }
-
-    if (queryParams.getSchemaVersionMajor() != null) {
-      filters.add("MajorVersion = :MajorVersion");
-      valueMap.put(":MajorVersion", new AttributeValue().withN(queryParams.getSchemaVersionMajor().toString()));
-    }
-
-    if (queryParams.getSchemaVersionMinor() != null) {
-      filters.add("MinorVersion = :MinorVersion");
-      valueMap.put(":MinorVersion", new AttributeValue().withN(queryParams.getSchemaVersionMinor().toString()));
-    }
-
-    if (queryParams.getSchemaVersionPatch() != null) {
-      filters.add("PatchVersion = :PatchVersion");
-      valueMap.put(":PatchVersion", new AttributeValue().withN(queryParams.getSchemaVersionPatch().toString()));
-    }
-
-    if (queryParams.getScope() != null) {
-      filters.add("SchemaScope = :SchemaScope");
-      valueMap.put(":SchemaScope", new AttributeValue().withS(queryParams.getScope()));
-    }
-    if (queryParams.getStatus() != null) {
-      filters.add("SchemaStatus = :SchemaStatus");
-      valueMap.put(":SchemaStatus", new AttributeValue().withS(queryParams.getStatus()));
-    }
-
-    String filterExpression = String.join(" and ", filters);
-    log.info(String.format("SchemaInfo query filter expression: %s", filterExpression));
-
-    List<SchemaInfoDoc> results = queryHelper.scanTable(SchemaInfoDoc.class, filterExpression, valueMap);
-    List<SchemaInfo> toReturn = results.stream().map(SchemaInfoDoc::getSchemaInfo).collect(Collectors.toList());
+    List<SchemaInfo> toReturn = results.stream()
+        .map(SchemaInfoDoc::getSchemaInfo)
+        .collect(Collectors.toCollection(ArrayList::new));
 
     if (queryParams.getLatestVersion() != null && queryParams.getLatestVersion()) {
       toReturn = getLatestVersionSchemaList(toReturn);
@@ -284,36 +291,52 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     return toReturn;
   }
 
+  /**
+   * Helper method to add a filter condition if the value is not null
+   */
+  private void addFilterIfNotNull(List<String> conditions, Map<String, AttributeValue> values,
+      String attributeName, Object value, boolean isNumber) {
+    if (value != null) {
+      String placeholder = ":" + attributeName.toLowerCase();
+      conditions.add(attributeName + " = " + placeholder);
+
+      if (isNumber) {
+        values.put(placeholder, AttributeValue.builder().n(value.toString()).build());
+      } else {
+        values.put(placeholder, AttributeValue.builder().s(value.toString()).build());
+      }
+    }
+  }
+
   @Override
   public List<SchemaInfo> getSystemSchemaInfoList(QueryParams queryParams) {
     return this.getSchemaInfoList(queryParams, sharedTenant);
   }
 
- @Override
+  @Override
   public boolean isUnique(String schemaId, String tenantId) {
+    Set<String> tenantList = new HashSet<>();
+    tenantList.add(sharedTenant);
+    tenantList.add(tenantId);
 
-   Set<String> tenantList = new HashSet<>();
-   tenantList.add(sharedTenant);
-   tenantList.add(tenantId);
+    // Add all tenants if checking from shared tenant
+    if (tenantId.equalsIgnoreCase(sharedTenant)) {
+      List<String> privateTenantList = tenantFactory.listTenantInfo().stream()
+          .map(TenantInfo::getDataPartitionId)
+          .toList();
+      tenantList.addAll(privateTenantList);
+    }
 
-   // code to call check uniqueness
-   if (tenantId.equalsIgnoreCase(sharedTenant)) {
-     List<String> privateTenantList = tenantFactory.listTenantInfo().stream().map(TenantInfo::getDataPartitionId)
-             .collect(Collectors.toList());
-     tenantList.addAll(privateTenantList);
-   }
-
-   for (String tenant : tenantList) {
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper(tenant);
-
-     String id = tenant + ":" + schemaId;
-     SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
-     schemaInfoDoc.setId(id);
-     if(queryHelper.keyExistsInTable(SchemaInfoDoc.class, schemaInfoDoc)){ // the schemaId exists and hence is not unique
-       return false;
-     }
-   }
-   return true;
+    // Check uniqueness across all relevant tenants
+    for (String tenant : tenantList) {
+      DynamoDBQueryHelper<SchemaInfoDoc> queryHelper = getSchemaInfoTableQueryHelper(tenant);
+      String id = tenant + ":" + schemaId;
+      Optional<SchemaInfoDoc> item = queryHelper.getItem(id);
+      if (item.isPresent()) {
+        return false; // Schema ID exists, not unique
+      }
+    }
+    return true;
   }
 
   @Override
@@ -323,14 +346,11 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   @Override
   public boolean cleanSchema(String schemaId) {
-
-    DynamoDBQueryHelperV2 queryHelper = getSchemaInfoTableQueryHelper();
-
+    DynamoDBQueryHelper<SchemaInfoDoc> queryHelper = getSchemaInfoTableQueryHelper();
     String id = headers.getPartitionId() + ":" + schemaId;
-    SchemaInfoDoc schemaInfoDoc = new SchemaInfoDoc();
-    schemaInfoDoc.setId(id);
+
     try {
-      queryHelper.deleteByPrimaryKey(SchemaInfoDoc.class, schemaInfoDoc);
+      queryHelper.deleteItem(id);
       return true;
     } catch (Exception ex) {
       log.error("Unable to delete schema info", ex);
@@ -348,12 +368,12 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
     List<SchemaInfo> latestSchemaList = new LinkedList<>();
     SchemaInfo previousSchemaInfo = null;
     TreeMap<VersionHierarchyUtil, SchemaInfo> sortedMap = new TreeMap<>(
-            new VersionHierarchyUtil.SortingVersionComparator());
+        new VersionHierarchyUtil.SortingVersionComparator());
 
     for (SchemaInfo schemaInfoObject : filteredSchemaList) {
       if ((previousSchemaInfo != null) && !(checkAuthorityMatch(previousSchemaInfo, schemaInfoObject)
-              && checkSourceMatch(previousSchemaInfo, schemaInfoObject)
-              && checkEntityMatch(previousSchemaInfo, schemaInfoObject))) {
+          && checkSourceMatch(previousSchemaInfo, schemaInfoObject)
+          && checkEntityMatch(previousSchemaInfo, schemaInfoObject))) {
         Map.Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
         latestSchemaList.add(latestVersionEntry.getValue());
         sortedMap.clear();
@@ -361,10 +381,10 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
       previousSchemaInfo = schemaInfoObject;
       SchemaIdentity schemaIdentity = schemaInfoObject.getSchemaIdentity();
       VersionHierarchyUtil version = new VersionHierarchyUtil(schemaIdentity.getSchemaVersionMajor(),
-              schemaIdentity.getSchemaVersionMinor(), schemaIdentity.getSchemaVersionPatch());
+          schemaIdentity.getSchemaVersionMinor(), schemaIdentity.getSchemaVersionPatch());
       sortedMap.put(version, schemaInfoObject);
     }
-    if (sortedMap.size() != 0) {
+    if (!sortedMap.isEmpty()) {
       Map.Entry<VersionHierarchyUtil, SchemaInfo> latestVersionEntry = sortedMap.firstEntry();
       latestSchemaList.add(latestVersionEntry.getValue());
     }
@@ -374,17 +394,17 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
   private boolean checkEntityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
     return schemaInfoObject.getSchemaIdentity().getEntityType()
-            .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getEntityType());
+        .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getEntityType());
   }
 
   private boolean checkSourceMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
     return schemaInfoObject.getSchemaIdentity().getSource()
-            .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getSource());
+        .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getSource());
   }
 
   private boolean checkAuthorityMatch(SchemaInfo previousSchemaInfo, SchemaInfo schemaInfoObject) {
     return schemaInfoObject.getSchemaIdentity().getAuthority()
-            .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
+        .equalsIgnoreCase(previousSchemaInfo.getSchemaIdentity().getAuthority());
   }
 
   private void updateDataPartitionId() {
