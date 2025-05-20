@@ -4,13 +4,7 @@ variables:
   GC_SERVICE: schema
   GC_VENDOR: gc
   GC_HELM_TIMEOUT: "--timeout 15m"
-
-gc-test:
-  variables:
-    GC_TEST_SUBDIR: testing/schema-test-core
-    VENDOR: gcp
-  script:
-    - $MAVEN_BUILD . test-results.log verify -q -f $GC_TEST_SUBDIR/pom.xml
+  HOST: "https://${GC_DOMAIN}"
 
 gc-dev2-test:
   variables:
