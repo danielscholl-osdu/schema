@@ -28,7 +28,7 @@ if [[ $ret -ne 0 ]]; then
 	currentMessage="Schema loading failed. Please check error logs for more details."
 fi
 if [ ! -z "$CONFIG_MAP_NAME" -a "$CONFIG_MAP_NAME" != " " ]; then
-  az login --identity --username $OSDU_IDENTITY_ID
+  az login --identity --client-id $OSDU_IDENTITY_ID
   ENV_AKS=$(az aks list --resource-group $RESOURCE_GROUP_NAME --query [].name -otsv)
   az aks get-credentials --resource-group $RESOURCE_GROUP_NAME --name $ENV_AKS
   kubectl config set-context $RESOURCE_GROUP_NAME --cluster $ENV_AKS
