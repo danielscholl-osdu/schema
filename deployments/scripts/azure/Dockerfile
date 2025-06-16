@@ -1,11 +1,14 @@
 FROM mcr.microsoft.com/azure-cli:2.72.0
 
-RUN apk add ca-certificates bash curl wget gettext jq bind-tools \
+RUN tdnf install -y ca-certificates bash curl wget gettext jq bind-utils shadow-utils \
+    && python3 -m ensurepip --upgrade \
     && wget -q https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl \
     && chmod +x /usr/local/bin/kubectl \
     && chmod g+rwx /root \
     && mkdir /config \
-    && chmod g+rwx /config
+    && chmod g+rwx /config \
+    && ln -s /usr/bin/python3 /usr/bin/python \
+    && ln -s /usr/bin/pip3 /usr/bin/pip
 
 ENV DATA_PARTITION="opendes" \
   AZURE_BUILD_SUBDIR="provider/schema-azure" \
@@ -18,7 +21,7 @@ ENV DATA_PARTITION="opendes" \
 USER root
 
 # Create osdu user
-RUN addgroup --system osdu && adduser --system osdu --ingroup osdu
+RUN groupadd --system osdu && useradd --system --gid osdu osdu
 WORKDIR /home/osdu
 
 # Install Requirements
