@@ -103,7 +103,7 @@ The following software have components provided under the terms of this license:
 - AutoValue Annotations (from https://github.com/google/auto/tree/main/value, https://github.com/google/auto/tree/master/value, https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations)
 - Awaitility (from http://awaitility.org)
 - BSON (from http://bsonspec.org, https://bsonspec.org)
-- BSON Record Codec (from <https://www.mongodb.com/>, https://www.mongodb.com/)
+- BSON Record Codec (from https://bsonspec.org, <https://www.mongodb.com/>, https://www.mongodb.com/)
 - Bean Validation API (from http://beanvalidation.org)
 - Byte Buddy (without dependencies) (from https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy)
 - Byte Buddy Java agent (from https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy-agent)
@@ -256,8 +256,8 @@ The following software have components provided under the terms of this license:
 - Spring Web MVC (from https://github.com/spring-projects/spring-framework, https://repo1.maven.org/maven2/org/springframework/spring-webmvc)
 - Standard Uri Template (from https://std-uritemplate.github.io/)
 - Swagger UI (from <http://webjars.org>, http://webjars.org, https://www.webjars.org)
-- boto3 (from https://github.com/boto/boto3)
-- botocore (from https://github.com/boto/botocore)
+- boto3 (from <https://github.com/boto/boto3>, https://github.com/boto/boto3)
+- botocore (from <https://github.com/boto/botocore>, https://github.com/boto/botocore)
 - datastore-v1-proto-client (from https://repo1.maven.org/maven2/com/google/cloud/datastore/datastore-v1-proto-client)
 - error-prone annotations (from https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations)
 - google-auth (from https://github.com/GoogleCloudPlatform/google-auth-library-python, https://github.com/googleapis/google-auth-library-python)
@@ -514,8 +514,6 @@ ImageMagick
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- Microsoft Azure Java XML Library (from https://github.com/Azure/azure-sdk-for-java)
-
 ========================================================================
 LGPL-2.1-only
 ========================================================================
@@ -618,13 +616,13 @@ The following software have components provided under the terms of this license:
 - System Stubs Core (from https://repo1.maven.org/maven2/uk/org/webcompere/system-stubs-core)
 - TestNG XML Formatter (from https://github.com/cucumber/testng-xml-formatter)
 - adal4j (from https://github.com/AzureAD/azure-activedirectory-library-for-java)
-- botocore (from https://github.com/boto/botocore)
+- botocore (from <https://github.com/boto/botocore>, https://github.com/boto/botocore)
 - javamsalruntime (from https://github.com/AzureAD/microsoft-authentication-library-for-cpp)
 - micrometer-commons (from https://github.com/micrometer-metrics/micrometer)
 - micrometer-core (from https://github.com/micrometer-metrics/micrometer)
 - mockito-inline (from http://mockito.org, https://github.com/mockito/mockito)
 - mockito-junit-jupiter (from https://github.com/mockito/mockito)
-- msal (from https://github.com/AzureAD/microsoft-authentication-library-for-python)
+- msal (from <https://github.com/AzureAD/microsoft-authentication-library-for-python>, https://github.com/AzureAD/microsoft-authentication-library-for-python)
 - msal4j (from https://github.com/AzureAD/microsoft-authentication-library-for-java)
 - msal4j-brokers (from https://github.com/AzureAD/microsoft-authentication-library-for-java)
 - msal4j-persistence-extension (from https://github.com/AzureAD/microsoft-authentication-extensions-for-java, https://github.com/AzureAD/microsoft-authentication-library-for-java)
