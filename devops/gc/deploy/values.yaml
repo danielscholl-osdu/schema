@@ -1,0 +1,57 @@
+global:
+  domain: ""
+  limitsEnabled: true
+  dataPartitionId: ""
+  logLevel: "ERROR"
+  tier: ""
+  autoscaling: true
+
+data:
+  #Configmaps
+  entitlementsHost: "http://entitlements"
+  javaOptions: "-Xms512M -Xmx1024M -XX:+UseG1GC -XX:+UseStringDeduplication -XX:InitiatingHeapOccupancyPercent=45"
+  logLevel: ""
+  partitionHost: "http://partition"
+  schemaTopicName: "schema-changed"
+  schemaChangedMessagingEnabled: true
+  schemaHost: "http://schema"
+  #Deployments
+  requestsCpu: "220m"
+  requestsMemory: "1.7G"
+  limitsCpu: "1"
+  limitsMemory: "2.5G"
+  bootstrapImage: ""
+  bootstrapServiceAccountName: ""
+  image: ""
+  imagePullPolicy: "IfNotPresent"
+  serviceAccountName: "schema"
+
+conf:
+  appName: "schema"
+  configmap: "schema-config"
+  replicas: 2
+
+istio:
+  proxyCPU: "90m"
+  proxyCPULimit: "500m"
+  proxyMemory: "100Mi"
+  proxyMemoryLimit: "512Mi"
+  bootstrapProxyCPU: "10m"
+  bootstrapProxyCPULimit: "100m"
+
+hpa:
+  minReplicas: 6
+  maxReplicas: 15
+  targetType: "AverageValue"
+  targetValue: 100
+  behaviorScaleUpStabilizationWindowSeconds: 10
+  behaviorScaleUpPoliciesValue: 50
+  behaviorScaleUpPoliciesPeriodSeconds: 15
+  behaviorScaleDownStabilizationWindowSeconds: 60
+  behaviorScaleDownPoliciesValue: 25
+  behaviorScaleDownPoliciesPeriodSeconds: 60
+
+local_ratelimit:
+  max_tokens: 75
+  tokens_per_fill: 75
+  fill_interval: "1s"
