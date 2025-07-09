@@ -4,7 +4,7 @@ global:
   dataPartitionId: ""
   logLevel: "ERROR"
   tier: ""
-  autoscaling: true
+  autoscalingMode: "cpu"
 
 data:
   #Configmaps
@@ -25,11 +25,16 @@ data:
   image: ""
   imagePullPolicy: "IfNotPresent"
   serviceAccountName: "schema"
+  affinityLabelsSpot:
+    cloud.google.com/gke-provisioning:
+      - spot
+  affinityLabelsStandard:
+    cloud.google.com/gke-provisioning:
+      - standard
 
 conf:
   appName: "schema"
   configmap: "schema-config"
-  replicas: 2
 
 istio:
   proxyCPU: "90m"
@@ -40,16 +45,25 @@ istio:
   bootstrapProxyCPULimit: "100m"
 
 hpa:
-  minReplicas: 6
-  maxReplicas: 15
-  targetType: "AverageValue"
-  targetValue: 100
-  behaviorScaleUpStabilizationWindowSeconds: 10
-  behaviorScaleUpPoliciesValue: 50
-  behaviorScaleUpPoliciesPeriodSeconds: 15
-  behaviorScaleDownStabilizationWindowSeconds: 60
-  behaviorScaleDownPoliciesValue: 25
-  behaviorScaleDownPoliciesPeriodSeconds: 60
+  minReplicas: 1
+  maxReplicas: 6
+  cpu:
+    utilization: 200
+    scaleUpStabilizationWindowSeconds: 30
+    scaleUpValue: 200
+    scaleUpPeriod: 15
+    scaleDownStabilizationWindowSeconds: 150
+    scaleDownValue: 100
+    scaleDownPeriod: 15
+  requests:
+    targetType: "AverageValue"
+    targetValue: 40
+    scaleUpStabilizationWindowSeconds: 10
+    scaleUpValue: 50
+    scaleUpPeriod: 15
+    scaleDownStabilizationWindowSeconds: 60
+    scaleDownValue: 25
+    scaleDownPeriod: 60
 
 local_ratelimit:
   max_tokens: 75
