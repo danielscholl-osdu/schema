@@ -43,6 +43,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
 import org.opengroup.osdu.core.aws.v2.dynamodb.interfaces.IDynamoDBQueryHelperFactory;
 import org.opengroup.osdu.core.aws.v2.dynamodb.model.GsiQueryRequest;
+import org.opengroup.osdu.core.aws.v2.dynamodb.model.QueryPageResult;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
@@ -532,7 +533,7 @@ class AwsSchemaInfoStoreTest {
             eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
         
         // Mock empty results from GSI query
-        when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(new ArrayList<>());
+        when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(new QueryPageResult<>(new ArrayList<>(), null, null));
         
         // Execute
         String result = schemaInfoStore.getLatestMinorVerSchema(inputSchema);
@@ -562,8 +563,9 @@ class AwsSchemaInfoStoreTest {
         SchemaInfoDoc resultDoc = SchemaInfoDoc.builder()
             .schemaInfo(inputSchema)
             .build();
-        List<SchemaInfoDoc> queryResults = List.of(resultDoc);
-        
+        List<SchemaInfoDoc> queryList = List.of(resultDoc);
+        QueryPageResult<SchemaInfoDoc> queryResults = new QueryPageResult<>(queryList, null, null);
+
         // Mock GSI query to return the single result
         when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(queryResults);
         
@@ -599,8 +601,9 @@ class AwsSchemaInfoStoreTest {
         SchemaInfoDoc doc2 = SchemaInfoDoc.builder().schemaInfo(schema2).build();
         SchemaInfoDoc doc3 = SchemaInfoDoc.builder().schemaInfo(schema3).build();
         
-        List<SchemaInfoDoc> queryResults = List.of(doc1, doc2, doc3);
-        
+        List<SchemaInfoDoc> queryList = List.of(doc1, doc2, doc3);
+        QueryPageResult<SchemaInfoDoc> queryResults = new QueryPageResult<>(queryList, null, null);
+
         // Mock GSI query to return multiple results
         when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(queryResults);
         
@@ -631,8 +634,9 @@ class AwsSchemaInfoStoreTest {
         SchemaInfoDoc resultDoc = SchemaInfoDoc.builder()
             .schemaInfo(inputSchema)
             .build();
-        List<SchemaInfoDoc> queryResults = List.of(resultDoc);
-        
+        List<SchemaInfoDoc> queryList = List.of(resultDoc);
+        QueryPageResult<SchemaInfoDoc> queryResults = new QueryPageResult<>(queryList, null, null);
+
         // Mock GSI query to return the single result
         when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(queryResults);
         
@@ -670,8 +674,9 @@ class AwsSchemaInfoStoreTest {
         SchemaInfoDoc doc3 = SchemaInfoDoc.builder().schemaInfo(schema3).build();
         SchemaInfoDoc doc4 = SchemaInfoDoc.builder().schemaInfo(schema4).build();
         
-        List<SchemaInfoDoc> queryResults = List.of(doc1, doc2, doc3, doc4);
-        
+        List<SchemaInfoDoc> queryList = List.of(doc1, doc2, doc3, doc4);
+        QueryPageResult<SchemaInfoDoc> queryResults = new QueryPageResult<>(queryList, null, null);
+
         // Mock GSI query to return multiple results
         when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(queryResults);
         
