@@ -1,63 +1,69 @@
-# OSDU SPI Fork Management Template
+## Documentation
+Official documentation [https://osdu.pages.opengroup.org/platform/system/schema-service/](https://osdu.pages.opengroup.org/platform/system/schema-service/)
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub Issues](https://img.shields.io/github/issues/danielscholl-osdu/osdu-fork-template)](https://github.com/danielscholl-osdu/osdu-fork-template/issues)
-[![Documentation](https://img.shields.io/badge/Documentation-Live-blue?logo=gitbook)](https://danielscholl-osdu.github.io/osdu-fork-template/)
+## Running the schema service locally
 
-> **Automated management for long-lived forks with AI-enhanced workflows**
+The Schema Service is a Maven multi-module project with each cloud implemention placed in its submodule. To build or run Schema Service locally, follow the below steps :
 
-## What This Template Provides
+## 1. Google Cloud deployment
 
-- 🔄 Automated upstream synchronization with conflict detection
-- 🤖 AI-enhanced PR descriptions and conflict guidance
-- 🛡️ Three-branch safety strategy
-- 📈 Release correlation tracking
-- 🎯 Zero-maintenance operations
+Instructions for running the Google Cloud implementation in the cloud can be found [here](./provider/schema-gc/README.md).
 
-**Perfect for**: OSDU teams needing Azure SPI customizations while staying current with upstream.
+## 2. Azure deployment
 
-## Quick Start
+Instructions for running the Azure implementation in the cloud can be found [here](https://community.opengroup.org/osdu/platform/system/schema-service/-/blob/master/provider/schema-azure/README.md).
 
-### 1. Create Your Fork Repository
+## Running Automated Integration Test
 
-Click **"Use this template"** → Choose repository name → **Create repository**
+DevSanity tests are located in a schema-core project in testing directory under the project root directory.
 
-### 2. Initialize Your Fork
+1. Google Cloud
+These tests validate functionality of schema service.
 
-1. Go to **Actions** → **"Repository Initialization"** → **"Run workflow"**
-2. Follow the setup instructions in the automatically created issue
-3. Provide your upstream repository URL when prompted
-4. Wait 2-5 minutes for complete setup
+They can then be run/debugged directly in your IDE of choice using the GUI or via the commandline using below command from schema-core project.
+Below command has to be run post building complete project.
 
-### 3. Configure Secrets (Optional but Recommended)
+Instructions for running the Google Cloud integration tests can be found [here](./provider/schema-gc/README.md).
 
-For full automation, add these secrets in **Settings** → **Secrets and variables** → **Actions**:
+Below command can be run through azure-pipeline.yml after setting environment variables in the pipeline.
 
-| Secret | Purpose | Required |
-|--------|---------|----------|
-| `GH_TOKEN` | Repository automation | For branch protection & full automation |
-| `ANTHROPIC_API_KEY` | AI-enhanced PR descriptions | Optional but recommended |
+ verify
+ 
+## Deploy Shared Schemas
 
-### 4. Start Using
+Schema service as part of deployment deploys pre-defined OSDU schemas so end users can get community accepted schemas to refer. Such schemas are present in [folder](./deployments/shared-schemas/osdu) and script to deploy the schema are present [here](deployments/scripts).
 
-- **Daily sync** happens automatically at midnight UTC
-- **Manual sync** available in Actions → "Upstream Synchronization"  
-- **Conflicts** create detailed issues with resolution guidance
-- **Releases** are automatically versioned and correlated with upstream
+Details to deploy shared schemas can be found under [README.md](./deployments/shared-schemas/README.md)
+  
+## AWS
 
-## Support and Contributing
+Instructions for running and testing this service can be found [here](./provider/schema-aws/README.md)  
 
-📚 **[Complete Documentation](https://danielscholl-osdu.github.io/osdu-fork-template/)** - Comprehensive guides covering system concepts, architecture, workflows, and AI integration.
+## Open API 3.0 - Swagger
+- Swagger UI : https://host/context-path/swagger (will redirect to https://host/context-path/swagger-ui/index.html)
+- api-docs (JSON) : https://host/context-path/api-docs
+- api-docs (YAML) : https://host/context-path/api-docs.yaml
 
-- **Issues**: [Report bugs or request features](https://github.com/danielscholl-osdu/osdu-fork-template/issues)
-- **Discussions**: [Community support and questions](https://github.com/danielscholl-osdu/osdu-fork-template/discussions)
-- **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines
-- **Security**: Report security issues privately via [GitHub security advisories](https://github.com/danielscholl-osdu/osdu-fork-template/security/advisories)
+All the Swagger and OpenAPI related common properties are managed here [swagger.properties](./schema-core/src/main/resources/swagger.properties)
+
+#### Server Url(full path vs relative path) configuration
+- `api.server.fullUrl.enabled=true` It will generate full server url in the OpenAPI swagger
+- `api.server.fullUrl.enabled=false` It will generate only the contextPath only
+- default value is false (Currently only in Azure it is enabled)
+[Reference]:(https://springdoc.org/faq.html#_how_is_server_url_generated)
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+Copyright 2017-2020, Schlumberger
 
----
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-**Need help?** Check the [documentation](https://danielscholl-osdu.github.io/osdu-fork-template/) or [open an issue](https://github.com/danielscholl-osdu/osdu-fork-template/issues/new).
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License
