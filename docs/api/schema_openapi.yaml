@@ -124,7 +124,7 @@ paths:
           schema:
             type: string
             default: '*'
-          example: wellbore
+          example: master-data--Wellbore
         - name: schemaVersionMajor
           in: query
           description: pass an optional string to search for a specific schemaVersionMajor
@@ -506,7 +506,7 @@ components:
           pattern: ^[\w\-\.]+$
           type: string
           description: EntityType Code
-          example: wellbore
+          example: master-data--Wellbore
         schemaVersionMajor:
           type: integer
           description: Major Schema Version Number
