@@ -31,6 +31,7 @@ import org.joda.time.DateTime;
 import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
 import org.opengroup.osdu.core.aws.v2.dynamodb.interfaces.IDynamoDBQueryHelperFactory;
 import org.opengroup.osdu.core.aws.v2.dynamodb.model.GsiQueryRequest;
+import org.opengroup.osdu.core.aws.v2.dynamodb.model.QueryPageResult;
 import org.opengroup.osdu.core.aws.v2.dynamodb.util.RequestBuilderUtil;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -226,10 +227,10 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
         .buildGsiRequest();
 
     // Call queryByGSI with just the GsiQueryRequest
-    List<SchemaInfoDoc> results = queryHelper.queryByGSI(request);
+    QueryPageResult<SchemaInfoDoc> results = queryHelper.queryByGSI(request);
 
     // Use Java streams to find the maximum minor version
-    Optional<SchemaInfoDoc> latestSchema = results.stream()
+    Optional<SchemaInfoDoc> latestSchema = results.getItems().stream()
         .max((a, b) -> Long.compare(
             a.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor(),
             b.getSchemaInfo().getSchemaIdentity().getSchemaVersionMinor()));
