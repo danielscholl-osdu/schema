@@ -40,12 +40,6 @@ variables:
   AWS_DEPLOY_TARGET: TF
   AWS_EKS_DEPLOYMENT_NAME: os-schema
 
-  MONGODB_AWS_SERVICE: schema
-  MONGODB_AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
-  MONGODB_AWS_TEST_SUBDIR: testing/schema-test-core
-  MONGODB_AWS_EKS_DEPLOYMENT_NAME: os-schema
-  MONGODB_AWS_DEPLOY_TARGET: TF
-
   ACCEPTANCE_TEST_DIR: "schema-acceptance-test"
 
 include:
@@ -63,12 +57,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/aws-maven.yml"
-
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/aws-mongodb-global.yml"
-
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/aws-mongodb-maven.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm-java-git.yml"
@@ -136,5 +124,4 @@ download_plugins:
 
 aws-test-java:
   image: $CI_REGISTRY/osdu/platform/deployment-and-operations/base-containers-aws/aws-maven/aws-maven:v2.0
-# aws-mongodb-test-java:
-#   image: $CI_REGISTRY/osdu/platform/deployment-and-operations/base-containers-aws/aws-maven/aws-maven:v2.0
+
