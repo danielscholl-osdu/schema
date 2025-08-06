@@ -61,17 +61,14 @@ class AwsToken(object):
 
 
     def get_service_principal_token(self):
-        if os.getenv("AWS_COGNITO_REGION") is not None:
-            region = os.environ["AWS_COGNITO_REGION"]
-        else:
-            region = os.environ["AWS_REGION"]
+        region = os.environ["AWS_REGION"]
 
-        cognito_name = os.environ["COGNITO_NAME"]
+        idp_name = os.environ["IDP_NAME"]
 
-        token_url_ssm_path=f"/osdu/cognito/{cognito_name}/oauth/token-uri"
-        oauth_custom_scope_ssm_path=f"/osdu/cognito/{cognito_name}/oauth/custom-scope"
-        client_id_ssm_path=f"/osdu/cognito/{cognito_name}/client/client-credentials/id"
-        client_secret_name=f"/osdu/cognito/{cognito_name}/client-credentials-secret"
+        token_url_ssm_path=f"/osdu/idp/{idp_name}/oauth/token-uri"
+        oauth_custom_scope_ssm_path=f"/osdu/idp/{idp_name}/oauth/custom-scope"
+        client_id_ssm_path=f"/osdu/idp/{idp_name}/client/client-credentials/id"
+        client_secret_name=f"/osdu/idp/{idp_name}/client-credentials-secret"
         client_secret_dict_key='client_credentials_client_secret'
 
         # session = boto3.session.Session()

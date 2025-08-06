@@ -17,7 +17,7 @@ data:
   schemaHost: "http://schema"
   #Deployments
   requestsCpu: "220m"
-  requestsMemory: "1.7G"
+  requestsMemory: "1.5G"
   limitsCpu: "1"
   limitsMemory: "2.5G"
   bootstrapImage: ""
