@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/danielscholl-osdu/schema/compare/v1.0.0...v1.1.0) (2025-08-06)
+
+
+### ✨ Features
+
+* Add schema version 0.28.7 with enhanced document and property types ([7d08e99](https://github.com/danielscholl-osdu/schema/commit/7d08e9952fd4b6b12953c4c3e2e51714cbe3822d))
+
+
+### 🔧 Miscellaneous
+
+* Sync template updates ([10d7023](https://github.com/danielscholl-osdu/schema/commit/10d70236d9b31cd98732ba3a1e667c4103c42f6e))
+
 ## 1.0.0 (2025-07-21)
 
 
