@@ -118,11 +118,15 @@ class AwsSchemaInfoStoreTest {
         String partitionId = "partitionId";
         String schemaId = "schemaId";
         
-        // Mock query helper - use exact argument matching
+        // Mock query helper for both partition and common tenant
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-                anyString(),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+                partitionId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                COMMON_TENANT_ID,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         when(queryHelper.getItem(partitionId + ":" + schemaId)).thenReturn(Optional.empty());
         when(queryHelper.getItem(COMMON_TENANT_ID + ":" + schemaId)).thenReturn(Optional.empty());
         
@@ -137,24 +141,32 @@ class AwsSchemaInfoStoreTest {
     void isUnique_ifNotExists_returnTrue_SystemSchema() {
         // Setup
         String schemaId = "schemaId";
-        when(dynamoDBQueryHelperFactory.createQueryHelper(
-            anyString(),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+        String partition2 = "partitionId";
+        
         TenantInfo tenant1 = new TenantInfo();
         tenant1.setName(COMMON_TENANT_ID);
         tenant1.setDataPartitionId(COMMON_TENANT_ID);
         TenantInfo tenant2 = new TenantInfo();
-        tenant2.setName("partitionId");
-        tenant2.setDataPartitionId("partitionId");
+        tenant2.setName(partition2);
+        tenant2.setDataPartitionId(partition2);
         Collection<TenantInfo> tenants = Lists.newArrayList(tenant1, tenant2);
         
         // Mock tenant factory
         when(tenantFactory.listTenantInfo()).thenReturn(tenants);
+        
+        // Mock query helper for each tenant
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+            COMMON_TENANT_ID,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+            partition2,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
 
         // Mock query helper - use exact argument matching
         when(queryHelper.getItem(COMMON_TENANT_ID + ":" + schemaId)).thenReturn(Optional.empty());
-        when(queryHelper.getItem("partitionId" + ":" + schemaId)).thenReturn(Optional.empty());
+        when(queryHelper.getItem(partition2 + ":" + schemaId)).thenReturn(Optional.empty());
         
         // Execute
         Boolean actual = schemaInfoStore.isUniqueSystemSchema(schemaId);
@@ -170,13 +182,16 @@ class AwsSchemaInfoStoreTest {
         String schemaId = "schemaId";
         SchemaInfoDoc mockDoc = new SchemaInfoDoc();
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-                anyString(),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+                partitionId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                COMMON_TENANT_ID,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         // The isUnique method checks both the shared tenant and the provided tenant
-        // We need to stub both potential calls to getItem
-        doReturn(Optional.empty()).when(queryHelper).getItem(COMMON_TENANT_ID + ":" + schemaId);
-        doReturn(Optional.of(mockDoc)).when(queryHelper).getItem(partitionId + ":" + schemaId);
+        when(queryHelper.getItem(COMMON_TENANT_ID + ":" + schemaId)).thenReturn(Optional.empty());
+        when(queryHelper.getItem(partitionId + ":" + schemaId)).thenReturn(Optional.of(mockDoc));
         
         // Execute
         Boolean actual = schemaInfoStore.isUnique(schemaId, partitionId);
@@ -189,21 +204,25 @@ class AwsSchemaInfoStoreTest {
     void isUnique_ifExists_returnFalse_SystemSchema() {
         // Setup
         String schemaId = "schemaId";
-        when(dynamoDBQueryHelperFactory.createQueryHelper(
-                anyString(),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+        String partition2 = "partitionId";
+        
         // Create tenant info
         TenantInfo tenant1 = new TenantInfo();
         tenant1.setName(COMMON_TENANT_ID);
         tenant1.setDataPartitionId(COMMON_TENANT_ID);
         TenantInfo tenant2 = new TenantInfo();
-        tenant2.setName("partitionId");
-        tenant2.setDataPartitionId("partitionId");
+        tenant2.setName(partition2);
+        tenant2.setDataPartitionId(partition2);
         Collection<TenantInfo> tenants = Lists.newArrayList(tenant1, tenant2);
         
         // Mock tenant factory
         when(tenantFactory.listTenantInfo()).thenReturn(tenants);
+        
+        // Mock query helper for shared tenant only (since we'll find the item on first check)
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                COMMON_TENANT_ID,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         
         // Mock query helper - first check will find the item
         when(queryHelper.getItem(COMMON_TENANT_ID + ":" + schemaId)).thenReturn(Optional.of(new SchemaInfoDoc()));
@@ -224,10 +243,10 @@ class AwsSchemaInfoStoreTest {
         SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.builder()
                 .schemaInfo(schemaInfo)
                 .build();
-                when(dynamoDBQueryHelperFactory.createQueryHelper(
-                    any(DpsHeaders.class),
-                    eq(SCHEMA_INFO_TABLE_PATH),
-                    eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                headers,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         // Mock headers
         when(headers.getPartitionId()).thenReturn(partitionId);
         
@@ -247,9 +266,9 @@ class AwsSchemaInfoStoreTest {
         String schemaId = "schemaId";
         String partitionId = "test-partition";
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
         // Mock headers
         when(headers.getPartitionId()).thenReturn(partitionId);
         
@@ -272,18 +291,21 @@ class AwsSchemaInfoStoreTest {
         SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.builder()
                 .schemaInfo(schemaInfo)
                 .build();
-                when(dynamoDBQueryHelperFactory.createQueryHelper(
-                    any(DpsHeaders.class),
-                    eq(SCHEMA_INFO_TABLE_PATH),
-                    eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
-        // Use doReturn...when syntax to avoid strict stubbing issues
-        doReturn(Optional.of(schemaInfoDoc)).when(queryHelper).getItem(anyString());
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                headers,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        // The method under test updates headers to use common tenant
+        when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+        when(queryHelper.getItem(COMMON_TENANT_ID + ":" + schemaId)).thenReturn(Optional.of(schemaInfoDoc));
         
         // Execute
         SchemaInfo actual = schemaInfoStore.getSystemSchemaInfo(schemaId);
         
         // Verify
         assertEquals(schemaInfo, actual);
+        verify(headers).put(SchemaConstants.DATA_PARTITION_ID, COMMON_TENANT_ID);
     }
 
     @Test
@@ -298,9 +320,9 @@ class AwsSchemaInfoStoreTest {
         schemaInfo.setScope(SchemaScope.INTERNAL); // Set scope to avoid NPE
         SchemaRequest schemaRequest = new SchemaRequest(schemaInfo, null);
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
         // Mock headers
         when(headers.getPartitionId()).thenReturn(partitionId);
         
@@ -321,9 +343,9 @@ class AwsSchemaInfoStoreTest {
         String schemaId = "schemaId";
         String partitionId = "test-partition";
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);        
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);        
         // Create existing schema
         SchemaIdentity existingIdentity = new SchemaIdentity();
         existingIdentity.setId(schemaId);
@@ -367,9 +389,9 @@ class AwsSchemaInfoStoreTest {
         String partitionId = "test-partition";
         String userEmail = "test-user@example.com";
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-                any(DpsHeaders.class),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+                headers,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         SchemaIdentity schemaIdentity = new SchemaIdentity();
         schemaIdentity.setId(schemaId);
         SchemaInfo schemaInfo = new SchemaInfo();
@@ -403,9 +425,9 @@ class AwsSchemaInfoStoreTest {
         String tenantId = "tenantId";
         QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", true);
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-                anyString(),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         // Mock query helper
         when(queryHelper.scanTable(any(ScanEnhancedRequest.class))).thenReturn(new ArrayList<>());
         
@@ -438,10 +460,10 @@ class AwsSchemaInfoStoreTest {
         SchemaInfoDoc schemaInfoDoc = SchemaInfoDoc.builder()
                 .schemaInfo(schemaInfo)
                 .build();
-                when(dynamoDBQueryHelperFactory.createQueryHelper(
-                    anyString(),
-                    eq(SCHEMA_INFO_TABLE_PATH),
-                    eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         List<SchemaInfoDoc> schemaInfoDocList = new ArrayList<>();
         schemaInfoDocList.add(schemaInfoDoc);
         
@@ -462,9 +484,9 @@ class AwsSchemaInfoStoreTest {
         // Setup
         QueryParams queryParams = new QueryParams("authority", "source", "entityType", 10L, 20L, 30L, 3, 3, "status", "scope", false);
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-                anyString(),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+                COMMON_TENANT_ID,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         // Mock query helper
         when(queryHelper.scanTable(any(ScanEnhancedRequest.class))).thenReturn(new ArrayList<>());
         
@@ -482,9 +504,9 @@ class AwsSchemaInfoStoreTest {
         String schemaId = "schemaId";
         String partitionId = "test-partition";
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-                any(DpsHeaders.class),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+                headers,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         // Mock headers
         when(headers.getPartitionId()).thenReturn(partitionId);
         
@@ -504,9 +526,9 @@ class AwsSchemaInfoStoreTest {
         String schemaId = "schemaId";
         String partitionId = "test-partition";
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-                any(DpsHeaders.class),
-                eq(SCHEMA_INFO_TABLE_PATH),
-                eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+                headers,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
         // Mock headers
         when(headers.getPartitionId()).thenReturn(partitionId);
         
@@ -528,9 +550,9 @@ class AwsSchemaInfoStoreTest {
         
         // Mock DynamoDBQueryHelper
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
         
         // Mock empty results from GSI query
         when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(new QueryPageResult<>(new ArrayList<>(), null, null));
@@ -555,9 +577,9 @@ class AwsSchemaInfoStoreTest {
         
         // Mock DynamoDBQueryHelper
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
         
         // Create result schema
         SchemaInfoDoc resultDoc = SchemaInfoDoc.builder()
@@ -588,9 +610,9 @@ class AwsSchemaInfoStoreTest {
         
         // Mock DynamoDBQueryHelper
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
         
         // Create multiple schema versions with different minor versions
         SchemaInfo schema1 = createSchemaInfo("test:schema:1.0.0", 1L, 0L, 0L);
@@ -626,9 +648,9 @@ class AwsSchemaInfoStoreTest {
         
         // Mock DynamoDBQueryHelper
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
         
         // Create result schema
         SchemaInfoDoc resultDoc = SchemaInfoDoc.builder()
@@ -641,7 +663,7 @@ class AwsSchemaInfoStoreTest {
         when(queryHelper.queryByGSI(any(GsiQueryRequest.class))).thenReturn(queryResults);
         
         // Mock schema store to throw NotFoundException
-        when(schemaStore.getSchema(anyString(), anyString())).thenThrow(new NotFoundException("Schema not found"));
+        when(schemaStore.getSchema(TEST_PARTITION_ID, "test:schema:1.0.0")).thenThrow(new NotFoundException("Schema not found"));
         
         // Execute
         String result = schemaInfoStore.getLatestMinorVerSchema(inputSchema);
@@ -659,9 +681,9 @@ class AwsSchemaInfoStoreTest {
         
         // Mock DynamoDBQueryHelper
         when(dynamoDBQueryHelperFactory.createQueryHelper(
-            any(DpsHeaders.class),
-            eq(SCHEMA_INFO_TABLE_PATH),
-            eq(SchemaInfoDoc.class))).thenReturn(queryHelper);
+            headers,
+            SCHEMA_INFO_TABLE_PATH,
+            SchemaInfoDoc.class)).thenReturn(queryHelper);
         
         // Create multiple schema versions with different minor versions in unsorted order
         SchemaInfo schema1 = createSchemaInfo("test:schema:1.2.0", 1L, 2L, 0L);
@@ -708,5 +730,197 @@ class AwsSchemaInfoStoreTest {
         schemaInfo.setStatus(SchemaStatus.PUBLISHED);
         
         return schemaInfo;
+    }
+
+    // Helper method to create a SchemaInfoDoc with custom entity type
+    private SchemaInfoDoc createSchemaInfoDocWithEntityType(String entityType) {
+        SchemaIdentity identity = new SchemaIdentity();
+        identity.setAuthority("osdu");
+        identity.setSource("wks");
+        identity.setEntityType(entityType);
+        identity.setSchemaVersionMajor(1L);
+        identity.setSchemaVersionMinor(0L);
+        identity.setSchemaVersionPatch(0L);
+        identity.setId("osdu:wks:" + entityType + ":1.0.0");
+        
+        SchemaInfo schemaInfo = new SchemaInfo();
+        schemaInfo.setSchemaIdentity(identity);
+        schemaInfo.setScope(SchemaScope.SHARED);
+        schemaInfo.setStatus(SchemaStatus.PUBLISHED);
+        schemaInfo.setCreatedBy("test-user");
+        schemaInfo.setDateCreated(new Date());
+        
+        return SchemaInfoDoc.builder()
+                .schemaInfo(schemaInfo)
+                .entityType(entityType)
+                .build();
+    }
+
+    @Test
+    void getSchemaInfoList_WithStartsWithPattern_UsesBeginsWith() {
+        // Setup
+        String tenantId = "tenantId";
+        QueryParams queryParams = new QueryParams(null, null, "well*", null, null, null, 10, 0, null, null, false);
+        
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        ArgumentCaptor<ScanEnhancedRequest> scanRequestCaptor = ArgumentCaptor.forClass(ScanEnhancedRequest.class);
+        when(queryHelper.scanTable(scanRequestCaptor.capture())).thenReturn(new ArrayList<>());
+        
+        // Execute
+        schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        
+        // Verify the filter expression contains begins_with
+        ScanEnhancedRequest capturedRequest = scanRequestCaptor.getValue();
+        String filterExpression = capturedRequest.filterExpression().expression();
+        assertTrue(filterExpression.contains("begins_with(SchemaEntityType, :schemaentitytype_pattern)"));
+        assertEquals("well", capturedRequest.filterExpression().expressionValues().get(":schemaentitytype_pattern").s());
+    }
+
+    @Test
+    void getSchemaInfoList_WithContainsPattern_UsesContains() {
+        // Setup
+        String tenantId = "tenantId";
+        QueryParams queryParams = new QueryParams(null, null, "*Well*", null, null, null, 10, 0, null, null, false);
+        
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        ArgumentCaptor<ScanEnhancedRequest> scanRequestCaptor = ArgumentCaptor.forClass(ScanEnhancedRequest.class);
+        when(queryHelper.scanTable(scanRequestCaptor.capture())).thenReturn(new ArrayList<>());
+        
+        // Execute
+        schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        
+        // Verify the filter expression contains contains()
+        ScanEnhancedRequest capturedRequest = scanRequestCaptor.getValue();
+        String filterExpression = capturedRequest.filterExpression().expression();
+        assertTrue(filterExpression.contains("contains(SchemaEntityType, :schemaentitytype_pattern)"));
+        assertEquals("Well", capturedRequest.filterExpression().expressionValues().get(":schemaentitytype_pattern").s());
+    }
+
+    @Test
+    void getSchemaInfoList_WithEndsWithPattern_ThrowsBadRequestException() {
+        // Setup
+        String tenantId = "tenantId";
+        QueryParams queryParams = new QueryParams(null, null, "*Well", null, null, null, 10, 0, null, null, false);
+        
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        // Execute and verify that BadRequestException is thrown
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        });
+        
+        // Verify the exception message
+        assertEquals("Unsupported wildcard pattern: *Well. 'ends with' patterns (*suffix) are not supported by DynamoDB. Only patterns like 'prefix*', '*substring*', and '*' are supported.", 
+                     exception.getMessage());
+    }
+
+    @Test
+    void getSchemaInfoList_WithWildcardAll_NoEntityTypeFilter() {
+        // Setup
+        String tenantId = "tenantId";
+        QueryParams queryParams = new QueryParams(null, null, "*", null, null, null, 10, 0, null, null, false);
+        
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        ArgumentCaptor<ScanEnhancedRequest> scanRequestCaptor = ArgumentCaptor.forClass(ScanEnhancedRequest.class);
+        when(queryHelper.scanTable(scanRequestCaptor.capture())).thenReturn(new ArrayList<>());
+        
+        // Execute
+        schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        
+        // Verify no entityType filter is added for wildcard all
+        ScanEnhancedRequest capturedRequest = scanRequestCaptor.getValue();
+        String filterExpression = capturedRequest.filterExpression().expression();
+        assertFalse(filterExpression.contains("SchemaEntityType"));
+    }
+
+    @Test
+    void getSchemaInfoList_WithExactMatch_UsesEqualityFilter() {
+        // Setup
+        String tenantId = "tenantId";
+        QueryParams queryParams = new QueryParams(null, null, "master-data--Well", null, null, null, 10, 0, null, null, false);
+        
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        ArgumentCaptor<ScanEnhancedRequest> scanRequestCaptor = ArgumentCaptor.forClass(ScanEnhancedRequest.class);
+        when(queryHelper.scanTable(scanRequestCaptor.capture())).thenReturn(new ArrayList<>());
+        
+        // Execute
+        schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        
+        // Verify exact match uses equality filter
+        ScanEnhancedRequest capturedRequest = scanRequestCaptor.getValue();
+        String filterExpression = capturedRequest.filterExpression().expression();
+        assertTrue(filterExpression.contains("SchemaEntityType = :schemaentitytype"));
+        assertEquals("master-data--Well", capturedRequest.filterExpression().expressionValues().get(":schemaentitytype").s());
+    }
+
+    @Test
+    void getSchemaInfoList_WithUnsupportedPattern_ThrowsBadRequestException() {
+        // Setup
+        String tenantId = "tenantId";
+        String unsupportedPattern = "w*ll";
+        QueryParams queryParams = new QueryParams(null, null, unsupportedPattern, null, null, null, 10, 0, null, null, false);
+        
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        // Execute and verify that BadRequestException is thrown
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        });
+        
+        // Verify the exception message
+        assertEquals("Unsupported wildcard pattern: w*ll. Only patterns like 'prefix*', '*substring*', and '*' are supported.", 
+                     exception.getMessage());
+    }
+
+    @Test
+    void getSchemaInfoList_WithPatternMatching_ReturnsExpectedResults() {
+        // Setup
+        String tenantId = "tenantId";
+        QueryParams queryParams = new QueryParams(null, null, "master-data--*", null, null, null, 10, 0, null, null, false);
+        
+        when(dynamoDBQueryHelperFactory.createQueryHelper(
+                tenantId,
+                SCHEMA_INFO_TABLE_PATH,
+                SchemaInfoDoc.class)).thenReturn(queryHelper);
+        
+        // Create test data
+        List<SchemaInfoDoc> mockResults = Lists.newArrayList(
+                createSchemaInfoDocWithEntityType("master-data--Well"),
+                createSchemaInfoDocWithEntityType("master-data--Wellbore"),
+                createSchemaInfoDocWithEntityType("master-data--Field")
+        );
+        
+        when(queryHelper.scanTable(any(ScanEnhancedRequest.class))).thenReturn(mockResults);
+        
+        // Execute
+        List<SchemaInfo> results = schemaInfoStore.getSchemaInfoList(queryParams, tenantId);
+        
+        // Verify results
+        assertEquals(3, results.size());
+        assertEquals("master-data--Well", results.get(0).getSchemaIdentity().getEntityType());
+        assertEquals("master-data--Wellbore", results.get(1).getSchemaIdentity().getEntityType());
+        assertEquals("master-data--Field", results.get(2).getSchemaIdentity().getEntityType());
     }
 }
