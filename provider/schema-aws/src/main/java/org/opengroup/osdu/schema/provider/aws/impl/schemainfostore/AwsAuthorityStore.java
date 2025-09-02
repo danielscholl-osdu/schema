@@ -87,9 +87,8 @@ public Authority create(Authority authority) throws ApplicationException, BadReq
     try {
         // Check if the authority already exists
         if (queryHelper.getItem(id).isPresent()) {
-            logger.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
-            throw new BadRequestException(
-                    MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION, authority.getAuthorityId()));
+            logger.info(MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED, authority.getAuthorityId()));
+            return authority;
         }
 
         // Create and save the document
@@ -98,8 +97,6 @@ public Authority create(Authority authority) throws ApplicationException, BadReq
 
         logger.info(SchemaConstants.AUTHORITY_CREATED);
         return authority;
-    } catch (BadRequestException ex) {
-        throw ex;
     } catch (Exception ex) {
         logger.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
         throw new ApplicationException(SchemaConstants.INVALID_INPUT);
