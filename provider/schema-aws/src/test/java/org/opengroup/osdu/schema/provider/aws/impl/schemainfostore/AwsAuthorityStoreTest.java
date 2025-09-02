@@ -188,7 +188,7 @@ class AwsAuthorityStoreTest {
     }
 
     @Test
-    void create_ThrowsBadRequestException_WhenAuthorityExists() {
+    void create_ReturnsExistingAuthority_WhenAuthorityExists() throws ApplicationException, BadRequestException {
         // Setup
         String authorityId = "existing-authority";
         String partitionId = "test-partition";
@@ -206,13 +206,14 @@ class AwsAuthorityStoreTest {
         // Mock query helper to return existing authority
         when(queryHelper.getItem(partitionId + ":" + authorityId)).thenReturn(Optional.of(existingDoc));
         
-        // Execute and verify
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
-            authorityStore.create(authority);
-        });
+        // Execute
+        Authority result = authorityStore.create(authority);
         
-        // Verify that the logger was called
-        verify(logger).warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
+        // Verify that the existing authority is returned
+        assertEquals(authority, result);
+        
+        // Verify that the logger was called with info message
+        verify(logger).info(anyString());
     }
 
     @Test
