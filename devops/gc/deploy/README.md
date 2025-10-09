@@ -52,9 +52,9 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **data.requestsCpu** | amount of requested CPU | string | `220m` | yes
-**data.requestsMemory** | amount of requested memory| string | `1.7G` | yes
+**data.requestsMemory** | amount of requested memory| string | `1.5G` | yes
 **data.limitsCpu** | CPU limit | string | `1` | only if `global.limitsEnabled` is true
-**data.limitsMemory** | memory limit | string | `1.5G` | only if `global.limitsEnabled` is true
+**data.limitsMemory** | memory limit | string | `2G` | only if `global.limitsEnabled` is true
 **data.bootstrapImage** | bootstrap image | string | - | yes
 **data.bootstrapServiceAccountName** | bootstrap service account name | string | - | yes
 **data.image** | service image | string | - | yes
@@ -117,7 +117,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | **hpa.requests.scaleDownValue**                      | the maximum number of replicas to destroy (in percents from current state)    | integer | `25`             | yes |
 | **hpa.requests.scaleDownPeriod**                     | pause for every new scale down decision                                       | integer | `60`             | yes |
 
-
 ### Limits variables
 
 | Name                     | Description                                     | Type    | Default | Required                                       |
@@ -149,9 +148,9 @@ Each label, along with its values, will be translated into a separate `- matchEx
 
 The chart uses the global.autoscaling parameter in your `values.yaml` to control how autoscaling behaves. This parameter accepts three possible string values:
 
-- **cpu** (default): Autoscaling is enabled and is based on CPU utilization. This is the default setting.
-- **requests**: Autoscaling is enabled and is based on resource requests (custom metrics). To enable this, you must also set your global.tier to PROD. **NOTE**: Prometheus should be installed in your cluster, custom metrics used for this type of autoscaling.
-- **none**: Autoscaling is entirely disabled for the application. Setting `global.autoscaling` to **none** also prevents the creation of the spot deployment.
+* **cpu** (default): Autoscaling is enabled and is based on CPU utilization. This is the default setting.
+* **requests**: Autoscaling is enabled and is based on resource requests (custom metrics). To enable this, you must also set your global.tier to PROD. **NOTE**: Prometheus should be installed in your cluster, custom metrics used for this type of autoscaling.
+* **none**: Autoscaling is entirely disabled for the application. Setting `global.autoscaling` to **none** also prevents the creation of the spot deployment.
 
 ### Methodology for Parameter Calculation variables: **hpa.requests.targetValue**, **limits.maxTokens** and **limits.tokensPerFill**
 
