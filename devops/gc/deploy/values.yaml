@@ -17,9 +17,9 @@ data:
   schemaHost: "http://schema"
   #Deployments
   requestsCpu: "220m"
-  requestsMemory: "950Mi"
+  requestsMemory: "1.5G"
   limitsCpu: "1"
-  limitsMemory: "2.5G"
+  limitsMemory: "2G"
   bootstrapImage: ""
   bootstrapServiceAccountName: ""
   image: ""
@@ -48,7 +48,7 @@ hpa:
   minReplicas: 1
   maxReplicas: 6
   cpu:
-    utilization: 200
+    utilization: 120
     scaleUpStabilizationWindowSeconds: 30
     scaleUpValue: 200
     scaleUpPeriod: 15

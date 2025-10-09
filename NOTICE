@@ -304,7 +304,7 @@ The following software have components provided under the terms of this license:
 - resilience4j (from https://github.com/resilience4j/resilience4j, https://resilience4j.readme.io, ttps://resilience4j.readme.io)
 - spring-boot-loader (from https://spring.io/projects/spring-boot)
 - springdoc-openapi-starter-common (from https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi-starter-common)
-- springdoc-openapi-starter-webmvc-api (from https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi-starter-webmvc-api)
+- springdoc-openapi-starter-webmvc-api (from https://repository.cloudera.com/artifactory/cloudera-repos/org/springdoc/springdoc-openapi-starter-webmvc-api)
 - springdoc-openapi-starter-webmvc-ui (from https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi-starter-webmvc-ui)
 - swagger-annotations (from https://repo1.maven.org/maven2/io/swagger/core/v3/swagger-annotations, https://repo1.maven.org/maven2/io/swagger/swagger-annotations)
 - swagger-annotations-jakarta (from https://repo1.maven.org/maven2/io/swagger/core/v3/swagger-annotations-jakarta)
