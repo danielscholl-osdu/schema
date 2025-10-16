@@ -148,6 +148,7 @@ The following software have components provided under the terms of this license:
 - JMES Path Query library (from https://aws.amazon.com/sdkforjava)
 - JSON Small and Fast Parser (from https://repo1.maven.org/maven2/net/minidev/json-smart, https://urielch.github.io/)
 - JSON library from Android SDK (from http://developer.android.com/sdk)
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - JSONassert (from http://github.com/skyscreamer/yoga, https://github.com/skyscreamer/JSONassert)
 - JSR107 API and SPI (from https://github.com/jsr107/jsr107spec)
 - JSpecify annotations (from http://jspecify.org/)
@@ -304,7 +305,7 @@ The following software have components provided under the terms of this license:
 - resilience4j (from https://github.com/resilience4j/resilience4j, https://resilience4j.readme.io, ttps://resilience4j.readme.io)
 - spring-boot-loader (from https://spring.io/projects/spring-boot)
 - springdoc-openapi-starter-common (from https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi-starter-common)
-- springdoc-openapi-starter-webmvc-api (from https://repository.cloudera.com/artifactory/cloudera-repos/org/springdoc/springdoc-openapi-starter-webmvc-api)
+- springdoc-openapi-starter-webmvc-api (from https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi-starter-webmvc-api)
 - springdoc-openapi-starter-webmvc-ui (from https://repo1.maven.org/maven2/org/springdoc/springdoc-openapi-starter-webmvc-ui)
 - swagger-annotations (from https://repo1.maven.org/maven2/io/swagger/core/v3/swagger-annotations, https://repo1.maven.org/maven2/io/swagger/swagger-annotations)
 - swagger-annotations-jakarta (from https://repo1.maven.org/maven2/io/swagger/core/v3/swagger-annotations-jakarta)
@@ -353,6 +354,7 @@ The following software have components provided under the terms of this license:
 - Hamcrest (from http://hamcrest.org/JavaHamcrest/)
 - Hamcrest Core (from http://hamcrest.org/, http://hamcrest.org/JavaHamcrest/, https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core)
 - JSON-B API (from https://jakartaee.github.io/jsonb-api)
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://github.com/jakartaee/jaf-api, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta Annotations API (from https://projects.eclipse.org/projects/ee4j.ca)
 - Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
@@ -406,6 +408,7 @@ CDDL-1.0
 The following software have components provided under the terms of this license:
 
 - Apache Log4j Core (from https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core)
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - Java Architecture for XML Binding (from http://jaxb.java.net/, https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api)
 - javax.annotation API (from http://jcp.org/en/jsr/detail?id=250)
@@ -415,6 +418,7 @@ CDDL-1.1
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - Java Architecture for XML Binding (from http://jaxb.java.net/, https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api)
 - javax.annotation API (from http://jcp.org/en/jsr/detail?id=250)
@@ -440,6 +444,7 @@ EPL-1.0
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - JUnit Vintage Engine (from http://junit.org/junit5/, https://junit.org/junit5/)
 - Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - Logback Contrib :: JSON :: Classic (from https://repo1.maven.org/maven2/ch/qos/logback/contrib/logback-json-classic)
@@ -456,6 +461,7 @@ The following software have components provided under the terms of this license:
 - AspectJ Weaver (from http://www.aspectj.org, https://www.eclipse.org/aspectj/)
 - Eclipse Parsson (from https://repo1.maven.org/maven2/org/eclipse/parsson/parsson)
 - JSON-B API (from https://jakartaee.github.io/jsonb-api)
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - JUnit Jupiter (Aggregator) (from https://junit.org/junit5/)
 - JUnit Jupiter API (from http://junit.org/junit5/, https://junit.org/junit5/)
 - JUnit Jupiter Engine (from http://junit.org/junit5/, https://junit.org/junit5/)
@@ -478,6 +484,7 @@ GPL-2.0-only
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - tomcat-embed-core (from http://tomcat.apache.org/)
 
@@ -490,6 +497,7 @@ The following software have components provided under the terms of this license:
 - Eclipse Parsson (from https://repo1.maven.org/maven2/org/eclipse/parsson/parsson)
 - Google Guice - Core Library (from https://repo1.maven.org/maven2/com/google/inject/guice)
 - JSON-B API (from https://jakartaee.github.io/jsonb-api)
+- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf, https://github.com/jakartaee/jaf-api, https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta Annotations API (from https://projects.eclipse.org/projects/ee4j.ca)
 - Jakarta Dependency Injection (from https://github.com/eclipse-ee4j/injection-api)
