@@ -80,11 +80,12 @@ public class JSONUtil {
 	}
 
 	public  JsonArray getJsonArrayFromGivenPath(String jsonString, String rootPath) {
-		JsonReader reader = Json.createReader(new StringReader(jsonString));
-		JsonStructure jsonStruct = reader.read();
-		JsonPointer jp = Json.createPointer(rootPath); 
-		JsonValue oldJsonVal = jp.getValue(jsonStruct);
-		return oldJsonVal.asJsonArray();
+		try (JsonReader reader = Json.createReader(new StringReader(jsonString))) {
+			JsonStructure jsonStruct = reader.read();
+			JsonPointer jp = Json.createPointer(rootPath); 
+			JsonValue oldJsonVal = jp.getValue(jsonStruct);
+			return oldJsonVal.asJsonArray();
+		}
 	}
 
 	private void clean(JsonNode node, String path) {
