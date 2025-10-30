@@ -38,7 +38,7 @@
     <cucumber.version>7.20.1</cucumber.version>
 		<!-- Plugin Versions -->
 		<surefire-plugin.version>3.2.2</surefire-plugin.version>
-		<jacoco-plugin.version>0.8.12</jacoco-plugin.version>
+		<jacoco-plugin.version>0.8.14</jacoco-plugin.version>
 	</properties>
 
 	<dependencyManagement>
