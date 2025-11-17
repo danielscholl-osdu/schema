@@ -73,7 +73,6 @@ public class SchemaServiceStepDef_GET {
 		HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 		this.context.setHttpResponse(response);
 		assertEquals("200", String.valueOf(response.getCode()));
-		LOGGER.log(Level.INFO, "resp - " + response.toString());
 		verifyGetListResponse(TestConstants.AUTHORITY, authority);
 	}
 
@@ -88,7 +87,6 @@ public class SchemaServiceStepDef_GET {
 		HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 		this.context.setHttpResponse(response);
 		assertEquals("200", String.valueOf(response.getCode()));
-		LOGGER.log(Level.INFO, "resp - " + response.toString());
 		verifyGetListResponse(parameter, parameterVal);
 	}
 

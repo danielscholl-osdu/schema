@@ -73,6 +73,9 @@ public class MessageBusImpl implements IMessageBus {
 				//We do not want to fail schema creation if notification delivery has failed, hence just logging the exception
 				auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
 				logger.warning(SchemaConstants.SCHEMA_NOTIFICATION_FAILED, ex);
+			} catch(Exception e){
+
+				logger.error(e.getMessage());
 			}
 
 		}else {
@@ -109,6 +112,9 @@ public class MessageBusImpl implements IMessageBus {
 				//We do not want to fail schema creation if notification delivery has failed, hence just logging the exception
 				auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
 				logger.warning(SchemaConstants.SCHEMA_NOTIFICATION_FAILED,ex);
+			}catch (Exception e){
+
+				logger.error(e.getMessage());
 			}
 
 		}else {

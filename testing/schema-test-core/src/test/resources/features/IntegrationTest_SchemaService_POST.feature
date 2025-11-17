@@ -63,14 +63,14 @@ Feature: To verify functionality of POST schema Service
       | "/input_payloads/postSchema_withEntityAttributeInPayload.json" | "TENANT1" | "400"             | "/output_payloads/PostSchema_EntityNotAllowedError.json"   |
       | "/input_payloads/postSchema_flattenedSchemaAsInput.json"       | "TENANT1" | "400"             | "/output_payloads/PostSchema_InvalidInputSchemaError.json" |
 
-  @Not_Running
-  Scenario Outline: Verify that Schema Service supersededBy functionality work correctly
-    Given I hit schema service POST API for supersededBy with <InputPayload> and data-partition-id as <tenant>
-    Then post service for supersededBy should respond back with <ReponseStatusCode> and <ResponseMessage>
-
-    Examples: 
-      | InputPayload                                           | tenant    | ReponseStatusCode | ResponseMessage                                                    |
-      | "/input_payloads/supercededInputPayload_positive.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
+#  @Not_Running
+#  Scenario Outline: Verify that Schema Service supersededBy functionality work correctly
+#    Given I hit schema service POST API for supersededBy with <InputPayload> and data-partition-id as <tenant>
+#    Then post service for supersededBy should respond back with <ReponseStatusCode> and <ResponseMessage>
+#
+#    Examples:
+#      | InputPayload                                           | tenant    | ReponseStatusCode | ResponseMessage                                                    |
+#      | "/input_payloads/supercededInputPayload_positive.json" | "TENANT1" | "201"             | "/output_payloads/SchemaPost_PrivateScope_SuccessfulCreation.json" |
 
   @SchemaService
   Scenario Outline: Verify whether schema can not be registered with already existing major, but increased minor version

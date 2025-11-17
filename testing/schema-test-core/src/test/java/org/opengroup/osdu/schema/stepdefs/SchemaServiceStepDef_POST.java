@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import org.junit.Assert;
 import org.opengroup.osdu.schema.constants.TestConstants;
@@ -40,7 +39,6 @@ public class SchemaServiceStepDef_POST {
 	String queryParameter;
 	static HashMap<String, String> map1=new HashMap<>();
 
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	List<HashMap<String, String>> list_schemaParameterMap = new ArrayList<HashMap<String, String>>();
 
 	@Given("I hit schema service POST API with {string} and data-partition-id as {string} only if status is not development")

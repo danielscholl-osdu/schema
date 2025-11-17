@@ -148,7 +148,6 @@ The following software have components provided under the terms of this license:
 - JMES Path Query library (from https://aws.amazon.com/sdkforjava)
 - JSON Small and Fast Parser (from https://repo1.maven.org/maven2/net/minidev/json-smart, https://urielch.github.io/)
 - JSON library from Android SDK (from http://developer.android.com/sdk)
-- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - JSONassert (from http://github.com/skyscreamer/yoga, https://github.com/skyscreamer/JSONassert)
 - JSR107 API and SPI (from https://github.com/jsr107/jsr107spec)
 - JSpecify annotations (from http://jspecify.org/)
@@ -162,7 +161,6 @@ The following software have components provided under the terms of this license:
 - Jackson-dataformat-YAML (from https://github.com/FasterXML/jackson, https://github.com/FasterXML/jackson-dataformats-text)
 - Jackson-module-parameter-names (from https://repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-parameter-names)
 - Jakarta Dependency Injection (from https://github.com/eclipse-ee4j/injection-api)
-- Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - Jakarta Servlet (from https://projects.eclipse.org/projects/ee4j.servlet)
 - Jakarta Validation API (from https://beanvalidation.org)
 - Java Architecture for XML Binding (from http://jaxb.java.net/, https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api)
@@ -207,13 +205,19 @@ The following software have components provided under the terms of this license:
 - Nimbus LangTag (from https://bitbucket.org/connect2id/nimbus-language-tags)
 - Non-Blocking Reactive Foundation for the JVM (from https://github.com/reactor/reactor, https://github.com/reactor/reactor-core)
 - OAuth 2.0 SDK with OpenID Connect extensions (from https://bitbucket.org/connect2id/oauth-2.0-sdk-with-openid-connect-extensions)
-- Objenesis (from https://repo1.maven.org/maven2/org/objenesis/objenesis)
+- Objenesis (from https://repo1.maven.org/maven2/org/objenesis/objenesis, https://repository.cloudera.com/artifactory/cloudera-repos/org/objenesis/objenesis)
 - OkHttp (from https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp, https://square.github.io/okhttp/)
 - OkHttp Logging Interceptor (from https://github.com/square/okhttp, https://repo1.maven.org/maven2/com/squareup/okhttp3/logging-interceptor, https://square.github.io/okhttp/)
 - OkHttp URLConnection (from https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp-urlconnection, https://square.github.io/okhttp/)
 - Okio (from https://github.com/square/okio/, https://repo1.maven.org/maven2/com/squareup/okio/okio)
 - OpenCensus (from https://github.com/census-instrumentation/opencensus-java)
 - OpenTelemetry Java (from https://github.com/open-telemetry/opentelemetry-java)
+- Prometheus Metrics Config (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-config)
+- Prometheus Metrics Core (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-core)
+- Prometheus Metrics Exposition Formats (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-exposition-formats)
+- Prometheus Metrics Exposition Text Formats (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-exposition-textformats)
+- Prometheus Metrics Model (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-model)
+- Prometheus Metrics Tracer Common (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-tracer-common)
 - Protocol Buffer extensions to the Google HTTP Client Library for Java. (from https://repo1.maven.org/maven2/com/google/http-client/google-http-client-protobuf)
 - Proton-J (from https://repo1.maven.org/maven2/org/apache/qpid/proton-j)
 - QpidJMS Client (from https://repo1.maven.org/maven2/org/apache/qpid/qpid-jms-client)
@@ -292,6 +296,7 @@ The following software have components provided under the terms of this license:
 - micrometer-jakarta9 (from https://github.com/micrometer-metrics/micrometer)
 - micrometer-observation (from https://github.com/micrometer-metrics/micrometer)
 - micrometer-registry-azure-monitor (from https://github.com/micrometer-metrics/micrometer)
+- micrometer-registry-prometheus (from <https://github.com/micrometer-metrics/micrometer>, https://github.com/micrometer-metrics/micrometer)
 - org.apiguardian:apiguardian-api (from https://github.com/apiguardian-team/apiguardian)
 - org.conscrypt:conscrypt-openjdk-uber (from https://conscrypt.org/)
 - org.opentest4j:opentest4j (from https://github.com/ota4j-team/opentest4j)
@@ -365,6 +370,7 @@ The following software have components provided under the terms of this license:
 - Mockito (from http://mockito.org, http://www.mockito.org, https://github.com/mockito/mockito)
 - Netty/Codec/HTTP (from https://repo1.maven.org/maven2/io/netty/netty-codec-http)
 - Old JAXB Core (from <https://eclipse-ee4j.github.io/jaxb-ri/>, https://eclipse-ee4j.github.io/jaxb-ri/, https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl)
+- Prometheus Metrics Exposition Formats (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-exposition-formats)
 - Protocol Buffer Java API (from http://code.google.com/p/protobuf, https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java)
 - Protocol Buffers [Util] (from https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java-util)
 - RE2/J (from http://github.com/google/re2j)
@@ -408,8 +414,6 @@ CDDL-1.0
 The following software have components provided under the terms of this license:
 
 - Apache Log4j Core (from https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core)
-- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
-- Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - Java Architecture for XML Binding (from http://jaxb.java.net/, https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api)
 - javax.annotation API (from http://jcp.org/en/jsr/detail?id=250)
 
@@ -418,8 +422,6 @@ CDDL-1.1
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
-- Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - Java Architecture for XML Binding (from http://jaxb.java.net/, https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api)
 - javax.annotation API (from http://jcp.org/en/jsr/detail?id=250)
 - tomcat-embed-core (from http://tomcat.apache.org/)
@@ -444,9 +446,7 @@ EPL-1.0
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
 - JUnit Vintage Engine (from http://junit.org/junit5/, https://junit.org/junit5/)
-- Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - Logback Contrib :: JSON :: Classic (from https://repo1.maven.org/maven2/ch/qos/logback/contrib/logback-json-classic)
 - Logback Contrib :: JSON :: Core (from https://repo1.maven.org/maven2/ch/qos/logback/contrib/logback-json-core)
 - Logback Contrib :: Jackson (from https://repo1.maven.org/maven2/ch/qos/logback/contrib/logback-jackson)
@@ -484,8 +484,6 @@ GPL-2.0-only
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- JSON-P Default Provider (from https://github.com/eclipse-ee4j/jsonp)
-- Jakarta JSON Processing API (from https://github.com/eclipse-ee4j/jsonp, https://javaee.github.io/jsonp)
 - tomcat-embed-core (from http://tomcat.apache.org/)
 
 ========================================================================
