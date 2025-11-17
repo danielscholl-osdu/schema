@@ -2,28 +2,15 @@ package org.opengroup.osdu.schema.util;
 
 import static io.restassured.RestAssured.given;
 
-import java.net.ConnectException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import javax.net.ssl.SSLHandshakeException;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.UUID;
 
 import org.opengroup.osdu.schema.constants.HttpConnection;
 import org.opengroup.osdu.schema.constants.TestConstants;
 import org.opengroup.osdu.schema.stepdefs.model.HttpRequest;
 import org.opengroup.osdu.schema.stepdefs.model.HttpResponse;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -38,8 +25,6 @@ import io.restassured.specification.RequestSpecification;
 import org.springframework.retry.support.RetryTemplate;
 
 public class RestAssuredClient implements HttpClient {
-    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
     RestAssuredClient() {
         // Due to a known issue in RestAssured the following deprecated methods has to
         // be used
@@ -54,13 +39,7 @@ public class RestAssuredClient implements HttpClient {
     private final RetryTemplate template = RetryTemplate.builder()
             .maxAttempts(TestConstants.HTTP_RETRY_COUNT)
             .fixedBackoff(TestConstants.HTTP_RETRY_BACKOFF_MILLIS)
-            .retryOn(Arrays.asList(
-                UndesiredHTTPResponseCodeException.class,
-                SocketException.class,
-                SocketTimeoutException.class,
-                ConnectException.class,
-                UnknownHostException.class,
-                SSLHandshakeException.class))
+            .retryOn(UndesiredHTTPResponseCodeException.class)
             .build();
 
     private class UndesiredHTTPResponseCodeException extends Exception {
@@ -92,41 +71,26 @@ public class RestAssuredClient implements HttpClient {
         if (httpRequest.getBody() != null) {
             requestSpecification.body(httpRequest.getBody());
         }
-        
-        Response finalResponse = null;
+
         try {
             // The template performs retries in case of UndesiredHTTPResponseCodeException occurs in the code specified within context
-            finalResponse = template.execute(context -> {
-                String correlationId = UUID.randomUUID().toString();
-                httpRequest.getRequestHeaders().put("correlation-id", correlationId);
-                LOGGER.log(Level.INFO, "HTTP Request Sending with correlation-id: " + correlationId);
-
+            return template.execute(context -> {
                 Response response = given(requestSpecification).request(httpRequest.getHttpMethod()).then().extract()
                         .response();
                 if (listOfRetriableStatusCodes.contains(response.getStatusCode())) {
                     throw new UndesiredHTTPResponseCodeException(response.toString());
                 }
-                return response;
+                return getHttpResponse(response);
             });
-            return getHttpResponse(finalResponse);
         }
-        catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Exception during HTTP Request Send.", e);
+        catch (UndesiredHTTPResponseCodeException e) {
+            // This is returned when all retries result in UndesiredHTTPResponseCodeException
+            Response response = given(requestSpecification).request(httpRequest.getHttpMethod()).then().extract()
+                    .response();
+            return getHttpResponse(response);
+        } catch (Exception e) {
+            // This is returned when any of the retries fails with any exception other than UndesiredHTTPResponseCodeException
             return HttpResponse.builder().exception(e).build();
-        } finally {
-            if (finalResponse == null) {
-                LOGGER.log(Level.SEVERE, "HTTP Response Received: null.");
-            } else {
-                String formattedResponseHeaders = 
-                finalResponse.getHeaders().asList().stream()
-                    .map(header -> header.getName() + "=" + header.getValue())
-                    .collect(Collectors.joining(", "));
-                
-                LOGGER.log(Level.INFO, "HTTP Response Received: \n" +
-                "Response Headers: " + formattedResponseHeaders + "\n" +
-                "Response Status Code: " + finalResponse.getStatusCode() + "\n" +
-                "Response Body: " + formatJson(finalResponse.getBody().asString()));
-            }
         }
     }
 
@@ -134,16 +98,5 @@ public class RestAssuredClient implements HttpClient {
     public <T> T send(HttpRequest httpRequest, Class<T> classOfT) {
         HttpResponse httpResponse = send(httpRequest);
         return JsonUtils.fromJson(httpResponse.getBody(), classOfT);
-    }
-
-    private String formatJson(String json) {
-        try {
-            return new GsonBuilder().setPrettyPrinting().create()
-                    .toJson(JsonParser.parseString(json));
-        } catch (Exception e) {
-            // Return the original JSON if formatting fails
-            LOGGER.log(Level.WARNING, "Failed to format JSON", e);
-            return json;
-        }
     }
 }

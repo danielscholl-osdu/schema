@@ -2,14 +2,12 @@ package org.opengroup.osdu.schema.constants;
 
 public class TestConstants {
     public static final String FORWARD_SLASH = "/";
-    public static final String PUT_ENDPOINT = "/api/schema-service/v1/schema";
-    public static final String PUT_SYSTEM_SCHEMA_ENDPOINT = "/api/schema-service/v1/schemas/system";
+    public static final String PUT_ENDPOINT = "/api/schema-service/v1/schemas/system";
     public static final String POST_ENDPOINT = "/api/schema-service/v1/schema";
     public static final String GET_LIST_ENDPOINT = "/api/schema-service/v1/schema";
     public static final String GET_ENDPOINT = "/api/schema-service/v1/schema/";
     public static final String GET_FLATTENED_ENDPOINT = "/api/schema-service/v1/schema/{id}/IndexerSchemaV1";
     public static final String GET_INFO_ENDPOINT = "/api/schema-service/v1/info";
-    public static final String GET_LIVENESS_ENDPOINT = "/api/schema-service/v1/liveness_check";
     //public static final String HOST = "http://localhost:8080";
     public static final String INTERNAL_SERVER_ERROR = "internal server error";
     public static final String INTERNAL = "INTERNAL";
@@ -56,14 +54,9 @@ public class TestConstants {
     public static final String PRIVATE_TENANT1 = System.getProperty("PRIVATE_TENANT1", System.getenv("PRIVATE_TENANT1"));
     public static final String PRIVATE_TENANT2 = System.getProperty("PRIVATE_TENANT2", System.getenv("PRIVATE_TENANT2"));
     public static final String SHARED_TENANT = System.getProperty("SHARED_TENANT", System.getenv("SHARED_TENANT"));
+    public static final String SYSTEM_TENANT = System.getProperty("SYSTEM_TENANT", System.getenv("SYSTEM_TENANT"));
     public static final Integer HTTP_RETRY_COUNT_DEFAULT = 3;
     public static final Integer HTTP_RETRY_COUNT = System.getenv("HTTP_RETRY_COUNT")!=null ? Integer.parseInt(System.getenv("HTTP_RETRY_COUNT")) : HTTP_RETRY_COUNT_DEFAULT ;
     public static final Long HTTP_RETRY_BACKOFF_MILLIS_DEFAULT = 1000L;
     public static final Long HTTP_RETRY_BACKOFF_MILLIS = System.getenv("HTTP_RETRY_BACKOFF")!=null ? Long.parseLong(System.getenv("HTTP_RETRY_BACKOFF")) : HTTP_RETRY_BACKOFF_MILLIS_DEFAULT ;
-    public static final Integer EXPONENTIALBACKOFF_INITIALINTERVAL_DEFAULT = 1000;
-    public static final Integer EXPONENTIALBACKOFF_INITIALINTERVAL = System.getenv("EXPONENTIALBACKOFF_INITIALINTERVAL")!=null ? Integer.parseInt(System.getenv("EXPONENTIALBACKOFF_INITIALINTERVAL")) : EXPONENTIALBACKOFF_INITIALINTERVAL_DEFAULT ;
-    public static final Integer EXPONENTIALBACKOFF_MULTIPLIER_DEFAULT = 2;
-    public static final Integer EXPONENTIALBACKOFF_MULTIPLIER = System.getenv("EXPONENTIALBACKOFF_MULTIPLIER")!=null ? Integer.parseInt(System.getenv("EXPONENTIALBACKOFF_MULTIPLIER")) : EXPONENTIALBACKOFF_MULTIPLIER_DEFAULT ;
-    public static final Integer EXPONENTIALBACKOFF_MAXINTERVAL_DEFAULT = 5000;
-    public static final Integer EXPONENTIALBACKOFF_MAXINTERVAL = System.getenv("EXPONENTIALBACKOFF_MAXINTERVAL")!=null ? Integer.parseInt(System.getenv("EXPONENTIALBACKOFF_MAXINTERVAL")) : EXPONENTIALBACKOFF_MAXINTERVAL_DEFAULT ;
 }

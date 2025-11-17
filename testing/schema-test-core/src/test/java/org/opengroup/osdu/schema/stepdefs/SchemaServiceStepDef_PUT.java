@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.junit.Assert;
 import org.opengroup.osdu.schema.constants.TestConstants;
@@ -36,7 +34,6 @@ public class SchemaServiceStepDef_PUT {
 	static String[] GetListVersionFilterArray;
 	String queryParameter;
 
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	List<HashMap<String, String>> list_schemaParameterMap = new ArrayList<HashMap<String, String>>();
 
 	@Given("I hit schema service PUT API with {string}, data-partition-id as {string} and mark schema as {string}")

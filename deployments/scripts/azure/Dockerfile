@@ -15,8 +15,7 @@ ENV DATA_PARTITION="opendes" \
   AZURE_TEST_SUBDIR="testing/schema-test-core" \
   AZURE_DEPLOYMENTS_SUBDIR="deployments/scripts/azure" \
   AZURE_DEPLOYMENTS_SCRIPTS_SUBDIR="deployments/scripts" \
-  AZURE_DNS_NAME=$AZURE_DNS_NAME \
-  AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net"
+  AZURE_DNS_NAME=$AZURE_DNS_NAME
 
 USER root
 

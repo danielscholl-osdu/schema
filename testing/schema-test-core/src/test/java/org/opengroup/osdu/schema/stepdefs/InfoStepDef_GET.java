@@ -29,8 +29,12 @@ import io.cucumber.java.en.Then;
 import org.opengroup.osdu.schema.stepdefs.model.HttpRequest;
 import org.opengroup.osdu.schema.stepdefs.model.HttpResponse;
 import org.opengroup.osdu.schema.stepdefs.model.SchemaServiceScope;
+import org.opengroup.osdu.schema.util.AuthUtil;
 import org.opengroup.osdu.schema.util.HttpClientFactory;
 import org.opengroup.osdu.schema.util.VersionInfoUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InfoStepDef_GET {
 
@@ -64,11 +68,18 @@ public class InfoStepDef_GET {
 		assertNotNull(responseObject.commitId);
 		assertNotNull(responseObject.commitMessage);
 	}
-	@Given("I send get request without a token to version info with Trailing Slash")
-	public void i_send_get_request_to_version_info_withTrailingSlash() {
+	@Given("I send get request to version info with Trailing Slash")
+	public void i_send_get_request_to_version_info_withTrailingSlash() throws Exception {
+		if (this.context.getToken() == null) {
+			String token = new AuthUtil().getToken();
+			this.context.setToken(token);
+		}
+		Map<String, String> authHeaders = new HashMap<String, String>();
+		authHeaders.put(TestConstants.AUTHORIZATION, this.context.getToken());
 		HttpRequest httpRequest = HttpRequest.builder()
 				.url(TestConstants.HOST + TestConstants.GET_INFO_ENDPOINT+"/")
 				.httpMethod(HttpRequest.GET)
+				.requestHeaders(authHeaders)
 				.build();
 		HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 		this.context.setHttpResponse(response);

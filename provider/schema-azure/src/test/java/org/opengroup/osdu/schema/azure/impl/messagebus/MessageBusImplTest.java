@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -110,6 +111,48 @@ public class MessageBusImplTest {
         messageBusImpl.publishMessage("dummy", "dummy");
         //Assert that eventGridTopicStore is not called even once
         verify(this.messagePublisher, times(0)).publishMessage(any(), any(), any());
+    }
+    @Test
+    public void shouldPublishGSMMessage_ValidInput_LogsWarning() {
+        //given
+        when(this.eventGridConfig.isEventGridEnabled()).thenReturn(true);
+        when(this.pubSubConfig.isServiceBusEnabled()).thenReturn(false);
+        //The schema-notification is turned off
+        when(this.eventGridConfig.getCustomTopicName()).thenReturn("dummy-topic");
+
+        doThrow(new RuntimeException("Some error occurred")).when(messagePublisher)
+                .publishMessage(any(DpsHeaders.class), any(PublisherInfo.class), any());
+
+        //when
+        messageBusImpl.publishMessage("dummy", "dummy");
+
+        //then
+        verify(messagePublisher, times(1))
+                .publishMessage(any(DpsHeaders.class), any(PublisherInfo.class), any());
+
+        verify(logger,times(1)).error("Some error occurred");
+
+    }
+
+    @Test
+    public void shouldPublishGSMMessage_ValidInput_PublicSchema_LogsWarning() {
+        //given
+        when(this.eventGridConfig.isEventGridEnabled()).thenReturn(true);
+        when(this.pubSubConfig.isServiceBusEnabled()).thenReturn(false);
+        //The schema-notification is turned off
+        when(this.eventGridConfig.getCustomTopicName()).thenReturn("dummy-topic");
+
+        doThrow(new RuntimeException("Some error occurred")).when(messagePublisher)
+                .publishMessage(any(DpsHeaders.class), any(PublisherInfo.class), any());
+
+        //Call publish Message
+        messageBusImpl.publishMessageForSystemSchema("dummy", "dummy");
+        messageBusImpl.publishMessage("dummy", "dummy");
+
+        //Assert that eventGridTopicStore is not called even once
+        verify(this.messagePublisher, times(1)).publishMessage(any(DpsHeaders.class), any(PublisherInfo.class), any());
+
+        verify(logger,times(1)).error("Some error occurred");
     }
 
     @Test
