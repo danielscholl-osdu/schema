@@ -10,7 +10,7 @@
 	<artifactId>os-schema-gc</artifactId>
 	<description>Google cloud related implementation staff.</description>
 	<packaging>jar</packaging>
-	<version>0.29.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<dependencies>
 		<dependency>
