@@ -101,6 +101,7 @@ The following software have components provided under the terms of this license:
 - Apache Log4j to SLF4J Adapter (from https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-to-slf4j)
 - AssertJ Core (from https://assertj.github.io/doc/#assertj-core)
 - Asynchronous Http Client (from https://repo1.maven.org/maven2/org/asynchttpclient/async-http-client)
+- Asynchronous Http Client Netty Utils (from https://repo1.maven.org/maven2/org/asynchttpclient/async-http-client-netty-utils)
 - AutoValue Annotations (from https://github.com/google/auto/tree/main/value, https://github.com/google/auto/tree/master/value, https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations)
 - Awaitility (from http://awaitility.org)
 - BSON (from http://bsonspec.org, https://bsonspec.org)
@@ -182,6 +183,7 @@ The following software have components provided under the terms of this license:
 - Mockito (from http://mockito.org, http://www.mockito.org, https://github.com/mockito/mockito)
 - MongoDB Driver (from https://www.mongodb.com/)
 - MongoDB Java Driver (from http://mongodb.org/, http://www.mongodb.org, https://www.mongodb.com/)
+- Netty Reactive Streams Implementation (from https://repo1.maven.org/maven2/com/typesafe/netty/netty-reactive-streams)
 - Netty/Buffer (from https://repo1.maven.org/maven2/io/netty/netty-buffer)
 - Netty/Codec (from https://repo1.maven.org/maven2/io/netty/netty-codec)
 - Netty/Codec/DNS (from https://repo1.maven.org/maven2/io/netty/netty-codec-dns)
@@ -306,6 +308,7 @@ The following software have components provided under the terms of this license:
 - proto-google-cloud-datastore-v1 (from https://github.com/googleapis/googleapis, https://github.com/googleapis/java-datastore/proto-google-cloud-datastore-v1)
 - proto-google-common-protos (from https://github.com/googleapis/api-client-staging, https://github.com/googleapis/googleapis, https://github.com/googleapis/java-iam/proto-google-common-protos, https://github.com/googleapis/sdk-platform-java)
 - proto-google-iam-v1 (from https://github.com/googleapis/googleapis, https://github.com/googleapis/java-iam/proto-google-iam-v1, https://github.com/googleapis/sdk-platform-java)
+- redis-authx-core (from https://github.com/redis/redis-authx-core)
 - requests (from http://python-requests.org, https://requests.readthedocs.io)
 - resilience4j (from https://github.com/resilience4j/resilience4j, https://resilience4j.readme.io, ttps://resilience4j.readme.io)
 - spring-boot-loader (from https://spring.io/projects/spring-boot)
@@ -415,6 +418,7 @@ The following software have components provided under the terms of this license:
 
 - Apache Log4j Core (from https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core)
 - Java Architecture for XML Binding (from http://jaxb.java.net/, https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api)
+- Streaming API for XML (from https://repo1.maven.org/maven2/javax/xml/stream/stax-api)
 - javax.annotation API (from http://jcp.org/en/jsr/detail?id=250)
 
 ========================================================================
@@ -543,7 +547,6 @@ MIT
 The following software have components provided under the terms of this license:
 
 - Animal Sniffer Annotations (from https://repo1.maven.org/maven2/org/codehaus/mojo/animal-sniffer-annotations)
-- Apache HttpClient Cache (from http://hc.apache.org/httpcomponents-client, http://hc.apache.org/httpcomponents-client-ga)
 - Azure Java Client Authentication Library for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Java Client Runtime for ARM (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Java Client Runtime for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
@@ -620,6 +623,7 @@ The following software have components provided under the terms of this license:
 - adal4j (from https://github.com/AzureAD/azure-activedirectory-library-for-java)
 - botocore (from <https://github.com/boto/botocore>, https://github.com/boto/botocore)
 - javamsalruntime (from https://github.com/AzureAD/microsoft-authentication-library-for-cpp)
+- jwks-rsa-java (from https://github.com/auth0/jwks-rsa-java)
 - micrometer-commons (from https://github.com/micrometer-metrics/micrometer)
 - micrometer-core (from https://github.com/micrometer-metrics/micrometer)
 - mockito-inline (from http://mockito.org, https://github.com/mockito/mockito)
@@ -628,6 +632,7 @@ The following software have components provided under the terms of this license:
 - msal4j (from https://github.com/AzureAD/microsoft-authentication-library-for-java)
 - msal4j-brokers (from https://github.com/AzureAD/microsoft-authentication-library-for-java)
 - msal4j-persistence-extension (from https://github.com/AzureAD/microsoft-authentication-extensions-for-java, https://github.com/AzureAD/microsoft-authentication-library-for-java)
+- redis-authx-core (from https://github.com/redis/redis-authx-core)
 - webjars-locator-lite (from https://webjars.org)
 
 ========================================================================
@@ -656,6 +661,7 @@ cc-pd
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- Guava: Google Core Libraries for Java (from http://code.google.com/p/guava-libraries, https://github.com/google/guava, https://repo1.maven.org/maven2/com/google/guava/guava)
 - Netty/Codec (from https://repo1.maven.org/maven2/io/netty/netty-codec)
 
 ========================================================================
