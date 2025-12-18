@@ -26,3 +26,7 @@ data:
   SCHEMA_CHANGED_MESSAGING_ENABLED: {{ .Values.data.schemaChangedMessagingEnabled | quote }}
   PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
   _JAVA_OPTIONS: {{ .Values.data.javaOptions | quote }}
+  {{- if .Values.data.otelJavaagentEnabled }}
+  OTEL_JAVAAGENT_ENABLED: {{.Values.data.otelJavaagentEnabled | quote}}
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{.Values.data.otelExporterEndpoint | quote}}
+  {{- end }}
