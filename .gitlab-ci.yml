@@ -53,6 +53,12 @@ include:
     file: "scanners/fossa-maven.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
+    file: "reporting/reporting.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "publishing/common-pages.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/aws-global.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
@@ -94,7 +100,6 @@ include:
 
   - local: "/devops/aws/bootstrap.yaml"
   - local: "/devops/ibm/bootstrap.yaml"
-  - local: "/publish.yml"
 
 download_plugins:
   image: maven:3.8.3-openjdk-17-slim
