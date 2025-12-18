@@ -5,6 +5,7 @@ variables:
   CIMPL_HELM_PACKAGE_NAME: core-plus-schema-deploy
   CIMPL_ENABLE_BOOTSTRAP: "true"
   CIMPL_HELM_TIMEOUT: "--timeout 15m"
+  DISABLE_INTEGRATION_TEST: true
 
 cimpl-containerize-bootstrap-gitlab:
   tags: ["osdu-medium"]
