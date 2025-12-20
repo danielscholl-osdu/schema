@@ -63,6 +63,10 @@ import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedExce
 @Repository
 public class AwsSchemaInfoStore implements ISchemaInfoStore {
 
+  private static final String UNSUPPORTED_WILDCARD_PATTERN_MSG = "Unsupported wildcard pattern: ";
+  private static final String SUPPORTED_PATTERNS_MSG = ". Only patterns like 'prefix*', '*substring*', and '*' are supported.";
+  private static final String ENDS_WITH_NOT_SUPPORTED_MSG = ". 'ends with' patterns (*suffix) are not supported by DynamoDB. Only patterns like 'prefix*', '*substring*', and '*' are supported.";
+
   private final DpsHeaders headers;
   private final ITenantFactory tenantFactory;
   private final JaxRsDpsLog log;
@@ -322,46 +326,61 @@ public class AwsSchemaInfoStore implements ISchemaInfoStore {
    */
   private void addPatternFilter(List<String> conditions, Map<String, AttributeValue> values,
       String attributeName, String pattern) {
-    String placeholder = String.format(":%s_pattern", attributeName.toLowerCase());
     
     if (pattern.equals("*")) {
-      // Match all - don't add any filter
-      return;
-    } else if (pattern.endsWith("*") && !pattern.startsWith("*")) {
-      // Starts with pattern (e.g., "well*")
-      String prefix = pattern.substring(0, pattern.length() - 1);
-      // Validate that the prefix doesn't contain wildcards
-      if (prefix.contains("*")) {
-        throw new BadRequestException("Unsupported wildcard pattern: " + pattern + 
-            ". Only patterns like 'prefix*', '*substring*', and '*' are supported.");
-      }
-      conditions.add(String.format("begins_with(%s, %s)", attributeName, placeholder));
-      values.put(placeholder, AttributeValue.builder().s(prefix).build());
-    } else if (pattern.startsWith("*") && pattern.endsWith("*")) {
-      // Contains pattern (e.g., "*well*")
-      String substring = pattern.substring(1, pattern.length() - 1);
-      // Validate that the substring doesn't contain wildcards
-      if (substring.contains("*")) {
-        throw new BadRequestException("Unsupported wildcard pattern: " + pattern + 
-            ". Only patterns like 'prefix*', '*substring*', and '*' are supported.");
-      }
-      conditions.add(String.format("contains(%s, %s)", attributeName, placeholder));
-      values.put(placeholder, AttributeValue.builder().s(substring).build());
-    } else if (pattern.startsWith("*") && !pattern.endsWith("*")) {
-      // Ends with pattern (e.g., "*well") - DynamoDB doesn't support ends_with natively
-      throw new BadRequestException("Unsupported wildcard pattern: " + pattern + 
-          ". 'ends with' patterns (*suffix) are not supported by DynamoDB. Only patterns like 'prefix*', '*substring*', and '*' are supported.");
+      return; // Match all - don't add any filter
+    }
+    
+    if (pattern.startsWith("*") && !pattern.endsWith("*")) {
+      throw new BadRequestException(UNSUPPORTED_WILDCARD_PATTERN_MSG + pattern + ENDS_WITH_NOT_SUPPORTED_MSG);
+    }
+    
+    if (pattern.contains("*")) {
+      handleWildcardPattern(conditions, values, attributeName, pattern);
     } else {
-      // Any other pattern with wildcards in the middle (e.g., "w*ll", "w*l*l") is unsupported
-      if (pattern.contains("*")) {
-        throw new BadRequestException("Unsupported wildcard pattern: " + pattern + 
-            ". Only patterns like 'prefix*', '*substring*', and '*' are supported.");
-      } else {
-        // No wildcards - treat as exact match
-        String placeholderExact = String.format(":%s", attributeName.toLowerCase());
-        conditions.add(String.format("%s = %s", attributeName, placeholderExact));
-        values.put(placeholderExact, AttributeValue.builder().s(pattern).build());
-      }
+      handleExactMatch(conditions, values, attributeName, pattern);
+    }
+  }
+  
+  private void handleWildcardPattern(List<String> conditions, Map<String, AttributeValue> values,
+      String attributeName, String pattern) {
+    String placeholder = String.format(":%s_pattern", attributeName.toLowerCase());
+    
+    if (pattern.endsWith("*") && !pattern.startsWith("*")) {
+      handlePrefixPattern(conditions, values, attributeName, pattern, placeholder);
+    } else if (pattern.startsWith("*") && pattern.endsWith("*")) {
+      handleContainsPattern(conditions, values, attributeName, pattern, placeholder);
+    } else {
+      throw new BadRequestException(UNSUPPORTED_WILDCARD_PATTERN_MSG + pattern + SUPPORTED_PATTERNS_MSG);
+    }
+  }
+  
+  private void handlePrefixPattern(List<String> conditions, Map<String, AttributeValue> values,
+      String attributeName, String pattern, String placeholder) {
+    String prefix = pattern.substring(0, pattern.length() - 1);
+    validateNoWildcards(prefix, pattern);
+    conditions.add(String.format("begins_with(%s, %s)", attributeName, placeholder));
+    values.put(placeholder, AttributeValue.builder().s(prefix).build());
+  }
+  
+  private void handleContainsPattern(List<String> conditions, Map<String, AttributeValue> values,
+      String attributeName, String pattern, String placeholder) {
+    String substring = pattern.substring(1, pattern.length() - 1);
+    validateNoWildcards(substring, pattern);
+    conditions.add(String.format("contains(%s, %s)", attributeName, placeholder));
+    values.put(placeholder, AttributeValue.builder().s(substring).build());
+  }
+  
+  private void handleExactMatch(List<String> conditions, Map<String, AttributeValue> values,
+      String attributeName, String pattern) {
+    String placeholder = String.format(":%s", attributeName.toLowerCase());
+    conditions.add(String.format("%s = %s", attributeName, placeholder));
+    values.put(placeholder, AttributeValue.builder().s(pattern).build());
+  }
+  
+  private void validateNoWildcards(String value, String originalPattern) {
+    if (value.contains("*")) {
+      throw new BadRequestException(UNSUPPORTED_WILDCARD_PATTERN_MSG + originalPattern + SUPPORTED_PATTERNS_MSG);
     }
   }
 
