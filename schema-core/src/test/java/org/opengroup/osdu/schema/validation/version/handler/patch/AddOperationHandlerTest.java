@@ -98,6 +98,53 @@ public class AddOperationHandlerTest {
 
 	}
 
+	/**
+	 * Regression test for schema version validation bug.
+	 *
+	 * This test verifies that adding a definition (e.g., AbstractCommonResources:1.0.1)
+	 * is correctly recognized as valid when an older version (e.g., 1.0.0) exists in the source.
+	 *
+	 * The bug was that JSON Patch paths start with "/" per RFC 6901 (JSON Pointer),
+	 * but the regex match was incorrectly checking the path WITH the "/" prefix
+	 * instead of the extracted sourceField WITHOUT the "/" prefix.
+	 *
+	 * Without the fix: pattern.matcher("/osdu:wks:...").matches() returns false
+	 * With the fix: pattern.matcher("osdu:wks:...").matches() returns true
+	 */
+	@Test
+	public void testCompare_ValidChange_AddDefinitionWithPatchVersionUpgrade_RegressionTest() throws IOException, ApplicationException {
+		List<SchemaBreakingChanges> schemaBreakingChanges = new ArrayList<>();
+		Set<String> processedArrayPath = new HashSet<>();
+
+		// Load schemas that simulate the exact bug scenario:
+		// Source has AbstractCommonResources:1.0.0, Target has AbstractCommonResources:1.0.1
+		SchemaHandlerVO schemaHandlerVO = getMockSchemaHandlerVO(
+				"/schema_compare/definition_version_upgrade/source-schema.json",
+				"/schema_compare/definition_version_upgrade/target-schema.json");
+
+		// Mock: upgrading from 1.0.0 to 1.0.1 is a valid PATCH change
+		Mockito.when(schemaUtil.isValidSchemaVersionChange(
+				"test:wks:TestDefinition:1.0.0",
+				"test:wks:TestDefinition:1.0.1",
+				SchemaValidationType.PATCH)).thenReturn(true);
+
+		List<SchemaPatch> schemaPatchList = TestUtility.findSchemaPatch(
+				schemaHandlerVO.getSourceSchema(),
+				schemaHandlerVO.getTargetSchema());
+
+		// Verify we have the expected patches (remove old version, add new version)
+		Assert.assertTrue("Expected patches for definition version change", schemaPatchList.size() >= 1);
+
+		for (SchemaPatch patch : schemaPatchList) {
+			addOperationHandler.compare(schemaHandlerVO, patch, schemaBreakingChanges, processedArrayPath);
+		}
+
+		// With the fix, this should pass (no breaking changes for valid version upgrade)
+		// Without the fix, this would fail because the regex wouldn't match the "/" prefixed path
+		Assert.assertTrue("Valid definition version upgrade should not be flagged as breaking change",
+				schemaBreakingChanges.isEmpty());
+	}
+
 	private SchemaHandlerVO getMockSchemaHandlerVO(String baseSchemaPath, String newSchemaPath) throws IOException {
 		JsonNode baseSchema = TestUtility.getJsonNodeFromFile(baseSchemaPath);
 		JsonNode newSchema = TestUtility.getJsonNodeFromFile(newSchemaPath);
