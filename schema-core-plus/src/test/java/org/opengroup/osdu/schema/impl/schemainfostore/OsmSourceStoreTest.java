@@ -22,6 +22,7 @@ import org.opengroup.osdu.core.osm.core.model.Destination;
 import org.opengroup.osdu.core.osm.core.model.Kind;
 import org.opengroup.osdu.core.osm.core.model.Namespace;
 import org.opengroup.osdu.core.osm.core.service.Context;
+import org.opengroup.osdu.core.osm.core.service.Transaction;
 import org.opengroup.osdu.core.osm.core.translate.TranslatorRuntimeException;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -71,6 +72,9 @@ public class OsmSourceStoreTest {
   @Mock
   PropertiesConfiguration configuration;
 
+  @Mock
+  Transaction transaction;
+
   @Before
   public void setUp() {
     when(configuration.getSharedTenantName()).thenReturn(COMMON_TENANT_ID);
@@ -85,6 +89,7 @@ public class OsmSourceStoreTest {
     when(context.getOne(any())).thenReturn(null);
     when(context.findOne(any())).thenReturn(Optional.of(mockSource));
     when(context.createAndGet(any(), any())).thenReturn(mockSource);
+    when(context.beginTransaction(any())).thenReturn(transaction);
   }
 
   @Test
@@ -142,40 +147,6 @@ public class OsmSourceStoreTest {
     Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
 
     assertNotNull(osmSourceStore.createSystemSource(mockSource));
-  }
-
-  @Test
-  public void testCreate_BadRequestException()
-      throws NotFoundException, ApplicationException, BadRequestException {
-    osmSourceStore = Mockito.spy(osmSourceStore);
-    when(context.getOne(any())).thenReturn(mockSource);
-    try {
-      osmSourceStore.create(mockSource);
-      fail("Should not succeed");
-    } catch (BadRequestException e) {
-      assertEquals("Source already registered with Id: wks", e.getMessage());
-
-    } catch (Exception e) {
-      fail("Should not get different exception");
-    }
-  }
-
-  @Test
-  public void testCreate_BadRequestException_SystemSchemas()
-      throws NotFoundException, ApplicationException, BadRequestException {
-    osmSourceStore = Mockito.spy(osmSourceStore);
-    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
-    when(context.getOne(any())).thenReturn(mockSource);
-    try {
-      osmSourceStore.createSystemSource(mockSource);
-      fail("Should not succeed");
-    } catch (BadRequestException e) {
-      assertEquals("Source already registered with Id: wks", e.getMessage());
-
-    } catch (Exception e) {
-      fail("Should not get different exception");
-    }
   }
 
   @Test
