@@ -59,10 +59,22 @@ public class RemoveOperationHandler implements SchemaValidationHandler{
 		Pattern pattern = Pattern.compile(SchemaConstants.SCHEMA_KIND_REGEX);
 		String path =  patch.getPath();
 		String sourceField = StringUtils.substringAfterLast(path, "/");
-		if(!pattern.matcher(path).matches() || !isAtRoot(path))
+		if(!pattern.matcher(sourceField).matches() || !isAtRoot(path))
 			return false;
-		
-		Iterator<String> fieldNameItr = schemaDiff.getTargetSchema().fieldNames();
+
+		// Determine where to look for the new version based on the path
+		Iterator<String> fieldNameItr;
+		if (isInDefinitions(path)) {
+			// For paths like /definitions/osdu:wks:..., look inside the definitions object
+			com.fasterxml.jackson.databind.JsonNode definitions = schemaDiff.getTargetSchema().get(SchemaConstants.DEFINITIONS);
+			if (definitions == null) {
+				return false;
+			}
+			fieldNameItr = definitions.fieldNames();
+		} else {
+			fieldNameItr = schemaDiff.getTargetSchema().fieldNames();
+		}
+
 		while(fieldNameItr.hasNext()) {
 			String fieldName = fieldNameItr.next();
 			if(pattern.matcher(fieldName).matches()) {
@@ -71,12 +83,20 @@ public class RemoveOperationHandler implements SchemaValidationHandler{
 				}
 			}
 		}
-		
+
 		return false;
+	}
+
+	private boolean isInDefinitions(String path) {
+		String[] subString = path.split("\\/");
+		return subString.length == 3 && SchemaConstants.DEFINITIONS.equals(subString[1]);
 	}
 	
 	private boolean isAtRoot(String path) {
 		String subString [] = path.split("\\/");
-		return subString.length == 2;
+		// Accept root level paths (e.g., /osdu:wks:...:1.0.0) with length 2
+		// Also accept definition paths (e.g., /definitions/osdu:wks:...:1.0.0) with length 3
+		return subString.length == 2 ||
+			   (subString.length == 3 && SchemaConstants.DEFINITIONS.equals(subString[1]));
 	}
 }
