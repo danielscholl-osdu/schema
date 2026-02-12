@@ -932,6 +932,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/CalculationMethodType.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--CasingComponentCatalog:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CasingComponentCatalog.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:master-data--CasingDesign:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/CasingDesign.1.0.0.json"
   },
@@ -946,6 +950,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--CatalogMapStateType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/CatalogMapStateType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--CatalogMaterialGrade:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CatalogMaterialGrade.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--CellShapeType:1.0.0",
@@ -1216,6 +1224,10 @@
     "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceDataJob.1.7.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceDataJob:1.8.0",
+    "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceDataJob.1.8.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceRegistryEntry:1.0.0",
     "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceRegistryEntry.1.0.0.json"
   },
@@ -1234,6 +1246,10 @@
   {
     "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceRegistryEntry:1.4.0",
     "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceRegistryEntry.1.4.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--ConnectedSourceRegistryEntry:1.5.0",
+    "relativePath": "shared-schemas/osdu/master-data/ConnectedSourceRegistryEntry.1.5.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--ConsolidationType:1.0.0",
@@ -1284,12 +1300,20 @@
     "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.1.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateReferenceSystem:1.2.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateReferenceSystem.1.2.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.1.0",
     "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.1.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--CoordinateTransformation:1.2.0",
+    "relativePath": "shared-schemas/osdu/reference-data/CoordinateTransformation.1.2.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--CorePreservationType:1.0.0",
@@ -1420,6 +1444,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/DepositionalSubEnvironment.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--DepthMeasurementType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DepthMeasurementType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--DesaturationMethod:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/DesaturationMethod.1.0.0.json"
   },
@@ -1512,6 +1540,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/DrainageCondition.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--DriftType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/DriftType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--DrillingActivityClassType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/DrillingActivityClassType.1.0.0.json"
   },
@@ -1550,6 +1582,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--EdsExternalProcessType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/EdsExternalProcessType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--EdsNotificationPolicy:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/EdsNotificationPolicy.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--ElementalAnalysisMethod:1.0.0",
@@ -2388,6 +2424,14 @@
     "relativePath": "shared-schemas/osdu/reference-data/HeaderKeyName.1.0.0.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--HoldUpDepthCategory:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/HoldUpDepthCategory.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--HoldUpDepthType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/HoldUpDepthType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--HoleOpenerType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/HoleOpenerType.1.0.0.json"
   },
@@ -2676,6 +2720,10 @@
     "relativePath": "shared-schemas/osdu/reference-data/MarkerType.1.0.1.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:reference-data--MaterialGradeStandardType:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/MaterialGradeStandardType.1.0.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--MaterialType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/MaterialType.1.0.0.json"
   },
@@ -2766,6 +2814,10 @@
   {
     "kind": "{{schema-authority}}:wks:work-product-component--NotionalSeismicLine:1.2.0",
     "relativePath": "shared-schemas/osdu/work-product-component/NotionalSeismicLine.1.2.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:work-product-component--NotionalSeismicProcessingProduct:1.0.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/NotionalSeismicProcessingProduct.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--OAuth2FlowType:1.0.0",
@@ -2914,6 +2966,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--ParentMatchingRuleSets:1.2.0",
     "relativePath": "shared-schemas/osdu/reference-data/ParentMatchingRuleSets.1.2.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:reference-data--PayloadTemplate:1.0.0",
+    "relativePath": "shared-schemas/osdu/reference-data/PayloadTemplate.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:reference-data--PerforationCentralizationMethodType:1.0.0",
@@ -4244,6 +4300,10 @@
     "relativePath": "shared-schemas/osdu/work-product-component/SeismicTraceData.1.5.1.json"
   },
   {
+    "kind": "{{schema-authority}}:wks:work-product-component--SeismicTraceData:1.6.0",
+    "relativePath": "shared-schemas/osdu/work-product-component/SeismicTraceData.1.6.0.json"
+  },
+  {
     "kind": "{{schema-authority}}:wks:reference-data--SeismicTraceDataDimensionalityType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/SeismicTraceDataDimensionalityType.1.0.0.json"
   },
@@ -5334,6 +5394,10 @@
   {
     "kind": "{{schema-authority}}:wks:reference-data--WellboreFluidType:1.0.0",
     "relativePath": "shared-schemas/osdu/reference-data/WellboreFluidType.1.0.0.json"
+  },
+  {
+    "kind": "{{schema-authority}}:wks:master-data--WellboreHoldUpDepth:1.0.0",
+    "relativePath": "shared-schemas/osdu/master-data/WellboreHoldUpDepth.1.0.0.json"
   },
   {
     "kind": "{{schema-authority}}:wks:work-product-component--WellboreIntervalSet:1.0.0",
