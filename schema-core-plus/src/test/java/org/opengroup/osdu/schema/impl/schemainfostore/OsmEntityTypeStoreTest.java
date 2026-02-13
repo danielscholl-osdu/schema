@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.opengroup.osdu.schema.constants.SchemaConstants.INVALID_INPUT;
 
@@ -145,6 +147,30 @@ public class OsmEntityTypeStoreTest {
     when(mockEntityType.getEntityTypeId()).thenReturn("wellbore");
 
     assertNotNull(osmEntityTypeStore.createSystemEntity(mockEntityType));
+  }
+
+  @Test
+  public void testCreate_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
+    when(context.getOne(any())).thenReturn(mockEntityType);
+
+    EntityType result = osmEntityTypeStore.create(mockEntityType);
+
+    assertNotNull(result);
+    assertEquals(mockEntityType, result);
+    verify(context, never()).createAndGet(any(), any());
+  }
+
+  @Test
+  public void testCreateSystemEntity_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
+    when(context.getOne(any())).thenReturn(mockEntityType);
+
+    EntityType result = osmEntityTypeStore.createSystemEntity(mockEntityType);
+
+    assertNotNull(result);
+    assertEquals(mockEntityType, result);
+    verify(context, never()).createAndGet(any(), any());
   }
 
   @Test

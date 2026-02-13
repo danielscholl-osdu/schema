@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -147,6 +149,32 @@ public class OsmSourceStoreTest {
     Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
 
     assertNotNull(osmSourceStore.createSystemSource(mockSource));
+  }
+
+  @Test
+  public void testCreate_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
+    when(context.getOne(any())).thenReturn(mockSource);
+
+    Source result = osmSourceStore.create(mockSource);
+
+    assertNotNull(result);
+    assertEquals(mockSource, result);
+    verify(context, never()).createAndGet(any(), any());
+  }
+
+  @Test
+  public void testCreateSystemSource_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
+    Mockito.when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+    Mockito.when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+    when(context.getOne(any())).thenReturn(mockSource);
+
+    Source result = osmSourceStore.createSystemSource(mockSource);
+
+    assertNotNull(result);
+    assertEquals(mockSource, result);
+    verify(context, never()).createAndGet(any(), any());
   }
 
   @Test

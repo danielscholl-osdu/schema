@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -150,6 +152,32 @@ public class OsmAuthorityStoreTest {
 
     when(mockAuthority.getAuthorityId()).thenReturn("os");
     assertNotNull(mockOsmAuthorityStore.createSystemAuthority(mockAuthority));
+  }
+
+  @Test
+  public void testCreateAuthority_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
+    when(context.getOne(any())).thenReturn(mockAuthority);
+
+    Authority result = mockOsmAuthorityStore.create(mockAuthority);
+
+    assertNotNull(result);
+    assertEquals(mockAuthority, result);
+    verify(context, never()).createAndGet(any(), any());
+  }
+
+  @Test
+  public void testCreateSystemAuthority_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
+    when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
+    when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
+    when(context.getOne(any())).thenReturn(mockAuthority);
+
+    Authority result = mockOsmAuthorityStore.createSystemAuthority(mockAuthority);
+
+    assertNotNull(result);
+    assertEquals(mockAuthority, result);
+    verify(context, never()).createAndGet(any(), any());
   }
 
   @Test
