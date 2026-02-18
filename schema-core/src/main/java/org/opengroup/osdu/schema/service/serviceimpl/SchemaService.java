@@ -42,7 +42,6 @@ import org.opengroup.osdu.schema.util.SchemaUtil;
 import org.opengroup.osdu.schema.validation.version.SchemaValidationType;
 import org.opengroup.osdu.schema.validation.version.SchemaVersionValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -154,18 +153,22 @@ public class SchemaService implements ISchemaService {
                 try {
                     SchemaInfo schemaInfo = this.createSchemaInfo(schemaRequest, isSystemSchema);
                     this.createSchema(schemaId, schema, isSystemSchema);
-                    auditLogger.schemaRegisteredSuccess(Collections.singletonList(schemaRequest.toString()));
                     if(isSystemSchema) {
+                        auditLogger.systemSchemaRegisteredSuccess(Collections.singletonList(schemaRequest.toString()));
                         messageBus.publishMessageForSystemSchema(schemaId, SchemaConstants.SCHEMA_CREATE_EVENT_TYPE);
                     }
                     else
                     {
+                        auditLogger.schemaRegisteredSuccess(Collections.singletonList(schemaRequest.toString()));
                         messageBus.publishMessage(schemaId, SchemaConstants.SCHEMA_CREATE_EVENT_TYPE);
                     }
                     return schemaInfo;
                 } catch (ApplicationException ex) {
-                    auditLogger.schemaRegisteredFailure(
-                            Collections.singletonList(schemaRequest.toString()));
+                    if(isSystemSchema) {
+                        auditLogger.systemSchemaRegisteredFailure(Collections.singletonList(schemaRequest.toString()));
+                    } else {
+                        auditLogger.schemaRegisteredFailure(Collections.singletonList(schemaRequest.toString()));
+                    }
                     log.warning(SchemaConstants.SCHEMA_CREATION_FAILED);
                     this.cleanSchema(schemaId, isSystemSchema);
                     this.cleanSchemaProject(schemaId, isSystemSchema);
@@ -224,16 +227,21 @@ public class SchemaService implements ISchemaService {
                 schInfo = schemaInfoStore.updateSystemSchemaInfo(schemaRequest);
                 schemaStore.createSystemSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
                 messageBus.publishMessageForSystemSchema(createdSchemaId, SchemaConstants.SCHEMA_UPDATE_EVENT_TYPE);
+                auditLogger.systemSchemaUpdatedSuccess(Collections.singletonList(schemaRequest.toString()));
             } else {
                 schInfo = schemaInfoStore.updateSchemaInfo(schemaRequest);
                 schemaStore.createSchema(schemaRequest.getSchemaInfo().getSchemaIdentity().getId(), schema);
                 messageBus.publishMessage(createdSchemaId, SchemaConstants.SCHEMA_UPDATE_EVENT_TYPE);
+                auditLogger.schemaUpdatedSuccess(Collections.singletonList(schemaRequest.toString()));
             }
-            auditLogger.schemaUpdatedSuccess(Collections.singletonList(schemaRequest.toString()));
             log.info(SchemaConstants.SCHEMA_UPDATED);
             return schInfo;
         } else {
-            auditLogger.schemaUpdatedFailure(Collections.singletonList(schemaRequest.toString()));
+            if (isSystemSchema) {
+                auditLogger.systemSchemaUpdatedFailure(Collections.singletonList(schemaRequest.toString()));
+            } else {
+                auditLogger.schemaUpdatedFailure(Collections.singletonList(schemaRequest.toString()));
+            }
             log.error(SchemaConstants.SCHEMA_UPDATE_ERROR);
             throw new BadRequestException(SchemaConstants.SCHEMA_UPDATE_EXCEPTION);
         }
@@ -272,7 +280,6 @@ public class SchemaService implements ISchemaService {
     public SchemaInfoResponse getSchemaInfoList(QueryParams queryParams)
             throws BadRequestException, ApplicationException {
 
-        String tenantId = headers.getPartitionId();
         List<SchemaInfo> schemaList = new LinkedList<>();
 
         latestVersionMajorMinorFiltersCheck(queryParams);

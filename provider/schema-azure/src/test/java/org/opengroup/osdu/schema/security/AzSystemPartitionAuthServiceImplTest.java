@@ -27,6 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.model.entitlements.AuthorizationResponse;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.provider.interfaces.IAuthorizationService;
+import org.opengroup.osdu.schema.constants.SchemaConstants;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AzSystemPartitionAuthServiceImplTest {
@@ -43,12 +44,13 @@ public class AzSystemPartitionAuthServiceImplTest {
     public void shouldCallEntitlementsWithSystemPartition_when_hasPermissionsIsCalled() {
         AuthorizationResponse authorizationResponse = mock(AuthorizationResponse.class);
         when(authorizationResponse.getUser()).thenReturn("user");
-        when(entitlementsService.authorizeAny(headers, "service.system-schema-service.editors")).thenReturn(authorizationResponse);
+        when(entitlementsService.authorizeAny(headers, SchemaConstants.ENTITLEMENT_SERVICE_SYSTEM_SCHEMA_EDITORS)).thenReturn(authorizationResponse);
 
         boolean hasPermissions = sut.hasSystemLevelPermissions();
 
         assertEquals("system", headers.getPartitionId());
         assertEquals("user", headers.getUserEmail());
+        assertEquals(SchemaConstants.ENTITLEMENT_SERVICE_SYSTEM_SCHEMA_EDITORS, headers.getUserAuthorizedGroupName());
         assertTrue(hasPermissions);
     }
 }

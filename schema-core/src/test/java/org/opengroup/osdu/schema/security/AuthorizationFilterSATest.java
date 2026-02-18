@@ -3,6 +3,7 @@ package org.opengroup.osdu.schema.security;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.opengroup.osdu.schema.constants.SchemaConstants.WORKFLOW_SYSTEM_ADMIN;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -83,6 +84,8 @@ public class AuthorizationFilterSATest {
         boolean response = authorizationFilterSA.hasPermissions();
 
         Mockito.verify(authorizationServiceForSystemPartition, Mockito.never()).hasSystemLevelPermissions();
+        Mockito.verify(headers).put(DpsHeaders.USER_EMAIL, AuthorizationFilterSA.SERVICE_ADMIN_USER);
+        Mockito.verify(headers).put(DpsHeaders.USER_AUTHORIZED_GROUP_NAME, WORKFLOW_SYSTEM_ADMIN);
         assertTrue(response);
     }
 }

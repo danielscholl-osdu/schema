@@ -98,4 +98,13 @@ public class MessageBusImplTest {
 
     verify(this.driver, times(1)).publish(any(OqmMessage.class), any(), any());
   }
+
+  @Test
+  public void testPublishMessageForSystemSchema_callsAuditLogger() {
+    when(eventMessagingPropertiesConfig.isMessagingEnabled()).thenReturn(true);
+    when(headers.getPartitionId()).thenReturn(DATA_PARTITION_ID);
+    when(tenantInfo.getName()).thenReturn(TENANT_NAME);
+    sut.publishMessageForSystemSchema(SCHEMA_ID, EVENT_TYPE);
+    verify(auditLogger, times(1)).systemSchemaNotificationSuccess(any());
+  }
 }
