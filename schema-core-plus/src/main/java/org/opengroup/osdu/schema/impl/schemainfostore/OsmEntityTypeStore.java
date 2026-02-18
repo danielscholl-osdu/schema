@@ -28,6 +28,7 @@ import org.opengroup.osdu.core.osm.core.model.Destination;
 import org.opengroup.osdu.core.osm.core.model.query.GetQuery;
 import org.opengroup.osdu.core.osm.core.model.where.Where;
 import org.opengroup.osdu.core.osm.core.service.Context;
+import org.opengroup.osdu.core.osm.core.service.Transaction;
 import org.opengroup.osdu.core.osm.core.translate.TranslatorRuntimeException;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -95,17 +96,7 @@ public class OsmEntityTypeStore implements IEntityTypeStore {
   @Override
   public EntityType create(EntityType entityType) throws BadRequestException, ApplicationException {
     Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
-    checkEntityExistence(entityType, tenantDestination);
-
-    EntityType entityFromDb;
-    try {
-      entityFromDb = context.createAndGet(getPrivateTenantDestination(this.headers.getPartitionId()), entityType);
-    } catch (TranslatorRuntimeException ex) {
-      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-      throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-    }
-    log.info(SchemaConstants.ENTITY_TYPE_CREATED);
-    return entityFromDb;
+    return createEntityType(entityType, tenantDestination);
   }
 
   /**
@@ -120,33 +111,30 @@ public class OsmEntityTypeStore implements IEntityTypeStore {
   public EntityType createSystemEntity(EntityType entityType)
       throws BadRequestException, ApplicationException {
     Destination systemDestination = getSystemDestination();
-    checkEntityExistence(entityType, systemDestination);
+    return createEntityType(entityType, systemDestination);
+  }
 
-    EntityType entityFromDb;
+  private EntityType createEntityType(EntityType entityType, Destination tenantDestination) throws ApplicationException {
+    Transaction txn = context.beginTransaction(tenantDestination);
     try {
-      entityFromDb = context.createAndGet(systemDestination, entityType);
+      EntityType entityFromDb = context.getOne(
+          buildQueryFor(tenantDestination, eq(NAME_FIELD, entityType.getEntityTypeId())));
+      if (ObjectUtils.isEmpty(entityFromDb)) {
+        entityFromDb = context.createAndGet(tenantDestination, entityType);
+      }
+      txn.commitIfActive();
+      log.info(SchemaConstants.ENTITY_TYPE_CREATED);
+      return entityFromDb;
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+    } finally {
+      txn.rollbackIfActive();
     }
-    log.info(SchemaConstants.ENTITY_TYPE_CREATED);
-    return entityFromDb;
   }
 
   private GetQuery<EntityType> buildQueryFor(Destination destination, Where where) {
     return new GetQuery<>(EntityType.class, destination, where);
-  }
-
-  private void checkEntityExistence(EntityType entityType, Destination destination)
-      throws BadRequestException {
-    EntityType entityFromDb = context.getOne(
-        buildQueryFor(destination, eq(NAME_FIELD, entityType.getEntityTypeId())));
-    if (ObjectUtils.isNotEmpty(entityFromDb)) {
-      log.warning(SchemaConstants.ENTITY_TYPE_EXISTS);
-      throw new BadRequestException(
-          MessageFormat.format(SchemaConstants.ENTITY_TYPE_EXISTS_EXCEPTION,
-              entityType.getEntityTypeId()));
-    }
   }
 
   private Destination getPrivateTenantDestination(String partitionId) {
