@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -22,6 +24,7 @@ import org.opengroup.osdu.core.osm.core.model.Destination;
 import org.opengroup.osdu.core.osm.core.model.Kind;
 import org.opengroup.osdu.core.osm.core.model.Namespace;
 import org.opengroup.osdu.core.osm.core.service.Context;
+import org.opengroup.osdu.core.osm.core.service.Transaction;
 import org.opengroup.osdu.core.osm.core.translate.TranslatorRuntimeException;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -71,6 +74,9 @@ public class OsmAuthorityStoreTest {
   @Mock
   PropertiesConfiguration configuration;
 
+  @Mock
+  Transaction transaction;
+
 
   @Before
   public void setUp() {
@@ -86,6 +92,7 @@ public class OsmAuthorityStoreTest {
     when(context.getOne(any())).thenReturn(null);
     when(context.findOne(any())).thenReturn(Optional.of(mockAuthority));
     when(context.createAndGet(any(), any())).thenReturn(mockAuthority);
+    when(context.beginTransaction(any())).thenReturn(transaction);
   }
 
   @Test
@@ -148,38 +155,29 @@ public class OsmAuthorityStoreTest {
   }
 
   @Test
-  public void testCreateAuthority_BadRequestException()
-      throws NotFoundException, ApplicationException, BadRequestException {
-    mockOsmAuthorityStore = Mockito.spy(mockOsmAuthorityStore);
+  public void testCreateAuthority_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
     when(context.getOne(any())).thenReturn(mockAuthority);
-    try {
-      mockOsmAuthorityStore.create(mockAuthority);
-      fail("Should not succeed");
-    } catch (BadRequestException e) {
-      assertEquals("Authority already registered with Id: os", e.getMessage());
 
-    } catch (Exception e) {
-      fail("Should not get different exception");
-    }
+    Authority result = mockOsmAuthorityStore.create(mockAuthority);
+
+    assertNotNull(result);
+    assertEquals(mockAuthority, result);
+    verify(context, never()).createAndGet(any(), any());
   }
 
   @Test
-  public void testCreateAuthority_BadRequestException_SystemSchemas()
-      throws NotFoundException, ApplicationException, BadRequestException {
+  public void testCreateSystemAuthority_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
     when(headers.getPartitionId()).thenReturn(COMMON_TENANT_ID);
-    mockOsmAuthorityStore = Mockito.spy(mockOsmAuthorityStore);
     when(tenantFactory.getTenantInfo(COMMON_TENANT_ID)).thenReturn(tenantInfo);
     when(context.getOne(any())).thenReturn(mockAuthority);
-    when(mockAuthority.getAuthorityId()).thenReturn("os");
-    try {
-      mockOsmAuthorityStore.createSystemAuthority(mockAuthority);
-      fail("Should not succeed");
-    } catch (BadRequestException e) {
-      assertEquals("Authority already registered with Id: os", e.getMessage());
 
-    } catch (Exception e) {
-      fail("Should not get different exception");
-    }
+    Authority result = mockOsmAuthorityStore.createSystemAuthority(mockAuthority);
+
+    assertNotNull(result);
+    assertEquals(mockAuthority, result);
+    verify(context, never()).createAndGet(any(), any());
   }
 
   @Test
