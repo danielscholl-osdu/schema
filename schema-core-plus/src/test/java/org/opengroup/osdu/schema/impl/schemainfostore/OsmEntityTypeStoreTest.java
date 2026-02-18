@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.opengroup.osdu.schema.constants.SchemaConstants.INVALID_INPUT;
 
@@ -20,6 +22,7 @@ import org.opengroup.osdu.core.osm.core.model.Destination;
 import org.opengroup.osdu.core.osm.core.model.Kind;
 import org.opengroup.osdu.core.osm.core.model.Namespace;
 import org.opengroup.osdu.core.osm.core.service.Context;
+import org.opengroup.osdu.core.osm.core.service.Transaction;
 import org.opengroup.osdu.core.osm.core.translate.TranslatorRuntimeException;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.destination.provider.impl.OsmDestinationProvider;
@@ -57,6 +60,9 @@ public class OsmEntityTypeStoreTest {
   @Mock
   PropertiesConfiguration configuration;
 
+  @Mock
+  Transaction transaction;
+
   private static final String COMMON_TENANT_ID = "common";
   private static final Destination DESTINATION = Destination.builder()
       .partitionId("partitionId")
@@ -73,6 +79,7 @@ public class OsmEntityTypeStoreTest {
     when(context.getOne(any())).thenReturn(null);
     when(context.createAndGet(any(), any())).thenReturn(mockEntityType);
     when(context.findOne(any())).thenReturn(Optional.ofNullable(mockEntityType));
+    when(context.beginTransaction(any())).thenReturn(transaction);
   }
 
   @Test
@@ -143,40 +150,27 @@ public class OsmEntityTypeStoreTest {
   }
 
   @Test
-  public void testCreate_BadRequestException()
-      throws NotFoundException, ApplicationException, BadRequestException {
-    System.out.println("testCreate_BadRequestException");
-
+  public void testCreate_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
     when(context.getOne(any())).thenReturn(mockEntityType);
-    when(mockEntityType.getEntityTypeId()).thenReturn("wks");
 
-    try {
-      osmEntityTypeStore.create(mockEntityType);
-      fail("Should not succeed");
-    } catch (BadRequestException e) {
-      assertEquals("EntityType already registered with Id: wks", e.getMessage());
-    } catch (Exception e) {
-      fail("Should not get different exception");
-    }
+    EntityType result = osmEntityTypeStore.create(mockEntityType);
+
+    assertNotNull(result);
+    assertEquals(mockEntityType, result);
+    verify(context, never()).createAndGet(any(), any());
   }
 
   @Test
-  public void testCreate_BadRequestException_SystemSchemas()
-      throws NotFoundException, ApplicationException, BadRequestException {
-    System.out.println("testCreate_BadRequestException");
-
+  public void testCreateSystemEntity_AlreadyExists_ReturnsExisting()
+      throws ApplicationException, BadRequestException {
     when(context.getOne(any())).thenReturn(mockEntityType);
-    when(mockEntityType.getEntityTypeId()).thenReturn("wks");
 
-    try {
-      osmEntityTypeStore.createSystemEntity(mockEntityType);
-      fail("Should not succeed");
-    } catch (BadRequestException e) {
-      assertEquals("EntityType already registered with Id: wks", e.getMessage());
+    EntityType result = osmEntityTypeStore.createSystemEntity(mockEntityType);
 
-    } catch (Exception e) {
-      fail("Should not get different exception");
-    }
+    assertNotNull(result);
+    assertEquals(mockEntityType, result);
+    verify(context, never()).createAndGet(any(), any());
   }
 
   @Test
