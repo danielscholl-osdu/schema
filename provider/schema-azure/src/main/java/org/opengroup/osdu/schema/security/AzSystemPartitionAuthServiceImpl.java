@@ -39,6 +39,7 @@ public class AzSystemPartitionAuthServiceImpl implements SystemPartitionAuthServ
                 .getUser();
 
         headers.put(DpsHeaders.USER_EMAIL, user);
+        headers.put(DpsHeaders.USER_AUTHORIZED_GROUP_NAME, SchemaConstants.ENTITLEMENT_SERVICE_SYSTEM_SCHEMA_EDITORS);
         return true;
     }
 }

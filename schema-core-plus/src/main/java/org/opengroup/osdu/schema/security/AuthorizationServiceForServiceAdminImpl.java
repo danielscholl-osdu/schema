@@ -18,6 +18,7 @@
 package org.opengroup.osdu.schema.security;
 
 import static org.opengroup.osdu.core.common.model.http.DpsHeaders.DATA_PARTITION_ID;
+import static org.opengroup.osdu.schema.constants.SchemaConstants.WORKFLOW_SYSTEM_ADMIN;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,6 @@ public class AuthorizationServiceForServiceAdminImpl implements
     IAuthorizationServiceForServiceAdmin {
 
   private final DpsHeaders headers;
-  private static final String WORKFLOW_SYSTEM_ADMIN = "service.schema-service.system-admin";
   private final PropertiesConfiguration configuration;
   private final IAuthorizationService authorizationService;
 
