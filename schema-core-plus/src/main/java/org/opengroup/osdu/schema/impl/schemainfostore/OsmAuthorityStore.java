@@ -28,6 +28,7 @@ import org.opengroup.osdu.core.osm.core.model.Destination;
 import org.opengroup.osdu.core.osm.core.model.query.GetQuery;
 import org.opengroup.osdu.core.osm.core.model.where.Where;
 import org.opengroup.osdu.core.osm.core.service.Context;
+import org.opengroup.osdu.core.osm.core.service.Transaction;
 import org.opengroup.osdu.core.osm.core.translate.TranslatorRuntimeException;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -87,51 +88,37 @@ public class OsmAuthorityStore implements IAuthorityStore {
   @Override
   public Authority create(Authority authority) throws ApplicationException, BadRequestException {
     Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
-    checkEntityExistence(authority, tenantDestination);
-
-    Authority entityFromDb;
-    try {
-      entityFromDb = context.createAndGet(tenantDestination, authority);
-    } catch (TranslatorRuntimeException ex) {
-      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-      throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-    }
-    log.info(SchemaConstants.AUTHORITY_CREATED);
-    return entityFromDb;
+    return createAuthority(authority, tenantDestination);
   }
 
   @Override
   public Authority createSystemAuthority(Authority authority)
       throws ApplicationException, BadRequestException {
     Destination systemDestination = getSystemDestination();
-    checkEntityExistence(authority, systemDestination);
+    return createAuthority(authority, systemDestination);
+  }
 
-    Authority entityFromDb;
+  private Authority createAuthority(Authority authority, Destination tenantDestination) throws ApplicationException {
+    Transaction txn = context.beginTransaction(tenantDestination);
     try {
-      entityFromDb = context.createAndGet(systemDestination, authority);
+      Authority entityFromDb = context.getOne(
+          buildQueryFor(tenantDestination, eq(NAME_FIELD, authority.getAuthorityId())));
+      if (ObjectUtils.isEmpty(entityFromDb)) {
+        entityFromDb = context.createAndGet(tenantDestination, authority);
+      }
+      txn.commitIfActive();
+      log.info(SchemaConstants.AUTHORITY_CREATED);
+      return entityFromDb;
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+    } finally {
+      txn.rollbackIfActive();
     }
-    log.info(SchemaConstants.AUTHORITY_CREATED);
-    return entityFromDb;
   }
 
   private GetQuery<Authority> buildQueryFor(Destination destination, Where where) {
     return new GetQuery<>(Authority.class, destination, where);
-  }
-
-  private void checkEntityExistence(Authority authority, Destination destination)
-      throws BadRequestException {
-    Authority entityFromDb =
-        context.getOne(buildQueryFor(destination, eq(NAME_FIELD, authority.getAuthorityId())));
-
-    if (ObjectUtils.isNotEmpty(entityFromDb)) {
-      log.warning(SchemaConstants.AUTHORITY_EXISTS_ALREADY_REGISTERED);
-      throw new BadRequestException(
-          MessageFormat.format(SchemaConstants.AUTHORITY_EXISTS_EXCEPTION,
-              authority.getAuthorityId()));
-    }
   }
 
   private Destination getPrivateTenantDestination(String partitionId) {

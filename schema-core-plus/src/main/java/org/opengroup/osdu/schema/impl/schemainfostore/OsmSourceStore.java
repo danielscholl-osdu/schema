@@ -28,6 +28,7 @@ import org.opengroup.osdu.core.osm.core.model.Destination;
 import org.opengroup.osdu.core.osm.core.model.query.GetQuery;
 import org.opengroup.osdu.core.osm.core.model.where.Where;
 import org.opengroup.osdu.core.osm.core.service.Context;
+import org.opengroup.osdu.core.osm.core.service.Transaction;
 import org.opengroup.osdu.core.osm.core.translate.TranslatorRuntimeException;
 import org.opengroup.osdu.schema.configuration.PropertiesConfiguration;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
@@ -93,17 +94,7 @@ public class OsmSourceStore implements ISourceStore {
   @Override
   public Source create(Source source) throws BadRequestException, ApplicationException {
     Destination tenantDestination = getPrivateTenantDestination(this.headers.getPartitionId());
-    checkEntityExistence(source, tenantDestination);
-
-    Source entityFromDb;
-    try {
-      entityFromDb = context.createAndGet(tenantDestination, source);
-    } catch (TranslatorRuntimeException ex) {
-      log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
-      throw new ApplicationException(SchemaConstants.INVALID_INPUT);
-    }
-    log.info(SchemaConstants.SOURCE_CREATED);
-    return entityFromDb;
+    return createSource(source, tenantDestination);
   }
 
   /**
@@ -117,17 +108,25 @@ public class OsmSourceStore implements ISourceStore {
   @Override
   public Source createSystemSource(Source source) throws BadRequestException, ApplicationException {
     Destination systemDestination = getSystemDestination();
-    checkEntityExistence(source, systemDestination);
+    return createSource(source, systemDestination);
+  }
 
-    Source entityFromDb;
+  private Source createSource(Source source, Destination systemDestination) throws ApplicationException {
+    Transaction txn = context.beginTransaction(systemDestination);
     try {
-      entityFromDb = context.createAndGet(systemDestination, source);
+      Source entityFromDb = context.getOne(buildQueryFor(systemDestination, eq(NAME_FIELD, source.getSourceId())));
+      if (ObjectUtils.isEmpty(entityFromDb)) {
+        entityFromDb = context.createAndGet(systemDestination, source);
+      }
+      txn.commitIfActive();
+      log.info(SchemaConstants.SOURCE_CREATED);
+      return entityFromDb;
     } catch (TranslatorRuntimeException ex) {
       log.error(MessageFormat.format(SchemaConstants.OBJECT_INVALID, ex.getMessage()));
       throw new ApplicationException(SchemaConstants.INVALID_INPUT);
+    } finally {
+      txn.rollbackIfActive();
     }
-    log.info(SchemaConstants.SOURCE_CREATED);
-    return entityFromDb;
   }
 
   private Destination getPrivateTenantDestination(String partitionId) {
@@ -145,17 +144,5 @@ public class OsmSourceStore implements ISourceStore {
 
   private GetQuery<Source> buildQueryFor(Destination destination, Where where) {
     return new GetQuery<>(Source.class, destination, where);
-  }
-
-  private void checkEntityExistence(Source source, Destination destination)
-      throws BadRequestException {
-    Source entityFromDb = context.getOne(
-        buildQueryFor(destination, eq(NAME_FIELD, source.getSourceId())));
-
-    if (ObjectUtils.isNotEmpty(entityFromDb)) {
-      log.warning(SchemaConstants.SOURCE_EXISTS);
-      throw new BadRequestException(
-          MessageFormat.format(SchemaConstants.SOURCE_EXISTS_EXCEPTION, source.getSourceId()));
-    }
   }
 }
