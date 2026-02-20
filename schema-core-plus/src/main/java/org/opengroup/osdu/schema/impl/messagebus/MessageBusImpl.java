@@ -87,7 +87,7 @@ public class MessageBusImpl implements IMessageBus {
 
       OqmMessage message = createMessage(schemaId, eventType);
       this.driver.publish(message, oqmTopic, destination);
-      this.auditLogger.schemaNotificationSuccess(Collections.singletonList(schemaId));
+      this.auditLogger.systemSchemaNotificationSuccess(Collections.singletonList(schemaId));
     } else {
       this.logger.info(SchemaConstants.SCHEMA_NOTIFICATION_IS_DISABLED);
     }
@@ -102,7 +102,11 @@ public class MessageBusImpl implements IMessageBus {
         String errorMessage = isSystemSchema ? SchemaConstants.SYSTEM_SCHEMA_NOTIFICATION_FAILED :
             SchemaConstants.SCHEMA_NOTIFICATION_FAILED;
         this.logger.info(errorMessage);
-        this.auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
+        if (isSystemSchema) {
+          this.auditLogger.systemSchemaNotificationFailure(Collections.singletonList(schemaId));
+        } else {
+          this.auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
+        }
         throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Internal error", errorMessage,
             e);
       }
