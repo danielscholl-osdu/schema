@@ -30,7 +30,6 @@ import org.opengroup.osdu.core.common.model.tenant.TenantInfo;
 import org.opengroup.osdu.core.common.provider.interfaces.ITenantFactory;
 import org.opengroup.osdu.schema.azure.di.EventGridConfig;
 import org.opengroup.osdu.schema.azure.di.PubSubConfig;
-import org.opengroup.osdu.schema.azure.di.SystemResourceConfig;
 import org.opengroup.osdu.schema.azure.impl.messagebus.model.SchemaPubSubInfo;
 import org.opengroup.osdu.schema.constants.SchemaConstants;
 import org.opengroup.osdu.schema.logging.AuditLogger;
@@ -53,8 +52,6 @@ public class MessageBusImpl implements IMessageBus {
 	private ITenantFactory tenantFactory;
 	@Autowired
 	private PubSubConfig pubSubConfig;
-	@Autowired
-	private SystemResourceConfig systemResourceConfig;
 	@Autowired
 	private MessagePublisher messagePublisher;
 
@@ -106,11 +103,11 @@ public class MessageBusImpl implements IMessageBus {
 
 				}
 
-				auditLogger.schemaNotificationSuccess(Collections.singletonList(schemaId));
+				auditLogger.systemSchemaNotificationSuccess(Collections.singletonList(schemaId));
 			}catch (AppException ex) {
 
 				//We do not want to fail schema creation if notification delivery has failed, hence just logging the exception
-				auditLogger.schemaNotificationFailure(Collections.singletonList(schemaId));
+				auditLogger.systemSchemaNotificationFailure(Collections.singletonList(schemaId));
 				logger.warning(SchemaConstants.SCHEMA_NOTIFICATION_FAILED,ex);
 			}catch (Exception e){
 

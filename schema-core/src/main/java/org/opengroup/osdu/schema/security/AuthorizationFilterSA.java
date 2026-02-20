@@ -1,5 +1,7 @@
 package org.opengroup.osdu.schema.security;
 
+import static org.opengroup.osdu.schema.constants.SchemaConstants.WORKFLOW_SYSTEM_ADMIN;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.schema.exceptions.BadRequestException;
@@ -32,6 +34,7 @@ public class AuthorizationFilterSA {
         if(authorizationServiceForServiceAdmin.isDomainAdminServiceAccount())
         {
             headers.put(DpsHeaders.USER_EMAIL, SERVICE_ADMIN_USER);
+            headers.put(DpsHeaders.USER_AUTHORIZED_GROUP_NAME, WORKFLOW_SYSTEM_ADMIN);
             return true;
         }
 

@@ -131,6 +131,9 @@ public class AuthorizationFilterTest {
         Mockito.when(en.getGroups()).thenReturn(getMockGrooups());
 
         assertEquals(true, authorizationFilter.hasRole("service.schema.admins"));
+
+        Mockito.verify(headers).put(DpsHeaders.USER_EMAIL, "test@slb.com");
+        Mockito.verify(headers).put(DpsHeaders.USER_AUTHORIZED_GROUP_NAME, "service.schema.admins");
     }
 
     @Test
