@@ -32,10 +32,14 @@ public class AuthorizationFilter {
     public boolean hasRole(String... requiredRoles) throws BadRequestException {
         validateMandatoryHeaders();
         IEntitlementsService service = this.entitlementsClientFactory.create(this.headers);
+
         try {
             Groups user = service.getGroups();
-            if (user.any(requiredRoles)) {
+            String userAuthorizedGroupName = user.getMatchingGroupName(requiredRoles);
+
+            if (userAuthorizedGroupName != null) {
                 this.headers.put(DpsHeaders.USER_EMAIL, user.getDesId());
+                this.headers.put(DpsHeaders.USER_AUTHORIZED_GROUP_NAME, userAuthorizedGroupName);
                 log.info("User authenticated");
                 return true;
             } else {
