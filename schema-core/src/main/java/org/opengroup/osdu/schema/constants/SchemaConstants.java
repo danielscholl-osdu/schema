@@ -16,7 +16,7 @@ public class SchemaConstants {
 
     // authority
     public static final String AUTHORITY_KIND = "authority";
-    
+
   //Delimeters
     public static final String SCHEMA_KIND_DELIMITER = ":";
     public static final String SCHEMA_Version_DELIMITER = ".";
@@ -50,6 +50,7 @@ public class SchemaConstants {
 
     public static final String ENTITLEMENT_SERVICE_GROUP_VIEWERS = "service.schema-service.viewers";
     public static final String ENTITLEMENT_SERVICE_GROUP_EDITORS = "service.schema-service.editors";
+    public static final String WORKFLOW_SYSTEM_ADMIN = "service.schema-service.system-admin";
 
 
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
@@ -64,7 +65,7 @@ public class SchemaConstants {
     public static final String SCHEMA_CREATION_STARTED = "Schema registration started";
     public static final String SCHEMA_INFO_CREATED = "Schema info registered in schema info store";
     public static final String SCHEMA_INFO_UPDATED = "Schema info updated in schema info store";
-    public static final String SCHEMA_CREATED = "Schmema saved in schema store";
+    public static final String SCHEMA_CREATED = "Schema saved in schema store";
     public static final String AUTHORITY_CREATED = "Authority is created";
     public static final String SOURCE_CREATED = "Source is created";
     public static final String ENTITY_TYPE_CREATED = "EntityType is created";
@@ -122,7 +123,7 @@ public class SchemaConstants {
     public static final String CORRELATION_ID = "correlation-id";
 
     public static final String APPLICATION_NAME = "Schema Service";
-    
+
     //pub-sub message
     public final static String EVENT_SUBJECT = "schemachanged";
     public final static String SCHEMA_CREATE_EVENT_TYPE = "create";
@@ -140,7 +141,7 @@ public class SchemaConstants {
   //Schema Validation Constants
     public static enum SkipTags
     {
-        TITLE("title"), 
+        TITLE("title"),
         DESCRIPTION("description"),
         EXAMPLES("examples"),
         EXAMPLE("example"),
@@ -157,13 +158,13 @@ public class SchemaConstants {
             return this.value;
         }
     }
-    
-    
+
+
     //schema-patch operation
     public final static String OP_ADD = "add";
     public final static String OP_REMOVE = "remove";
     public final static String OP_REPLACE = "replace";
-    
+
     //Schema Composition Tags
     public static enum CompositionTags
     {
