@@ -4,7 +4,7 @@ The Schema Service is a Maven multi-module project with each cloud implementatio
 
 ## AWS
 
-Instructions for running the AWS implementation can be found [here](https://community.opengroup.org/osdu/platform/system/schema-service/-/blob/master/provider/schema-aws/README.md).
+The AWS provider has been removed from this repository.
 
 ## Azure
 
