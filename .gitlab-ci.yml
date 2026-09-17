@@ -23,18 +23,8 @@ variables:
   AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=${AZURE_BASE}data;AccountKey=${AZURE_STORAGE_KEY};EndpointSuffix=core.windows.net
   AZURE_COVERAGE_THRESHOLD: $AZURE_CODE_COVERAGE_THRESHOLD
 
-  AWS_BUILD_SUBDIR: provider/schema-aws/build-aws
-  AWS_TEST_SUBDIR: testing/schema-test-core
-  AWS_CHART_SUBDIR: devops/aws/chart
-  AWS_DEPLOYMENTS_SUBDIR: deployments/scripts/aws
-  AWS_SERVICE: schema
-  AWS_SERVICE_GATEWAY: osdu-gateway
-  AWS_ENVIRONMENT: dev
-  AWS_MAVEN_TEST_COMMAND_OVERRIDE: verify
-  AWS_DEPLOY_TARGET: TF
-  AWS_EKS_DEPLOYMENT_NAME: os-schema
-
-  CIMPL_OPENAPI_YAML_ROUTE: /api/schema-service/v1/api-docs.yaml
+  CIMPL_OPENAPI_CONFIG_ROUTE: /api/schema-service/v1/api-docs/swagger-config
+  SCHEMATHESIS_OPENAPI_YAML_ROUTE: /api/schema-service/v1/api-docs.yaml
 
   ACCEPTANCE_TEST_DIR: "schema-acceptance-test"
 
@@ -55,12 +45,6 @@ include:
     file: "publishing/common-pages.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/aws-global.yml"
-
-  - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/aws-maven.yml"
-
-  - project: "osdu/platform/ci-cd-pipelines"
     file: "scanners/gitlab-ultimate.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
@@ -73,9 +57,6 @@ include:
     file: "cloud-providers/cimpl-global.yml"
 
   - local: "devops/core-plus/pipeline/override-stages.yml"
-
-  - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/aws-one-pipeline.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/azure-one-pipeline.yml"
@@ -91,7 +72,6 @@ include:
   - local: "/devops/azure/gitlab-bootstrap.yml"
   - local: "/devops/azure/override-stages.yml"
 
-  - local: "/devops/aws/bootstrap.yaml"
 download_plugins:
   image: maven:3.8.3-openjdk-17-slim
   stage: build
@@ -117,9 +97,3 @@ download_plugins:
   only:
     variables:
       - $PROTECTED == '1'
-
-aws-test-java:
-  image: $CI_REGISTRY/osdu/platform/deployment-and-operations/base-containers-aws/aws-maven/aws-maven:v2.0
-
-schemathesis-tests:
-  extends: .schemathesis-tests-template

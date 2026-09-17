@@ -37,7 +37,7 @@ Details to deploy shared schemas can be found under [README.md](./deployments/sh
   
 ## AWS
 
-Instructions for running and testing this service can be found [here](./provider/schema-aws/README.md)  
+The AWS provider has been removed from this repository.
 
 ## Open API 3.0 - Swagger
 - Swagger UI : https://host/context-path/swagger (will redirect to https://host/context-path/swagger-ui/index.html)
