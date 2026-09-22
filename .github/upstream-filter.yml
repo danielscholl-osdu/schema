@@ -23,7 +23,7 @@ top_level:
   LICENSE: keep
   NOTICE: keep
   README.md: keep
-  deployments: strip
+  deployments: keep
   docs: keep
   maven: keep
   pom.xml: keep
@@ -81,6 +81,8 @@ expected_kept:
   - pom.xml
   - schema-core
   - testing/schema-test-core
+  - deployments/shared-schemas
+  - deployments/scripts/DeploySharedSchemas.py
 
 expected_absent:
   - provider
@@ -90,7 +92,6 @@ expected_absent:
   - testing/schema-test-azure
   - testing/schema-test-aws
   - testing/schema-test-core-plus
-  - deployments
 
 inject_root_pom_azure_profile: |
       <profile>
