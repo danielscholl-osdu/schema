@@ -11,7 +11,7 @@ In order to run this service locally, you will need the following:
 - [Maven 3.8.0+](https://maven.apache.org/download.cgi)
 - [Java 17](https://adoptopenjdk.net/)
 - Download the [application-insights-agent](https://github.com/microsoft/ApplicationInsights-Java/releases/tag/3.5.2) jar
-- Infrastructure dependencies, deployable through the relevant [infrastructure template](https://dev.azure.com/slb-des-ext-collaboration/open-data-ecosystem/_git/infrastructure-templates?path=%2Finfra&version=GBmaster&_a=contents)
+- Azure infrastructure for the service, provisioned by [OSDU SPI Stack](https://github.com/Azure/osdu-spi-stack)
 - While not a strict dependency, example commands in this document use [bash](https://www.gnu.org/software/bash/)
 
 ### General Tips
@@ -173,7 +173,7 @@ Jet Brains - the authors of Intellij IDEA, have written an [excellent guide](htt
 ## Deploying service to Azure
 
 Service deployments into Azure are standardized to make the process the same for all services. The steps to deploy into
-Azure can be [found here](https://dev.azure.com/slb-des-ext-collaboration/open-data-ecosystem/_git/infrastructure-templates?path=%2Fdocs%2Fosdu%2FSERVICE_DEPLOYMENTS.md&_a=preview)
+Azure are in [OSDU SPI Stack](https://github.com/Azure/osdu-spi-stack).
 
 
 ## License
