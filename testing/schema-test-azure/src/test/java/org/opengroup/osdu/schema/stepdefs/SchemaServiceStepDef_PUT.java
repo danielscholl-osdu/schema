@@ -37,6 +37,13 @@ public class SchemaServiceStepDef_PUT {
 
     List<HashMap<String, String>> list_schemaParameterMap = new ArrayList<HashMap<String, String>>();
 
+    // The system schema API rejects a data-partition-id header.
+    private Map<String, String> systemHeaders() {
+        Map<String, String> headers = new HashMap<>(this.context.getAuthHeaders());
+        headers.remove(TestConstants.DATA_PARTITION_ID);
+        return headers;
+    }
+
     @Given("I hit schema service PUT API with {string} only if status is not development")
     public void i_hit_schema_service_put_api_with_string_only_if_status_is_not_development(String inputPayload) throws IOException {
         String resp = this.context.getHttpResponse().getBody();
@@ -62,9 +69,10 @@ public class SchemaServiceStepDef_PUT {
             this.context.setSchemaIdFromInputPayload(schemaId);
 
             updateVersionInJsonBody(jsonBody, nextMinorVersion, nextMajorVersion, schemaId);
+            body = new Gson().toJson(jsonBody);
             Map<String, String> headers = this.context.getAuthHeaders();
             HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                    .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                    .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                     .build();
             HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 
@@ -90,7 +98,7 @@ public class SchemaServiceStepDef_PUT {
         body = new Gson().toJson(jsonBody);
         Map<String, String> headers = this.context.getAuthHeaders();
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
         this.context.setHttpResponse(response);
@@ -113,7 +121,7 @@ public class SchemaServiceStepDef_PUT {
         body = new Gson().toJson(jsonBody);
         Map<String, String> headers = this.context.getAuthHeaders();
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
         this.context.setHttpResponse(response);
@@ -132,7 +140,7 @@ public class SchemaServiceStepDef_PUT {
         body = new Gson().toJson(jsonBody);
         Map<String, String> headers = this.context.getAuthHeaders();
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
         this.context.setHttpResponse(response);
@@ -181,7 +189,7 @@ public class SchemaServiceStepDef_PUT {
         this.context.setSchemaIdFromInputPayload(newID);
         this.context.setSupersededById(supersededById);
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(putRequest.toString()).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(putRequest.toString()).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
 
@@ -202,7 +210,7 @@ public class SchemaServiceStepDef_PUT {
         body = new Gson().toJson(jsonBody);
         Map<String, String> headers = this.context.getAuthHeaders();
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
         this.context.setHttpResponse(response);
@@ -228,7 +236,7 @@ public class SchemaServiceStepDef_PUT {
         body = new Gson().toJson(jsonBody);
         Map<String, String> headers = this.context.getAuthHeaders();
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
         this.context.setHttpResponse(response);
@@ -251,7 +259,7 @@ public class SchemaServiceStepDef_PUT {
         body = new Gson().toJson(jsonBody);
         Map<String, String> headers = this.context.getAuthHeaders();
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
         this.context.setHttpResponse(response);
@@ -340,7 +348,7 @@ public class SchemaServiceStepDef_PUT {
         body = new Gson().toJson(jsonBody);
         Map<String, String> headers = this.context.getAuthHeaders();
         HttpRequest httpRequest = HttpRequest.builder().url(TestConstants.HOST + TestConstants.PUT_ENDPOINT)
-                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(this.context.getAuthHeaders())
+                .body(body).httpMethod(HttpRequest.PUT).requestHeaders(systemHeaders())
                 .build();
         HttpResponse response = HttpClientFactory.getInstance().send(httpRequest);
         this.context.setHttpResponse(response);
