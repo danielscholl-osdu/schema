@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.3.0](https://github.com/danielscholl-osdu/schema/compare/v1.2.0...v1.3.0) (2026-09-29)
+
+
+### ✨ Features
+
+* Declare the Azure integration suite for spi test ([4f0678d](https://github.com/danielscholl-osdu/schema/commit/4f0678d71d5fb8549c3448f4480070343e4b9139))
+
+
+### 📚 Documentation
+
+* Add CONTRIBUTING guide and refresh Azure doc links ([26c755f](https://github.com/danielscholl-osdu/schema/commit/26c755f09f96de55be7c14b00527a9306f635d86))
+* Add CONTRIBUTING guide and refresh Azure doc links ([e31a578](https://github.com/danielscholl-osdu/schema/commit/e31a5782eb281c4d3e6862fd0a4e14f822483c88))
+
+
+### 🔧 Miscellaneous
+
+* Sync template updates ([8b97b80](https://github.com/danielscholl-osdu/schema/commit/8b97b80b6aef7474e7051d2da0025443aef8d152))
+* Sync template updates ([446d8c5](https://github.com/danielscholl-osdu/schema/commit/446d8c56aa67b15c216265cb7220e6eca6aea109))
+* **template-sync:** Sync template updates (updated 2026-09-23) ([8663e72](https://github.com/danielscholl-osdu/schema/commit/8663e72ba2f9425be20edf0158ea989a2d64ea37))
+* **template-sync:** Sync template updates (updated 2026-09-26) ([355b45d](https://github.com/danielscholl-osdu/schema/commit/355b45de728631bf4f258bc8ae8f7f1a175160b9))
+
+
+### 🧪 Tests
+
+* **azure:** Declare azure integration suite and fix PUT stepdefs ([63847b2](https://github.com/danielscholl-osdu/schema/commit/63847b20087d7724d1db48c60119cb6a5330f61e))
+
 ## [1.2.0](https://github.com/danielscholl-osdu/schema/compare/v1.1.0...v1.2.0) (2026-09-22)
 
 
