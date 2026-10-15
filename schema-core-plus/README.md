@@ -15,6 +15,10 @@ Pre-requisites
 * Lombok 1.18.40 or later
 * [Maven 3.9.16+](https://maven.apache.org/download.cgi)
 
+### Lettuce runtime dependency
+
+`os-core-common` declares `lettuce-core` as **provided**. Without an explicit dependency, startup fails with `ClassNotFoundException: io.lettuce.core.codec.RedisCodec` when creating `gsonCodecFactory`. `schema-core-plus` therefore declares `lettuce-core` (`${lettuce.version}`) so Redis cache codecs resolve at runtime.
+
 ### Installation
 
 ### Service Configuration
