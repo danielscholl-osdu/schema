@@ -11,9 +11,9 @@ These instructions will get you a copy of the project up and running on your loc
 Pre-requisites
 
 * GCloud SDK with java (latest version)
-* JDK 17
-* Lombok 1.18.26 or later
-* Maven
+* JDK 25
+* Lombok 1.18.40 or later
+* [Maven 3.9.16+](https://maven.apache.org/download.cgi)
 
 ### Installation
 
@@ -30,9 +30,9 @@ Check that maven is installed:
 
 ```bash
 $ mvn --version
-Apache Maven 3.8.7
+Apache Maven 3.9.16
 Maven home: /usr/share/maven
-Java 17.0.7
+Java version: 25.0.4
 ...
 ```
 
